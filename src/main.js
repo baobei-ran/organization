@@ -3,6 +3,7 @@ import App from './App';
 import router from './router';
 import ElementUI from 'element-ui';
 import Config from '@/common/js/config.js';
+// import API from '@/api/index.js';
 import API from '@/api/http.js';
 import 'babel-polyfill';
 import 'element-ui/lib/theme-chalk/index.css';
@@ -18,7 +19,7 @@ import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
  
  // 进度条
-NProgress.configure({ showSpinner: true })
+NProgress.configure({ showSpinner: false })     // true 为开启
 router.beforeEach((to, from, next) => {
     NProgress.start();
     next()

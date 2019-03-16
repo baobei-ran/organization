@@ -59,7 +59,7 @@ export default {
                 var layer = layui.layer;
                 var noneclick = false;
                 $("#sendCode").on("click", function () {
-                    var isphone = /^1[34578]\d{9}$/;
+                    var isphone = /^1[345789]\d{9}$/;
                     if (!isphone.test($('#phone').val())) {
                         layer.msg("请输入确的手机号");
                         return;
@@ -94,7 +94,7 @@ export default {
             var _this = this;
             layui.use(["layer"], function () {
                 var layer = layui.layer;
-                var exgphone = /^1(3|4|5|7|8)\d{9}$/;//手机号验证
+                var exgphone = /^1(3|4|5|7|8|9)\d{9}$/;//手机号验证
                 var isNumber = /^\d{4}$/; //验证数字
                 var ispass = /^\d{6,12}$/; //验证密码
 
@@ -119,6 +119,7 @@ export default {
                 }
                 if (checkpress()) {
                     _this.$http.post('/shv2/login/register', { phone: $('#phone').val(), code: $('#code').val(), pwd: $('#pass').val() }, function (res) {//
+                    console.log(res)
                         if (res.code == 1) {
                             _this.localstorage.put('logindata',{hospital_status:0})
                             _this.go('/setting/mechanismMsg?upload=true')

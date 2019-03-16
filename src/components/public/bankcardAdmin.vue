@@ -6,8 +6,8 @@
             </p>
             <div class="Pd-B24 Pd-L24 Pd-R24">
                 <div class="Pd-B24 Pd-L24 Pd-T24 Mg-T22 Ft-S14 Color_black backborder">
-                    <p class="Mg-B20"><img class="Mg-R5" src="@/common/image/pages/account/icon_zs.png" width="15px" height="15ox" alt="" style="position:relative;top:-2px">招商银行</p>
-                    <p>8772 22** **** **8877</p>
+                    <p class="Mg-B20"><img class="Mg-R5" :src="$http.baseURL+dataObj.img" width="15px" height="15ox" alt="" style="position:relative;top:-2px">{{ dataObj.bank_name }}</p>
+                    <p>{{ dataObj.bankcard }}</p>
                 </div>
             </div>
         </div>
@@ -23,11 +23,11 @@
                     </tr>
                     <tr height="44px">
                         <td class="Ft-S14 Color_black" align="right">姓名：</td>
-                        <td class="Ft-S14 Color_gray6 Pd-L40">李粒粒</td>
+                        <td class="Ft-S14 Color_gray6 Pd-L40">{{ dataObj.userName }}</td>
                     </tr>
                     <tr height="44px">
                         <td class="Ft-S14 Color_black" align="right">身份证号：</td>
-                        <td class="Ft-S14 Color_gray6 Pd-L40">222222*********988</td>
+                        <td class="Ft-S14 Color_gray6 Pd-L40">{{ dataObj.idCardNo }}</td>
                     </tr>
                     <tr height="44px">
                         <td class="Ft-S14 Color_black" align="right">个人身份证照片：</td>
@@ -37,18 +37,19 @@
             </div>
         </div>
 
+        <!-- 修改交易密码 -->
         <div id="exitpass" class="form_content_action hide">
             <form class="layui-form Mg-T40" action="">
                 <div class="layui-form-item Mg-B24">
                     <label class="layui-form-label Color_black">原交易密码：</label>
                     <div class="layui-input-inline Mg-L16">
                         <ul id="ul0">
-                            <input type="password" />
-                            <input type="password" />
-                            <input type="password" />
-                            <input type="password" />
-                            <input type="password" />
-                            <input type="password" />
+                            <input type="password" v-model='pass[0]' maxlength="1"/>
+                            <input type="password" v-model='pass[1]' maxlength="1"/>
+                            <input type="password" v-model='pass[2]' maxlength="1"/>
+                            <input type="password" v-model='pass[3]' maxlength="1"/>
+                            <input type="password" v-model='pass[4]' maxlength="1"/>
+                            <input type="password" v-model='pass[5]' maxlength="1"/>
                         </ul>
                         <p class="clear Mg-T10 Ft-S14" style="width:300px"><span class="fl Color_gray6">请输入原交易密码</span><span class="fr Color_blue pointer" @click="forgetpass">忘记密码?</span></p>
                     </div>
@@ -78,11 +79,13 @@
                 </div>
                 <div class="Mg-B24">
                     <div class="layui-input-block">
-                        <a class="layui-btn" id="onsubmit">确认</a>
+                        <a class="layui-btn" id="onsubmit" @click='editPass'>确认</a>
                     </div>
                 </div>
             </form>
         </div>
+
+        <!-- 忘记密码 -->
         <div id="forgetpass" class="form_content_action hide">
             <form class="layui-form Mg-T40" action="">
                 <div class="layui-form-item Mg-B24">
@@ -104,12 +107,12 @@
                     <label class="layui-form-label">支付密码：</label>
                     <div class="layui-input-inline Mg-L16">
                         <ul id="ul1">
-                            <input type="password" />
-                            <input type="password" />
-                            <input type="password" />
-                            <input type="password" />
-                            <input type="password" />
-                            <input type="password" />
+                            <input type="password" maxlength="1"/>
+                            <input type="password" maxlength="1"/>
+                            <input type="password" maxlength="1"/>
+                            <input type="password" maxlength="1"/>
+                            <input type="password" maxlength="1"/>
+                            <input type="password" maxlength="1"/>
                         </ul>
                         <p class="Mg-T10 Mg-B20 Color_gray6">请输入6位数字支付密码</p>
                         <ul id="ul2">
@@ -130,6 +133,8 @@
                 </div>
             </form>
         </div>
+
+        <!-- 申请解绑银行卡 -->
         <div id="outbank" class="form_content_action hide">
             <form class="layui-form Mg-T40" action="">
                 <div class="layui-form-item Mg-B24">
@@ -166,7 +171,22 @@ export default {
     name: '',
     data() {
         return {
-            noneclick:false
+            noneclick:false,              // 
+            pass: new Array(6),           // 修改交易密码的原密码
+            newPass: '',                  // 修改交易密码的新密码
+            dataObj: {
+                bank_name: "工商银行",
+                bankcard: "6212260200165888781",
+                banktel: "199****8302",
+                bindid: "342857139",
+                cardtype: 0,
+                id: 133,
+                idCardNo: "1306***********650",
+                img: "/upload/bankcard/ICBC.png",
+                money: "0.00",
+                numberu: "**** **** **** 8781",
+                userName: "李京浩"
+            }
         }
     },
     created() {
@@ -204,6 +224,7 @@ export default {
     },
     methods: {
         initdata() {
+            var _this = this;
             layui.use(["layer"], function () {
                 var $ = layui.jquery;
                 function inkeypress() {
@@ -217,12 +238,18 @@ export default {
                 $("#ul1>input").on("keypress", inkeypress);
                 $("#ul2>input").on("keypress", inkeypress);
                 $("#ul3>input").on("keypress", inkeypress);
+                
+                // $("#ul0>input").bind('input propertychange', function () {
+                    
+                // })
+                
+                
             });
         },
-        getcode(){
+        getcode(){  // 获取验证码按钮
             var _salf = this;
             layui.use(["layer"], function () {
-                var isphone = /^1[34578]\d{9}$/;
+                var isphone = /^1[345789]\d{9}$/;
                 if (!isphone.test($("#phone").val())) {
                     layer.msg("请输入正确的手机号");
                     return;
@@ -246,7 +273,7 @@ export default {
                 }, 1000);
             })
         },
-        outbank() {//
+        outbank() {//申请解绑银行卡按钮
             layui.use(["layer"], function () {
                 var $ = layui.jquery;
                 layer.open({
@@ -266,7 +293,7 @@ export default {
             });
             $(".layui-layer-setwin").css("top", "19px");
         },
-        exitpass() {//修改交易密码
+        exitpass() {// 修改交易密码 按钮
             layui.use(["layer"], function () {
                 var $ = layui.jquery;
                 layer.open({
@@ -306,6 +333,27 @@ export default {
                 "line-height": "50px"
             });
             $(".layui-layer-setwin").css("top", "19px");
+        },
+
+        editPass () {   // 修改交易密码后提交
+            var _this = this;
+            var a = this.pass.join('')
+            console.log(a)
+             layui.use(["layer"], function () {
+                var $ = layui.jquery;
+                var obj = { pwd: 'a' }
+                _this.$http.post('/shv2/account/change_pwd', obj, function (res) {
+                    console.log(res)
+                }, function (err) { console.log(err)})
+             })
+        },
+
+
+        // 绑卡后获取用户卡号信息
+        getUserMsg() {
+            this.$http.post('/shv2/account/recharge_wait',{}, function (res) {
+                console.log(res)
+            }, function (err) { console.log(err)})
         }
     }
 }

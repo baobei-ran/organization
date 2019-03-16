@@ -80,7 +80,6 @@ export default {
         initdata() {
             var _this = this;
             _this.$http.post('/shv2/account/add_bank_person_audit',{}, function (res) {
-                console.log(res)
                 if(res.code == 1) {
                     _this.userName = res.data.name
                     _this.IDcard = res.data.idcard

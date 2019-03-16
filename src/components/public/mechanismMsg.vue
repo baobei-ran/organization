@@ -204,7 +204,8 @@ export default {
             },
             provinceList: '',
             cityList: '',
-            countyList: ''
+            countyList: '',
+            leixing: ''         // 选择的 机构类型
         }
     },
     mounted() {
@@ -250,6 +251,7 @@ export default {
         ifcontent() {
             let _this = this
             this.$http.post('/shv2/Setting/look_write', {}, function (res) {
+                console.log(res)
                 _this.formdata = {
                     name: res.data.hospital_name,
                     type: res.data.structureType,

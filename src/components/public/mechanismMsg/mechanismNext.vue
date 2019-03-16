@@ -174,7 +174,7 @@ export default {
                 var form = layui.form;
                 form.render()
             })
-            var map = new AMap.Map("container", {
+            var map = new AMap.Map("container", {   // 地图
                 resizeEnable: true,
                 zoom: 13
             });

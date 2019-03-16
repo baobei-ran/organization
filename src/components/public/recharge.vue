@@ -33,7 +33,7 @@
 
         <div class="alipay_dialog ac hide">
             <div class="Mg-T56" style="width:200px;height:200px;background: #eee; margin: 0 auto">
-                <iframe id="aliurl" :src="zfbUrl" frameborder="0"
+                <iframe id="aliurl" src="" frameborder="0"
                     width="180px"
                     height="180px;"
                     marginwidth="0"
@@ -75,9 +75,11 @@ export default {
     name: '',
     data() {
         return {
-            price: '',   // 监听金额
-            wxUrl: '',   //  微信返回的二维码
-            zfbUrl: ''   // 支付宝的路径
+            price: '',      // 监听金额
+            wxUrl: '',      //  微信返回的二维码
+            zfbUrl: '',     // 支付宝的路径
+            maxPrice: '1',   // 充值最大金额
+            minPrice: '0.01'    // 充值最小金额
         }
     },
     computed: {
@@ -113,13 +115,14 @@ export default {
                         paytext = $(this).text();
                     });
                 });
+
+
                 $('#money').blur(function(){
                     if (_this.price == '') {
                         _this.price = '0.00'
                     }
                     var money2 = _this.price.match(/^\d*(\.?\d{0,2})/g)[0]; // 保留小数点后面两位小数
                     _this.price = money2
-                
                 });
                 $("#money").on('input  propertychange',function(){  // 金钱输入验证
                     //如果输入非数字，则替换为''
@@ -131,12 +134,19 @@ export default {
                     //保证.只出现一次，而不能出现两次以上     
                     this.value = this.value.replace('.','$#$').replace(/\./g,'').replace('$#$','.');
                     //只能输入两位小数
-                    this.value = this.value.replace(/^(\-)*(\d+)\.(\d\d).*$/,'$1$2.$3');
+                    // this.value = this.value.replace(/^(\-)*(\d+)\.(\d\d).*$/,'$1$2.$3');
 
-                    if(this.value.length > 1) {
-                        this.value=this.value.replace(/[^\d]/g, '').replace(/^0{1,}/g,'')
-                    }
+                    
                 })
+
+                _this.$http.post('/shv2/account/recharge',{}, function (res) {  // 充值参数判断
+                    console.log(res)
+                    if(res.code == 1) {
+                        var data = res.data;
+                        _this.maxPrice = data.max;
+                        _this.minPrice = data.min;
+                    }
+                }, function (err) { console.log(err) })
 
 
 
@@ -147,8 +157,12 @@ export default {
                         layer.msg('请输入充值金额');
                         return false;
                     }
-                    if (money < 0.01) {
-                        layer.msg('充值金额不能小于0.01');
+                    if (money < _this.minPrice) {
+                        layer.msg('充值金额不能小于'+_this.minPrice);
+                        return false;
+                    }
+                    if (money > _this.maxPrice) {
+                        layer.msg('充值金额不能大于'+_this.maxPrice);
                         return false;
                     }
                     if (paytext == '') {
@@ -174,25 +188,18 @@ export default {
                         }, function (err) { console.log(err)})
                        
                     } else if (paytext == "支付宝支付") {
-                        console.log( _this.price)
-                        _this.$http.post('/shv2/account/charge', {money: _this.price, type: 1}, function (res) {
-                            console.log(res)
-                            if (res.code == 1) {
-                                _this.zfbUrl = res
-                                layer.open({
-                                    type: 1,
-                                    title: "支付宝充值",
-                                    shadeClose: true,
-                                    shade: 0.8,
-                                    area: ["400px", "460px"],
-                                    content: $(".alipay_dialog") //iframe的url
-                                });
-                            } else {
-                                layer.msg(res.msg);
-                            }
-                            
-                        }, function (err) { console.log(err)})
-                        
+                        _this.zfbUrl = '/shv2/account/charge?money='+_this.price+'&type=1';  // 支付宝地址
+                       $('#aliurl').attr('src', _this.$http.baseURL+_this.zfbUrl)           
+                        // console.log($('#aliurl').attr('src'))
+                            layer.open({    // 弹框
+                                type: 1,
+                                title: "支付宝充值",
+                                shadeClose: true,
+                                shade: 0.8,
+                                area: ["400px", "460px"],
+                                content: $(".alipay_dialog") //iframe的弹框
+                            });
+                           
                     } else {
                         // 在此判断有无绑定银行卡
                         // window.location.href = "/shanghu/account/recharge_bank";

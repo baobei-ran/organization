@@ -79,7 +79,8 @@ export default {
         initdata() {
             
             var phone = this.localstorage.get('logindata').phone
-            this.form.phone=phone.substring(0,3)+'****'+phone.substring(7,11)
+            console.log(phone)
+            // this.form.phone=phone.substring(0,3)+'****'+phone.substring(7,11)
         },
         getcode() {
             let _this = this

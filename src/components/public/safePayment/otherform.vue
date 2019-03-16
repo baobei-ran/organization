@@ -103,16 +103,17 @@ export default {
     name: '',
     data() {
         return {
-            userName: '',           // 姓名
-            IDcrad: '',             // 身份证
-            account_open: '',       // 开户银行
-            bank_card: '',          // 银行卡
-            phone: '',              //  手机号
+            userName: '',            // 姓名
+            IDcrad: '',              // 身份证
+            account_open: '',        // 开户银行
+            bank_card: '',           // 银行卡
+            phone: '',               //  手机号
             verification_code: '',   // 验证码
             flag: false,             // 是否发送手机验证码
-            time: '60',               //  时间
-            sp: true,               // 按钮时间切换
-            cleardate: ''           //  储存时间
+            time: '60',              //  时间
+            sp: true,                // 按钮时间切换
+            cleardate: '',           //  储存时间
+            merchantFlowId: ''       //  绑卡请求号
         }
     },
     mounted() {
@@ -141,7 +142,7 @@ export default {
 
                 // 提交按钮
                 $("#addbackpublic").on("click", function () {   
-                    var isphone = /^1[34578]\d{9}$/;
+                    var isphone = /^1[345789]\d{9}$/;
                     var pattern = /^([1-9]{1})(\d{14}|\d{18})$/;
                     var isIDCard = /^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/;
                     // if (!$("#name").val()) {
@@ -179,11 +180,12 @@ export default {
                         if(res.code == 1) {
                             layer.msg(res.msg)
                             _this.flag = true
+                            _this.merchantFlowId = res.merchantFlowId;  // 绑卡请求号
                              if (_this.flag) {
                                 // 弹出层
-                                $("#layerphone").text(_this.phone); //弹框手机号
-                                var index = layer.load(1, { // 调用loading动画
-                                    shade: [0.1, "#000"] //加载层
+                                $("#layerphone").text(_this.phone);  // 弹框手机号
+                                var index = layer.load(1, {          // 调用loading动画
+                                    shade: [0.1, "#000"]             // 加载层
                                 });
                              var time = 60;
                             _this.sp = false;
@@ -204,12 +206,14 @@ export default {
                                 title: "验证码",
                                 content: $("#layer_getcode"),
                                 area: ["560px", "360px"],
-                                cancel: function () {   //右上角关闭回调
-                                    layer.close(index)  // 关闭loading
-                                    layer.msg('绑卡失败')
-                                    _this.sp = true;
-                                    _this.time = '60'
-                                    clearInterval(_this.cleardate);
+                                cancel: function () {           // 右上角关闭回调
+                                    
+                                         layer.close(index)     // 关闭loading
+                                        _this.sp = true;
+                                        _this.time = '60'
+                                        clearInterval(_this.cleardate);
+                                   
+                                   
                                 }
                             });
                             }
@@ -276,16 +280,17 @@ export default {
                 //弹出框确认提交
                 $("#confirm").on("click", function () {
                     //弹出框提交
-                    if (!_this.verification_code || _this.verification_code.length != 4) {
+                    if (!_this.verification_code ) {
                         //验证码
                         layer.msg("请输入正确的验证码");
                         return;
                     } else {
-                        layer.closeAll() //关闭弹框和loading
-                        var obj = { merchantFlowId: _this.phone, smsCode: _this.verification_code }
+                       
+                        var obj = { merchantFlowId: _this.merchantFlowId, smsCode: _this.verification_code }
                         _this.$http.post('/shv2/account/smsConfirm', obj, function (res) {           // 绑卡短信确认
                             console.log(res)
                             if (res.code == 1) {
+                                 layer.closeAll() //关闭弹框和loading
                                 _this.go('/finance/bankcardadmin/success?name=yes')     // 绑卡成功后跳转成功提示
                             } else {
                                 layer.msg(res.msg);

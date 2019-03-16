@@ -67,7 +67,6 @@
                         </p>
                     </td>
                     <td class="Pd-L40 Ft-S16 Color_gray6">
-                         <p style='font-size:12px;width:300px; overflow:hidden;color:#3196FF;'>{{ upfile.name }}</p>
                         <div class="clear upflie Pd-T14" style="overflow:hidden">
                             <div class="fl">
                                 <input type="file" id="uploadfile" placeholder="" />
@@ -180,8 +179,9 @@ export default {
                             layer.msg("文件大小不能超过2M");
                         } else {
                             _this.upfile = file
-                            // console.log(_this.upfile)
-                            _this.uptitle = '重新上传授权证明文件'
+                            if (_this.upfile) {
+                                _this.uptitle = '已上传授权证明文件'
+                            }
                         }
                         
                        
@@ -190,7 +190,7 @@ export default {
 
                 
                 $("#addsunbimt").on("click", function () {
-                    var isphone = /^1[34578]\d{9}$/;
+                    var isphone = /^1[345789]\d{9}$/;
                     var pattern = /^([1-9]{1})(\d{14}|\d{18})$/;
                     var isIDCard = /^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/;
                     if (!_this.userName) {

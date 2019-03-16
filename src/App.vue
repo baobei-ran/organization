@@ -457,7 +457,8 @@ export default {
                 this.go('/')
             }
             var rzstatus = this.localstorage.get('logindata');
-            if (rzstatus) {
+            // console.log(rzstatus)
+            if (rzstatus) {     // 判断是否审核通过
                 if (rzstatus.hospital_status == 0 || rzstatus.hospital_status == 2 || rzstatus.hospital_status == 3) {
                     this.isstatus = true;
                 }

@@ -32,7 +32,7 @@ export default {
     },
     methods: {
         returnBtn () {
-            this.$router.back()
+            this.go('/finance/bankcardadmin');       //  绑卡成功，返回绑卡页面
         }
     }
 }

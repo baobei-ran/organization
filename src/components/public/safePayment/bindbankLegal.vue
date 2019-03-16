@@ -172,16 +172,7 @@ export default {
                     var isphone = /^1[345789]\d{9}$/;
                     var pattern = /^([1-9]{1})(\d{14}|\d{18})$/;
                     var isIDCard = /^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/;
-                    // if (!_this.userName) {
-                    //     //法人姓名
-                    //     layer.msg("请输入正确的法人姓名");
-                    //     return;
-                    // }
-                    // if (!_this.IDcard || !isIDCard.test(_this.IDcard)) {
-                    //     //法人身份证号码
-                    //     layer.msg("请输入正确的法人身份证号码");
-                    //     return;
-                    // }
+                   
                     if (!_this.account_open) {
                         //开户银行
                         layer.msg("请输入正确的开户银行");
@@ -204,7 +195,7 @@ export default {
                     _this.$http.post('/shv2/account/add_bank_legal', obj, function (res) {              // 法人账户绑定银行卡
                         console.log(res)
                         
-                        if (res.code == 1) {
+                        if (res.code == 0) {
                             _this.flag = true
                             layer.msg(res.msg)
                             if (!_this.noneclick) { // 初始化是false 的时候调用时间，只调用一次
@@ -241,7 +232,8 @@ export default {
                                     area: ["560px", "360px"],
                                     cancel: function () { 
                                         layer.close(index); // 关闭loading
-                                        layer.msg('绑卡失败')
+                                        // layer.msg('绑卡失败')
+                                        
                                     }
                                 });
                             }
@@ -259,7 +251,7 @@ export default {
 
                 $("#confirm").on("click", function () {
                     //弹出框提交
-                    if (!_this.auth_code || _this.auth_code.length != 4) {
+                    if (!_this.auth_code) {
                         //验证码
                         layer.msg("请输入正确的验证码");
                         return;
@@ -283,8 +275,7 @@ export default {
         }
     },
     beforeDestroy() {
-        console.log('我离开了')
-        clearInterval();    
+       
     }
 }
 </script>

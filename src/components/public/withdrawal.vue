@@ -35,8 +35,8 @@
                         <div class="bg_f Pd-T24 Pd-B22 Pd-L24">
                             <p class="Mg-B52">银行卡</p>
 
-                            <p v-show='!disabledBtn'>
-                                <i class="bank_CMBC"></i><span class="Mg-R20">{{ Card_door }}</span><span>{{ Card_number }}</span>
+                            <p v-show='!disabledBtn' class="bank">
+                                <img :src="$http.baseURL+bankImg" alt=""><span class="Mg-R20">{{ Card_door }}</span><span>{{ Card_number }}</span>
                             </p>
 
                             <p class="Ft-S14 pointer" style="color:#3196FF;"  v-show='disabledBtn'>
@@ -178,27 +178,38 @@ export default {
     name: '',
     data() {
         return {
-            disabledBtn: true,  //  提现按钮
-            Card_door: '',      //  银行
-            Card_number: '',    //  卡号
-            withdraw_deposit: '',   // 提现人的基本信息
+            disabledBtn: true,                        //  提现按钮
+            Card_door: '工商银行',                     //  银行
+            Card_number: '452523*******125564455',    //  卡号
+            bankImg: '',                              //   银行login
+            withdraw_deposit: '',                     // 提现人的基本信息
             page: 1,
             limit: 10,
-            startTime: '',          // 开始时间 
-            endTime: '',            // 结束时间
-            withdraw_depositList: '', // 提现记录列表
+            startTime: '',                            // 开始时间 
+            endTime: '',                              // 结束时间
+            withdraw_depositList: '',                 // 提现记录列表
         }
     },
     created() {
         var _this = this;
-        this.$http.post('/shv2/account/if_bank', {}, function (res) {   // 查询 查询机构是否绑卡
-            console.log(res)
+        this.getData('/shv2/account/if_bank', {}).then(res => {     // 查询 查询机构是否绑卡
             if (res.code == 1) {   // 1 代表绑卡
                 _this.disabledBtn = false
+                _this.getData('/shv2/account/recharge_wait', {}).then(res => {   // 用户信息
+                    if (res.code == 1) {
+                        _this.Card_door = res.data.bank_name;   // 获取某某银行
+                        // 处理卡号
+                        
+                        _this.Card_number = res.data.bankcard;   // 卡号
+                        _this.bankImg = res.data.img            // 银行login
+                    }
+                })
             } else {
                 _this.disabledBtn = true
             }
-        }, function (err) { console.log(err)})
+        }).catch(err => console.log(err))
+
+        
     },
     mounted() {
         
@@ -213,6 +224,12 @@ export default {
         this.TixianList(1);
     },
     methods: {
+        getData (url, data) {   // 封装下接口
+            var _this = this;
+            return new Promise((resolve, reject) => {
+                _this.$http.post(url, data, function (res) { resolve(res) }, function (err) { reject(err)})
+            })
+        },
         serch () {
             console.log(this.startTime)
         },
@@ -571,6 +588,14 @@ export default {
             border: 1px solid #e2e2e2;
         }
     }
+
+    .bank > img {
+        width: 15px;
+        height: 15px;
+        margin-right: 8px;
+        vertical-align: middle;
+        margin-bottom: 3px;
+    }
 }
 .form_content_action {
     input {
@@ -628,6 +653,7 @@ export default {
             border-right: 1px solid rgba(66, 129, 215, 1) !important;
         }
     }
+    
 }
 .layui-layer-title {
     background-color: #ecf2fb;

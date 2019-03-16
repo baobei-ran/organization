@@ -2,15 +2,15 @@
 import axios from "axios";
 import qs from 'qs'
 // var baseURL="https://www.yunyikang.cn"//正式
-var baseURL = "http://test99.yunyikang.cn/"; //
+var baseURL = "http://test99.yunyikang.cn"; //
 // var baseURL="http://192.168.8.106/"//
 axios.defaults.baseURL = baseURL;
 
 axios.defaults.withCredentials = true;  // 跨域请求头
 // 添加请求拦截器
 axios.interceptors.request.use(function (config) {
-    config.data = qs.stringify(config.data)
-    // console.log(config)
+    // config.data = qs.stringify(config.data)    // 转换数据类型
+    // console.log(config)     //    qs输出：data: "phone=18519708006&code=5332&pwd=123456"
     return config;
   }, function (error) {
     
@@ -28,29 +28,84 @@ axios.interceptors.response.use(function (response) {
     return response;
   }, function (error) {
     // 对响应错误做点什么
-    console.log(error)
+    // console.log(error)
+    if (error && error.response) {
+      switch (error.response.status) {
+        case 400:
+          console.log('错误请求')
+          break;
+        case 401:
+          console.log('未授权，请重新登录')
+          break;
+        case 403:
+          console.log( '拒绝访问')
+          break;
+        case 404:
+          console.log('请求错误,未找到该资源')
+          break;
+        case 405:
+          console.log('请求方法未允许')
+          break;
+        case 408:
+          console.log('请求超时')
+          break;
+        case 500:
+          console.log('服务器端出错')
+          break;
+        case 501:
+          console.log('网络未实现')
+          break;
+        case 502:
+          console.log('网络错误')
+          break;
+        case 503:
+          console.log('服务不可用')
+          break;
+        case 504:
+          console.log('网络超时')
+          break;
+        case 505:
+          console.log('http版本不支持该请求')
+          break;
+        default:
+          console.log(`连接错误${error.response.status}`)
+      }
+    }
     return Promise.reject(error);
   });
 
-// let config = {
+// let config = {  // 使用 formData 的请求头
 //     headers: {
 //         'Content-Type': 'multipart/form-data'
-//     },
-//      // 当需要发送formData格式的时候如下
-//      transformRequest: [
-//       function(data) {  //转换数据的方法
-//         let newData = "";
-//         for (let k in data) {
-//           if (data.hasOwnProperty(k) === true) {
-//             newData += encodeURIComponent(k) + "=" + encodeURIComponent(data[k]) + "&";
-//           }
-//         }
-//         // console.log(newData)
-//         return newData;
-//       }
-//     ]
+//     }
 //   }
   
+
+function Axios (method, url, data) {
+  return new Promise ((resolve, reject) => {
+    axios({
+      method: method,
+      url: url,
+      headers:{
+      'Content-type': 'application/x-www-form-urlencoded;charset=UTF-8'
+      },
+      data: data,
+      transformRequest: [   //转换数据的方法
+        function (data) {
+        let ret = '';
+        for (let it in data) {
+          if (data.hasOwnProperty(it) === true) {
+              ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+          }
+        }
+        // console.log(ret)   //  格式：phone=18519708006&code=0211&pwd=123456&
+        return ret;
+      }],
+    }).then((res)=>{
+      resolve(res.data)
+    }).catch(err => reject(err))
+  })
+}
 
 
 
@@ -80,32 +135,11 @@ export default {
       return await $Post(url, data).then(res => response(res)).catch(err => error(err))
     },
    async post (url, data, response, error) {
-        return await Axios(url, data).then(res => response(res)).catch(err => error(err))
+        return await Axios('POST', url, data).then(res => response(res)).catch(err => error(err))
     },
     baseURL: baseURL,
     
 }
 
 
-function Axios (url, data) {
-  return new Promise ((resolve, reject) => {
-    axios({
-      method:"post",
-      url: url,
-      headers:{
-      'Content-type': 'application/x-www-form-urlencoded'
-      },
-      data: data,
-      transformRequest: [
-        function (data) {
-        let ret = '';
-        for (let it in data) {
-        ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
-        }
-        return ret;
-      }],
-    }).then((res)=>{
-      resolve(res.data)
-    }).catch(err => reject(err))
-  })
-}
+
