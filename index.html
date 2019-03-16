@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>机构端</title>
+    <!-- <link rel="stylesheet" href="/static/layui/css/layui.css" /> -->
+    <script src="/static/layui/layui.js"></script>
+    <script
+      type="text/javascript"
+      src="https://webapi.amap.com/maps?v=1.4.12&key=e517e724a87febb5b4df96032957b22b&plugin=AMap.Geocoder"
+    ></script>
+    <script
+      type="text/javascript"
+      src="https://webapi.amap.com/demos/js/liteToolbar.js"
+    ></script>
+    <script>
+      let logindata = localStorage.getItem("logindata"); //无登录缓存 跳转登录页面
+      if (logindata == "" || logindata == null) {
+        if (!window.location.href.includes("login")) {
+          window.location.href = "/login";
+        }
+      }
+    </script>
+  </head>
+  <body style="background:#F1F2F9">
+    <div id="app"></div>
+    <!-- built files will be auto injected -->
+  </body>
+</html>
+

@@ -1,0 +1,51 @@
+import Vue from 'vue';
+import App from './App';
+import router from './router';
+import ElementUI from 'element-ui';
+import Config from '@/common/js/config.js';
+import API from '@/api/http.js';
+import 'babel-polyfill';
+import 'element-ui/lib/theme-chalk/index.css';
+import '../static/layui/css/layui.css'
+import 'jquery';
+import cache from 'cz-storage';
+import '@/common/js/filter';
+//引入样式文件
+import "@/common/css/reset.css"
+import "@/common/css/Size.css"
+// import axios from "axios";
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
+ 
+ // 进度条
+NProgress.configure({ showSpinner: true })
+router.beforeEach((to, from, next) => {
+    NProgress.start();
+    next()
+});
+ 
+router.afterEach(transition => {
+	NProgress.done();
+});
+
+Vue.use(Config);
+Vue.use(ElementUI);
+Vue.config.productionTip = false;
+Vue.prototype.go = function (name) {    // 把go挂载在实例上，直接使用
+    if (name.indexOf('http') != -1) {
+        window.open(name, '_black');
+    } else {
+        this.$router.push({ path: name });
+    }
+}//路由跳转
+
+Vue.prototype.$http = API;//ajax
+Vue.prototype.localstorage = cache;//缓存
+
+
+new Vue({
+    el: '#app',
+    router,
+    components: { App },
+    template: '<App/>',
+});
