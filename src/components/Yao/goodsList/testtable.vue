@@ -41,104 +41,82 @@
                         </div>
                     </div>
                     
-                    
-                        
-                        
-                   
-                    
-                    <table class="layui-table layui-form" id='demo' lay-filter="test" lay-skin="nob" lay-event='aa' style='text-align:center;'>
-                        <thead>
-                            <tr class="table_headtr" >
-                                
-                                <th lay-data="{field:'city', type:'checkbox',align:'center', title: '全选', width:80}">全选</th>
-                                <th lay-data="{field:'username',align:'center',width:200}">商品名称</th>
-                                <th lay-data="{field:'sex',align:'center',minWidth:250,}">商品编码</th>
-                                <th lay-data="{field:'id', sort: true,align:'center',edit:true,minWidth:80}">排序</th>
-                                <th lay-data="{field:'sign', sort: true,align:'center',minWidth:100}">库存</th>
-                                <th lay-data="{field:'experience', sort: true,align:'center',minWidth:80}">已售</th>
-                                <th lay-data="{field:'score',align:'center',minWidth:90}">商品售价</th>
-                                <!-- <th lay-data="{field:'wealth',align:'center',width: '100'}" >审核状态</th> -->
-                                <th lay-data="{field:'right',align:'center',width:260,toolbar: '#toolBar'}">操作</th>
-                                
-                            </tr>
-                            <!-- <tr style="width: 100%;">
-                                <td lay-data="{field:'city', type:'checkbox',align:'center', title: '全选', width:80}">全选</td>
-                                <td style='color: #3196FF!important;' id='checkeds' colspan="6">批量操作，当前选择8条信息</td>
-                            </tr> -->
-                        </thead>
-
-                        <tbody>
-                            <tr v-for="val in 5" >
-                                <td>
-                                    <div class="layui-form-item">
-                                        <input type="checkbox" name="like1[write]" lay-skin="primary" title="全部" checked="">
-                                    </div>
-                                </td>
-                                <td>
-                                    <img class='imgList' src="" alt="">
-                                    <span style="display:inline-block;width:243px; text-align:left" class="Mg-L16" >OTC（非处方药）同仁堂药业 益安宁丸112丸*3瓶宁丸112丸*3瓶</span>
-                                </td>
-                                <td >32143</td>
-                                <td >33</td>
-                                <td>43214</td>
-                                <td >32143</td>
-                                <td >321432</td>
-                                <!-- <td>未通过</td> -->
-                                <td>
-                                   <div id='toolBar' style="z-index: 9999;">
-                                        <span class="pointer Color_blue Mg-R20" lay-event="edit" @click='edits(val.id)'>编辑</span>
-                                        <span class="pointer Color_blue Mg-R20" lay-event="xia">下架</span>
-                                        <span class="pointer Color_blue moreafter" id='more' :class="more1?'moreafterup':'moreafter'" lay-event="more"><span>更多</span></span>
-                                        <dl class="tdmore hide" :class="{'active':val.id === numId}">
-                                            <dd class="pointer" lay-event="del" @click='del(val.id, 3)'>删除</dd>
-                                            <dd class="pointer" lay-event="record" @click="sendgoods(val.id)">记录</dd>
-                                        </dl>
-                                   
-                                  </div>
-                                    
-                                </td>
-                            </tr>
-                        </tbody>
 
 
 
 
+                   <el-table
+                    :data="tableData"
+                    :row-style='styleColor'
+                    :span-method='colspan'
+                    border
+                    style="width: 100%;height: 515px;overflow: auto;" :header-cell-style='styleObj' >
+                        <el-table-column
+                        type="selection"
+                        label="全选"
+                        width="80" align='center'>
+                        </el-table-column>
+                        <el-table-column
+                            prop="id"
+                            label="商品名称"
+                           align ='center' style='width:300px!mportant;'>
 
+                           <template slot-scope="scope" style='display:flex;'>
+                                <img src="../../../common/image/pages/account/icon_sj.png" alt="" style='width: 50px; height:50px;display:block;' >
+                                <p>撒娇成就大师看得出几十块的看电视剧斯柯达深刻的思考呢是的</p>
+                            </template>
 
-                        <!-- <tbody>
-                            <tr v-for="(val, index) in goodList" :key='index'>
-                                <td>
-                                    <div class="layui-form-item">
-                                        <input type="checkbox" name="like1[write]" lay-skin="primary" title="全部" checked="">
-                                    </div>
-                                </td>
-                                <td>
-                                    <img class='imgList' :src="$http.baseURL+val.pic" alt="">
-                                    <span style="display:inline-block;width:243px; text-align:left" class="Mg-L16" v-text="val.name">OTC（非处方药）同仁堂药业 益安宁丸112丸*3瓶宁丸112丸*3瓶</span>
-                                </td>
-                                <td v-text='val.number'>32143</td>
-                                <td v-text="val.id">33</td>
-                                <td v-text='val.stock'>43214</td>
-                                <td v-text='val.monthly'>32143</td>
-                                <td v-text='val.money'>321432</td>
-                                <td>未通过</td>
-                                <td>
-                                   <div id='toolBar' style="z-index: 9999;">
-                                        <span class="pointer Color_blue Mg-R20" lay-event="edit" @click='edits(val.id)'>编辑</span>
-                                        <span class="pointer Color_blue Mg-R20" lay-event="xia">下架</span>
-                                        <span class="pointer Color_blue moreafter" id='more' :class="more1?'moreafterup':'moreafter'" lay-event="more"><span>更多</span></span>
-                                        <dl class="tdmore hide" :class="{'active':val.id === numId}">
-                                            <dd class="pointer" lay-event="del" @click='del(val.id, 3)'>删除</dd>
-                                            <dd class="pointer" lay-event="record" @click="sendgoods(val.id)">记录</dd>
-                                        </dl>
-                                   
-                                  </div>
-                                    
-                                </td>
-                            </tr>
-                        </tbody> -->
-                    </table>
-                   
+                        </el-table-column>
+                        <el-table-column
+                            prop="name"
+                            label="商品编码" align ='center'>
+                        </el-table-column>
+                        <el-table-column
+                            prop="amount1"
+                            sortable
+                            :cell-dblclick='editSort'
+                            @click.native="handleEdit($index, row)"
+                            label="排序" align ='center'>
+                        </el-table-column>
+                        <el-table-column
+                            prop="amount2"
+                            sortable
+                            label="库存" align ='center'>
+                        </el-table-column>
+                        <el-table-column
+                            prop="amount3"
+                            sortable
+                            label="已售" align ='center'>
+                        </el-table-column>
+                        <el-table-column
+                            prop="amount3"
+                            label="商品售价" align ='center'>
+                        </el-table-column>
+
+                            <!-- <el-table-column
+                            prop="amount3"
+                            label="审核" align ='center' v-show='true'>
+                            </el-table-column> -->
+
+                        <el-table-column
+                            prop="amount3"
+                            label="操作" align ='center'>
+
+                            <template slot-scope="scope" style='display: flex;'>
+                                <button class='btn' 
+                                    @click="edits(scope.row)">编辑</button>
+                                <button class='btn' 
+                                    @click="soldOut(scope.row)">下架</button>
+                                <button class='btn' 
+                                @click="shows(scope.row)">更多 <i class='el-icon-caret-bottom'></i><i class='el-icon-caret-top hide' ></i></button>
+                                <dl class="tdmore hide" :class="{'active':scope.row.id === numId}" >
+                                    <dd class="pointer"  @click='del(scope.row)'>删除</dd>
+                                    <dd class="pointer"  @click="sendgoods(scope.row.id)">记录</dd>
+                                </dl>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                    <div id='page'></div>
                             
                 </div>
             </div>
@@ -164,7 +142,42 @@ export default {
     name: 'goodsList',
     data() {
         return {
-            
+            styleObj: {
+                'background':'#DAE9FF',
+                'color': '#333',
+            },
+            tableData: [{
+                id: '12987122',
+                name: '商品名称',
+                amount1: '商品编码',
+                amount2: '3.2',
+                amount3: 10,
+
+                }, {
+                id: '12987123',
+                name: '王小虎',
+                amount1: '165',
+                amount2: '4.43',
+                amount3: 12
+                }, {
+          id: '12987124',
+          name: '王小虎',
+          amount1: '324',
+          amount2: '1.9',
+          amount3: 9
+        }, {
+          id: '12987125',
+          name: '王小虎',
+          amount1: '621',
+          amount2: '2.2',
+          amount3: 17
+        }, {
+          id: '12987126',
+          name: '王小虎',
+          amount1: '539',
+          amount2: '4.1',
+          amount3: 15
+        }],
             showA: true, // 
             numId: 0,   // id
             tdlast: 0,  // 商品状态
@@ -186,7 +199,43 @@ export default {
         this.initdata(5) // test
     },
     methods: {
-        
+        //点击编辑
+handleEdit(index, row) {
+    this.showEdit[index] = true;
+    this.showBtn[index] = true;
+    this.$set(this.showEdit,row,true)
+    this.$set(this.showBtn,row,true)
+},
+
+
+        handleEdit(index, row) {
+        console.log(index, row);
+      },
+      handleDelete(index, row) {
+        console.log(index, row);
+      },
+
+        // 排序
+        editSort (row, column, cell, event) {
+            console.log(row, column, cell, event)
+        },
+
+    styleColor ({row, rowIndex}) { // 隔行变色
+        if (rowIndex %2 == 1) {
+        return { "background-color": "#E5F0FF" }
+        } else {
+            return { "background-color": "#FFF" }
+        }
+        return { 'height' : '60px' }
+        console.log( rowIndex)
+    },
+
+    colspan ({ row, column, rowIndex, columnIndex }) {    // 合并行或列的计算方法
+        // console.log( columnIndex )
+        if (columnIndex == 1) {
+           
+        }
+    },
 
 
         tab(num) {  // 选项卡
@@ -213,107 +262,59 @@ export default {
                 }, function (err) { console.log(err)})
             });
         },
-        initdata(total) {  // table 表格
+        initdata(total) {  // 分页
             var _this = this;
-            this.$nextTick(() => {
-            layui.use(['table', 'form'], function () {
-                var table = layui.table;
-               var form = layui.form;
-               
-                table.init('test',
-                 {
-                    height: 515 //设置高度
-                    , limit: total, //注意：请务必确保 limit 参数（默认：10）是与你服务端限定的数据条数一致
-                    page: {
-                        layout: ['prev', 'page', 'next', 'skip']
-                    },
-                    done: function (res, curr, count) {
-                        $('thead tr').css({ 'background-color': '#dae9ff', 'height': '50px' });
-                        $('.layui-table-header').css({ 'border-width': '0px 0px 10px', 'border-color': '#fff' });
-                        $('.layui-table-view').css({ 'border-width': '0px 0px 0px' });
-                        $('.layui-table-body').css({ 'border': '1px solid #ddd' });
-                        $('.layui-table-body>table td').css({ 'height': '100px' });
-                        $('.layui-table-box').css({ 'overflow': 'visible' });
-                        $('.layui-table-grid-down').css({ 'display': 'none' });
-                        $('.layui-table-tips-main').css({ 'display': 'none' });
-                        $('.layui-table-tips-c').css({ 'display': 'none' });
-                        $('.layui-table-cell').css({ 'overflow': 'auto!important' })
-
+            layui.use(['layer','laypage'], function () {
+                var layer = layui.layer;
+               var laypage = layui.laypage
+                //完整功能
+                laypage.render({
+                    elem: 'page'
+                    ,count: 30
+                    ,layout: [ 'prev', 'page', 'next', 'skip']
+                    ,jump: function(obj){
+                        // console.log(obj)
                     }
-                });
-                table.on('sort(test)', function (obj) { //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
-                    $('thead tr').css({ 'background-color': '#dae9ff', 'height': '50px' });
-                    $('.layui-table-header').css({ 'border-width': '0px 0px 10px', 'border-color': '#fff' });
-                    $('.layui-table-view').css({ 'border-width': '0px 0px 0px' });
-                    $('.layui-table-body').css({ 'border': '1px solid #ddd' });
-                    $('.layui-table-body>table td').css({ 'height': '100px' });
-                    $('.layui-table-box').css({ 'overflow': 'visible' })
-                    $('.layui-table-grid-down').css({ 'display': 'none' });
-                    $('.layui-table-tips-main').css({ 'display': 'none' });
-                    $('.layui-table-tips-c').css({ 'display': 'none' });
-                });
-                table.on('checkbox(test)', function (obj) {
-                    // console.log(obj.checked); //当前是否选中状态
-                    // console.log(obj.data); //选中行的相关数据
-                    // console.log(obj.type); //如果触发的是全选，则为：all，如果触发的是单选，则为：one
-                    $('.layui-form-checked[lay-skin=primary] i').attr('class', 'layui-icon layui-icon-ok checkedbox1')
                 });
                 
-                // 编辑、删除、更多操作
-                table.on('tool(test)', function(obj){
-                    // console.log(obj.data.id)     //  获取id
-                    switch(obj.event) {
-                        case "more":
-                        
-                            _this.numId = obj.data.id
-                            _this.more1 = !_this.more1
-                            $('.active').show()
-                            
-                        break;
-                        case 'xia': _this.soldOut(obj.data.id, 2); break;
-                        case 'edit': _this.edits(obj.data.id); break;
-                        case 'del': _this.del(obj.data.id, 3); break;
-                        case 'record': _this.sendgoods(obj.data.id); break;
-                    }
-                });
-                form.render()
-                table.render()
+                
+                
             })
-            });
            
         },
-        edits(id) { // 编辑
+        edits(data) { // 编辑
+            let { id } = data
             console.log(id)
             this.go('/jgmall/goodsList/addGoods?id='+id)
         },
-        shows(id) { // 更多
+        shows(data) { // 更多
+            console.log(data)
+            var { id } = data;
             var _this = this;
-            layui.use(['layer','form'], function(){
-                var layer = layui.layer;
-                var form = layui.form;
+            if (_this.numId == id) {
+                _this.numId = ''
+            } else {
                 _this.numId = id
-                _this.showA = !_this.showA
-                form.render()
-            });
-           
+            }
+                
         },
-        soldOut(id, num) {  // 下架
-            // console.log(id, num)
+        soldOut(data) {  // 下架
+            var { id } = data;
             var _this = this;
             layui.use('layer', function(){
-            var layer = layui.layer;
-            _this.$http.post('/shv2/goods/goods_set', {id: id, type: num}, function (res) {
-                // console.log(res)
-                layer.msg(res.msg);
-            }, function (err) { console.log(err) })
-            
+                var layer = layui.layer;
+                _this.$http.post('/shv2/goods/goods_set', {id: id, type: 2}, function (res) {
+                    // console.log(res)
+                    layer.msg(res.msg);
+                }, function (err) { console.log(err) })
             });  
         },
-        del (id, num) { // 删除商品
+        del (data) { // 删除商品
             var _this = this;
+            var { id } = data;
              layui.use('layer', function(){
                 var layer = layui.layer;
-                _this.$http.post('/shv2/goods/goods_set', {id: id, type: num}, function (res) {
+                _this.$http.post('/shv2/goods/goods_set', {id: id, type: 3}, function (res) {
                     // console.log(res)
                     layer.msg(res.msg);
                 }, function (err) { console.log(err) })
@@ -362,27 +363,42 @@ export default {
 }
 </script>
 <style scoped lang='less'>
-tbody tr > td:nth-child(2) div {
-    height: 100px;
-    display: flex;
-    align-items: center;
+
+#goodsList {
+    .layui-tab-content .btn {
+        color: #3196FF;
+        margin: 0 4px;
+        border: 0;
+        background: none;
+        cursor: pointer;
+    }
+    .el-table__body {
+        body > tr {
+            height: 60px;
+        }
+    }
+    .el-table tr{
+        height: 50px;
+    }
+    tbody tr > td:nth-child(4) div {
+        display: inline-block;
+        /* width: 50px; */
+        height: 27px;
+        border: 1px solid #aaaaaa;
+    }
+    .hide {
+        display: none;
+    }
 }
 
-tbody tr > td:nth-child(4) div {
-    display: inline-block;
-    /* width: 50px; */
-    height: 27px;
-    border: 1px solid #aaaaaa;
-}
-tbody tr > td:nth-child(8) div {
-    overflow: visible;
-}
+
 .tdmore {
     position: absolute;
     z-index: 666;
     height: 86px;
     width: 100px;
-    right: 40px;
+    right: 0px;
+    top: 75px;
     border: 1px solid #dddddd;
     margin-top: 10px;
     background-color: #fff;
@@ -426,6 +442,10 @@ tbody tr > td:nth-child(8) div {
 
 <style scoped lang="less">
 #goodsList {
+    #page {
+        text-align:center;
+        margin-top: 15px;
+    }
     .orderList_tit {
         border-bottom: 1px solid #e6e6e6;
     }
@@ -460,7 +480,7 @@ tbody tr > td:nth-child(8) div {
                         height: 34px;
                     }
                     .date_icon {
-                        background: url(../../common/image/pages/account/icon_sj.png)
+                        background: url(../../../common/image/pages/account/icon_sj.png)
                             no-repeat 150px;
                     }
                 }
@@ -502,13 +522,13 @@ tbody tr > td:nth-child(8) div {
                     .upfile_icon {
                         width: 14px;
                         height: 14px;
-                        background: url(../../common/image/icon/icon_fh.png)
+                        background: url(../../../common/image/icon/icon_fh.png)
                             no-repeat;
                     }
                     .add_icon {
                         width: 16px;
                         height: 16px;
-                        background: url(../../common/image/icon/icon_xzsp.png)
+                        background: url(../../../common/image/icon/icon_xzsp.png)
                             no-repeat;
                     }
                 }
@@ -604,7 +624,7 @@ tbody tr > td:nth-child(8) div {
                     border: 1px solid #c2c3c3;
                 }
                 .tan_icon {
-                    background: url(../../common/image/icon/icon_hxcw.png)
+                    background: url(../../../common/image/icon/icon_hxcw.png)
                         no-repeat;
                     width: 13px;
                     height: 13px;
@@ -643,5 +663,7 @@ tbody tr > td:nth-child(8) div {
 .layui-table thead tr #checkeds {
     color: #3196FF!important;
 }
+
+
 
 </style>

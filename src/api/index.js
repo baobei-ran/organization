@@ -17,14 +17,15 @@ let http = axios.create({
             encodeURIComponent(k) + "=" + encodeURIComponent(data[k]) + "&";
         }
       }
-      console.log(newData)
+      newData = newData.substr(0, newData.length - 1)
+      // console.log(newData)
       return newData;
     }
   ]
 });
 http.interceptors.response.use(function(res) {
   //全局拦截处理未登录
-  console.log(res)
+  // console.log(res)
   if (res.data.code == 406) {
     localStorage.clear();
     window.location.href = "/login";
@@ -63,6 +64,22 @@ function $upload(Url, data, handle) {
     });
 }
 
+function Axios(method, url, params) {
+  return new Promise((resolve, reject) => {
+    http({
+      method: method,
+      url: url,
+      data: method === "post" || method === "put" ? params : null,
+      params: method === "GET" || method === "delelte" ? params : null
+    })
+      .then(function(res) {
+        resolve(res.data);
+      })
+      .catch(function(err) {
+         reject(err);
+      });
+  })
+}
 
 
 export default {
@@ -81,12 +98,15 @@ export default {
   all: function(arr, response) {
     axios.all(arr).then(
       axios.spread(function(acct, perms) {
-        return response();
+        return response(acct, perms);
       })
     );
   },
   upload: function(url, params, response) {
     return $upload(url, params, response);
+  },
+  $post: async function (url, data) {           // 用 then 接收
+    return await Axios('POST', url, data)
   },
   baseURL: baseURL  // 导出前缀路径
 };

@@ -6,7 +6,8 @@ var baseURL = "http://test99.yunyikang.cn"; //
 // var baseURL="http://192.168.8.106/"//
 axios.defaults.baseURL = baseURL;
 
-axios.defaults.withCredentials = true;  // 跨域请求头
+axios.defaults.withCredentials = true;  // 跨域凭证
+
 // 添加请求拦截器
 axios.interceptors.request.use(function (config) {
     // config.data = qs.stringify(config.data)    // 转换数据类型
@@ -89,7 +90,8 @@ function Axios (method, url, data) {
       headers:{
       'Content-type': 'application/x-www-form-urlencoded;charset=UTF-8'
       },
-      data: data,
+      data: method = 'POST' ? data : null,
+      params: method = 'GET' ? data : null,
       transformRequest: [   //转换数据的方法
         function (data) {
         let ret = '';
@@ -98,6 +100,7 @@ function Axios (method, url, data) {
               ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
           }
         }
+        ret = ret.substring(0, ret.length - 1)
         // console.log(ret)   //  格式：phone=18519708006&code=0211&pwd=123456&
         return ret;
       }],
@@ -129,6 +132,9 @@ function Axios (method, url, data) {
     })
   }
 
+ 
+
+
 // 导出
 export default {
   async upload (url, data, response, error) {
@@ -137,8 +143,20 @@ export default {
    async post (url, data, response, error) {
         return await Axios('POST', url, data).then(res => response(res)).catch(err => error(err))
     },
+    async get (url, params, response, error) {
+      return await Axios('GET', url, params).then(res => response(res)).catch(err => error(err))
+    },
     baseURL: baseURL,
-    
+    all: async function(arr, response) {          // 并发请求
+      await axios.all(arr).then(
+        axios.spread(function(acct, perms) {
+          return response(acct, perms);
+        })
+      );
+    },
+    $post: async function (url, data) {           // 用 then 接收
+        return await Axios('POST', url, data)
+    }
 }
 
 

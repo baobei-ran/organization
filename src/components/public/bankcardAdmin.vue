@@ -7,7 +7,7 @@
             <div class="Pd-B24 Pd-L24 Pd-R24">
                 <div class="Pd-B24 Pd-L24 Pd-T24 Mg-T22 Ft-S14 Color_black backborder">
                     <p class="Mg-B20"><img class="Mg-R5" :src="$http.baseURL+dataObj.img" width="15px" height="15ox" alt="" style="position:relative;top:-2px">{{ dataObj.bank_name }}</p>
-                    <p>{{ dataObj.bankcard }}</p>
+                    <p>{{ dataObj.numberu }}</p>
                 </div>
             </div>
         </div>
@@ -39,7 +39,7 @@
 
         <!-- 修改交易密码 -->
         <div id="exitpass" class="form_content_action hide">
-            <form class="layui-form Mg-T40" action="">
+            <div class="layui-form Mg-T40" >
                 <div class="layui-form-item Mg-B24">
                     <label class="layui-form-label Color_black">原交易密码：</label>
                     <div class="layui-input-inline Mg-L16">
@@ -58,21 +58,21 @@
                     <label class="layui-form-label Color_black">新交易密码：</label>
                     <div class="layui-input-inline Mg-L16">
                         <ul id="ul1">
-                            <input type="password" />
-                            <input type="password" />
-                            <input type="password" />
-                            <input type="password" />
-                            <input type="password" />
-                            <input type="password" />
+                            <input type="password" v-model='newPass[0]' maxlength="1"/>
+                            <input type="password" v-model='newPass[1]' maxlength="1"/>
+                            <input type="password" v-model='newPass[2]' maxlength="1"/>
+                            <input type="password" v-model='newPass[3]' maxlength="1"/>
+                            <input type="password" v-model='newPass[4]' maxlength="1"/>
+                            <input type="password" v-model='newPass[5]' maxlength="1"/>
                         </ul>
                         <p class="Mg-T10 Mg-B20 Color_gray6">请输入6位数字支付密码</p>
                         <ul id="ul2">
-                            <input type="password" />
-                            <input type="password" />
-                            <input type="password" />
-                            <input type="password" />
-                            <input type="password" />
-                            <input type="password" />
+                            <input type="password"  v-model='yesPass[0]' maxlength="1"/>
+                            <input type="password"  v-model='yesPass[1]' maxlength="1"/>
+                            <input type="password"  v-model='yesPass[2]' maxlength="1"/>
+                            <input type="password"  v-model='yesPass[3]' maxlength="1"/>
+                            <input type="password"  v-model='yesPass[4]' maxlength="1"/>
+                            <input type="password"  v-model='yesPass[5]' maxlength="1"/>
                         </ul>
                         <p class="Mg-T10 Mg-B16 Color_gray6">请再次确定支付密码</p>
                     </div>
@@ -82,22 +82,22 @@
                         <a class="layui-btn" id="onsubmit" @click='editPass'>确认</a>
                     </div>
                 </div>
-            </form>
+            </div>
         </div>
 
         <!-- 忘记密码 -->
         <div id="forgetpass" class="form_content_action hide">
-            <form class="layui-form Mg-T40" action="">
+            <div class="layui-form Mg-T40" >
                 <div class="layui-form-item Mg-B24">
                     <label class="layui-form-label">手机号：</label>
                     <div class="layui-input-inline">
-                        <input type="tel" name="phone" required lay-verify="required" style="width:300px" placeholder="" autocomplete="off" class="layui-input Mg-L16" id="phone" maxlength="11" value="" />
+                        <input type="tel" name="phone" required lay-verify="required" v-model='phone' style="width:300px" placeholder="" autocomplete="off" class="layui-input Mg-L16" maxlength="11" />
                     </div>
                 </div>
                 <div class="layui-form-item Mg-B24">
                     <label class="layui-form-label">验证码：</label>
                     <div class="layui-input-inline  Mg-L16">
-                        <input type="tel" name="code" required lay-verify="required" style="width:210px" placeholder="请输入密码" autocomplete="off" maxlength="4" class="layui-input" id="code" />
+                        <input type="tel" name="code" required lay-verify="required" v-model='phoneCode' style="width:210px" placeholder="请输入密码" autocomplete="off" maxlength="10" class="layui-input" />
                     </div>
                     <div class="layui-form-mid layui-word-aux Mg-L20 ac pointer getcode" @click="getcode">
                         获取验证码
@@ -106,7 +106,7 @@
                 <div class="layui-form-item  Mg-B24">
                     <label class="layui-form-label">支付密码：</label>
                     <div class="layui-input-inline Mg-L16">
-                        <ul id="ul1">
+                        <ul id="ul4">
                             <input type="password" maxlength="1"/>
                             <input type="password" maxlength="1"/>
                             <input type="password" maxlength="1"/>
@@ -115,51 +115,51 @@
                             <input type="password" maxlength="1"/>
                         </ul>
                         <p class="Mg-T10 Mg-B20 Color_gray6">请输入6位数字支付密码</p>
-                        <ul id="ul2">
-                            <input type="password" />
-                            <input type="password" />
-                            <input type="password" />
-                            <input type="password" />
-                            <input type="password" />
-                            <input type="password" />
+                        <ul id="ul5">
+                            <input type="password" maxlength="1"/>
+                            <input type="password" maxlength="1"/>
+                            <input type="password" maxlength="1"/>
+                            <input type="password" maxlength="1"/>
+                            <input type="password" maxlength="1"/>
+                            <input type="password" maxlength="1"/>
                         </ul>
                         <p class="Mg-T10 Mg-B16 Color_gray6">请再次确定支付密码</p>
                     </div>
                 </div>
                 <div class="Mg-B24">
                     <div class="layui-input-block">
-                        <a class="layui-btn" id="onsubmit">确认</a>
+                        <button class="layui-btn" @click='setPass'>确认</button>
                     </div>
                 </div>
-            </form>
+            </div>
         </div>
 
         <!-- 申请解绑银行卡 -->
         <div id="outbank" class="form_content_action hide">
-            <form class="layui-form Mg-T40" action="">
+            <form class="layui-form Mg-T40">
                 <div class="layui-form-item Mg-B24">
                     <label class="layui-form-label">银行卡：</label>
                     <div class="layui-input-inline">
-                        <input type="tel" name="bankcard" required lay-verify="required" style="width:300px" placeholder="输入已绑定银行卡号" autocomplete="off" class="layui-input Mg-L16" id="bankcard" maxlength="11" value="" />
+                        <input type="tel" name="bankcard" v-model='bankCard' required lay-verify="required" style="width:300px" placeholder="输入已绑定银行卡号" autocomplete="off" class="layui-input Mg-L16" id="bankcard" />
                     </div>
                 </div>
                 <div class="layui-form-item  Mg-B40">
                     <label class="layui-form-label">交易密码：</label>
                     <div class="layui-input-inline Mg-L16">
                         <ul id="ul3">
-                            <input type="password" />
-                            <input type="password" />
-                            <input type="password" />
-                            <input type="password" />
-                            <input type="password" />
-                            <input type="password" />
+                            <input type="password" maxlength="1"/>
+                            <input type="password" maxlength="1"/>
+                            <input type="password" maxlength="1"/>
+                            <input type="password" maxlength="1"/>
+                            <input type="password" maxlength="1"/>
+                            <input type="password" maxlength="1"/>
                         </ul>
                         <p class="clear Mg-T10 Ft-S14" style="width:300px"><span class="fl Color_gray6">请输入6位数字交易密码</span><span class="fr Color_blue pointer" @click="forgetpass">忘记密码?</span></p>
                     </div>
                 </div>
                 <div class="Mg-B24">
                     <div class="layui-input-block">
-                        <a class="layui-btn" id="onsubmit">确认</a>
+                        <button class="layui-btn" id="submit">确认</button>
                     </div>
                 </div>
             </form>
@@ -171,12 +171,16 @@ export default {
     name: '',
     data() {
         return {
-            noneclick:false,              // 
-            pass: new Array(6),           // 修改交易密码的原密码
-            newPass: '',                  // 修改交易密码的新密码
+            noneclick:false,                    // 
+            pass: new Array(6),                 // 修改交易密码的原密码
+            newPass: new Array(6),              // 修改交易密码的新密码
+            yesPass: new Array(6),              // 确认新密码
+            bankCard: '',                       // 申请解绑银行卡的卡号
+            phone: '',                          // 手机号
+            phoneCode: '',                      // 手机验证码
             dataObj: {
                 bank_name: "工商银行",
-                bankcard: "6212260200165888781",
+                bankcard: "621226****8781",
                 banktel: "199****8302",
                 bindid: "342857139",
                 cardtype: 0,
@@ -185,48 +189,81 @@ export default {
                 img: "/upload/bankcard/ICBC.png",
                 money: "0.00",
                 numberu: "**** **** **** 8781",
-                userName: "李京浩"
+                userName: "李大爷"
             }
         }
     },
     created() {
-        var _this = this;
-        this.$http.post('/shv2/account/if_bank', {}, function (res) {   // 查询机构是否绑卡
-            if (res.code == 1) {    // 1 代表绑卡
-                _this.go('/finance/bankcardadmin')  // 已绑定银行卡页面
-            } else if (res.code == 0) {
-                // 未绑卡的情况查询是否提交过其他账户审核状态
-                _this.$http.post('/shv2/account/add_bank_person_audit',{}, function (res) {
-                    console.log(res)
-                    if (res.code == 1) {
-                        var status = res.data.status;
-                        if (status == 1) {
-                            _this.go('/finance/bankcardadmin/otherform')  // 审核通过，进入绑卡模块
-                        } else if (status == 3) {
-                            _this.go('/finance/bankcardadmin/bindbankLegal') // 未绑卡进入法人页面
-                        } else {
-                            _this.go('/finance/bankcardadmin/checkbank')   // 其他账户审核情况
-                        }
-                    }
-                }, (err) => console.log(err))
-                
-
-                
-            }
-        }, function (err) { console.log(err)})
+        this.initbank();
+         
+                // 以上是对下面的嵌套进行处理
+        // this.$http.post('/shv2/account/if_bank', {}, function (res) {   // 查询机构是否绑卡
+        //     if (res.code == 1) {    // 1 代表绑卡
+        //         _this.go('/finance/bankcardadmin')  // 已绑定银行卡页面
+        //         _this.getUserMsg();
+        //     } else if (res.code == 0) {
+        //         // 未绑卡的情况查询是否提交过其他账户审核状态
+        //         _this.$http.post('/shv2/account/add_bank_person_audit',{}, function (res) {
+        //             console.log(res)
+        //             if (res.code == 1) {
+        //                 var status = res.data.status;
+        //                 if (status == 1) {
+        //                     _this.go('/finance/bankcardadmin/otherform')  // 审核通过，进入绑卡模块
+        //                 } else if (status == 3) {
+        //                     _this.go('/finance/bankcardadmin/bindbankLegal') // 未绑卡进入法人页面
+        //                 } else {
+        //                     _this.go('/finance/bankcardadmin/checkbank')   // 其他账户审核情况
+        //                 }
+        //             }
+        //         }, (err) => console.log(err))
+        //     }
+        // }, function (err) { console.log(err)})
         
     },
     mounted() {
         this.initdata();
         // if(true){//判断条件是否绑卡 如果绑卡则不跳转绑卡页面
-        //     // this.go('/finance/bankcardadmin/safePayment')    // 跳转对公账户页面
+        //     // this.go('/finance/bankcardadmin/safePayment')    // 跳转对公账户页面  已去掉，但页面还在，已隐藏
         // }
     },
     methods: {
+        initbank () {
+            var _this = this;
+            function bank() {
+            return _this.$http.$post('/shv2/account/if_bank', {})   // 查询机构是否绑卡
+            }
+            function zhuang () {
+                return _this.$http.$post('/shv2/account/add_bank_person_audit',{})   // 未绑卡的情况查询是否提交过其他账户审核状态
+            }
+
+            this.$http.all([bank(), zhuang()], function (res, rea) {        // 处理并发请求
+                // console.log(res, rea)
+                if (res.code == 1) {    // 1 代表绑卡
+                    _this.go('/finance/bankcardadmin')  // 已绑定银行卡页面
+                    _this.getUserMsg();                 // 绑卡后获取卡号信息
+                } else if (res.code == 0) {
+                        if (rea.code == 1) {
+                            var status = rea.data.status;
+                            if (status == 1) {
+                                _this.go('/finance/bankcardadmin/otherform')  // 审核通过，进入绑卡模块
+                            } else if (status == 3) {
+                                _this.go('/finance/bankcardadmin/bindbankLegal') // 未绑卡进入法人页面
+                            } else {
+                                _this.go('/finance/bankcardadmin/checkbank')   // 其他账户审核情况
+                            }
+                        }
+                }
+            })
+        },
+
+
+
+
         initdata() {
             var _this = this;
             layui.use(["layer"], function () {
-                var $ = layui.jquery;
+                var $ = layui.jquery,
+                    layer = layui.layer;
                 function inkeypress() {
                     $(this).val("");
                     var $input = $(this).next("input");
@@ -238,19 +275,54 @@ export default {
                 $("#ul1>input").on("keypress", inkeypress);
                 $("#ul2>input").on("keypress", inkeypress);
                 $("#ul3>input").on("keypress", inkeypress);
-                
-                // $("#ul0>input").bind('input propertychange', function () {
-                    
-                // })
+                $("#ul4>input").on("keypress", inkeypress);
+                $("#ul5>input").on("keypress", inkeypress);
                 
                 
+                
+                // 解绑银行卡
+                $('#submit').on('click', function () {
+                    var password = '';
+                    $('#ul3>input').each(function (i) {     // 获取支付密码
+                        if ($(this).val()) {
+                            password += $(this).val();
+                        }
+                    })
+                    var pattern = /^([1-9]{1})(\d{14}|\d{18})$/,    // 验证身份证
+                        num = /^\d{6}$/;
+                    if (!_this.bankCard || !pattern.test(_this.bankCard)) {
+                        layer.msg('请输入正确的银行卡号')
+                        return false;
+                    }
+                    if (!(password.length == 6) || !num.test(password)) {
+                        layer.msg('请输入正确的密码')
+                        return false;
+                    }
+                    if (_this.bankCard != _this.dataObj.bankcard) {
+                        layer.msg('银行卡号错误')
+                        return false;
+                    }
+                    _this.$http.post('/shv2/account/unbind_bankcard', { pwd: password }, function (res) {    // 解绑银行卡
+                        console.log(res)
+                        if (res.code == 1) {
+                            layer.msg(res.msg)
+                            layer.closeAll('page');
+                            _this.initbank();
+                        } else {
+                            layer.msg(res.msg)
+                        }
+                    }, function (err) { console.log(err)})
+                    return false;
+                })
             });
         },
-        getcode(){  // 获取验证码按钮
+        getcode(){  // 忘记密码弹框中的 获取验证码按钮
             var _salf = this;
             layui.use(["layer"], function () {
+                let layer = layui.layer;
+                let _layer = this;
                 var isphone = /^1[345789]\d{9}$/;
-                if (!isphone.test($("#phone").val())) {
+                if (!isphone.test(_salf.phone)) {
                     layer.msg("请输入正确的手机号");
                     return;
                 }
@@ -271,6 +343,15 @@ export default {
                     time--;
                     $('.getcode').text("(" + time + "s)重获");
                 }, 1000);
+                var obj =  { telphone: _salf.phone }
+                _salf.$http.post('/shv2/Alidayu/sendSMS', obj, function (res) {         // 获取验证码
+                    // console.log(res)
+                    if (res.code == 1) {
+                        _layer.layer.msg('短信发送成功')
+                    } else {
+                        _layer.layer.msg(res.msg)
+                    }
+                }, function (err) { console.log(err)})
             })
         },
         outbank() {//申请解绑银行卡按钮
@@ -278,6 +359,7 @@ export default {
                 var $ = layui.jquery;
                 layer.open({
                     type: 1,
+                    anim: 0,
                     title: "申请解绑银行卡",
                     shadeClose: true,
                     shade: 0.2,
@@ -294,6 +376,15 @@ export default {
             $(".layui-layer-setwin").css("top", "19px");
         },
         exitpass() {// 修改交易密码 按钮
+             this.pass = this.pass.map((v) => {     // 开启弹框，进行清空
+                v = ''
+            })
+            this.newPass = this.newPass.map((v) => {
+                v = ''
+            })
+            this.yesPass = this.yesPass.map((v) => {
+                v = ''
+            })
             layui.use(["layer"], function () {
                 var $ = layui.jquery;
                 layer.open({
@@ -313,7 +404,50 @@ export default {
             });
             $(".layui-layer-setwin").css("top", "19px");
         },
-        forgetpass() {//忘记交易密码
+        
+        editPass () {   // 修改交易密码后提交
+            var _this = this;
+            var admin = this.pass.join(''),
+                newAdmin = this.newPass.join(''),
+                yesAdmin = this.yesPass.join(''),
+                num = /^\d{6}$/;
+            layui.use('layer', function(){
+                var layer = layui.layer;
+            if (!(admin.length == 6) || !num.test(admin)) {
+                layer.msg('请输入正确密码');
+                return false;
+            }
+            if (!(newAdmin.length == 6)) {
+                layer.msg('请输入六位新密码');
+                return false;
+            } else if (!num.test(newAdmin)) {
+                layer.msg('请输入六位数字');
+                return false;
+            }
+            if (!(yesAdmin.length == 6) || !num.test(yesAdmin)) {
+                layer.msg("请再次确认密码");
+                return false;
+            }
+
+            if (yesAdmin != newAdmin) {
+                layer.msg('两次密码输入不一致');
+                return false;
+            }
+                var $ = layui.jquery;
+                var obj = { pwd: admin, new_pwd: newAdmin }
+                _this.$http.post('/shv2/account/change_pwd', obj, function (res) {
+                    if (res.code == 1) {
+                        layer.msg(res.msg)
+                        layer.closeAll('page');
+                    } else {
+                        layer.msg(res.msg)
+                    }
+                }, function (err) { console.log(err)})
+             
+             }); 
+        },
+
+        forgetpass() {//忘记交易密码按钮
             layui.use(["layer"], function () {
                 var $ = layui.jquery;
                 layer.closeAll()
@@ -335,24 +469,65 @@ export default {
             $(".layui-layer-setwin").css("top", "19px");
         },
 
-        editPass () {   // 修改交易密码后提交
-            var _this = this;
-            var a = this.pass.join('')
-            console.log(a)
-             layui.use(["layer"], function () {
-                var $ = layui.jquery;
-                var obj = { pwd: 'a' }
-                _this.$http.post('/shv2/account/change_pwd', obj, function (res) {
+        setPass () {    // 忘记密码进行充值
+            var _this = this,
+                newPass1 = '',
+                newPass2 = '',
+                isphone = /^1[345789]\d{9}$/,
+                pass = /^\d{6}/;
+            if (!isphone.test(_this.phone)) {
+                layer.msg("请输入正确的手机号");
+                return;
+            }
+            $('#ul4>input').each(function (i) {
+                if ($(this).val()) {
+                    newPass1 += $(this).val();
+                }
+            })
+            $('#ul5>input').each(function (i) {
+                if ($(this).val()) {
+                    newPass2 += $(this).val();
+                }
+            })
+            if (!_this.phoneCode) {
+                layer.msg('请输入正确验证码')
+                return false;
+            }
+            if (!(newPass1.length == 6) || !pass.test(newPass1)) {
+                layer.msg('请输入正确的密码')
+                return false;
+            }
+            if (!(newPass2.length == 6) || !pass.test(newPass2)) {
+                layer.msg('请输入再次确认密码')
+                return false;
+            }
+            if (newPass1 != newPass2) {
+                layer.msg('两次输入密码不一致')
+                return false;
+            }
+            layui.use('layer', function(){
+                var layer = layui.layer;
+                var obj = {code: _this.phoneCode, pwd: newPass1 }
+                _this.$http.post('/shv2/account/set_pwd', obj, function (res) {
                     console.log(res)
+                    if (res.code == 1) {
+                        layer.msg('密码修改成功');
+                        layer.closeAll('page');
+                    } else {
+                        layer.msg(res.msg);
+                    }
                 }, function (err) { console.log(err)})
-             })
+            }); 
+            
         },
-
-
-        // 绑卡后获取用户卡号信息
+        
         getUserMsg() {
-            this.$http.post('/shv2/account/recharge_wait',{}, function (res) {
+            var _this = this;
+            this.$http.post('/shv2/account/recharge_wait',{}, function (res) {      // 获取绑定卡后用户卡号信息
                 console.log(res)
+                if (res.code == 1) {
+                    _this.dataObj = res.data
+                }
             }, function (err) { console.log(err)})
         }
     }
@@ -435,6 +610,10 @@ export default {
             background: rgba(66, 129, 215, 1);
             border-radius: 4px;
             margin-left: 80px;
+            color: #fff;
+            &:hover {
+                color: #fff;
+            }
         }
         .layui-layer-setwin {
             top: 20px;

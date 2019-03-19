@@ -62,9 +62,7 @@
                 <tr>
                     <td></td>
                     <td class="Pd-L44 Pd-T40">
-                        <button class="bankrecharge Ft-S16 onsubmit" id="addbackpublic">
-                            提交信息
-                        </button>
+                        <button class="layui-btn Ft-S16 layui-btn-normal"  id="addbackpublic" :disabled='disabled'>提交</button>
                     </td>
                 </tr>
             </table>
@@ -102,6 +100,7 @@ export default {
     name: '',
     data() {
         return {
+            disabled: false,    // 提交按钮
             userName: '',       // 姓名
             IDcard: '',         // 身份证
             account_open: '',   // 开户银行
@@ -109,7 +108,8 @@ export default {
             phone:'',           // 银行手机号
             auth_code: '',      // 验证码
             flag: false,        // 调取弹框
-            noneclick: false    // 控制时间
+            noneclick: false,    // 控制时间
+            merchantFlowId: ''   // 绑卡请求号
         }
     },
     mounted() {
@@ -189,13 +189,14 @@ export default {
                         layer.msg("请输入正确的手机号");
                         return;
                     }
-                    
+                    _this.disabled = true
                     // 提交
                     var obj = { depositBank: _this.account_open, bankCardNo: _this.card_num, phone: _this.phone }
                     _this.$http.post('/shv2/account/add_bank_legal', obj, function (res) {              // 法人账户绑定银行卡
                         console.log(res)
-                        
-                        if (res.code == 0) {
+                        _this.disabled = false
+                        if (res.code == 1) {
+                            _this.merchantFlowId = res.merchantFlowId;
                             _this.flag = true
                             layer.msg(res.msg)
                             if (!_this.noneclick) { // 初始化是false 的时候调用时间，只调用一次
@@ -244,7 +245,7 @@ export default {
                             _this.flag = false
                             
                         }
-                    }, function (err) { console.log(err)})
+                    }, function (err) { _this.disabled = false; console.log(err)})
 
                     
                 });
@@ -257,10 +258,11 @@ export default {
                         return;
                     } else {
                         // layer.closeAll() //关闭弹框
-                        var obj = { merchantFlowId: _this.phone, smsCode: _this.auth_code } // 传递的参数
+                        var obj = { merchantFlowId: _this.merchantFlowId, smsCode: _this.auth_code } // 传递的参数
                         _this.$http.post('/shv2/account/smsConfirm', obj, function (res) {
                             console.log(res)
                             if (res.code == 1) {
+                                layer.closeAll();
                                 _this.go('/finance/bankcardadmin/success?name=yes')     //  绑卡成功后跳转成功提示
                             } else if (res.code == 2) {
                                 layer.msg(res.msg)
@@ -326,6 +328,7 @@ export default {
         border-radius: 4px;
         color: #fff;
         border: none;
+        cursor:pointer;
     }
     .showimg {
         width: 158px;

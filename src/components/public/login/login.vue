@@ -9,7 +9,7 @@
                 <div class="my_group"><input type="text" id="phone" maxlength="11" v-focus placeholder="账号/手机号"></div>
                 <div class="my_group"><input type="text" id="pass" placeholder="请输入密码"></div>
                 <div class="my_group code"><input type="text" id="code" maxlength="4" placeholder="请输入验证码">
-                    <img :src="$http.baseURL+'captcha.html'" id="imgcode" alt="" onclick="this.src=this.src+'?'">
+                    <img :src="$http.baseURL+'/captcha.html'" id="imgcode" alt="" onclick="this.src=this.src+'?'">
                 </div>
                 <div class="my_group link_box">
                     <span class="register pointer" @click="go('/register')">注册账号</span>

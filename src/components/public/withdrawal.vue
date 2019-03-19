@@ -20,7 +20,7 @@
                             </div>
                             <div class="fr Mg-R24">
                                 <p class="Mg-B34">
-                                    <span class="Ft-S14 Color_blue pointer reBtn"><i class="reflsh"></i>核对信息</span>
+                                    <span class="Ft-S14 Color_blue pointer reBtn" @click='reloads'><i class="reflsh"></i>核对信息</span>
                                 </p>
                                 <!--
                   <button style="width:140px;height:40px;border:none;background: #3196FF" class="Color_white Ft-S18">提现</button>
@@ -106,15 +106,7 @@
                         <td>提现失败</td>
                         <td>工商银行（尾数2333）</td>
                     </tr>
-                    <tr>
-                        <td>0002</td>
-                        <td>3332018092700012121</td>
-                        <td>2019-11-11 11:11:11</td>
-                        <td>工商银行（尾数2333）</td>
-                        <td>0.3</td>
-                        <td>提现失败</td>
-                        <td>工商银行（尾数2333）</td>
-                    </tr>
+                    
                 </table>
 
                 <div id="page" class="ac Mg-T20"></div>
@@ -127,13 +119,13 @@
                         <div class="layui-form-item Mg-B24">
                             <label class="layui-form-label">手机号：</label>
                             <div class="layui-input-inline">
-                                <input type="tel" name="phone" required lay-verify="required" style="width:300px" placeholder="" disabled autocomplete="off" class="layui-input Mg-L16" id="phone" maxlength="11" value="" />
+                                <input type="tel" name="phone" lay-verify="required" style="width:300px" disabled v-model='withdraw_deposit.login_phone' autocomplete="off" class="layui-input Mg-L16" id="phone" />
                             </div>
                         </div>
                         <div class="layui-form-item Mg-B24">
                             <label class="layui-form-label">验证码：</label>
                             <div class="layui-input-inline  Mg-L16">
-                                <input type="tel" name="code" required lay-verify="required" style="width:210px" placeholder="请输入密码" autocomplete="off" maxlength="4" class="layui-input" id="code" />
+                                <input type="tel" name="code" required lay-verify="required" style="width:210px" placeholder="请输入密码" autocomplete="off" class="layui-input" id="code" />
                             </div>
                             <div class="layui-form-mid layui-word-aux Mg-L20 ac pointer" id="getcode">
                                 获取验证码
@@ -182,12 +174,16 @@ export default {
             Card_door: '工商银行',                     //  银行
             Card_number: '452523*******125564455',    //  卡号
             bankImg: '',                              //   银行login
-            withdraw_deposit: '',                     // 提现人的基本信息
+            withdraw_deposit: {                       // 提现人的基本信息
+                login_phone: "19912345678",
+                transaction: 0
+            },                     
             page: 1,
             limit: 10,
             startTime: '',                            // 开始时间 
             endTime: '',                              // 结束时间
             withdraw_depositList: '',                 // 提现记录列表
+            setPass: '',                              // 设置支付密码
         }
     },
     created() {
@@ -195,35 +191,39 @@ export default {
         this.getData('/shv2/account/if_bank', {}).then(res => {     // 查询 查询机构是否绑卡
             if (res.code == 1) {   // 1 代表绑卡
                 _this.disabledBtn = false
-                _this.getData('/shv2/account/recharge_wait', {}).then(res => {   // 用户信息
-                    if (res.code == 1) {
-                        _this.Card_door = res.data.bank_name;   // 获取某某银行
-                        // 处理卡号
-                        
-                        _this.Card_number = res.data.bankcard;   // 卡号
-                        _this.bankImg = res.data.img            // 银行login
-                    }
-                })
             } else {
                 _this.disabledBtn = true
             }
         }).catch(err => console.log(err))
-
-        
     },
     mounted() {
-        
-        var _this = this;
-        this.$http.post('/shv2/account/withdraw_deposit', {}, function (res) {  // 提现人的信息，是否有可提现的金额和卡
-            console.log(res)
-            if (res.code == 1) {
-                _this.withdraw_deposit = res.data
-            }
-        }, (err) => console.log(err))
-
+        this.whetherbank()
         this.TixianList(1);
     },
     methods: {
+        //核对信息
+        reloads () {
+            this.TixianList(1)
+            // window.location.reload();       // 刷新
+        },
+               
+        whetherbank () {        // 
+            var _this = this;
+            this.$http.post('/shv2/account/withdraw_deposit', {}, function (res) {  // 提现人的信息，是否有可提现的金额和卡
+                console.log(res)
+                if (res.code == 1) {
+                    if (res.bank) {
+                        _this.Card_door = res.bank.bank_name;   // 获取某某银行
+                            // 处理卡号
+                        _this.Card_number = res.bank.numberu  // 卡号
+                        _this.bankImg = res.bank.img 
+                    }
+                    _this.withdraw_deposit = res.data
+                    console.log(_this.withdraw_deposit)
+                }
+            }, (err) => console.log(err))
+        },
+
         getData (url, data) {   // 封装下接口
             var _this = this;
             return new Promise((resolve, reject) => {
@@ -244,13 +244,14 @@ export default {
                     _this.withdraw_depositList = res.data
                     _this.initdata(res.count)
                 }
-            }, (err) => cosole.log(err))
+            }, (err) => console.log(err))
             }); 
         },
         initdata(total) {
             var _this = this;
             layui.use(["laypage", "layer", "laydate"], function () {
                 var laypage = layui.laypage;
+                var layer = layui.layer;
                 //执行一个laypage实例
                 laypage.render({
                     elem: "page", //注意，这里的 test1 是 ID，不用加 # 号
@@ -305,10 +306,6 @@ export default {
                     }
                 );
 
-                //核对信息
-                $(".reBtn").on("click", function () {
-                    window.location.reload();       // 刷新
-                });
                 
                 // 添加银行卡按钮
                 $("#addbankcard").on("click", function () {
@@ -317,14 +314,12 @@ export default {
                 });
 
                 var checkpress = function () {//验证
-                    var isphone = /^1[34578]\d{9}$/;
-                    var codeNum = /^\d{4}$/;
+                    var isphone = /^1[345789]\d{9}$/;
+                    // var codeNum = /^\d{6}$/;
                     var passNum = /^\d{6}$/;
                     var num = ""; //密码
                     var num1 = ""; //再次输入的密码
-                    var code = $("#code").val();
-                    // $('#phone').val() 手机号
-                    //$('#code').val() 验证码
+                    var code = $("#code").val(); // 验证码
                     $("#ul1>input").each(function (i) {
                         if ($(this).val()) {
                             num += $(this).val();
@@ -335,12 +330,8 @@ export default {
                             num1 += $(this).val();
                         }
                     });
-                    /*if(!isphone.test($('#phone').val())) {
-                         layer.msg('请输入正确的手机号');
-                         return
-                         }*/
 
-                    if (!codeNum.test(code)) {
+                    if (!code) {
                         layer.msg("请输入正确的验证码");
                         return false;
                     }
@@ -356,10 +347,23 @@ export default {
                         layer.msg("两次输入的密码不一致");
                         return false;
                     }
+                    _this.setPass = num
                     return true;
                 };
                 var onsubmit = function () {//提交ajax
-                    window.location.href = "/shanghu/account/withdraw_deposit_bank";
+                    // window.location.href = "/shanghu/account/withdraw_deposit_bank";
+                    var obj = { code: $("#code").val(), pwd: _this.setPass}
+                    _this.$http.post('/shv2/account/set_pwd', obj, function (res) {
+                        console.log(res)
+                        if(res.code == 1) {
+                            layer.msg(res.msg)
+                            layer.closeAll();
+                            _this.whetherbank()
+                        } else {
+                            layer.msg(res.msg)
+                        }
+
+                    }, function (err) { console.log(err)})
                 };
                 $("#onsubmit").on("click", function () {//设置密码确认
                     if (checkpress()) {
@@ -367,29 +371,28 @@ export default {
                     }
                 });
                 $("#withdraw").on("click", function () {//点击提现
-                    // if(){//判断是否设置交易密码
-                    $("#SectionBox input").each(function (i) {
-                        $(this).val("");
-                    });
-                    layer.open({
-                        type: 1,
-                        shadeClose: true,
-                        shade: 0.3,
-                        closeBtn: 1,
-                        title: "设置交易密码",
-                        content: $(".layer_notice"),
-                        area: ["560px", "500px"],
-                        cancel: function () { }
-                    });
-                    $(".layui-layer-title").css({
-                        height: "50px",
-                        background: "#ECF2FB",
-                        "line-height": "50px"
-                    });
-                    $(".layui-layer-setwin").css("top", "19px");
-                    return;
-                    // }
-                    onsubmit();
+                    if (_this.withdraw_deposit.transaction === 1){  //判断是否设置交易密码
+                        _this.go('/finance/withdrawal/outToBank')   // 进入提现到银行卡页
+                    } else {
+                        layer.open({    // 没有设置密码调起弹框去填写
+                            type: 1,
+                            shadeClose: true,
+                            shade: 0.3,
+                            closeBtn: 1,
+                            title: "设置交易密码",
+                            content: $(".layer_notice"),
+                            area: ["560px", "500px"],
+                            cancel: function () { }
+                        });
+                        $(".layui-layer-title").css({
+                            height: "50px",
+                            background: "#ECF2FB",
+                            "line-height": "50px"
+                        });
+                        $(".layui-layer-setwin").css("top", "19px");
+                        return;
+                    }
+                    // onsubmit();
                 });
 
                 $("#ul1>input").on("keypress", function () {
@@ -407,9 +410,10 @@ export default {
                     }
                 });
                 var noneclick = false;
+
                 $("#getcode").on("click", function () {
                     //获取验证码
-                    var isphone = /^1[34578]\d{9}$/;
+                    var isphone = /^1[345789]\d{9}$/;
                     if (!isphone.test($("#phone").val())) {
                         layer.msg("请输入正确的手机号");
                         return;
@@ -417,20 +421,31 @@ export default {
                     if (noneclick) {
                         return;
                     }
-                    var time = 60;
+
+                     var time = 60;
                     $(this).text("(60s)重获");
-                    var _this = $(this);
+                    var _selt = $(this);
                     var settime = setInterval(function () {
                         if (!time) {
                             noneclick = false;
-                            _this.text("重新获取");
+                            _selt.text("重新获取");
                             clearInterval(settime);
                             return;
                         }
                         noneclick = true;
                         time--;
-                        _this.text("(" + time + "s)重获");
+                        _selt.text("(" + time + "s)重获");
                     }, 1000);
+                    _this.$http.post('/shv2/Alidayu/sendSMS', { telphone: _this.withdraw_deposit.login_phone }, function (res) {  // 获取验证码      
+                        console.log(res)
+                        if (res.code == 1) {
+                            layer.msg('已发送验证码')
+                        } else {
+                            layer.msg(res.msg)
+                        }
+                    }, function (err) { console.log(err)})
+                
+                   
                 });
             });
         }

@@ -1,5 +1,6 @@
 import Vue from "vue";
 import Router from "vue-router";
+import R404 from '@/components/404/404'
 import Index from "@/components/index"; //首页
 import login from "@/components/public/login/login"; //登录
 import register from "@/components/public/login/register"; //注册
@@ -64,7 +65,7 @@ import departmentEdit from "@/components/Yi/departmentList/departmentEdit"; //�
 import departmentAdd from "@/components/Yi/departmentList/departmentAdd"; //编辑科室
 // 药店端
 import shopMsg from "@/components/public/shopMsg"; //店铺信息
-import goodsList from "@/components/Yao/Yao-goodsList"; //商品列表
+import goodsList from "@/components/Yao/goodsList/testtable"; //商品列表  test
 import addGoods from "@/components/Yao/list/Yao-addGoods"; //新增商品
 import List from "@/components/Yao/Yao-List"; //列表
 import listDetail from "@/components/Yao/List/Yao-ListDetail"; //列表

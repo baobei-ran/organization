@@ -4,16 +4,20 @@
             充值到银行卡
         </p>
         <div class="ac">
-            <img src="../../../common/image/pages/account/icon_czcg.png" alt="" class="Mg-T40 Mg-B16" />
-            <!-- <img src="../../../common/image/pages/account/icon_czsb.png" alt="" class="Mg-T40 Mg-B16" /> -->
-            <p>充值成功！</p>
-            <!-- <p>充值失败，余额不足</p> -->
+            <div v-if='orderbank'>
+                <img src="../../../common/image/pages/account/icon_czcg.png" alt="" class="Mg-T40 Mg-B16" />
+                <p>充值成功！</p>
+            </div>
+            <div v-if='!orderbank'>
+                 <img src="../../../common/image/pages/account/icon_czsb.png" alt="" class="Mg-T40 Mg-B16" />
+                 <p>充值失败!</p>
+            </div>
             <button class="Mg-T40 gobacklyt Color_white Ft-S16" style="width: 140px;
             height: 40px;
             background: #3196FF;
             border:none;
             border-radius: 5px;
-            " id="golyt">
+            " id="golyt" @click='ReturnBtn'>
                 返回鲁医通账户
             </button>
         </div>
@@ -24,7 +28,7 @@ export default {
     name: '',
     data() {
         return {
-
+            orderbank: 1        // 充值是否成功
         }
     },
     mounted() {
@@ -32,7 +36,11 @@ export default {
     },
     methods: {
         initdata() {
-
+            var { order } = this.$route.query
+            this.orderbank = Number(order)
+        },
+        ReturnBtn () {
+          this.$router.replace({path: '/finance/lytAccount'})
         }
     }
 }
@@ -41,8 +49,13 @@ export default {
 <style scoped lang="less">
 //银行卡充值
 #bank_recharge {
+    
     .recharge_tit {
+        width: 100%;
         border-bottom: 1px solid #f1f2f9;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        padding: 0 50px 0 100px;
     }
     #price {
         border: 1px solid #c2c2c3;

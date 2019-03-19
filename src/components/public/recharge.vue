@@ -64,7 +64,7 @@
             background: #3196FF;
             border:none;
             border-radius: 5px;
-            pointer">
+            pointer" @click='ReturnBtn'>
                 返回鲁医通账户
             </button>
         </div>
@@ -79,16 +79,38 @@ export default {
             wxUrl: '',      //  微信返回的二维码
             zfbUrl: '',     // 支付宝的路径
             maxPrice: '1',   // 充值最大金额
-            minPrice: '0.01'    // 充值最小金额
+            minPrice: '0.01',    // 充值最小金额
+            Tied_card: false,    // 是否绑定银行卡
+            chongzhiTime: ''     // 二维码充值时间查询
         }
     },
     computed: {
        
     },
     mounted() {
-        this.initdata()
+        this.initdata();
+        var _this = this;
+        this.$http.post('/shv2/account/if_bank',{}, function (res) {   // 检测是否绑卡
+            if(res.code == 1) {
+                _this.Tied_card = true;  // 已绑卡
+            } else {
+                _this.Tied_card = false; // 未绑卡
+            }
+        }, function (err) { console.log(err)})
+           
+           let user = this.localstorage.get('logindata')
+           console.log(user)
     },
     methods: {
+        ReturnBtn () {
+            var _this = this;
+            layui.use('layer', function(){
+                var layer = layui.layer;
+                _this.go('/finance/lytAccount')
+                layer.closeAll();
+            });  
+            
+        },
         initdata() {
             var _this = this;
             layui.use(["layer"], function () {
@@ -98,6 +120,7 @@ export default {
                     //成功失败
                     layer.open({
                         type: 1,
+                        anim: 0,
                         title: "<span class='Color_black Ft-S18'>支付宝充值</span>",
                         area: ["400px", "460px"], //宽高
                         content: $(".alipay_success")
@@ -116,31 +139,30 @@ export default {
                     });
                 });
 
-
-                $('#money').blur(function(){
+          
+                $('#money').blur(function(){    // 失去焦点后不符合要求的会对内容进行处理
                     if (_this.price == '') {
                         _this.price = '0.00'
                     }
                     var money2 = _this.price.match(/^\d*(\.?\d{0,2})/g)[0]; // 保留小数点后面两位小数
                     _this.price = money2
+                     var regex=/^[0]+/;
+                     _this.price = _this.price.replace(regex,"");
+                     _this.price =  _this.price.replace(/^\./g, '0.');
                 });
-                $("#money").on('input  propertychange',function(){  // 金钱输入验证
-                    //如果输入非数字，则替换为''
+                $("#money").on("input propertychange",function(event) {     // 输入的时候进行验证
+                    this.value = this.value.replace(/^([1-9]\d*(\.[\d]{0,2})?|0(\.[\d]{0,2})?)[\d.]*/g, '$1');
+                    this.value = this.value.replace(/^([1-9]\d{5})\d*/g, '$1');
                     this.value = this.value.replace(/[^\d\.]/g, '');
-                    //必须保证第一个为数字而不是.     
-                    this.value = this.value.replace(/^\./g,'');
-                    //保证只有出现一个.而没有多个.     
-                    this.value = this.value.replace(/\.{2,}/g,'.');
-                    //保证.只出现一次，而不能出现两次以上     
-                    this.value = this.value.replace('.','$#$').replace(/\./g,'').replace('$#$','.');
-                    //只能输入两位小数
-                    // this.value = this.value.replace(/^(\-)*(\d+)\.(\d\d).*$/,'$1$2.$3');
-
-                    
+                    this.value = this.value.replace(/^\./g, '0.');
+                    this.value = this.value.replace('.', '$#$').replace(/\./g, '').replace('$#$', '.');
+                    this.value = this.value.replace(/^(\-)*(\d+)\.(\d\d).*$/, '$1$2.$3');
                 })
 
+                
+
                 _this.$http.post('/shv2/account/recharge',{}, function (res) {  // 充值参数判断
-                    console.log(res)
+                    // console.log(res)
                     if(res.code == 1) {
                         var data = res.data;
                         _this.maxPrice = data.max;
@@ -174,7 +196,7 @@ export default {
                             console.log(res)
                             if (res.code == 1) {
                                 _this.wxUrl = res.code_url
-                                 layer.open({   // 调取弹框
+                                layer.open({   // 调取弹框
                                     type: 1,
                                     shadeClose: true,
                                     shade: 0.8,
@@ -182,6 +204,19 @@ export default {
                                     area: ["400px", "460px"], //宽高
                                     content: $(".wx_dialig")
                                 });
+                                if (_this.chongzhiTime !== '') {
+                                    clearInterval(_this.chongzhiTime)
+                                }
+                               _this.chongzhiTime = setInterval(() => {    // 调用微信二维码后，进行充值查询
+                                    _this.payResult(res.order_code, res.type).then(res => {
+                                        console.log(res)
+                                        if (res.code == 1) {
+                                            clearInterval(_this.chongzhiTime)
+                                             layer.closeAll();
+                                            selectstatus()              // 充值成功后弹出成功框
+                                        }
+                                    })
+                                }, 1000)
                             } else {
                                 layer.msg(res.msg);
                             }
@@ -189,8 +224,8 @@ export default {
                        
                     } else if (paytext == "支付宝支付") {
                         _this.zfbUrl = '/shv2/account/charge?money='+_this.price+'&type=1';  // 支付宝地址
-                       $('#aliurl').attr('src', _this.$http.baseURL+_this.zfbUrl)           
-                        // console.log($('#aliurl').attr('src'))
+                       $('#aliurl').attr('src', _this.$http.baseURL+_this.zfbUrl)            // 把地址发给 iframe
+                            
                             layer.open({    // 弹框
                                 type: 1,
                                 title: "支付宝充值",
@@ -199,14 +234,40 @@ export default {
                                 area: ["400px", "460px"],
                                 content: $(".alipay_dialog") //iframe的弹框
                             });
-                           
+                           if (_this.chongzhiTime !== '') {
+                                    clearInterval(_this.chongzhiTime)
+                                }
+                        //        _this.chongzhiTime = setInterval(() => {    // 调用支付宝二维码后，进行充值查询
+                        //             _this.payResult(res.order_code, res.type).then(res => {
+                        //                 console.log(res)
+                        //                 if (res.code == 1) {
+                        //                     clearInterval(_this.chongzhiTime)
+                        //                      layer.closeAll();
+                        //                     selectstatus()              // 充值成功后弹出成功框
+                        //                 }
+                        //             })
+                        //         }, 1000)
                     } else {
                         // 在此判断有无绑定银行卡
                         // window.location.href = "/shanghu/account/recharge_bank";
-                        // _this.$router.push('/finance/bankcardadmin/bindbankLegal')   //  跳转到绑定银行卡页面
-                        _this.$http.post('/shv2/account/recharge_bank', { money: _this.price }, function (res) {
-                                console.log(res)
-                        }, function (err) { console.log(err)})
+                            if(_this.Tied_card) {
+                                _this.$http.post('/shv2/account/recharge_bank', { money: _this.price }, function (res) {
+                                        console.log(res)
+                                        if (res.code == 1) {
+                                            _this.localstorage.put('bankOrder', res.data, 1/12);
+                                            _this.$router.replace({path: '/finance/recharge/insetBank'})
+                                            
+                                        } else {
+                                            layer.msg(res.msg)
+                                        }
+                                }, function (err) { console.log(err)})
+                            } else {
+                                 _this.$router.push('/finance/bankcardadmin')   //  跳转到绑定银行卡页面
+                            }
+                       
+                         
+                        
+                        
                         
                     }
 
@@ -241,7 +302,17 @@ export default {
                 //     return data;
                 // }
             });
+        },
+        payResult: function (order, type) {    // 信支付宝充值是否成功
+            return new Promise((resolve, reject) => {
+                this.$http.post('/mobile/order/pay_result',{order_code: order, type:type}, function (res) {
+                    resolve(res)
+                }, function (err) { reject(err)})
+            })
         }
+    },
+    beforeDestroy() {
+        clearInterval(this.chongzhiTime)    // 离开前清楚定时器
     }
 }
 </script>

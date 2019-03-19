@@ -56,7 +56,7 @@
                                 <td>操作</td>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody v-if='tableList.length'>
                             <tr class="table_con Color_black ac" v-for="(val,index) in tableList">
                                 <td v-text="index+1"></td>
                                 <td v-text="val.number"></td>
@@ -85,8 +85,13 @@
                                 </td>
                             </tr>
                         </tbody>
+                        <tbody v-else>
+                            <tr class="table_con Color_black ac" >
+                                <td colspan='7'>暂无数据</td>
+                            </tr>
+                        </tbody>
                     </table>
-                    <div id="page" class="ac Mg-T30"></div>
+                    <div id="page" v-show='tableList.length' class="ac Mg-T30"></div>
                 </div>
             </div>
         </div>
