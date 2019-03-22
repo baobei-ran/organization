@@ -1,13 +1,16 @@
 <template>
+
+<!-- 问诊订单页 -->
     <div id="bookingorder" class="bg_f" style="height:95%">
         <div class="tab_content Pd-L24 Pd-R24">
             <div class="layui-tab Pd-T24">
                 <ul class="layui-tab-title">
                     <li class="layui-this" @click="tab(0)">全部（{{ orderNavNum.count }}）</li>
-                    <li @click="tab(1)">未使用（{{ orderNavNum.count1 }}）</li>
-                    <li @click="tab(2)">已使用（{{ orderNavNum.count2 }}）</li>
-                    <li @click="tab(3)">已过期（{{ orderNavNum.count3 }}）</li>
-                    <li @click="tab(4)">已退号（{{ orderNavNum.count4 }}）</li>
+                    <li @click="tab(3)">图文问诊（{{ orderNavNum.count1 }}）</li>
+                    <li @click="tab(4)">语音问诊（{{ orderNavNum.count2 }}）</li>
+                    <li @click="tab(12)">视频问诊（{{ orderNavNum.count3 }}）</li>
+                    <li @click="tab(11)">院后指导（{{ orderNavNum.count4 }}）</li>
+                    <li @click="tab(2)">私人医生（{{ orderNavNum.count5 }}）</li>
                 </ul>
 
                  <div class="layui-tab-content">
@@ -15,7 +18,7 @@
                         <div class="layui-form-item layui-row">
                             <div class="layui-col-md2 ">
                                 <div class="layui-inline lay_width">
-                                    <label class="layui-form-label">预约单号</label>
+                                    <label class="layui-form-label">问诊单号</label>
                                     <div class="layui-input-inline">
                                         <input type="text" v-model='number' autocomplete="off" class="layui-input">
                                     </div>
@@ -23,7 +26,7 @@
                             </div>
                             <div class="layui-col-md2 ">
                                 <div class="layui-inline lay_width">
-                                    <label class="layui-form-label">预约医生</label>
+                                    <label class="layui-form-label">问诊医生</label>
                                     <div class="layui-input-inline">
                                         <input type="text" v-model='name' autocomplete="off" class="layui-input">
                                     </div>
@@ -32,23 +35,19 @@
                             <div class="layui-col-md2">
                                 <div class="layui-inline lay_width">
                                     <label class="layui-form-label">所属科室</label>
-                                    <select name="city" lay-verify="required" v-model='depid' class="select_class">
+                                    <select name="city" lay-verify="required" v-model='depid' class="select_class" >
                                         <option value="">全部</option>
                                         <option v-for='(val,i) in depList' :key='i' :value="val.department_id">{{ val.department_name }}</option>
                                     </select>
                                 </div>
                             </div>
                             <div class="layui-col-md4 selecttime">
-                                <label class="layui-form-label">预约时间</label>
-                                <div class="layui-input-block">
-                                    <div class="layui-input-inline">
-                                        <input type="text" name="price_min" v-model='ktime' placeholder="" id="date" autocomplete="off" class="layui-input">
-                                    </div>
-                                    <div class="layui-form-mid">-</div>
-                                    <div class="layui-input-inline">
-                                        <input type="text" name="price_max" v-model='jtime' placeholder="" id="date1" autocomplete="off" class="layui-input">
-                                    </div>
-                                </div>
+                                <label class="layui-form-label">问诊状态</label>
+                                <select name="city" lay-verify="required" v-model='stateId' class="select_tai" style='width: 100px;height:38px;'>
+                                        <option value="">请选择</option>
+                                        <option v-for='(val,i) in states' :key='i' :value="val.id">{{ val.name }}</option>
+                                    </select>
+                                
                             </div>
                             <div class="layui-col-md1">
                                 <div class="layui-input-inline">
@@ -65,38 +64,99 @@
                                 <td>预约单号</td>
                                 <td>预约医生</td>
                                 <td>所属科室</td>
-                                <td>预约时间</td>
+                                <td>问诊类型</td>
                                 <td>用户信息</td>
                                 <td>患者信息</td>
                                 <td>支付信息</td>
-                                <td>预约订单</td>
+                                <td>问诊状态</td>
                                 <td>操作</td>
                             </tr>
                         </thead>
-                        <tbody v-show='orderList'>
+                        <tbody v-show='orderList.length'>
                             <tr v-for="(val,i) in orderList">
                                 <td>{{ i+1 }}</td>
-                                <td>{{ val.registration_number }}</td>
+                                <td>{{ val.number }}</td>
                                 <td>{{ val.true_name }}</td>
                                 <td>{{ val.department_name }}</td>
-                                <td>{{ val.registration_time }}</td>
-                                <td>{{ val.real_name  }}</td>
-                                <td>{{ val.name }}</td>
-                                <td>{{ val.registration_amount }}元</td>
-                                <td>{{ val.stat }}</td>
-                                <td><span class="Color_blue pointer" @click="godetail(val.registration_id)">查看</span></td>
+                                <td>{{ val.type}}</td>
+                                <td>{{ val.user  }}</td>
+                                <td>{{ val.con }}</td>
+                                <td>{{ val.money }}元</td>
+                                <td>{{ val.status }}</td>
+                                <td><span class="Color_blue pointer" @click="godetail(val.id)">查看</span></td>
                             </tr>
                         </tbody>
-                        <tbody v-show='!orderList'>
+                        <tbody v-show='!orderList.length'>
                             <td colspan="10">暂无数据</td>
                         </tbody>
                     </table>
-                    <div v-show='orderList' id="page" class="ac Mg-T30"></div>
+                    <div v-show='orderList.length' id="page" class="ac Mg-T30"></div>
                 </div>
-                
+            </div>
 
+        </div>
+
+        <div class="box hide" id='wrap' >
+            <p class="title">基本信息</p>
+            <div class="box_head bg_f">
+                <div class="box_user">
+               <div>
+                   <span>医生姓名：</span><span>{{ check.true_name }}</span>
+               </div>
+               <div>
+                   <span>医生手机：</span><span>{{ check.d_phone }}</span>
+               </div>
+               <div>
+                   <span>医生邮箱：</span><span>{{ check.mailbox }}</span>
+               </div>
+            </div>
+            <div class="box_user">
+                <div>
+                   <span>医生职称：</span><span>{{ check.gname }}</span>
+               </div>
+               <div>
+                   <span>所属科室：</span><span>{{ check.department_name }}</span>
+               </div>
+            </div>
+                <div style='padding-left:10px;' class="Mg-T10">
+                    <span>医生简介：</span> {{ check.introduction }}
+                </div>
+            </div>
+            <p class="title Mg-T20">订单信息</p>
+            <div class="box_head bg_f">
+                <div class="box_user">
+               <div>
+                   <span>问诊单号：</span><span>{{ check.number }}</span>
+               </div>
+               <div>
+                   <span>问诊时间：</span><span>{{ check.addtime|moment('YYYY-MM-DD hh:mm:ss') }}</span>
+               </div>
+            </div>
+            <div class="box_user">
+                <div>
+                   <span>支付金额：</span><span>{{ check.money }} 元</span>
+               </div>
+                <div>
+                   <span>问诊类型：</span><span>{{ busitype }}</span>
+               </div>
+               <div>
+                   <span>问诊状态：</span><span>{{ busistatus }}</span>
+               </div>
+            </div>
+               
+                <div class="box_user">
+                    <div>
+                        <span>用户信息：</span><span>{{ check.real_name }}</span> <span> 手机  {{ check.patient_phone }}</span>
+                    </div>
+                    <div>
+                        <span>患者信息：</span><span>{{ check.cname }}</span> <span> 手机 {{ check.patient_phone }}</span>
+                    </div>
+                </div>
             </div>
         </div>
+
+            
+
     </div>
 </template>
 <script>
@@ -116,13 +176,22 @@ export default {
                 count2: 0,
                 count3: 0,
                 count4: 0,
+                count5: 0
             },
-            number: '',     // 预约单号
-            name: '',       // 预约医生
+            number: '',     // 问诊单号
+            name: '',       // 问诊医生
             depid: '',      // 科室 id
-            ktime: '',      // 开始时间
-            jtime: '',       // 结束时间
+            stateId: '',     // 选择问诊状态
             depList: [],    // 选择科室列表
+            states: [       // 问诊状态列表
+                {id: 1, name: '未开始'},
+                {id:2,name: '已开始'},
+                {id:3,name: '已结束'}
+            ],
+           check: '',      //  查看的数据
+           busitype: '',    // 类型
+           busistatus: ''   // 状态
+
         }
     },
     mounted() {
@@ -137,19 +206,22 @@ export default {
     },
     methods: {
 
-        search () {
+        search () { // 搜索
+            var _this = this;
+                _this.orderList = []
+                _this.initList(1)
             
-            this.initList(1)
         },
         //  数据
-        initList(num) { // 和 搜索
+        initList(num) { 
             var _this = this;
-            this.$http.post('/shv2/server/make_list', {type: _this.tdlast, page: num,limit: _this.limit, number: _this.number, name: _this.name, depid: _this.depid, ktime: _this.ktime, jtime: _this.jtime }, function (res) {
-                console.log(res)
-                if (res.code == 0) {
+            var obj = {busitype: _this.tdlast, page: num,limit: _this.limit, number: _this.number, name: _this.name, depid: _this.depid, type:_this.stateId }
+            this.$http.post('/shv2/server/asking_list', obj, function (res) {
+                // console.log(res)
+                if (res.code == 1) {
                     _this.orderList = res.data
                     _this.orderNavNum = res.type
-                        _this.initdata(res.count)
+                    _this.initdata(res.count)
                 }
             }, function (err) { console.log(err)})
         },
@@ -177,19 +249,46 @@ export default {
                             _this.initList(obj.curr);
                         }
                     },
-                    // prev:
-                    //     '<img src="../../common/image/pages/account/icon_left.png" style="margin-top:-3px;" alt="" />',
-                    // next:
-                    //     '<img src="../../common/image/pages/account/icon_right.png" style="margin-top:-3px;"  alt="" />'
                 });
             });
         },
         tab(num) {  
             this.tdlast = num
+            this.orderList = [];        // tab 切换，先进行一次清空数据
             this.initList(1)
         },
-       godetail(id) {
-           this.go('/server/bookingOrder/bookingOrderdetail?id='+id)
+       godetail(id) {  // 查看详情
+            var _this = this;
+            _this.check = '';
+           layui.use('layer', function(){
+            var layer = layui.layer;
+            _this.$http.post('/shv2/server/asking_look', {id:id}, function (res) {
+                if (res.code == 1) {
+                    _this.check = res.data
+                    var type = res.data.busitype;
+                    _this.busitype = type == 3 ? '图文问诊' : type == 4 ? '语音问诊' : type == 12 ? '视频问诊' : type == 11 ? '院后指导': type == 2 ? '私人医生': '';
+                    var statu = res.data.busistatus;
+                    _this.busistatus = statu == 1? '未开始': statu == 2? '已开始': '已结束';
+                }
+            }, function (err) { console.log(err)})
+
+
+
+
+                layer.open({    // 弹框
+                    type: 1,
+                    title: "信息",
+                    btn:['返回'],
+                    shade: 0.4,
+                    anim: 0,
+                    area: ["1000px", "700px"],
+                    content: $("#wrap"), //iframe的弹框
+                    end: function () {
+                        $("#wrap").hide()
+                     }
+                });
+                
+            });  
        }
 
     }
@@ -221,6 +320,9 @@ export default {
                     width: 98px;
                     height: 38px;
                     border: 1px solid #ddd;
+                }
+                .select_tai {
+                    width: 100px;
                 }
             }
         }
@@ -287,5 +389,34 @@ export default {
             }
         }
     }
+
+    // 弹框
+    .box {
+        width: 100%;
+        height: auto;
+        background: #F1F2F9;
+        display: none;
+        .title {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            background: #fff;
+        }
+        .box_head {
+            background-color: #fff;
+            padding: 20px;
+            font-size: 16px;
+        }
+        .box_user {
+            width: 100%;
+            -webkit-display:flex;
+            display: flex;
+            > div {
+                width: 300px;
+                margin: 10px;
+            }
+        }
+    }
+    
+
 }
 </style>

@@ -42,11 +42,12 @@
                                 医生职称
                             </span>
                             <span class="Color_gray6">
-                                <el-select class='Mg-T30' style='width:70%;' v-model="editList.name" placeholder="请选择">
+                                <el-select class='Mg-T30' style='width:70%;' v-model="grade" placeholder="请选择">
                                 <el-option
                                     v-for="item in endList.grade"
                                     :key="item.id"
-                                    :value="item.name">
+                                    :label="item.name"
+                                    :value="item.id">
                                     </el-option>
                                 </el-select>
                             </span>
@@ -69,8 +70,8 @@
         <div class="bg_f Mg-B24">
             <p class="bookingorderdetail_tit Pd-B14 Pd-T14 Pd-L24 Mg-B24 Ft-S16 Color_black clear" style="line-height:38px;">关联疾病<span class="Color_red">*</span><span class="fr"><input type="text" placeholder="搜索" id="icon_right"></span></p>
             <p class="filtertype Pd-L24 Pd-R24 Pd-B12 Mg-B12">
-                <span class="select">内科系统</span>
-                <span>呼吸内科</span>
+                <span v-for='(val,i) in depLsit' :key='i' :class="{'select':id==val.department_id}" @click='changeDep(val.department_id)'>{{ val.department_name }}</span>
+                <!-- <span>呼吸内科</span>
                 <span>内分泌科</span>
                 <span>神经内科</span>
                 <span>肾内科</span>
@@ -78,24 +79,27 @@
                 <span>血液病研究所</span>
                 <span>风湿免疫科</span>
                 <span>肝病研究所</span>
-                <span>肝病研究所</span>
+                <span>肝病研究所</span> -->
             </p>
             <div class="select_type">
                 <form class="layui-form " action="">
                     <table>
-                        <tr v-for="val in 5">
-                            <td width="20%">
+                        <tr style='width:100%;display:flex;flex-wrap:wrap;'>
+                            <td style='margin-top:20px;'>
+                                <el-checkbox-group 
+                                    v-model="addSublevel"
+                                   
+                                    >
+                                    <el-checkbox v-for='(val, index) in depSublevel' :key='index' :label="val" >{{ val }}</el-checkbox>
+                                </el-checkbox-group>
+                               
+                            </td>
+                            <!-- <td width="20%">
                                 <input type="checkbox" name="" title="慢性支气管炎" lay-skin="primary">
                             </td>
                             <td width="20%">
                                 <input type="checkbox" name="" title="慢性支气管炎" lay-skin="primary">
-                            </td>
-                            <td width="20%">
-                                <input type="checkbox" name="" title="慢性支气管炎" lay-skin="primary">
-                            </td>
-                            <td width="20%">
-                                <input type="checkbox" name="" title="慢性支气管炎" lay-skin="primary">
-                            </td>
+                            </td> -->
                         </tr>
                     </table>
                 </form>
@@ -116,17 +120,17 @@
                     <td class="Pd-T10">
                         <ul class="clear idcardphoto">
                             <li class="fl Pd-R60">
-                                <div><img id='editImg' src="" alt=""><span class="reset_up">重新上传</span><input class="pointer" type="file"></div>
+                                <div><img id='editImg' src="" ref='zImg' alt=""><span class="reset_up">重新上传</span><input class="pointer files1" type="file"></div>
                                 <p class="Mg-T10 Ft-S14 Color_black">身份证正面</p>
                                 <p class="line"></p>
                             </li>
                             <li class="fl Pd-L60 Pd-R60">
-                                <div><img id='esitImg2' src="" alt=""><span class="reset_up">重新上传</span><input class="pointer" type="file"></div>
+                                <div><img id='esitImg2' src="" ref='fImg' alt=""><span class="reset_up">重新上传</span><input class="pointer files2" type="file"></div>
                                 <p class="Mg-T10 Ft-S14 Color_black">身份证反面</p>
                                 <p class="line"></p>
                             </li>
                             <li class="fl">
-                                <div class="Mg-L60"><img src="../../../common/image/pages/yi/00_03.jpg" alt=""><span class="reset_up">重新上传</span><input class="pointer" type="file"></div>
+                                <div class="Mg-L60"><img id='esitImg3' src="" alt=""><span class="reset_up">重新上传</span><input class="pointer files3" type="file"></div>
                                 <p class="Mg-T10 Mg-L30 Ft-S14 Color_black">执业证 / 资质证 / 职称证（三选一）</p>
                             </li>
                         </ul>
@@ -141,14 +145,14 @@
                     <tr>
                         <td width="33.3%" class="Pd-T12 Pd-B12">
                             <span class="Color_black Ft-S14">开通服务：</span>
-                            <!-- <el-checkbox-group style='display: inline-block;' v-model='editList.business' @change="handleCheckedCitiesChange">
+                            <el-checkbox-group style='display: inline-block;' v-model='editList.business' >
                                 <el-checkbox v-for="city in endList.business" :label="city.id" :key="city.id">{{city.name}}</el-checkbox>
-                            </el-checkbox-group> -->
-                            <input type="checkbox" class='serverNum' name="" title="预约挂号" lay-skin="primary">
-                            <input type="checkbox" class='serverNum' name="" title="图文问诊" lay-skin="primary">
+                            </el-checkbox-group>
+                            <!-- <input type="checkbox" v-for='(val, i) in endList.business' :key='i' class='serverNum' name="" :value='val.id' :title="val.name" lay-skin="primary"> -->
+                            <!-- <input type="checkbox" class='serverNum' name="" title="图文问诊" lay-skin="primary">
                             <input type="checkbox" class='serverNum' name="" title="语音问诊" lay-skin="primary">
                             <input type="checkbox" class='serverNum' name="" title="视频问诊" lay-skin="primary">
-                            <input type="checkbox" class='serverNum' name="" title="院后指导" lay-skin="primary">
+                            <input type="checkbox" class='serverNum' name="" title="院后指导" lay-skin="primary"> -->
                         </td>
                     </tr>
                 </table>
@@ -162,8 +166,8 @@
                         <td width="33.3%" class="Pd-T12 Pd-B12">
                             <span class="Color_black Ft-S14"><span class="Color_red">*</span>是否开启推荐:</span>
                             <div class="layui-input-inline Mg-L20" style="position:relative;top:2px">
-                                <input type="radio" name="sex" value="开启" title="开启">
-                                <input type="radio" name="sex" value="关闭" title="关闭" checked>
+                                <input type="radio" v-model="sort" name="sex" value="1" title="开启">
+                                <input type="radio" v-model="sort" name="sex" value="0" title="关闭" >
                             </div>
                             <p class="Color_red Ft-S12">注：开启推荐优先展示</p>
                         </td>
@@ -171,7 +175,7 @@
                 </table>
             </form>
         </div>
-        <p class="ac"><span class="Color_white Ft-S16 goback pointer Mg-R28" @click="go('/data/departmentList')" style="background:#fff;color:rgba(49, 150, 255, 1)!important;border:1px solid rgba(49, 150, 255, 1)">返回</span><span class="Color_white Ft-S16 goback pointer" @click="onsubmit">保存信息</span></p>
+        <p class="ac"><span class="Color_white Ft-S16 goback pointer Mg-R28" @click="go('/data/doctorList')" style="background:#fff;color:rgba(49, 150, 255, 1)!important;border:1px solid rgba(49, 150, 255, 1)">返回</span><span class="Color_white Ft-S16 goback pointer" @click="onsubmit">保存信息</span></p>
     </div>
 </template>
 <script>
@@ -180,42 +184,201 @@ export default {
     data() {
         return {
             editList: '',
-            endList: '' // 医生职称和医生服务
+            endList: '',  // 医生职称和医生服务
+            depLsit: '',    // 获取科室，关联疾病
+            id: '',         // class 绑定使用
+            depSublevel: '',    // 关联疾病, 子级列表
+            addSublevel: [],    // 选中的放入这里
+            zCard: '',          // 身份证正面
+            fCard: '',          // 身份证反面
+            SSScard: '',         // 三选一证图
+            sort: '1',           //  是否开启推荐
+            grade: '',          // 获取职称id
         }
     },
     mounted() {
         this.initdata()
+        var _this = this;   
+        this.$http.post('/shv2/data/dep_list', {}, function (res) {         // 获取科室，关联疾病
+            // console.log(res)
+            if (res.code == 1) {
+                _this.depLsit = res.data
+            }
+        }, (err) => { console.log(err)})
     },
     methods: {
         initdata() {
             var _this = this;
             layui.use('form', function () {
                 var form = layui.form;
-                form.render();
-                _this.$http.post('/shv2/data/doc_look', _this.$route.query, function (res) {
+                
+                _this.$http.post('/shv2/data/doc_look', _this.$route.query, function (res) {    //  传递 id 获取对应详情
                     var code = res.code.toString()
+                    // console.log(res)
                     if (code.includes('1')) {
                         _this.editList = res.data
-                        console.log(res)
+                        var list = _this.endList.grade
+                        for (var k in list) {
+                            if (_this.editList.name == list[k].name) {
+                                _this.grade = list[k].id
+                            }
+                        }
+                        
+                        
+                        _this.sort = res.data.sort
+                        _this.id=res.data.tid       // 科室id
+                        if (res.data.zcard) {
+                            _this.zCard = res.data.zcard
+                            _this.$refs.zImg.src = _this.$http.baseURL + res.data.zcard
+                        }
+                        if (res.data.fcard) {
+                            _this.fCard = res.data.fcard
+                            _this.$refs.fImg.src = _this.$http.baseURL + res.data.fcard
+                        }
+                        
+                        if (res.data.tid) {
+                            setTimeout(() => {
+                            var keshi = '';
+                            for(var i=0;i<_this.depLsit.length;i++) {
+                                if(res.data.tid == _this.depLsit[i].department_id) {
+                                    keshi = _this.depLsit[i]
+                                }
+                            }
+                            _this.depSublevel = keshi.diss.split('、')      // 把对应别的找出，渲染到页面
+                            _this.addSublevel = res.data.title.split(',')   // 这是获取的
+                        }, 30)
+                        }
                     }
                 }, function (res) { console.log(res) })
-                _this.$http.post('shv2/data/doc_type', {}, function (res) {
+
+
+                $('.files1').on('change', function () {
+                    $('#editImg').attr('src', window.URL.createObjectURL(this.files[0]))
+                    _this.zCard = this.files[0]
+                })
+
+                $('.files2').on('change', function () {
+                    $('#esitImg2').attr('src', window.URL.createObjectURL(this.files[0]))
+                    _this.fCard = this.files[0]
+                })
+
+                $('.files3').on('change', function () {
+                    $('#esitImg3').attr('src', window.URL.createObjectURL(this.files[0]))
+                    _this.SSScard = this.files[0]
+                })
+
+                form.on('radio', function (data) {
+                     var sex = data.value;
+                       _this.sort = sex
+                })
+
+                
+
+                _this.$http.post('shv2/data/doc_type', {}, function (res) {        //  获取医生职称
                     var code = res.code.toString()
                     if (code.includes('1')) {
                         _this.endList = res.data
-                        // console.log(res)
+                        console.log(res)
                     }
                 }, function (err) { console.log(err)})
+
+
+                form.render();
             });
         },
-        onsubmit() {
+        onsubmit() {    // 保存、提交
             console.log(this.editList)
+            
+            var _this = this;
+            layui.use('layer', function(){
+            var layer = layui.layer;
+            var list = _this.editList;
+            var exgphone = /^1(3|4|5|7|8|9)\d{9}$/;
+            var cardid = /^[1-9][0-9]{5}(19|20)[0-9]{2}((01|03|05|07|08|10|12)(0[1-9]|[1-2][0-9]|31)|(04|06|09|11)(0[1-9]|[1-2][0-9]|30)|02(0[1-9]|[1-2][0-9]))[0-9]{3}([0-9]|x|X)$/;
+            console.log(list.name)
+            if (!list.true_name) {
+                layer.msg('请输入姓名！')
+                return false;
+            }
+            if (!list.mailbox) {
+                layer.msg('请输入邮箱！')
+                return false;
+            }
+            if (!_this.grade) {
+                layer.msg('请选择医生职称！')
+                return false;
+            }
+            if (!list.phone || !exgphone.test(list.phone)) {
+                layer.msg('请输入正确手机号！')
+                return false;
+            }
+            if (!list.introduction) {
+                layer.msg('请来一段简介！')
+                return false;
+            }
+            if (!_this.id || _this.addSublevel < 0) {
+                layer.msg('请选择疾病！')
+                return false;
+            }
+            if (!list.IDnumber || !cardid.test(list.IDnumber)) {
+                layer.msg('请输入正确身份证号')
+                return false;
+            }
+            if (!_this.zCard) {
+                layer.msg('请上传身份证正面')
+                return false;
+            }
+            if (!_this.fCard) {
+                layer.msg('请上传身份证反面')
+                return false;
+            }
+            if (!list.business) {
+                layer.msg('请选择一项服务')
+                return false;
+            }
+            var formdata = new FormData();
+                formdata.append('id', list.did)
+                formdata.append('true_name', list.true_name)
+                formdata.append('phone', list.phone)
+                formdata.append('mailbox', list.mailbox)
+                formdata.append('grade', _this.grade)
+                formdata.append('introduction', list.introduction)
+                formdata.append('depid', _this.id)
+                formdata.append('disid[]', _this.addSublevel)
+                formdata.append('IDnumber', list.IDnumber)
+                formdata.append('business[]', list.business)         // 服务信息
+                formdata.append('sort', _this.sort)
+                formdata.append('zcard[]', _this.zCard)
+                formdata.append('fcard[]', _this.fCard)
+                formdata.append('zzz[]', _this.SSScard)
+                _this.$http.upload('/shv2/data/edit_doc', formdata, function (res) {
+                    console.log(res)
+                    if(res.code == 1) {
+                        layer.msg(res.msg, { icon: 1});
+                        var time = setTimeout(() => {
+                            clearTimeout(time)
+                            _this.go('/data/doctorList')
+                        }, 1000)
+                    } else {
+                        layer.msg(res.msg);
+                    }
+                }, function (err) { console.log(err)})
+            
+            });  
         },
 
-        handleCheckedCitiesChange(value) {
-           console.log(value)
-
-      }
+        changeDep(id) {       
+            this.id = id                  // 关联疾病联动
+            var dep = this.depLsit
+            this.addSublevel = []
+            for(var i=0; i< dep.length;i++) {
+                if (id == dep[i].department_id) {
+                    this.depSublevel = dep[i].diss
+                }
+            }
+            this.depSublevel = this.depSublevel.split('、')
+        },
+         
     }
 }
 </script>
@@ -229,6 +392,13 @@ export default {
 #doctorEdit {
     input {
         border: 1px solid #c2c3c3;
+    }
+    #editImg, #esitImg2, #esitImg3 {
+        width: 158px;
+        height: 158px;
+        margin-top: 0;
+        display: block;
+        border-radius: 6px;
     }
     .first_tab {
         input {
@@ -255,10 +425,12 @@ export default {
         #text1::-webkit-scrollbar-thumb {
             border-radius: 5px;
             -webkit-box-shadow: inset 0 0 5px #dddddd;
+            box-shadow: inset 0 0 5px #dddddd;
             background: #dddddd;
         }
         #text1::-webkit-scrollbar-track {
             -webkit-box-shadow: inset 0 0 5px #fff;
+            box-shadow: inset 0 0 5px #fff;
             border-radius: 0;
             background: #fff;
         }
@@ -283,6 +455,7 @@ export default {
             .select {
                 background: #3196ff !important;
                 color: #fff;
+                cursor: pointer;
             }
             span {
                 display: inline-block;
@@ -296,6 +469,7 @@ export default {
                 color: #666;
                 margin-right: 12px;
                 margin-bottom: 12px;
+                cursor: pointer;
             }
         }
         .select_type {
@@ -312,10 +486,12 @@ export default {
         .select_type::-webkit-scrollbar-thumb {
             border-radius: 5px;
             -webkit-box-shadow: inset 0 0 5px #dddddd;
+            box-shadow: inset 0 0 5px #dddddd;
             background: #dddddd;
         }
         .select_type::-webkit-scrollbar-track {
             -webkit-box-shadow: inset 0 0 5px #fff;
+            box-shadow: inset 0 0 5px #fff;
             border-radius: 0;
             background: #fff;
         }
@@ -376,7 +552,7 @@ export default {
                             }
                             .reset_up {
                                 position: absolute;
-                                bottom: 0;
+                                bottom: -2px;
                                 left: 0;
                                 display: inline-block;
                                 width: 158px;

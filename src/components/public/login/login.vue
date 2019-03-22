@@ -7,7 +7,7 @@
                 </div>
                 <p>机构登录</p>
                 <div class="my_group"><input type="text" id="phone" maxlength="11" v-focus placeholder="账号/手机号"></div>
-                <div class="my_group"><input type="text" id="pass" placeholder="请输入密码"></div>
+                <div class="my_group"><input type="password" id="pass" placeholder="请输入密码"></div>
                 <div class="my_group code"><input type="text" id="code" maxlength="4" placeholder="请输入验证码">
                     <img :src="$http.baseURL+'/captcha.html'" id="imgcode" alt="" onclick="this.src=this.src+'?'">
                 </div>
@@ -73,8 +73,8 @@ export default {
                     return true
                 }
                 if (checkpress()) {
-                    _this.$http.post('/shv2/login/login', { phone: $('#phone').val(), code: $('#code').val(), pwd: $('#pass').val() }, function (res) {//
-                        console.log(res)
+                    _this.$http.post('/shv2/login/login', { phone: $('#phone').val(), code: $('#code').val(), pwd: $('#pass').val() }, function (res) {// 登录
+                        // console.log(res)
                         if (res.code == 1) {
                             _this.localstorage.put('logindata', res.data);
                             if (res.data.hospital_status == 0 || res.data.hospital_status == 2 || res.data.hospital_status == 3) {

@@ -104,7 +104,7 @@
                                 <p class="line"></p>
                             </li>
                             <li class="fl Pd-L60 Pd-R60">
-                                <div><img style='width: 158px;height: 156px;' id="showimg1" src="../../../common/image/pages/yi/00_03.jpg" alt=""><span class="reset_up">重新上传</span><input class="pointer" id="idcardf" type="file"></div>
+                                <div><img style='width: 158px;height: 156px;' id="showimg1" src="" alt=""><span class="reset_up">重新上传</span><input class="pointer" id="idcardf" type="file"></div>
                                 <p class="Mg-T10 Ft-S14 Color_black">身份证反面</p>
 
                             </li>
@@ -151,7 +151,7 @@
                 </tr>
             </table>
         </div>
-        <p class="ac"><span class="Color_white Ft-S16 goback pointer Mg-R28" @click="go('/data/departmentList')" style="background:#fff;color:rgba(49, 150, 255, 1)!important;border:1px solid rgba(49, 150, 255, 1)">返回</span><span class="Color_white Ft-S16 goback pointer" @click="onsubmit">保存信息</span></p>
+        <p class="ac"><span class="Color_white Ft-S16 goback pointer Mg-R28" @click="go('/data/doctorList')" style="background:#fff;color:rgba(49, 150, 255, 1)!important;border:1px solid rgba(49, 150, 255, 1)">返回</span><span class="Color_white Ft-S16 goback pointer" @click="onsubmit">保存信息</span></p>
     </div>
 </template>
 <script>
@@ -191,16 +191,15 @@ export default {
       //当上传图片后，调用onchange方法，获取图片本地路径
       onchange(file,fileList){  // 
           var _this = this;
-                console.log(fileList)
-                var event = event || window.event;
-                var file = event.target.files[0];
+            var event = event || window.event;
+            var filea = event.target.files[0];
                 var reader = new FileReader(); 
-                //转base64
-                reader.onload = function(e) {
-                  _this.imageUrl = e.target.result //将图片路径赋值给src进行预览
-                }
-                reader.readAsDataURL(file);
-                console.log(reader)
+                reader.readAsDataURL(filea);
+            //转base64
+            reader.onload = function(e) {
+                _this.imageUrl = e.target.result //将图片路径赋值给src进行预览
+            }
+            
       },
 
 
@@ -238,7 +237,6 @@ export default {
             })
             $('#idcardf').on('change', function () {
                 $('#showimg1').attr('src', window.URL.createObjectURL(this.files[0]));
-                console.log(window.URL.createObjectURL(this.files[0]))
                 $('#showimg1').next().show()
             })
             $('#zyz').on('change', function () {
@@ -287,7 +285,7 @@ export default {
             let _this = this;
             layui.use(["layer"], function () {
                 _this.$http.post('/shv2/data/dep_list', {}, function (res) {//
-                console.log(res)
+                // console.log(res)
                     if (res.code == 1) {
                         _this.tabletype = res.data;
                         _this.inactive = res.data[0].department_id; // 初始化赋值，默认第一个选中
@@ -313,45 +311,45 @@ export default {
             layui.use(["layer"], function () {
                 if (!_this.addList.true_name) {
                     layui.layer.msg('请填写医生姓名')
-                    return
+                    return false;
                 }
                 if (!exgphone.test(_this.addList.phone)) {
                     layui.layer.msg('请填写医生手机号')
-                    return
+                    return false;
                 }
                 if (!_this.addList.mailbox) {
                     layui.layer.msg('请填写医生邮箱')
-                    return
+                    return false;
                 }
                 if (!_this.addList.grade) {
                     layui.layer.msg('请选择职称')
-                    return
+                    return false;
                 }
                 if (!_this.addList.introduction) {
                     layui.layer.msg('请填写医生简介')
-                    return
+                    return false;
                 }
                 if (!cardid.test(_this.addList.IDnumber)) {
                     layui.layer.msg('请填写身份证号')
-                    return
+                    return false;
                 }
                 if (!_this.addList.true_name) {
                     layui.layer.msg('请填写医生姓名')
-                    return
+                    return false;
                 }
                 if (!$('#idcardz').val()) {
                     layui.layer.msg('请上传身份证正面')
-                    return
+                    return false;
                 }
                 if (!$('#idcardf').val()) {
                     layui.layer.msg('请上传身份证反面')
-                    return
+                    return false;
                 }
                 if (!$('#zyz').val()&&!$('#zzz').val()&&!$('#zcz').val()) {
                     layui.layer.msg('请上传身份证正面')
-                    return
+                    return false;
                 }
-            })
+           
             var formdata = new FormData();
             _this.selectfilter.forEach((ele, index) => {
                 var arr = [];
@@ -368,21 +366,20 @@ export default {
             //     formdata.append('zcard[]', file);
             // });
             $.each($('#idcardf')[0].files, function (i, file) {//证件反面
-                console.log(file)
+            
                 formdata.append('fcard[]', file);
             });
             $.each($('#zyz')[0].files, function (i, file) {//证件
-            console.log(file)
+           
                 formdata.append('zyz[]', file);
             });
             $.each($('#zzz')[0].files, function (i, file) {//证件
                 formdata.append('zzz[]', file);
-                console.log(file)
             });
             $.each($('#zcz')[0].files, function (i, file) {//证件
                 formdata.append('zcz[]', file);
-                console.log(file)
             });
+            
             layui.use(["layer"], function () {
                 formdata.append("true_name", _this.addList.true_name);
                 formdata.append("phone", _this.addList.phone);
@@ -394,12 +391,16 @@ export default {
                 formdata.append("sort", _this.settop);
                 formdata.append("zcard[]", _this.zcard);
                 _this.$http.upload('/shv2/data/add_doc', formdata, function (res) {// 添加医生
+                console.log(res)
                     if (res.code == 1) {
                         layer.msg(res.msg);
                         _this.go('/data/doctorList')
+                    } else {
+                        // layer.msg(res.msg);
                     }
                 });
             });
+             })
         }
     }
 }

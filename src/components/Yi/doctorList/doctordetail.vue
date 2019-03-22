@@ -102,7 +102,7 @@
                                 <p class="line"></p>
                             </li>
                             <li class="fl">
-                                <div class="Mg-L60"><img src="../../../common/image/pages/yi/00_03.jpg" alt=""></div>
+                                <div class="Mg-L60"><img src="" alt=""></div>
                                 <p class="Mg-T10 Mg-L30 Ft-S14 Color_black">执业证 / 资质证 / 职称证（三选一）</p>
                             </li>
                         </ul>
@@ -139,7 +139,7 @@
                 </tr>
             </table>
         </div>
-        <p class="ac"><span class="Color_white Ft-S16 goback pointer Mg-R28" @click="go('/data/doctorList')" style="background:#fff;color:rgba(49, 150, 255, 1)!important;border:1px solid rgba(49, 150, 255, 1)">返回</span><span class="Color_white Ft-S16 goback pointer" @click="go('/data/doctorList/doctorEdit')">编辑信息</span></p>
+        <p class="ac"><span class="Color_white Ft-S16 goback pointer Mg-R28" @click="go('/data/doctorList')" style="background:#fff;color:rgba(49, 150, 255, 1)!important;border:1px solid rgba(49, 150, 255, 1)">返回</span><span class="Color_white Ft-S16 goback pointer" @click="editUp">编辑信息</span></p>
 
     </div>
 </template>
@@ -148,12 +148,13 @@ export default {
     name: 'doctordetail',
     data() {
         return {
-            datalist:'' // 用户信息
-
+            datalist:'', // 用户信息
+            id: ''       // 获取id
         }
     },
     mounted() {
         this.initdata();
+        this.id = this.$route.query.id
     },
     methods: {
         initdata() {
@@ -166,6 +167,9 @@ export default {
                         console.log(_this.num)
                     }
                 }, function (err) { console.log(err) });
+        },
+        editUp () {
+            this.go('/data/doctorList/doctorEdit?id=' + this.id)
         }
     }
 }

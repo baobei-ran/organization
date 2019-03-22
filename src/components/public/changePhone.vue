@@ -9,7 +9,7 @@
                     <td width="100px" class="Ft-S14 Color_black" align="right">
                         手机号：
                     </td>
-                    <td class="Pd-L24 Ft-S14 Color_gray6" v-text="form.phone">
+                    <td class="Pd-L24 Ft-S14 Color_gray6" v-text="phone">
                         138***545454
                     </td>
                 </tr>
@@ -19,7 +19,7 @@
                     </td>
                     <td class="Pd-L24 Ft-S16 Color_gray6">
                         <input type="text" maxlength="4" id="code" @keypress="errcode=''" v-model="form.code" placeholder="请输入验证码" style="width: 210px;" class="Pd-L10" /><span class="getcode" @click="getcode">获取验证码</span>
-                        <p class="Ft-S12 Color_gray6 errmsg">{{errcode}}</p>
+                        <p class="Ft-S12 errmsg" >{{errcode}}</p>
                     </td>
                 </tr>
                 <tr>
@@ -60,7 +60,7 @@ export default {
             let _this=this;
             //获取验证码
             layui.use(["layer"], function () {
-                
+                var layer = layui.layer;
                 if (this.noneclick) {
                     return;
                 }
@@ -79,11 +79,11 @@ export default {
                     $('.getcode').text("(" + time + "s)重获");
                 }, 1000);
                 
-                _this.$http.post('/shv2/Alidayu/sendSMS', { telphone: _this.phone}, function (res) {//
+                _this.$http.post('/shv2/Alidayu/sendSMS', { telphone: _this.phone }, function (res) {//
                     if (res.code == 1) {
-
+                        layer.msg(res.msg)
                     } else {
-
+                        layer.msg(res.msg)
                     }
                 }, function (err) { console.log(err) });
             })
@@ -91,15 +91,17 @@ export default {
         onsubmit() {
             let _this = this
             layui.use(["layer"], function () {
+                var layer = layui.layer;
                 if (!_this.form.code) {
                     _this.errcode = '请填写正确的验证码';
                     return
                 }
                 _this.$http.post('/shv2/Setting/judge_code', { code: _this.form.code }, function (res) {//
+                console.log(res)
                     if (res.code == 1) {
                         _this.go('/setting/changePhone/changePhonechild')
                     } else {
-
+                        layer.msg(res.msg)
                     }
                 }, function (err) { console.log(err) });
                 
@@ -139,6 +141,7 @@ export default {
         position: absolute;
         z-index: 66;
         padding-top:3px;
+        color: red;
     }
     .getcode {
         display: inline-block;

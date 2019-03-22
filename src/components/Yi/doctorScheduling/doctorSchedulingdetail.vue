@@ -70,21 +70,27 @@
                             </td>
                         </tr>
                         <tr>
-                            <td v-for="(val,index) in datearr"> <span v-text="val.date">08/27</span></td>
+                            <td v-for="(val,index) in datearr" :key='index'> <span v-text="val.date">08/27</span></td>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
                             <td>上午</td>
-                            <td v-for="val in 21"></td>
+                            <td v-for="(val,index) in datearr"  :day='val.date' dtype='1'>
+                                <i v-if='val.date == 3.29' class="icon_default">普</i>
+                            </td>
                         </tr>
                         <tr>
                             <td>下午</td>
-                            <td v-for="val in 21"><i class="icon_stop">停</i></td>
+                            <td v-for="(val,index) in datearr" :day='val.date' dtype='2'>
+                                <i v-if='val.date == 4.01' class="icon_stop">停</i>
+                            </td>
                         </tr>
                         <tr>
                             <td>晚上</td>
-                            <td v-for="val in 21"><i class="icon_default">普</i></td>
+                            <td  v-for="(val,index) in datearr" :day='val.date' dtype='3'>
+                                <i v-if='val.date == 3.31' class="icon_default">普</i>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -99,10 +105,10 @@ export default {
     name: 'bookingorderdetail',
     data() {
         return {
-            datearr: [],    // 日期
+            datearr: [],     // 日期
             doctorMsg: '',   // 医生信息
-            normal: [],  //  正常排班数据
-            stop: []    // 停诊数据
+            normal: [],      // 正常排班数据
+            stop: []         // 停诊数据
         }
     },
     mounted() {
@@ -112,24 +118,30 @@ export default {
     methods: {
         initdata() {
             var _this = this;
-            console.log(_this.$route.query)
             this.$http.post('/shv2/server/doc_class', _this.$route.query , function (res) {
                 console.log(res)
                 if (res.code == 1) {
                     _this.doctorMsg = res.data;
                     _this.normal = res.normal;
                     _this.stop = res.stop;
+                    _this.normal.forEach(val => {
+                        let d = new Date().getTime();
+                        var b = _this.$moment(val.date1).format('MM.DD')
+                        console.log(b)
+                        
+                    })
+                    
                 }
             }, function (err) { console.log(err)})
         },
         Datelist() {
-            this.datearr;
+            this.datearr;   // 空数组，用来接收时间
             let datetime = new Date().getTime();
             let onedays = 24 * 60 * 60 * 1000
             for (let i = 0; i < 21; i++) {
-                let month = (new Date(datetime).getMonth() + 1 + '').length > 1 ? new Date(datetime).getMonth() + 1 : '0' + (new Date(datetime).getMonth() + 1)
-                let dates = (new Date(datetime).getDate() + '').length > 1 ? new Date(datetime).getDate() : '0' + new Date(datetime).getDate();
-                let week = new Date(datetime).getDay();
+                let month = (new Date(datetime).getMonth() + 1 + '').length > 1 ? new Date(datetime).getMonth() + 1 : '0' + (new Date(datetime).getMonth() + 1)     // 月份
+                let dates = (new Date(datetime).getDate() + '').length > 1 ? new Date(datetime).getDate() : '0' + new Date(datetime).getDate();                     // 几号
+                let week = new Date(datetime).getDay();     //  星期
                 switch (week) {
                     case 0: week = '周日'; break;
                     case 1: week = "周一"; break;

@@ -33,7 +33,7 @@
 
         <div class="alipay_dialog ac hide">
             <div class="Mg-T56" style="width:200px;height:200px;background: #eee; margin: 0 auto">
-                <iframe id="aliurl" src="" frameborder="0"
+                <iframe id="aliurl" ref='Iframe' src="" frameborder="0"
                     width="180px"
                     height="180px;"
                     marginwidth="0"
@@ -91,6 +91,7 @@ export default {
         this.initdata();
         var _this = this;
         this.$http.post('/shv2/account/if_bank',{}, function (res) {   // 检测是否绑卡
+            // console.log(res)
             if(res.code == 1) {
                 _this.Tied_card = true;  // 已绑卡
             } else {
@@ -98,8 +99,8 @@ export default {
             }
         }, function (err) { console.log(err)})
            
-           let user = this.localstorage.get('logindata')
-           console.log(user)
+        
+
     },
     methods: {
         ReturnBtn () {
@@ -226,6 +227,8 @@ export default {
                         _this.zfbUrl = '/shv2/account/charge?money='+_this.price+'&type=1';  // 支付宝地址
                        $('#aliurl').attr('src', _this.$http.baseURL+_this.zfbUrl)            // 把地址发给 iframe
                             
+                            
+
                             layer.open({    // 弹框
                                 type: 1,
                                 title: "支付宝充值",

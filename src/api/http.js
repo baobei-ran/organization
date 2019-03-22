@@ -82,6 +82,8 @@ axios.interceptors.response.use(function (response) {
 //   }
   
 
+
+           
 function Axios (method, url, data) {
   return new Promise ((resolve, reject) => {
     axios({

@@ -103,7 +103,12 @@ export default {
                     return
                 }
                 _this.$http.post('/shv2/Setting/edit_phone', {phone:_this.form.phone, code: _this.form.code }, function (res) {//
-                    layer.msg(res.msg)
+                    if (res.code == 1) {
+                        layer.msg(res.msg)
+                        _this.go('/setting/changePhone')
+                    } else {
+                        layer.msg(res.msg)
+                    }
                 }, function (err) { console.log(err) });
             })
         }

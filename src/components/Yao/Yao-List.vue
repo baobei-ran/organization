@@ -107,7 +107,7 @@
                 </tr>
             </table>
             <p class="clear">
-                <span class="fl"><button class="cancel pointer">取消</button></span>
+                <span class="fl"><button class="cancel pointer" @click='cancel'>取消</button></span>
                 <span class="fr"><button class="send pointer" @click="sendup">发货</button></span>
             </p>
         </div>
@@ -122,7 +122,7 @@
                 </tr>
             </table>
             <p class="clear">
-                <span class="fl"><button class="cancel pointer">取消</button></span>
+                <span class="fl"><button class="cancel pointer" @click='cancel'>取消</button></span>
                 <span class="fr"><button class="send pointer">发货</button></span>
             </p>
         </div>
@@ -302,6 +302,13 @@ export default {
 
                 });
             })
+        },  
+        cancel () {     // 取消关闭弹框
+            layui.use('layer', function(){
+            var layer = layui.layer;
+            
+                layer.closeAll();
+            }); 
         },
         empty() {   // 清空
             this.list.number = '';

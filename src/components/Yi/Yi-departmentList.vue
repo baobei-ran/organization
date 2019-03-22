@@ -40,7 +40,7 @@
                                 <td v-text="val.diss">心脏病、糖尿病、急性脑...</td>
                                 <td v-text="val.sort">1</td>
                                 <td>
-                                    <el-switch v-model="val.settop" :active-value="1" :inactive-value="0" @change="setdep_op(val.id,val.settop)" active-color="#13ce66" inactive-color="#ff4949">
+                                    <el-switch v-model="val.settop" :active-value="1" :inactive-value="0" @change="setdep_op(val.id,val.settop)" active-color="#13ce66" inactive-color="#ccc">
                                     </el-switch>
                                 </td>
                                 <td>
@@ -123,7 +123,9 @@ export default {
             layui.use(["layer"], function () {
                 _this.$http.post('/shv2/data/dep_op', { id: id, val: val }, function (res) {//
                     if (res.code == 1) {
-                        layui.layer.msg(res.msg)
+                        layui.layer.msg(res.msg, {icon:1})
+                    } else {
+                        layui.layer.msg(res.msg, {icon:2})
                     }
                 }, function (err) { console.log(err) });
             });

@@ -18,9 +18,7 @@
                                     <label class="layui-form-label">所属科室</label>
                                     <select name="city" lay-verify="required" v-model='departmentName' class="select_class1">
                                         <option value="">全部</option>
-                                        <option value="010">xx</option>
-                                        <option value="021">xx</option>
-                                        <option value="0571">xx</option>
+                                        <option v-for='(val, i) in departmentList' :key='i' :value="val.department_id">{{ val.department_name }}</option>
                                     </select>
                                 </div>
                             </div>
@@ -29,9 +27,7 @@
                                     <label class="layui-form-label">医生职称</label>
                                     <select name="city" lay-verify="required" v-model='doctorName' class="select_class1">
                                         <option value="">全部</option>
-                                        <option value="010">xx</option>
-                                        <option value="021">xx</option>
-                                        <option value="0571">xx</option>
+                                        <option v-for='(val,i) in doctorList' :key='i' :value="val.id">{{ val.name }}</option>
                                     </select>
                                 </div>
                             </div>
@@ -53,8 +49,8 @@
                                 <td>操作</td>
                             </tr>
                         </thead>
-                        <tbody v-show='doctorList.length'>
-                            <tr v-for="(val, index) in doctorList" :key='index'>
+                        <tbody v-show='doctorLists.length'>
+                            <tr v-for="(val, index) in doctorLists" :key='index'>
                                 <td>{{ index+1 }}</td>
                                 <td v-text='val.true_name'>陈亚楠</td> 
                                 <td v-text='val.name'>主任医师</td>
@@ -62,13 +58,13 @@
                                 <td><span class="Color_blue pointer" @click="godetail(val.did)">查看</span></td>
                             </tr>
                         </tbody>
-                        <tbody v-show="!doctorList.length">
+                        <tbody v-show="!doctorLists.length">
                             <tr>
                                 <td colspan="5">暂无数据</td>
                             </tr>
                         </tbody>
                     </table>
-                    <div id="page" class="ac Mg-T30"></div>
+                    <div  v-show="doctorLists.length" id="page" class="ac Mg-T30"></div>
                 </div>
             </div>
         </div>
@@ -79,16 +75,32 @@ export default {
     name: 'doctorpb',
     data() {
         return {
-            page: 1,    // 页数
-            limit: 10,   // 每一位几条
-            doctorList: '',  // 排班列表
-            userName: '',   // 搜索医生姓名
+            page: 1,            // 页数
+            limit: 10,          // 每一位几条
+            doctorLists: [],     // 排班列表
+            userName: '',       // 搜索医生姓名
             departmentName: '', // 搜索科室
-            doctorName: ''      // 搜索职称
+            doctorName: '',      // 搜索职称
+            doctorList: [],      // 职称列表
+            departmentList: []       // 科室列表
         }
     },
     mounted() {
         this.crewList(1);
+        // 医生职称
+        var _this = this;
+        this.$http.post('shv2/data/doc_type',{}, function (res) {
+            // console.log(res)
+            if (res.code == 1) {
+                _this.doctorList = res.data.grade
+            }
+        })
+        // 科室 
+        this.$http.post('/shv2/data/dep_list', {}, function (res) {
+            if (res.code == 1) {
+                _this.departmentList = res.data
+            }
+        },(err) => { console.log(err)})
     },
     methods: {
         //  数据接口  和  搜索
@@ -98,12 +110,11 @@ export default {
                 var element = layui.element;
                 _this.page = num;
                 _this.$http.post('/shv2/server/doctor_list', {page: _this.page, limit: _this.limit, name: _this.userName, depid: _this.departmentName, grade: _this.doctorName}, function (res) {
-                    // console.log(res)
-                    if (res.code == 0) {
-                        _this.doctorList = res.data
-                        if (num ==1) {
-                            _this.initdata(res.count)   // 传递总条数
-                        }
+                    console.log(res)
+                    if (res.code == 1) {
+                        _this.doctorLists = res.data
+                        _this.initdata(res.count)   // 传递总条数
+                      
                     }
                 }, function (err) { console.log(err)})
             });
@@ -123,7 +134,7 @@ export default {
                 laypage.render({
                     elem: "page", //注意，这里的 test1 是 ID，不用加 # 号
                     count: total, //数据总数，从服务端得到
-                    limit: 10, //每页条数
+                    limit: 5, //每页条数
                     layout: ["prev", "page", "next", "skip"],
                     groups: 4,
                     jump: function(obj, first){                        
@@ -136,8 +147,9 @@ export default {
             });
         },
         godetail(id) {  // 查看
-            this.go('/server/doctorScheduling/doctorSchedulingdetail?' + id)
-        }
+            this.go('/server/doctorScheduling/doctorSchedulingdetail?id=' + id)
+        },
+
     }
 }
 </script>

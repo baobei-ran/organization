@@ -61,8 +61,13 @@
                     </td>
                 </tr>
             </table>
-        </div>
 
+            <div >
+                <div id='demo'></div>
+            </div>
+
+        </div>
+        
     </div>
 </template>
 <script>
@@ -75,6 +80,14 @@ export default {
     },
     mounted() {
         this.initdata()
+        var map = new AMap.Map("demo", {   // 地图
+                resizeEnable: true,
+                zoom: 13
+            });
+            map.on('click', function (e) {
+                var x = e.lnglat.getLng();
+                var y =e.lnglat.getLat();
+            });
     },
     methods: {
         initdata() {

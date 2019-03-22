@@ -34,22 +34,30 @@
                             <div class="layui-col-md4">
                                 <div class="layui-inline lay_width">
                                     <div class="layui-input-inline" style="width:100%">
-                                        <span class="Ft-S14 selectbtn ac pointer" @click='goodLists(1)'>筛选订单</span><span class="Color_blue pointer Ft-S14 Mg-L24" @click='empty'>清空筛选条件</span>
+                                        <span class="Ft-S14 selectbtn ac pointer" @click='search'>筛选订单</span><span class="Color_blue pointer Ft-S14 Mg-L24" @click='empty'>清空筛选条件</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     
+                    <!-- 加的选项卡风格只是装饰 -->
+                    <div class="layui-tab-item layui-show"></div>
+                    <div class="layui-tab-item"></div>
+                    <div class="layui-tab-item"></div>
+                    <!--  -->
 
-
-
-
+            <div class="table_box" v-if='tdlast == 3? false : true'>
+                <div class='table_head' v-show='multipleSelection.length' v-if='tdlast == 0? false : tdlast == 3? false : true'>
+                    <el-checkbox v-model='num' @change='CheckAll' > 批量操作，当前选择{{ multipleSelection.length }}条信息</el-checkbox>
+                    <div v-show='tdlast == 2 ? true:false'><el-button type="primary" size='mini' >上架</el-button></div>
+                    <div v-show='tdlast == 1 ? true:false'><el-button type="primary" size='mini' >下架</el-button></div>
+                </div>
                    <el-table
-                    :data="tableData"
+                    :data="goodList"
                     :row-style='styleColor'
-                    :span-method='colspan'
                     border
+                    @selection-change="handleSelectionChange"
                     style="width: 100%;height: 515px;overflow: auto;" :header-cell-style='styleObj' >
                         <el-table-column
                         type="selection"
@@ -57,56 +65,68 @@
                         width="80" align='center'>
                         </el-table-column>
                         <el-table-column
-                            prop="id"
+                            min-width="140%"
+                            
                             label="商品名称"
                            align ='center' style='width:300px!mportant;'>
 
-                           <template slot-scope="scope" style='display:flex;'>
-                                <img src="../../../common/image/pages/account/icon_sj.png" alt="" style='width: 50px; height:50px;display:block;' >
-                                <p>撒娇成就大师看得出几十块的看电视剧斯柯达深刻的思考呢是的</p>
+                           <template slot-scope="scope">
+                                <div  style='-webkit-display:flex;display:flex;align-items: center;'>
+                                    <img :src="$http.baseURL+scope.row.pic" alt="" style='width: 60px; height:60px;display:block;' >
+                                <p style='margin-left:20px;text-align:left;color: #333;'>{{ scope.row.name }}</p>
+                                </div>
                             </template>
 
                         </el-table-column>
                         <el-table-column
-                            prop="name"
-                            label="商品编码" align ='center'>
+                            prop="number"
+                            label="商品编码" align ='center' style='width: 200px;'>
                         </el-table-column>
                         <el-table-column
-                            prop="amount1"
+                            prop="id"
                             sortable
+                            min-width="50%"
                             :cell-dblclick='editSort'
                             @click.native="handleEdit($index, row)"
                             label="排序" align ='center'>
                         </el-table-column>
                         <el-table-column
-                            prop="amount2"
+                            prop="stock"
                             sortable
+                            min-width="50%"
                             label="库存" align ='center'>
                         </el-table-column>
                         <el-table-column
-                            prop="amount3"
+                            prop="monthly"
                             sortable
-                            label="已售" align ='center'>
+                            min-width="50%"
+                            label="已售" align ='center' >
                         </el-table-column>
+
                         <el-table-column
-                            prop="amount3"
+                            prop="money"
+                            min-width="50%"
                             label="商品售价" align ='center'>
+                            <template slot-scope="scope">
+                                <div>
+                                    <span>￥</span><span>{{ scope.row.money }}</span>
+                                </div>
+                            </template>
                         </el-table-column>
 
-                            <!-- <el-table-column
-                            prop="amount3"
-                            label="审核" align ='center' v-show='true'>
-                            </el-table-column> -->
+                           
 
                         <el-table-column
-                            prop="amount3"
+                            min-width="80%"
                             label="操作" align ='center'>
 
                             <template slot-scope="scope" style='display: flex;'>
                                 <button class='btn' 
                                     @click="edits(scope.row)">编辑</button>
-                                <button class='btn' 
+                                <button class='btn' v-if='tdlast == 0 ? true : tdlast == 1 ? true : false'
                                     @click="soldOut(scope.row)">下架</button>
+                                    <button class='btn' v-if='tdlast == 2 ? true : false'
+                                    @click="putaway(scope.row)">上架</button>
                                 <button class='btn' 
                                 @click="shows(scope.row)">更多 <i class='el-icon-caret-bottom'></i><i class='el-icon-caret-top hide' ></i></button>
                                 <dl class="tdmore hide" :class="{'active':scope.row.id === numId}" >
@@ -116,8 +136,104 @@
                             </template>
                         </el-table-column>
                     </el-table>
-                    <div id='page'></div>
-                            
+                </div>
+                    
+                <div class="layui-tab-item" >   <!-- 审核页面-->
+                    
+                    <el-table
+                    :data="goodList"
+                    :row-style='styleColor'
+                    border
+                    style="width: 100%;height: 515px;overflow: auto;" :header-cell-style='styleObj' >
+                        <el-table-column
+                        type="selection"
+                        label="全选"
+                        width="80" align='center'>
+                        </el-table-column>
+                        <el-table-column
+                            min-width="140%"
+                            nin-height = '70px'
+                            prop="goodList"
+                            label="商品名称"
+                           align ='center' style='width:300px!mportant;'>
+
+                           <template slot-scope="scope">
+                                <div  style='-webkit-display:flex;display:flex;align-items: center;'>
+                                    <img :src="$http.baseURL+scope.row.pic" alt="" style='width: 60px; height:60px;display:block;' >
+                                <p style='margin-left:20px;text-align:left;color: #333;'>{{ scope.row.name }}</p>
+                                </div>
+                            </template>
+
+                        </el-table-column>
+                        <el-table-column
+                            prop="number"
+                            label="商品编码" align ='center' style='width: 200px;'>
+                        </el-table-column>
+                        <el-table-column
+                            prop="id"
+                            sortable
+                            min-width="50%"
+                            :cell-dblclick='editSort'
+                            @click.native="handleEdit($index, row)"
+                            label="排序" align ='center'>
+                        </el-table-column>
+                        <el-table-column
+                            prop="stock"
+                            sortable
+                            min-width="50%"
+                            label="库存" align ='center'>
+                        </el-table-column>
+
+                        <el-table-column
+                            prop="money"
+                            min-width="50%"
+                            label="商品售价" align ='center'>
+                            <template slot-scope="scope">
+                                <div>
+                                    <span>￥</span><span>{{ scope.row.money }}</span>
+                                </div>
+                            </template>
+                        </el-table-column>
+
+                            <el-table-column
+                            prop="examine"
+                            min-width="50%"
+                            label="审核" align ='center'>
+                                <template slot-scope="scope">
+                                    <div style='color: red;font-size:14px' v-if='scope.row.examine == 2 ? true : false'>
+                                     未通过 <i class="el-icon-warning"></i>
+                                    </div>
+                                    <div v-if='scope.row.examine == 0 ? true : false'>待审核</div>
+                                    <div v-if='scope.row.examine == 1 ? true : false'>审核通过</div>
+                                </template>
+                            </el-table-column>
+
+                        <el-table-column
+                            min-width="80%"
+                            prop="examine"
+                            label="操作" align ='center'>
+
+                            <template slot-scope="scope" style='display: flex;'>
+                                <div v-if='scope.row.examine == 1 ? true : scope.row.examine == 2 ? true : false'>
+                                    <button class='btn' 
+                                        @click="edits(scope.row)">重新编辑</button>
+                                    <button class='btn' 
+                                    @click="shows(scope.row)">更多 <i class='el-icon-caret-bottom'></i><i class='el-icon-caret-top hide' ></i></button>
+                                    <dl class="tdmore hide" :class="{'active':scope.row.id === numId}" >
+                                        <dd class="pointer"  @click='del(scope.row)'>删除</dd>
+                                        <dd class="pointer"  @click="sendgoods(scope.row.id)">记录</dd>
+                                    </dl>
+                                </div>
+                                <div v-else>
+                                    审核中，无法操作
+                                </div>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </div> 
+
+                    <div v-show='goodList.length' id='page'></div>
+                           
                 </div>
             </div>
         </div>
@@ -128,11 +244,18 @@
                     <td class="Color_black Ft-S16" width="33.3%">操作人</td>
                     <td class="Color_black Ft-S16">记录</td>
                 </tr>
-                <tr v-for="(val,index) in record" :key='index'>
-                    <td>2018年11月12日 21:11:22</td>
-                    <td v-text='val.person'>188****9979</td>
-                    <td v-text='val.record'>商品上架</td>
-                </tr>
+                <tbody v-if='record.length'>
+                    <tr v-for="(val,index) in record" :key='index'>
+                        <td>2018年11月12日 21:11:22</td>
+                        <td v-text='val.person'>188****9979</td>
+                        <td v-text='val.record'>商品上架</td>
+                    </tr>
+                </tbody>
+                 <tbody v-else>
+                    <tr>
+                        <td colspan="3"> 暂无数据</td>
+                    </tr>
+                </tbody>
             </table>
         </div>
     </div>
@@ -146,38 +269,8 @@ export default {
                 'background':'#DAE9FF',
                 'color': '#333',
             },
-            tableData: [{
-                id: '12987122',
-                name: '商品名称',
-                amount1: '商品编码',
-                amount2: '3.2',
-                amount3: 10,
-
-                }, {
-                id: '12987123',
-                name: '王小虎',
-                amount1: '165',
-                amount2: '4.43',
-                amount3: 12
-                }, {
-          id: '12987124',
-          name: '王小虎',
-          amount1: '324',
-          amount2: '1.9',
-          amount3: 9
-        }, {
-          id: '12987125',
-          name: '王小虎',
-          amount1: '621',
-          amount2: '2.2',
-          amount3: 17
-        }, {
-          id: '12987126',
-          name: '王小虎',
-          amount1: '539',
-          amount2: '4.1',
-          amount3: 15
-        }],
+            
+            num: false,     // 是否全选
             showA: true, // 
             numId: 0,   // id
             tdlast: 0,  // 商品状态
@@ -191,6 +284,7 @@ export default {
             number: '',     // 商品编号
             record: [],      // 记录列表
             tabShen: true,   // 审核
+            multipleSelection: []   // 选中的值进行保存
         }
     },
     mounted() {
@@ -199,21 +293,15 @@ export default {
         this.initdata(5) // test
     },
     methods: {
-        //点击编辑
-handleEdit(index, row) {
-    this.showEdit[index] = true;
-    this.showBtn[index] = true;
-    this.$set(this.showEdit,row,true)
-    this.$set(this.showBtn,row,true)
-},
-
-
+        //点击排序
         handleEdit(index, row) {
-        console.log(index, row);
-      },
-      handleDelete(index, row) {
-        console.log(index, row);
-      },
+            this.showEdit[index] = true;
+            this.showBtn[index] = true;
+            this.$set(this.showEdit,row,true)
+            this.$set(this.showBtn,row,true)
+        },
+
+    
 
         // 排序
         editSort (row, column, cell, event) {
@@ -230,12 +318,45 @@ handleEdit(index, row) {
         console.log( rowIndex)
     },
 
-    colspan ({ row, column, rowIndex, columnIndex }) {    // 合并行或列的计算方法
-        // console.log( columnIndex )
-        if (columnIndex == 1) {
-           
+     
+       
+       CheckAll (val) {     // 取消全选
+            console.log(val)
+            if (val) {
+                this.num = val
+            } else {
+                this.num = val
+                this.handleSelectionChange([])
+            }
+       },
+
+    handleSelectionChange(val) {    // 全选
+        console.log(val)
+        if (val.length) {
+            this.multipleSelection = val;
+            this.num = true
+        } else {
+            this.multipleSelection = val;
+            this.num = false
         }
-    },
+        
+      },
+
+
+        search () { // 搜索
+            var _this = this;
+            layui.use('layer', function(){
+            var layer = layui.layer;
+                if (!_this.number && !_this.name) {
+                    layer.msg('请输入要搜索的内容');
+                    return;
+                }
+                _this.goodLists(1)
+            });   
+            
+
+        },
+
 
 
         tab(num) {  // 选项卡
@@ -249,10 +370,10 @@ handleEdit(index, row) {
                 var layer = layui.layer;
                 var form = layer.form;
                 _this.$http.post('/shv2/goods/index', {type: _this.tdlast,examine: _this.examine,name: _this.name, number: _this.number, page: _this.page, limit: _this.limit}, function (res) {
+                    console.log(res)
                     if(res.code == 1) {
                         _this.goodCount = res;
                         _this.goodList = res.data;
-                        console.log(res)
                         if (num == 1) {
                             // _this.initdata(res.count) 
                         }
@@ -270,10 +391,12 @@ handleEdit(index, row) {
                 //完整功能
                 laypage.render({
                     elem: 'page'
-                    ,count: 30
+                    ,count: total
                     ,layout: [ 'prev', 'page', 'next', 'skip']
-                    ,jump: function(obj){
-                        // console.log(obj)
+                    ,jump: function(obj, first){
+                        if(!first){
+                            _this.goodLists(obj.curr) // /得到当前页，以便向服务端请求对应页的数据
+                        }
                     }
                 });
                 
@@ -285,10 +408,9 @@ handleEdit(index, row) {
         edits(data) { // 编辑
             let { id } = data
             console.log(id)
-            this.go('/jgmall/goodsList/addGoods?id='+id)
+            this.go('/jgmall/goodsList/editGoods?id='+id)
         },
         shows(data) { // 更多
-            console.log(data)
             var { id } = data;
             var _this = this;
             if (_this.numId == id) {
@@ -321,10 +443,11 @@ handleEdit(index, row) {
             })
         },
         sendgoods(id) { //  商品操作记录
-            console.log(id)
+            // console.log(id)
             var _this = this;
+            _this.record = '';  // 每次查看前，先进行一次清空数据
             this.$http.post('/shv2/goods/goods_log', {id:id}, function (res) {
-                // console.log(res)
+                console.log(res)
                 if(res.code == 1) {
                     _this.record = res.data
                 } else {
@@ -358,6 +481,24 @@ handleEdit(index, row) {
         empty() {   // 清空
             this.name = '';
             this.number = '';
+        },
+
+        putaway (data) {    // 上架
+            console.log(data)
+            let { id } = data;
+            var _this = this;
+            layui.use('layer', function(){
+            var layer = layui.layer;
+                _this.$http.post('/shv2/goods/goods_set', { id: id, type: 4 }, function (res) {
+                    console.log(res)
+                    if (res.code == 1) {
+                        layer.msg(res.msg)
+                    } else {
+                        layer.msg(res.msg);
+                    }
+                }, function (err) { console.log(err)})
+            
+            });  
         }
     }
 }
@@ -365,6 +506,7 @@ handleEdit(index, row) {
 <style scoped lang='less'>
 
 #goodsList {
+    height: 100vh;
     .layui-tab-content .btn {
         color: #3196FF;
         margin: 0 4px;
@@ -373,8 +515,8 @@ handleEdit(index, row) {
         cursor: pointer;
     }
     .el-table__body {
-        body > tr {
-            height: 60px;
+        body > tr.el-table__row {
+            height: 80px;
         }
     }
     .el-table tr{
@@ -386,8 +528,26 @@ handleEdit(index, row) {
         height: 27px;
         border: 1px solid #aaaaaa;
     }
+    .el-table__header .has-gutter tr th.el-table_1_column_2 > .cell {
+        display: flex;
+    }
     .hide {
         display: none;
+    }
+    .table_box {
+        position: relative;
+    }
+    .table_head {
+        position: absolute;
+        z-index: 99;
+        width: 100%;
+        height: 60px;
+        background-color: #DAE9FF;
+        line-height: 60px;
+        padding:0 30px;
+        -webkit-display: flex;
+        display: flex;
+        justify-content: space-between;
     }
 }
 
@@ -398,10 +558,11 @@ handleEdit(index, row) {
     height: 86px;
     width: 100px;
     right: 0px;
-    top: 75px;
+    top: 45px;
     border: 1px solid #dddddd;
     margin-top: 10px;
     background-color: #fff;
+    z-index: 100;
 }
 .tdmore:after {
     content: "";

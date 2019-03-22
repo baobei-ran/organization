@@ -1,6 +1,6 @@
 <template>
     <div id="doctorparabiosemsg" class="" style="height:95%">
-        <div class="bg_f Mg-B24">
+        <div class="bg_f Mg-B24 box">
             <p class="bookingorderdetail_tit Pd-B24 Pd-T24 Pd-L24 Ft-S16 Color_black">目标机构信息</p>
             <table class="Mg-T12">
                 <tr>
@@ -48,11 +48,11 @@
                 </tr>
                 <tr>
                     <td width="100%" colspan="2">
-                        <p class="">
+                        <p class="ps">
                             <span class="Color_black v-top" style="width:60px;">
                                 机构简介:
                             </span>
-                            <span class="Color_gray6" style="">
+                            <span class="Color_gray6">
                                 {{dataList.introduction}}
                             
                             </span>
@@ -258,6 +258,12 @@ export default {
 
 <style scoped lang="less">
 #doctorparabiosemsg {
+    width: 100%;box-sizing: border-box;
+    overflow: hidden;
+    .box {
+        width: 100%;box-sizing: border-box;
+        overflow: hidden;
+    }
     input,
     input:hover,
     input:focus {
@@ -302,6 +308,16 @@ export default {
         background: rgba(49, 150, 255, 1);
         border-radius: 4px;
         text-align: center;
+    }
+    .ps {
+        box-sizing: border-box;
+        display: inline-block;
+        overflow: hidden;
+        width:95%;
+        span {
+            display: inline-block;
+            width: 100%;
+        }
     }
 }
 </style>

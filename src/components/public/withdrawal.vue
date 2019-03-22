@@ -72,44 +72,33 @@
                             <td>序号</td>
                             <td>账单单号</td>
                             <td>申请时间</td>
+                            <td>类型</td>
                             <td>金额（元）</td>
-                            <td>手续费（元）</td>
                             <td>账单状态</td>
                             <td>收款方式</td>
                         </tr>
                     </thead>
 
-                    <tr>
-                        <td>0002</td>
-                        <td>3332018092700012121</td>
-                        <td>2019-11-11 11:11:11</td>
-                        <td>+1000.00</td>
-                        <td>提现失败</td>
-                        <td>提现失败</td>
-                        <td>+1000.00</td>
-                    </tr>
-                    <tr>
-                        <td>0002</td>
-                        <td>3332018092700012121</td>
-                        <td>2019-11-11 11:11:11</td>
-                        <td>+1000.00</td>
-                        <td>0.3</td>
-                        <td>提现失败</td>
-                        <td>工商银行（尾数2333）</td>
-                    </tr>
-                    <tr>
-                        <td>0002</td>
-                        <td>3332018092700012121</td>
-                        <td>2019-11-11 11:11:11</td>
-                        <td>+1000.00</td>
-                        <td>0.3</td>
-                        <td>提现失败</td>
-                        <td>工商银行（尾数2333）</td>
-                    </tr>
+                    <tbody v-if='withdraw_depositList.length'>
+                        <tr v-for='(val, i) in withdraw_depositList'>
+                            <td>{{ i+1 }}</td>
+                            <td>{{ val.number }}</td>
+                            <td>{{ val.creatime }}</td>
+                            <td>{{ val.change }}</td>
+                            <td>{{ val.money }}</td>
+                            <td>{{ val.state }}</td>
+                            <td>{{ val.pay_name }}</td>
+                        </tr>
+                    </tbody>
                     
+                    <tbody v-else>
+                        <tr>
+                            <td colspan="7">暂无数据</td>
+                        </tr>
+                    </tbody>
                 </table>
 
-                <div id="page" class="ac Mg-T20"></div>
+                <div v-if='withdraw_depositList.length' id="page" class="ac Mg-T20"></div>
             </div>
         </div>
         <div id="SectionBox">

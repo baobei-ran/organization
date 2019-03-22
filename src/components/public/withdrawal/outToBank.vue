@@ -144,18 +144,17 @@ export default {
                     }
                     var money2 = _this.price.match(/^\d*(\.?\d{0,2})/g)[0]; // 保留小数点后面两位小数
                     _this.price = money2
+                    var regex=/^[0]+/;
+                    _this.price = _this.price.replace(regex,"");
+                    _this.price =  _this.price.replace(/^\./g, '0.');
                 });
                 $("#price").on('input  propertychange',function(){  // 金钱输入验证
-                    //如果输入非数字，则替换为''
                     this.value = this.value.replace(/[^\d\.]/g, '');
-                    //必须保证第一个为数字而不是.     
                     this.value = this.value.replace(/^\./g,'');
-                    //保证只有出现一个.而没有多个.     
                     this.value = this.value.replace(/\.{2,}/g,'.');
-                    //保证.只出现一次，而不能出现两次以上     
                     this.value = this.value.replace('.','$#$').replace(/\./g,'').replace('$#$','.');
                     //只能输入两位小数
-                    // this.value = this.value.replace(/^(\-)*(\d+)\.(\d\d).*$/,'$1$2.$3');
+                    this.value = this.value.replace(/^(\-)*(\d+)\.(\d\d).*$/,'$1$2.$3');
 
                     
                 })

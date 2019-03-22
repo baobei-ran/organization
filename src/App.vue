@@ -89,6 +89,10 @@ export default {
                             url: '/server/bookingOrder',
                         },
                         {
+                            title: '问诊订单',
+                            url: '/server/inquiryOrder',
+                        },
+                        {
                             title: '医生排班',
                             url: '/server/doctorScheduling',
                         },
@@ -106,7 +110,7 @@ export default {
                         },
                         {
                             title: '服务设置',
-                            url: '/server/xxx',
+                            url: '/server/serverSetting',
                         },
 
                     ]
@@ -162,7 +166,7 @@ export default {
                     children: [
                         {
                             title: '会员',
-                            url: '',
+                            url: '/vip/vipmember',
                         },
                         {
                             title: '会员',
@@ -176,7 +180,7 @@ export default {
                     children: [
                         {
                             title: '采购',
-                            url: '',
+                            url: '/supply/purchase',
                         },
                         {
                             title: '采购',
@@ -190,7 +194,7 @@ export default {
                     children: [
                         {
                             title: '通知',
-                            url: '',
+                            url: '/message/inform',
                         },
                         {
                             title: '通知',
@@ -217,6 +221,7 @@ export default {
                     ]
                 },
             ],
+
             SidebarList1: [//药店端
                 {
                     title: "首页",
@@ -236,6 +241,10 @@ export default {
                             url: '/jgmall/List',
                         },
                         {
+                            title: '商城管理',
+                            url: '/jgmall/openmall',
+                        },
+                        {
                             title: '发货单列表',
                             url: '/jgmall/sendGoodsList',
                         },
@@ -251,11 +260,8 @@ export default {
                             title: '评价管理',
                             url: '/jgmall/evaluationAdmin',
                         }
-                        ,
-                        {
-                            title: '商城管理',
-                            url: '/jgmall/mallAdmin',
-                        }
+                        
+                        
                     ]
                 },
                 {
@@ -294,8 +300,9 @@ export default {
                     children: [
                         {
                             title: '统计',
-                            url: '',
+                            url: '/statistics/home',
                         },
+                        
                     ]
                 },
                 {
@@ -304,12 +311,9 @@ export default {
                     children: [
                         {
                             title: '会员',
-                            url: '',
+                            url: '/vip/member',
                         },
-                        {
-                            title: '会员',
-                            url: '',
-                        }
+                        
                     ]
                 },
                 {
@@ -318,12 +322,9 @@ export default {
                     children: [
                         {
                             title: '供销',
-                            url: '',
+                            url: '/supply/marketing',
                         },
-                        {
-                            title: '供销',
-                            url: '',
-                        }
+                        
                     ]
                 },
                 {
@@ -337,21 +338,26 @@ export default {
                         {
                             title: '设备申请',
                             url: '/server/YaoequipmenApply',
+                        },
+                        {
+                            title: '处方单医生列表',
+                            url: '/server/Yaoprescription',
+                        },
+                        {
+                            title:'处方单列表',
+                            url: '/server/YaoprescriptionList'
                         }
                     ]
                 },
                 {
                     title: "通知",
-                    urlIndexof: 'message',
+                    urlIndexof: 'messages',
                     children: [
                         {
                             title: '通知',
-                            url: '',
+                            url: '/messages/informMsg',
                         },
-                        {
-                            title: '通知',
-                            url: '',
-                        }
+                        
                     ]
                 },
                 {
@@ -388,7 +394,12 @@ export default {
         }
     },
     created() {
-      this.sliderMenu = false   //区分医院 药店菜单
+        var user = this.localstorage.get('logindata');
+        var type = user.type.toString()                 // 根据type来区分医院 药店菜单
+        switch(type) {
+            case '1':  this.sliderMenu = true; break;   // 医院 
+            case '8':  this.sliderMenu = false; break;  // 药店菜单
+        }
     },
     mounted() {
         this.tabListActive();
@@ -922,4 +933,7 @@ input::-webkit-inner-spin-button {
 input[type="number"] {
     -moz-appearance: textfield;
 }
+
+
+
 </style>

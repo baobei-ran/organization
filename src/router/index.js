@@ -39,6 +39,7 @@ import changePhonechild from "@/components/public/changePhone/changePhonechild";
 // Yi文件
 import bookingOrder from "@/components/Yi/Yi-bookingOrder"; //预约订单
 import bookingOrderdetail from "@/components/Yi/bookingOrder/bookingOrderdetail"; //预约订单详情
+import inquiryOrder from '@/components/Yi/Yi-inquiryOrder';   // 问诊列表
 import doctorScheduling from "@/components/Yi/Yi-doctorScheduling"; //医生排班
 import doctorSchedulingdetail from "@/components/Yi/doctorScheduling/doctorSchedulingdetail"; //医生排班专家
 import doctorSchedulingdetail1 from "@/components/Yi/doctorScheduling/doctorSchedulingdetail1"; //医生排班普通
@@ -54,6 +55,7 @@ import drugrecord from "@/components/Yi/drugParabiose/record"; //药店合作记
 import drugrecorddetail from "@/components/Yi/drugParabiose/recorddetail"; //药店合作记录详情
 import equipmenApply from "@/components/Yi/Yi-equipmenApply"; //设备申请
 import equipmendetail from "@/components/Yi/equipmenApply/equipmendetail"; //设备详情
+import serverSetting from '@/components/Yi/Yi-serverSetting';          // 服务设置
 import equipmenjl from "@/components/Yi/equipmenApply/equipmenjl"; //记录
 import doctorList from "@/components/Yi/Yi-doctorList"; //医生列表
 import doctorListAdd from "@/components/Yi/doctorList/doctorListAdd"; //医生列表
@@ -63,17 +65,24 @@ import departmentList from "@/components/Yi/Yi-departmentList"; //科室列表
 import departmentDetail from "@/components/Yi/departmentList/departmentDetail"; //查看科室
 import departmentEdit from "@/components/Yi/departmentList/departmentEdit"; //编辑科室
 import departmentAdd from "@/components/Yi/departmentList/departmentAdd"; //编辑科室
+import Member from '@/components/Yi/Yi-vipmember';   // 会员首页
+import Inform from '@/components/Yi/Yi-inform';   // 通知首页
+import Purchase from '@/components/Yi/Yi-purchase';   // 采购首页
+
+
 // 药店端
 import shopMsg from "@/components/public/shopMsg"; //店铺信息
 import goodsList from "@/components/Yao/goodsList/testtable"; //商品列表  test
 import addGoods from "@/components/Yao/list/Yao-addGoods"; //新增商品
+import editGoods from "@/components/Yao/list/Yao-editGoods"; //编辑商品
 import List from "@/components/Yao/Yao-List"; //列表
 import listDetail from "@/components/Yao/List/Yao-ListDetail"; //列表
 import sendGoodsList from "@/components/Yao/Yao-sendGoodsList"; //发货列表
 import sendGoodsLog from "@/components/Yao/Yao-sendGoodsLog"; //发货日志
 import refundList from "@/components/Yao/Yao-refundList"; //退款列表
 import evaluationAdmin from "@/components/Yao/Yao-evaluationAdmin"; //评价管理
-import mallAdmin from "@/components/Yao/Yao-mall"; //商城管理
+import mallAdmin from "@/components/Yao/jgmall/Yao-mall"; //商城管理
+import Openmall from "@/components/Yao/jgmall/Open_the_mall"; //开通商城
 import YaodrugParabiose from "@/components/Yao/Yao-drugParabiose"; //药连体
 import YaoaddDrugParabiose from "@/components/Yao/drugParabiose/addDrugParabiose"; //添加药连体
 import YaodrugParabiosemsg from "@/components/Yao/drugParabiose/drugParabiosemsg"; //药店关联进度
@@ -82,7 +91,12 @@ import Yaodrugrecorddetail from "@/components/Yao/drugParabiose/recorddetail"; /
 import YaoequipmenApply from "@/components/Yao/Yao-equipmenApply"; //设备申请
 import Yaoequipmendetail from "@/components/Yao/equipmenApply/equipmendetail"; //设备详情
 import Yaoequipmenjl from "@/components/Yao/equipmenApply/equipmenjl"; //记录
-
+import Yaoprescription from '@/components/Yao/Yao-prescription';       // 处方医生列表
+import YaoprescriptionList from '@/components/Yao/Yao-prescriptionList';  // 处方单列表
+import statisticsHome from '@/components/Yao/Yao-statistics';                 // 统计首页
+import Vipmember from '@/components/Yao/Yao-member';                    //  药店会员首页
+import Marketing from '@/components/Yao/Yao-marketing';                 // 供销页
+import InfromMsg from '@/components/Yao/Yao-informMsg';                 //  通知页
 
 Vue.use(Router);
 
@@ -221,6 +235,21 @@ export default new Router({
       name: "机构信息成功",
       component: mesuccess
     },
+    {
+      path: '/vip/vipmember',
+      name: '开通会员',
+      component: Member
+    },
+    {
+      path: '/supply/purchase',
+      name: '采购',
+      component: Purchase
+    },
+    {
+      path: '/message/inform',
+      name: '消息通知',
+      component: Inform
+    },
     // 药店机构信息
     {
       path: "/setting/YaomechanismMsg",
@@ -271,6 +300,11 @@ export default new Router({
       path: "/server/bookingOrder/bookingOrderdetail",
       name: "预约订单详情",
       component: bookingOrderdetail
+    },
+    {
+      path: "/server/inquiryOrder",
+      name: "问诊订单",
+      component: inquiryOrder
     },
     {
       path: "/server/doctorScheduling",
@@ -348,6 +382,11 @@ export default new Router({
       component: equipmendetail
     },
     {
+      path: "/server/serverSetting",
+      name: "服务设置",
+      component:serverSetting
+    },
+    {
       path: "/server/equipmenApply/equipmenjl",
       name: "申请记录",
       component: equipmenjl
@@ -392,6 +431,22 @@ export default new Router({
       name: "药店端申请记录",
       component: Yaoequipmenjl
     },
+
+    // 处方
+    {
+      path: '/server/Yaoprescription',
+      name: '处方单医生列表',
+      component: Yaoprescription
+    },  
+    {
+      path: '/server/YaoprescriptionList',
+      name: '处方单列表',
+      component: YaoprescriptionList
+    },
+
+
+
+
     {
       path: "/data/doctorList",
       name: "医生列表",
@@ -443,6 +498,11 @@ export default new Router({
       component: addGoods
     },
     {
+      path: "/jgmall/goodsList/editGoods",
+      name: "编辑商品",
+      component: editGoods
+    },
+    {
       path: "/jgmall/List",
       name: "订单列表",
       component: List
@@ -476,6 +536,33 @@ export default new Router({
       path: "/jgmall/mallAdmin",
       name: "商城管理",
       component: mallAdmin
+    },
+    {
+      path: '/jgmall/openmall',
+      name: '开通商城',
+      component: Openmall
+    },
+    {
+      path: '/statistics/home',
+      name: '统计',
+      component: statisticsHome
+    },
+    {
+      path: '/vip/member',
+      name: '会员',
+      component: Vipmember
+    },
+    {
+      path: '/supply/marketing',
+      name: '供销',
+      component: Marketing
+    },
+    {
+      path: '/messages/informMsg',
+      name: '通知',
+      component: InfromMsg
     }
   ]
 });
+
+

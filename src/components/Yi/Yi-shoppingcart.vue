@@ -63,7 +63,7 @@
             </div>
             <p class="ac">
                 <span class="Mg-R24"><button class="cancel pointer" @click="close">返回</button></span>
-                <span class=""><button class="send pointer" @click="submitdata">提交</button></span>
+                <span class=""><button class="send pointer"  @click="submitdata">提交</button></span>
             </p>
         </div>
     </div>
@@ -82,8 +82,11 @@ export default {
             dropBalls: [],
             goodstypes: this.num,
             layerData: '',
-            backindex:this.$route.path=='/server/equipmenApply/equipmendetail'
+            backindex:this.$route.path=='/server/equipmenApply/equipmendetail',
         }
+    },
+    computed: {
+        
     },
     mounted() {
         console.log()

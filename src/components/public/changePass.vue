@@ -20,7 +20,7 @@
                     </td>
                     <td class="Pd-L24 Ft-S16 Color_gray6">
                         <input type="text" maxlength="4" id="code" @keypress="errcode=''" v-model="form.code" placeholder="请输入验证码" style="width: 210px;" class="Pd-L10" /><span class="getcode" @click="getcode">获取验证码</span>
-                        <p class="Ft-S12 Color_gray6 errmsg">{{errcode}}</p>
+                        <p class="Ft-S12 errmsg" >{{errcode}}</p>
                     </td>
                 </tr>
                 <tr class="" height="60px">
@@ -29,7 +29,7 @@
                     </td>
                     <td class="Pd-L24 Ft-S16 Color_gray6">
                         <input type="password" id="pass" @keypress="errmsg=''" v-model="form.pass" placeholder="请输入新密码" style="width: 300px;" />
-                        <p class="Ft-S12 Color_gray6 errmsg">{{errmsg}}</p>
+                        <p class="Ft-S12 errmsg">{{errmsg}}</p>
                     </td>
                 </tr>
                 <tr class="" height="60px">
@@ -38,7 +38,7 @@
                     </td>
                     <td class="Pd-L24 Ft-S16 Color_gray6">
                         <input type="password" id="secondpass" @keypress="repeatmsg=''" v-model="form.secondpass" placeholder="再次输入新密码" style="width: 300px;" />
-                        <p class="Ft-S12 Color_gray6 errmsg">{{repeatmsg}}</p>
+                        <p class="Ft-S12 errmsg">{{repeatmsg}}</p>
                     </td>
                 </tr>
                 <tr>
@@ -79,7 +79,8 @@ export default {
         initdata() {
             
             var phone = this.localstorage.get('logindata').phone
-            console.log(phone)
+            this.form.phone = phone
+            // console.log(phone)
             // this.form.phone=phone.substring(0,3)+'****'+phone.substring(7,11)
         },
         getcode() {
@@ -106,9 +107,9 @@ export default {
                 }, 1000);
                 _this.$http.post('/shv2/Alidayu/sendSMS', { telphone: _this.phone }, function (res) {//
                     if (res.code == 1) {
-
+                        layer.msg(res.code);
                     } else {
-
+                        layer.msg(res.code);
                     }
                 }, function (err) { console.log(err) });
             })
@@ -134,8 +135,11 @@ export default {
                     return
                 }
                 _this.$http.post('/shv2/Setting/pwd_edit', { phone: _this.phone, code: _this.form.code, pwd: _this.form.pass }, function (res) {
+                    console.log(res)
                     if (res.code == 1) {
                         layer.msg('修改成功')
+                    } else {
+                        layer.msg(res.msg)
                     }
                 }, function () {
                     layer.msg(res.msg)
@@ -178,6 +182,7 @@ export default {
         position: absolute;
         z-index: 66;
         padding-top: 3px;
+        color:rgb(250, 14, 14);
     }
     .getcode {
         display: inline-block;

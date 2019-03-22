@@ -49,7 +49,7 @@
                                 <td>操作</td>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody v-if='tableList.length'>
                             <tr v-for="(val,index) in tableList">
                                 <td v-text="index"></td>
                                 <td v-text="val.true_name">陈亚楠</td>
@@ -57,7 +57,7 @@
                                 <td v-text="val.title">心脏病、糖尿病、急性脑...</td>
                                 
                                 <td>
-                                    <el-switch v-model="val.sort" @change="setdep_op(val.did,val.sort)" active-color="#13ce66" :active-value="1" :inactive-value="0" inactive-color="#ff4949">
+                                    <el-switch v-model="val.sort" @change="setdep_op(val.did,val.sort)" active-color="#13ce66" :active-value="1" :inactive-value="0" inactive-color="#ccc">
                                     </el-switch>
                                 </td>
                                 <td>
@@ -67,8 +67,13 @@
                                 </td>
                             </tr>
                         </tbody>
+                        <tbody v-if='!tableList.length'>
+                            <tr>
+                                <td colspan='8'>无数据</td>
+                            </tr>
+                        </tbody>
                     </table>
-                    <div id="page" class="ac Mg-T30"></div>
+                    <div id="page" v-show='tableList.length' class="ac Mg-T30"></div>
                 </div>
             </div>
         </div>
@@ -109,9 +114,7 @@ export default {
                     if (res.code == 1) {
                         _this.count = res.count;
                         _this.tableList = res.data;
-                        if (num == 1) {
-                            _this.pageFun(res.count)
-                        }
+                        _this.pageFun(res.count)
                     } else {
                         _this.tableList = false;
                         _this.pageFun(0)
@@ -146,7 +149,7 @@ export default {
             layui.use(["layer"], function () {
                 _this.$http.post('/shv2/data/doc_op', { id: id, val: val }, function (res) {//
                     if (res.code == 1) {
-                        layui.layer.msg(res.msg)
+                        layui.layer.msg(res.msg, {icon:1})
                     }
                 }, function (err) { console.log(err) });
             });
