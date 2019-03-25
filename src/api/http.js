@@ -20,7 +20,6 @@ axios.interceptors.request.use(function (config) {
 
 // 添加响应拦截器
 axios.interceptors.response.use(function (response) {
-    
     // console.log(response)
     if (response.data.code == 406) {  // 如果未登录，返回登录页
         localStorage.clear();

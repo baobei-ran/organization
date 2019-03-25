@@ -57,30 +57,30 @@
                         <p class="Pd-T20 Pd-B20 Pd-L18 Ft-S16 Color_black">功能分类</p>
                         <div class="layui-row Pd-B20 Mg-T20 ac">
                             <div class="layui-col-md3">
-                                <p class="Ft-S14 Color_black Mg-B18 icon1 pointer">预约订单</p>
+                                <p class="Ft-S14 Color_black Mg-B18 icon1 pointer" @click='list(1)'>预约订单</p>
                             </div>
                             <div class="layui-col-md3">
-                                <p class="Ft-S14 Color_black Mg-B18 icon2 pointer">问诊订单</p>
+                                <p class="Ft-S14 Color_black Mg-B18 icon2 pointer" @click='list(2)'>问诊订单</p>
                             </div>
                             <div class="layui-col-md3">
-                                <p class="Ft-S14 Color_black Mg-B18 icon3 pointer">医生排班</p>
+                                <p class="Ft-S14 Color_black Mg-B18 icon3 pointer" @click='list(3)'>医生排班</p>
                             </div>
                             <div class="layui-col-md3">
-                                <p class="Ft-S14 Color_black Mg-B18 icon4 pointer">机构关联</p>
+                                <p class="Ft-S14 Color_black Mg-B18 icon4 pointer" @click='list(4)'>机构关联</p>
                             </div>
                         </div>
                         <div class="layui-row Pd-B20 ac">
                             <div class="layui-col-md3">
-                                <p class="Ft-S14 Color_black Mg-B18 icon5 pointer">医生列表</p>
+                                <p class="Ft-S14 Color_black Mg-B18 icon5 pointer" @click='list(5)'>医生列表</p>
                             </div>
                             <div class="layui-col-md3">
-                                <p class="Ft-S14 Color_black Mg-B18 icon6 pointer">科室列表</p>
+                                <p class="Ft-S14 Color_black Mg-B18 icon6 pointer" @click='list(6)'>科室列表</p>
                             </div>
                             <div class="layui-col-md3">
-                                <p class="Ft-S14 Color_black Mg-B18 icon5 pointer">设备申请</p>
+                                <p class="Ft-S14 Color_black Mg-B18 icon5 pointer" @click='list(7)'>设备申请</p>
                             </div>
                             <div class="layui-col-md3">
-                                <p class="Ft-S14 Color_black Mg-B18 icon6 pointer">机构设置</p>
+                                <p class="Ft-S14 Color_black Mg-B18 icon6 pointer" @click='list(8)'>机构设置</p>
                             </div>
                         </div>
                     </div>
@@ -142,6 +142,18 @@ export default {
                     }
                 }, function (err) {console.log(err)})
             }); 
+        },
+        list (num) {    // 功能分类跳转链接
+            switch(num) {
+                case 1: this.$router.push({path: '/server/bookingOrder'}); break;
+                case 2: this.$router.push({path:'/server/inquiryOrder'}); break;
+                case 3: this.$router.push({path:'/server/doctorScheduling'}); break;
+                case 4: this.$router.push({path: '/server/doctorParabiose'}); break;
+                case 5: this.$router.push({path: '/data/doctorList'}); break;
+                case 6: this.$router.push({path: '/data/departmentList'}); break;
+                case 7: this.$router.push({path: '/server/equipmenApply'}); break;
+                case 8: this.$router.push({path: '/setting/mechanismMsg/checkmemsg'}); break;
+            }
         }
     }
 }

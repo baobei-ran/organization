@@ -76,20 +76,36 @@
                     <tbody>
                         <tr>
                             <td>上午</td>
-                            <td v-for="(val,index) in datearr"  :day='val.date' dtype='1'>
-                                <i v-if='val.date == 3.29' class="icon_default">普</i>
+                            <td v-for="(val,index) in datearr"  :key='index'>
+                                <span v-for='(item, i) in normal'>
+                                    <i v-if='val.date == item.date1 && item.subsection_type == val.up' class="icon_default">普</i>
+                                </span>
+                                 <span v-for='(sp, s) in stop' >
+                                     <i v-if='val.date == sp.date2 && sp.subsection_type == val.up' class="icon_stop">停</i>
+                                </span>
                             </td>
                         </tr>
                         <tr>
                             <td>下午</td>
-                            <td v-for="(val,index) in datearr" :day='val.date' dtype='2'>
-                                <i v-if='val.date == 4.01' class="icon_stop">停</i>
+                            <td v-for="(val,index) in datearr" :key='index'>
+                                <span v-for='(item, i) in normal' >
+                                    <i v-show='val.date == item.date1 && item.subsection_type == val.centre ' class="icon_default">普</i>
+                                    
+                                </span>
+                                <span v-for='(sp, s) in stop' >
+                                     <i v-if='val.date == sp.date2 && sp.subsection_type == val.centre' class="icon_stop">停</i>
+                                </span>
                             </td>
                         </tr>
                         <tr>
                             <td>晚上</td>
-                            <td  v-for="(val,index) in datearr" :day='val.date' dtype='3'>
-                                <i v-if='val.date == 3.31' class="icon_default">普</i>
+                            <td  v-for="(val,index) in datearr" :key='index' :dtype='val.out'>
+                                <span v-for='(item, i) in normal' >
+                                    <i v-if='val.date == item.date1 && item.subsection_type == val.out' class="icon_default">普</i>
+                                </span>
+                                 <span v-for='(sp, s) in stop' >
+                                     <i v-if='val.date == sp.date2 && sp.subsection_type == val.out' class="icon_stop">停</i>
+                                </span>
                             </td>
                         </tr>
                     </tbody>
@@ -114,6 +130,7 @@ export default {
     mounted() {
         this.initdata();
         this.Datelist()
+        
     },
     methods: {
         initdata() {
@@ -122,23 +139,55 @@ export default {
                 console.log(res)
                 if (res.code == 1) {
                     _this.doctorMsg = res.data;
-                    _this.normal = res.normal;
-                    _this.stop = res.stop;
-                    _this.normal.forEach(val => {
-                        let d = new Date().getTime();
-                        var b = _this.$moment(val.date1).format('MM.DD')
-                        console.log(b)
-                        
+                    var pu = res.normal;
+                    var sp = res.stop;
+                    Date.prototype.Formats = function (fmt) {    // 封装时间转换格式
+                        var o = {
+                            "M+": this.getMonth() + 1, //月份
+                            "d+": this.getDate(), //日
+                            "h+": this.getHours(), //小时
+                            "m+": this.getMinutes(), //分
+                            "s+": this.getSeconds(), //秒
+                            "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+                            "S": this.getMilliseconds() //毫秒
+                        };
+                        if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+                        for (var k in o)
+                            if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+                        return fmt;
+                    };
+                
+                if (pu.length > 0) {    // 普通门诊
+                    var time = [];
+                    pu.forEach(val => {
+                        var cTime = new Date(val.date1*1000).Formats("MM.dd");
+                        val.date1 = cTime
+                        time.push(val)
                     })
-                    
+                    _this.normal = time
+                } else {
+                    _this.normal = pu
+                }
+                if (sp.length > 0) {    // 停诊
+                    var timeSp = []
+                    sp.forEach(val => {
+                        var commonTime = new Date(val.date2*1000).Formats("MM.dd");
+                        val.date2 = commonTime
+                        timeSp.push(val)
+                    })
+                    _this.stop = timeSp;
+                } else {
+                    _this.stop = sp;
+                }
                 }
             }, function (err) { console.log(err)})
         },
+        
         Datelist() {
             this.datearr;   // 空数组，用来接收时间
             let datetime = new Date().getTime();
             let onedays = 24 * 60 * 60 * 1000
-            for (let i = 0; i < 21; i++) {
+            for (let i = 0; i < 20; i++) {
                 let month = (new Date(datetime).getMonth() + 1 + '').length > 1 ? new Date(datetime).getMonth() + 1 : '0' + (new Date(datetime).getMonth() + 1)     // 月份
                 let dates = (new Date(datetime).getDate() + '').length > 1 ? new Date(datetime).getDate() : '0' + new Date(datetime).getDate();                     // 几号
                 let week = new Date(datetime).getDay();     //  星期
@@ -153,7 +202,10 @@ export default {
                 }
                 let dateobj = {
                     week: week,
-                    date: month + '.' + dates
+                    date: month + '.' + dates,
+                    up: 1,
+                    centre: 2,
+                    out: 3
                 }
                 this.datearr.push(dateobj);
                 datetime += onedays;

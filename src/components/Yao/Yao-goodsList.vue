@@ -7,7 +7,9 @@
                     <li class="layui-this" @click="tab(0)">全部（{{ goodCount.count }}）</li>
                     <li @click="tab(1)">已上架（{{ goodCount.count1 }}）</li>
                     <li @click="tab(2)">已下架（{{ goodCount.count2 }}）</li>
-                    <li @click="tab(3)">审核（{{ goodCount.count4 }}）</li>
+                    <li @click="tab(3)">已售罄（{{ goodCount.count3 }}）</li>
+                    <li @click="tab(4)">待审核（{{ goodCount.count4 }}）</li>
+                    <li @click="tab(5)">审核未通过（{{ goodCount.count5 }}）</li>
                     <p class="fr Ft-S14 Color_blue"><span class="Mg-R24 pointer"><i class="upfile_icon"></i>批量上传</span><span class="pointer" @click="go('/jgmall/goodsList/addGoods')"><i class="add_icon"></i>新增商品</span></p>
                 </ul>
 
@@ -34,112 +36,255 @@
                             <div class="layui-col-md4">
                                 <div class="layui-inline lay_width">
                                     <div class="layui-input-inline" style="width:100%">
-                                        <span class="Ft-S14 selectbtn ac pointer" @click='goodLists(1)'>筛选订单</span><span class="Color_blue pointer Ft-S14 Mg-L24" @click='empty'>清空筛选条件</span>
+                                        <span class="Ft-S14 selectbtn ac pointer" @click='search'>筛选订单</span><span class="Color_blue pointer Ft-S14 Mg-L24" @click='empty'>清空筛选条件</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     
-                    
-                        
-                        
-                   
-                    
-                    <table class="layui-table layui-form" id='demo' lay-filter="test" lay-skin="nob" lay-event='aa' style='text-align:center;'>
-                        <thead>
-                            <tr class="table_headtr" >
-                                
-                                <th lay-data="{field:'city', type:'checkbox',align:'center', title: '全选', width:80}">全选</th>
-                                <th lay-data="{field:'username',align:'center',width:200}">商品名称</th>
-                                <th lay-data="{field:'sex',align:'center',minWidth:250,}">商品编码</th>
-                                <th lay-data="{field:'id', sort: true,align:'center',edit:true,minWidth:80}">排序</th>
-                                <th lay-data="{field:'sign', sort: true,align:'center',minWidth:100}">库存</th>
-                                <th lay-data="{field:'experience', sort: true,align:'center',minWidth:80}">已售</th>
-                                <th lay-data="{field:'score',align:'center',minWidth:90}">商品售价</th>
-                                <!-- <th lay-data="{field:'wealth',align:'center',width: '100'}" >审核状态</th> -->
-                                <th lay-data="{field:'right',align:'center',width:260,toolbar: '#toolBar'}">操作</th>
-                                
-                            </tr>
-                            <!-- <tr style="width: 100%;">
-                                <td lay-data="{field:'city', type:'checkbox',align:'center', title: '全选', width:80}">全选</td>
-                                <td style='color: #3196FF!important;' id='checkeds' colspan="6">批量操作，当前选择8条信息</td>
-                            </tr> -->
-                        </thead>
+                    <!-- 加的选项卡风格只是装饰 -->
+                    <!-- <div class="layui-tab-item layui-show"></div>
+                    <div class="layui-tab-item"></div>
+                    <div class="layui-tab-item"></div>
+                    <div class="layui-tab-item"></div> -->
+                    <!--  -->
 
-                        <tbody>
-                            <tr v-for="val in 5" >
-                                <td>
-                                    <div class="layui-form-item">
-                                        <input type="checkbox" name="like1[write]" lay-skin="primary" title="全部" checked="">
-                                    </div>
-                                </td>
-                                <td>
-                                    <img class='imgList' src="" alt="">
-                                    <span style="display:inline-block;width:243px; text-align:left" class="Mg-L16" >OTC（非处方药）同仁堂药业 益安宁丸112丸*3瓶宁丸112丸*3瓶</span>
-                                </td>
-                                <td >32143</td>
-                                <td >33</td>
-                                <td>43214</td>
-                                <td >32143</td>
-                                <td >321432</td>
-                                <!-- <td>未通过</td> -->
-                                <td>
-                                   <div id='toolBar' style="z-index: 9999;">
-                                        <span class="pointer Color_blue Mg-R20" lay-event="edit" @click='edits(val.id)'>编辑</span>
-                                        <span class="pointer Color_blue Mg-R20" lay-event="xia">下架</span>
-                                        <span class="pointer Color_blue moreafter" id='more' :class="more1?'moreafterup':'moreafter'" lay-event="more"><span>更多</span></span>
-                                        <dl class="tdmore hide" :class="{'active':val.id === numId}">
-                                            <dd class="pointer" lay-event="del" @click='del(val.id, 3)'>删除</dd>
-                                            <dd class="pointer" lay-event="record" @click="sendgoods(val.id)">记录</dd>
-                                        </dl>
-                                   
-                                  </div>
-                                    
-                                </td>
-                            </tr>
-                        </tbody>
+            <div class="table_box" v-if='tdlast == 4 ? false : tdlast == 5 ? false : true'>
+                <!-- <div class='table_head' v-show='multipleSelection.length' v-if='tdlast == 0? false : tdlast == 3? false : true'>
+                    <span style='color: #3196FF;'>批量操作，当前选择{{ multipleSelection.length }}条信息</span>
+                    <div v-show='tdlast == 2 ? true:false'><el-button type="primary" size='mini' >上架</el-button></div>
+                    <div v-show='tdlast == 1 ? true:false'><el-button type="primary" size='mini' >下架</el-button></div>
+                </div> -->
+                   <el-table
+                    :data="goodList"
+                    :row-style='styleColor'
+                    border
+                    @selection-change="handleSelectionChange"
+                    style="width: 100%;height: 515px;overflow: auto;" :header-cell-style='styleObj' >
+                        <el-table-column
+                        type="selection"
+                        label="全选"
+                        width="80" align='center'>
+                        </el-table-column>
+                        <el-table-column
+                            min-width="100%"
+                            label="商品名称"
+                           align ='center' style='width:300px!mportant;'>
 
+                           <template slot-scope="scope">
+                                <div  style='-webkit-display:flex;display:flex;align-items: center;text-align:center'>
+                                    <!-- <img :src="$http.baseURL+scope.row.pic" alt="" style='width: 60px; height:60px;display:block;' > -->
+                                <p style='margin-left:20px;text-align:center;color: #333;'>{{ scope.row.name }}</p>
+                                </div>
+                            </template>
 
+                        </el-table-column>
+                        <el-table-column
+                            min-width="60%"
+                            label="商品图片"
+                           align ='center' style='width:300px!mportant;'>
+                           <template slot-scope="scope">
+                                <div style='-webkit-display:flex;display:flex;align-items: center; text-align:center;'>
+                                    <img :src="$http.baseURL+scope.row.pic" alt="" style='width: 60px; height:60px;display:block;margin: 0 auto;' >
+                                </div>
+                            </template>
 
+                        </el-table-column>
 
+                        <el-table-column
+                            prop="number"
+                            label="商品编码" align ='center' style='width: 200px;'>
+                        </el-table-column>
+                        <!-- <el-table-column
+                            prop="id"
+                            sortable
+                            min-width="50%"
+                            :cell-dblclick='editSort'
+                            @click.native="handleEdit($index, row)"
+                            label="排序" align ='center'>
+                        </el-table-column> -->
+                        <el-table-column
+                            prop="stock"
+                            sortable
+                            min-width="50%"
+                            label="库存" align ='center'>
+                        </el-table-column>
+                        <el-table-column
+                            prop="monthly"
+                            sortable
+                            min-width="50%"
+                            label="已售" align ='center' >
+                        </el-table-column>
 
-
-                        <!-- <tbody>
-                            <tr v-for="(val, index) in goodList" :key='index'>
-                                <td>
-                                    <div class="layui-form-item">
-                                        <input type="checkbox" name="like1[write]" lay-skin="primary" title="全部" checked="">
-                                    </div>
-                                </td>
-                                <td>
-                                    <img class='imgList' :src="$http.baseURL+val.pic" alt="">
-                                    <span style="display:inline-block;width:243px; text-align:left" class="Mg-L16" v-text="val.name">OTC（非处方药）同仁堂药业 益安宁丸112丸*3瓶宁丸112丸*3瓶</span>
-                                </td>
-                                <td v-text='val.number'>32143</td>
-                                <td v-text="val.id">33</td>
-                                <td v-text='val.stock'>43214</td>
-                                <td v-text='val.monthly'>32143</td>
-                                <td v-text='val.money'>321432</td>
-                                <td>未通过</td>
-                                <td>
-                                   <div id='toolBar' style="z-index: 9999;">
-                                        <span class="pointer Color_blue Mg-R20" lay-event="edit" @click='edits(val.id)'>编辑</span>
-                                        <span class="pointer Color_blue Mg-R20" lay-event="xia">下架</span>
-                                        <span class="pointer Color_blue moreafter" id='more' :class="more1?'moreafterup':'moreafter'" lay-event="more"><span>更多</span></span>
-                                        <dl class="tdmore hide" :class="{'active':val.id === numId}">
-                                            <dd class="pointer" lay-event="del" @click='del(val.id, 3)'>删除</dd>
-                                            <dd class="pointer" lay-event="record" @click="sendgoods(val.id)">记录</dd>
-                                        </dl>
-                                   
-                                  </div>
-                                    
-                                </td>
-                            </tr>
-                        </tbody> -->
-                    </table>
-                   
+                        <el-table-column
+                            prop="money"
+                            min-width="50%"
+                            label="商品售价" align ='center'>
+                            <template slot-scope="scope">
+                                <div>
+                                    <span>￥</span><span>{{ scope.row.money }}</span>
+                                </div>
+                            </template>
+                        </el-table-column>
+                        <el-table-column
+                            prop="type"
+                            min-width="50%"
+                            label="商品状态" align ='center'>
+                            <template slot-scope="scope">
+                                <div>
+                                    <span v-show='scope.row.type == 1 ? true :false'>已上架</span>
+                                    <span v-show='scope.row.type == 2? true :false'>已下架</span>
+                                    <span v-show='scope.row.type == 3? true :false'>已售罄</span>
+                                </div>
+                            </template>
+                        </el-table-column>
                             
+                        <el-table-column
+                            min-width="50%"
+                            label="推荐" align ='center'>
+                            <template slot-scope="scope">
+                                        <el-switch
+                                            v-model="scope.row.recommend"
+                                            @change='tuijian(scope.row.id)'
+                                            active-color="#13ce66"
+                                            inactive-color="#ccc">
+                                        </el-switch>
+                            </template>
+                        </el-table-column>
+                           
+
+                        <el-table-column
+                            min-width="80%"
+                            label="操作" align ='center'>
+
+                            <template slot-scope="scope" style='display: flex;'>
+                                <button class='btn' 
+                                    @click="edits(scope.row)">编辑</button>
+                                <button class='btn' v-if='tdlast == 0 ? true : tdlast == 1 ? true : false'
+                                    @click="soldOut(scope.row)">下架</button>
+                                    <button class='btn' v-if='tdlast == 2 ? true : false'
+                                    @click="putaway(scope.row)">上架</button>
+                                <button class='btn' 
+                                @click="shows(scope.row)">更多 <i class='el-icon-caret-bottom'></i><i class='el-icon-caret-top hide' ></i></button>
+                                <dl class="tdmore hide" :class="{'active':scope.row.id === numId}" >
+                                    <dd class="pointer"  @click='del(scope.row)'>删除</dd>
+                                    <dd class="pointer"  @click="sendgoods(scope.row.id)">记录</dd>
+                                </dl>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </div>
+                    
+                <div v-else-if="tdlast == 4 ? true : tdlast == 5 ? true : false " >   <!-- 审核页面-->
+                    
+                    <el-table
+                    :data="goodList"
+                    :row-style='styleColor'
+                    border
+                    style="width: 100%;height: 515px;overflow: auto;" :header-cell-style='styleObj' >
+                        <el-table-column
+                        type="selection"
+                        label="全选"
+                        width="80" align='center'>
+                        </el-table-column>
+                        <el-table-column
+                            min-width="100%"
+                            nin-height = '70px'
+                            prop="goodList"
+                            label="商品名称"
+                           align ='center' style='width:300px!mportant;'>
+                           <template slot-scope="scope">
+                                <div  style='-webkit-display:flex;display:flex;align-items: center;'>
+                                    <!-- <img :src="$http.baseURL+scope.row.pic" alt="" style='width: 60px; height:60px;display:block;' > -->
+                                <p style='margin-left:20px;text-align:left;color: #333;'>{{ scope.row.name }}</p>
+                                </div>
+                            </template>
+
+                        </el-table-column>
+                         <el-table-column
+                            min-width="80%"
+                            nin-height = '70px'
+                            prop="goodList"
+                            label="商品名称"
+                           align ='center' style='width:300px!mportant;'>
+                           <template slot-scope="scope">
+                                <div  style='-webkit-display:flex;display:flex;align-items: center;'>
+                                    <img :src="$http.baseURL+scope.row.pic" alt="" style='width: 60px; height:60px;display:block;margin:0 auto;' >
+                                </div>
+                            </template>
+
+                        </el-table-column>
+                        <el-table-column
+                            prop="number"
+                            label="商品编码" align ='center' style='width: 200px;'>
+                        </el-table-column>
+                        <el-table-column
+                            prop="id"
+                            sortable
+                            min-width="50%"
+                            :cell-dblclick='editSort'
+                            @click.native="handleEdit($index, row)"
+                            label="排序" align ='center'>
+                        </el-table-column>
+                        <el-table-column
+                            prop="stock"
+                            sortable
+                            min-width="50%"
+                            label="库存" align ='center'>
+                        </el-table-column>
+
+                        <el-table-column
+                            prop="money"
+                            min-width="50%"
+                            label="商品售价" align ='center'>
+                            <template slot-scope="scope">
+                                <div>
+                                    <span>￥</span><span>{{ scope.row.money }}</span>
+                                </div>
+                            </template>
+                        </el-table-column>
+
+                            <el-table-column
+                            prop="examine"
+                            min-width="50%"
+                            label="审核" align ='center'>
+                                <template slot-scope="scope">
+                                    <div style='color: red;font-size:14px' v-if='scope.row.examine == 2 ? true : false'>
+                                     未通过 <i class="el-icon-warning"></i>
+                                    </div>
+                                    <div v-if='scope.row.examine == 0 ? true : false'>待审核</div>
+                                    <div v-if='scope.row.examine == 1 ? true : false'>审核通过</div>
+                                </template>
+                            </el-table-column>
+
+                        <el-table-column
+                            min-width="80%"
+                            prop="examine"
+                            label="操作" align ='center'>
+
+                            <template slot-scope="scope" style='display: flex;'>
+                                <div v-if='scope.row.examine == 0 ? true : false'>
+                                    审核中，无法操作
+                                </div>
+                                <div v-else>
+                                    <button class='btn' 
+                                        @click="edits(scope.row)">重新编辑</button>
+                                    <button class='btn' 
+                                    @click="shows(scope.row)">更多 <i class='el-icon-caret-bottom'></i><i class='el-icon-caret-top hide' ></i></button>
+                                    <dl class="tdmore hide" :class="{'active':scope.row.id === numId}" >
+                                        <dd class="pointer"  @click='del(scope.row)'>删除</dd>
+                                        <dd class="pointer"  @click="sendgoods(scope.row.id)">记录</dd>
+                                    </dl>
+                                </div>
+                                
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </div> 
+
+                    <div v-show='goodList.length' id='page'></div>
+                           
                 </div>
             </div>
         </div>
@@ -150,11 +295,18 @@
                     <td class="Color_black Ft-S16" width="33.3%">操作人</td>
                     <td class="Color_black Ft-S16">记录</td>
                 </tr>
-                <tr v-for="(val,index) in record" :key='index'>
-                    <td>2018年11月12日 21:11:22</td>
-                    <td v-text='val.person'>188****9979</td>
-                    <td v-text='val.record'>商品上架</td>
-                </tr>
+                <tbody v-if='record.length'>
+                    <tr v-for="(val,index) in record" :key='index'>
+                        <td>2018年11月12日 21:11:22</td>
+                        <td v-text='val.person'>188****9979</td>
+                        <td v-text='val.record'>商品上架</td>
+                    </tr>
+                </tbody>
+                 <tbody v-else>
+                    <tr>
+                        <td colspan="3"> 暂无数据</td>
+                    </tr>
+                </tbody>
             </table>
         </div>
     </div>
@@ -164,7 +316,12 @@ export default {
     name: 'goodsList',
     data() {
         return {
+            styleObj: {
+                'background':'#DAE9FF',
+                'color': '#333',
+            },
             
+            num: false,     // 是否全选
             showA: true, // 
             numId: 0,   // id
             tdlast: 0,  // 商品状态
@@ -178,6 +335,7 @@ export default {
             number: '',     // 商品编号
             record: [],      // 记录列表
             tabShen: true,   // 审核
+            multipleSelection: []   // 选中的值进行保存
         }
     },
     mounted() {
@@ -186,26 +344,82 @@ export default {
         this.initdata(5) // test
     },
     methods: {
+        //点击排序
+        handleEdit(index, row) {
+            this.showEdit[index] = true;
+            this.showBtn[index] = true;
+            this.$set(this.showEdit,row,true)
+            this.$set(this.showBtn,row,true)
+        },
+
+    
+
+        // 排序
+        editSort (row, column, cell, event) {
+            // console.log(row, column, cell, event)
+        },
+
+    styleColor ({row, rowIndex}) { // 隔行变色
+        if (rowIndex %2 == 1) {
+        return { "background-color": "#E5F0FF" }
+        } else {
+            return { "background-color": "#FFF" }
+        }
+        return { 'height' : '60px' }
+        console.log( rowIndex)
+    },
+
+
+    handleSelectionChange(val) {    // 全选
+        if (val.length) {
+            this.multipleSelection = val;
+            this.num = true
+        } else {
+            this.multipleSelection = val;
+            this.num = false
+        }
         
+      },
+
+
+        search () { // 搜索
+            var _this = this;
+            layui.use('layer', function(){
+            var layer = layui.layer;
+                if (!_this.number && !_this.name) {
+                    layer.msg('请输入要搜索的内容');
+                    return;
+                }
+                _this.goodLists(1)
+            });   
+            
+
+        },
+
 
 
         tab(num) {  // 选项卡
             this.tdlast = num
             this.goodLists(1)
+            if (num == 1) {
+                this.multipleSelection = []
+            } else {
+                this.multipleSelection = []
+            }
         },
         goodLists(num) {    // 数据 和 搜索
             var _this = this;
-            
+            _this.goodList = []
             layui.use(['layer', 'form'], function(){
                 var layer = layui.layer;
                 var form = layer.form;
                 _this.$http.post('/shv2/goods/index', {type: _this.tdlast,examine: _this.examine,name: _this.name, number: _this.number, page: _this.page, limit: _this.limit}, function (res) {
+                    console.log(res)
                     if(res.code == 1) {
                         _this.goodCount = res;
                         _this.goodList = res.data;
-                        console.log(res)
                         if (num == 1) {
-                            // _this.initdata(res.count) 
+                            // _this.initdata(res.num) // 传递总数
                         }
                     } else {
                         _this.initdata(0) 
@@ -213,115 +427,84 @@ export default {
                 }, function (err) { console.log(err)})
             });
         },
-        initdata(total) {  // table 表格
+        initdata(total) {  // 分页
             var _this = this;
-            this.$nextTick(() => {
-            layui.use(['table', 'form'], function () {
-                var table = layui.table;
-               var form = layui.form;
-               
-                table.init('test',
-                 {
-                    height: 515 //设置高度
-                    , limit: total, //注意：请务必确保 limit 参数（默认：10）是与你服务端限定的数据条数一致
-                    page: {
-                        layout: ['prev', 'page', 'next', 'skip']
-                    },
-                    done: function (res, curr, count) {
-                        $('thead tr').css({ 'background-color': '#dae9ff', 'height': '50px' });
-                        $('.layui-table-header').css({ 'border-width': '0px 0px 10px', 'border-color': '#fff' });
-                        $('.layui-table-view').css({ 'border-width': '0px 0px 0px' });
-                        $('.layui-table-body').css({ 'border': '1px solid #ddd' });
-                        $('.layui-table-body>table td').css({ 'height': '100px' });
-                        $('.layui-table-box').css({ 'overflow': 'visible' });
-                        $('.layui-table-grid-down').css({ 'display': 'none' });
-                        $('.layui-table-tips-main').css({ 'display': 'none' });
-                        $('.layui-table-tips-c').css({ 'display': 'none' });
-                        $('.layui-table-cell').css({ 'overflow': 'auto!important' })
-
+            layui.use(['layer','laypage'], function () {
+                var layer = layui.layer;
+               var laypage = layui.laypage
+                //完整功能
+                laypage.render({
+                    elem: 'page'
+                    ,count: total
+                    ,layout: [ 'prev', 'page', 'next', 'skip']
+                    ,jump: function(obj, first){
+                        if(!first){
+                            _this.goodLists(obj.curr) // /得到当前页，以便向服务端请求对应页的数据
+                        }
                     }
-                });
-                table.on('sort(test)', function (obj) { //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
-                    $('thead tr').css({ 'background-color': '#dae9ff', 'height': '50px' });
-                    $('.layui-table-header').css({ 'border-width': '0px 0px 10px', 'border-color': '#fff' });
-                    $('.layui-table-view').css({ 'border-width': '0px 0px 0px' });
-                    $('.layui-table-body').css({ 'border': '1px solid #ddd' });
-                    $('.layui-table-body>table td').css({ 'height': '100px' });
-                    $('.layui-table-box').css({ 'overflow': 'visible' })
-                    $('.layui-table-grid-down').css({ 'display': 'none' });
-                    $('.layui-table-tips-main').css({ 'display': 'none' });
-                    $('.layui-table-tips-c').css({ 'display': 'none' });
-                });
-                table.on('checkbox(test)', function (obj) {
-                    // console.log(obj.checked); //当前是否选中状态
-                    // console.log(obj.data); //选中行的相关数据
-                    // console.log(obj.type); //如果触发的是全选，则为：all，如果触发的是单选，则为：one
-                    $('.layui-form-checked[lay-skin=primary] i').attr('class', 'layui-icon layui-icon-ok checkedbox1')
                 });
                 
-                // 编辑、删除、更多操作
-                table.on('tool(test)', function(obj){
-                    // console.log(obj.data.id)     //  获取id
-                    switch(obj.event) {
-                        case "more":
-                        
-                            _this.numId = obj.data.id
-                            _this.more1 = !_this.more1
-                            $('.active').show()
-                            
-                        break;
-                        case 'xia': _this.soldOut(obj.data.id, 2); break;
-                        case 'edit': _this.edits(obj.data.id); break;
-                        case 'del': _this.del(obj.data.id, 3); break;
-                        case 'record': _this.sendgoods(obj.data.id); break;
-                    }
-                });
-                form.render()
-                table.render()
+                
+                
             })
-            });
            
         },
-        edits(id) { // 编辑
+        tuijian (id) {    // 推荐是否开启
+            var _this = this;
             console.log(id)
-            this.go('/jgmall/goodsList/addGoods?id='+id)
-        },
-        shows(id) { // 更多
-            var _this = this;
-            layui.use(['layer','form'], function(){
-                var layer = layui.layer;
-                var form = layui.form;
-                _this.numId = id
-                _this.showA = !_this.showA
-                form.render()
-            });
-           
-        },
-        soldOut(id, num) {  // 下架
-            // console.log(id, num)
-            var _this = this;
             layui.use('layer', function(){
             var layer = layui.layer;
-            _this.$http.post('/shv2/goods/goods_set', {id: id, type: num}, function (res) {
+            _this.$http.post('/shv2/goods/recommend', {id:id}, function (res) {
                 // console.log(res)
-                layer.msg(res.msg);
-            }, function (err) { console.log(err) })
-            
+                if (res.code == 1) {
+                    layer.msg(res.msg, { icon:1});
+                } else {
+                    layer.msg(res.msg, { icon:2});
+                }
+            }, function (err) { console.log(err)})
+            }); 
+        },
+        edits(data) { // 编辑
+            let { id } = data
+            // console.log(id)
+            this.go('/jgmall/goodsList/editGoods?id='+id)
+        },
+        shows(data) { // 更多
+            var { id } = data;
+            var _this = this;
+            if (_this.numId == id) {
+                _this.numId = ''
+            } else {
+                _this.numId = id
+            }
+                
+        },
+        soldOut(data) {  // 下架
+            var { id } = data;
+            var _this = this;
+            layui.use('layer', function(){
+                var layer = layui.layer;
+                _this.$http.post('/shv2/goods/goods_set', {id: id, type: 2}, function (res) {
+                    // console.log(res)
+                    layer.msg(res.msg);
+                }, function (err) { console.log(err) })
             });  
         },
-        del (id, num) { // 删除商品
+        del (data) { // 删除商品
             var _this = this;
+            var { id } = data;
              layui.use('layer', function(){
                 var layer = layui.layer;
-                _this.$http.post('/shv2/goods/goods_set', {id: id, type: num}, function (res) {
+                _this.$http.post('/shv2/goods/goods_set', {id: id, type: 3}, function (res) {
                     // console.log(res)
                     layer.msg(res.msg);
                 }, function (err) { console.log(err) })
             })
         },
         sendgoods(id) { //  商品操作记录
-            console.log(id)
+            // console.log(id)
             var _this = this;
+            _this.record = '';  // 每次查看前，先进行一次清空数据
             this.$http.post('/shv2/goods/goods_log', {id:id}, function (res) {
                 // console.log(res)
                 if(res.code == 1) {
@@ -357,35 +540,88 @@ export default {
         empty() {   // 清空
             this.name = '';
             this.number = '';
+        },
+
+        putaway (data) {    // 上架
+            // console.log(data)
+            let { id } = data;
+            var _this = this;
+            layui.use('layer', function(){
+            var layer = layui.layer;
+                _this.$http.post('/shv2/goods/goods_set', { id: id, type: 4 }, function (res) {
+                    console.log(res)
+                    if (res.code == 1) {
+                        layer.msg(res.msg)
+                    } else {
+                        layer.msg(res.msg);
+                    }
+                }, function (err) { console.log(err)})
+            
+            });  
         }
     }
 }
 </script>
 <style scoped lang='less'>
-tbody tr > td:nth-child(2) div {
-    height: 100px;
-    display: flex;
-    align-items: center;
+
+#goodsList {
+    
+    .layui-tab-content .btn {
+        color: #3196FF;
+        margin: 0 4px;
+        border: 0;
+        background: none;
+        cursor: pointer;
+    }
+    .el-table__body {
+        body > tr.el-table__row {
+            height: 80px;
+        }
+    }
+    .el-table tr{
+        height: 50px;
+    }
+    tbody tr > td:nth-child(4) div {
+        display: inline-block;
+        /* width: 50px; */
+        height: 27px;
+        border: 1px solid #aaaaaa;
+    }
+    .el-table__header .has-gutter tr th.el-table_1_column_2 > .cell {
+        display: flex;
+    }
+    .hide {
+        display: none;
+    }
+    .table_box {
+        position: relative;
+    }
+    .table_head {
+        position: absolute;
+        z-index: 99;
+        width: 90%;
+        right: 5px;
+        background-color: #DAE9FF;
+        padding: 14px 30px 14px 0;
+        -webkit-display: flex;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
 }
 
-tbody tr > td:nth-child(4) div {
-    display: inline-block;
-    /* width: 50px; */
-    height: 27px;
-    border: 1px solid #aaaaaa;
-}
-tbody tr > td:nth-child(8) div {
-    overflow: visible;
-}
+
 .tdmore {
     position: absolute;
     z-index: 666;
     height: 86px;
     width: 100px;
-    right: 40px;
+    right: 0px;
+    top: 45px;
     border: 1px solid #dddddd;
     margin-top: 10px;
     background-color: #fff;
+    z-index: 100;
 }
 .tdmore:after {
     content: "";
@@ -426,6 +662,11 @@ tbody tr > td:nth-child(8) div {
 
 <style scoped lang="less">
 #goodsList {
+    #page {
+        text-align:center;
+        margin-top: 5px;
+        padding-bottom: 10px;
+    }
     .orderList_tit {
         border-bottom: 1px solid #e6e6e6;
     }
@@ -643,5 +884,7 @@ tbody tr > td:nth-child(8) div {
 .layui-table thead tr #checkeds {
     color: #3196FF!important;
 }
+
+
 
 </style>

@@ -179,16 +179,14 @@ export default {
             phone: '',                          // 手机号
             phoneCode: '',                      // 手机验证码
             dataObj: {
-                bank_name: "工商银行",
-                bankcard: "621226****8781",
-                banktel: "199****8302",
-                bindid: "342857139",
-                cardtype: 0,
-                id: 133,
-                idCardNo: "1306***********650",
-                img: "/upload/bankcard/ICBC.png",
+                bank_name: "",
+                bankcard: "",
+                banktel: "",
+                bindid: "",
+                idCardNo: "",
+                img: "",
                 money: "0.00",
-                numberu: "**** **** **** 8781",
+                numberu: "",
                 userName: "李大爷"
             }
         }

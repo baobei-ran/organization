@@ -21,7 +21,7 @@
                             </div>
                             <div class="fl">
                                 <div class="layui-input-inline">
-                                    <span class="Ft-S14 selectbtn ac pointer">查询</span>
+                                    <span class="Ft-S14 selectbtn ac pointer" @click='search'>查询</span>
                                 </div>
                             </div>
                         </div>
@@ -35,7 +35,7 @@
                                 <td>操作</td>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody v-if="tableList.length">
                             <tr v-for="(val,index) in tableList">
                                 <td>{{index+1}}</td>
                                 <td v-text="val.name">推车式彩超、推车式彩超、推车式彩超、推车式彩超、推车式彩超、推车式彩超、推车式彩超...</td>
@@ -45,12 +45,19 @@
                                 </td>
                             </tr>
                         </tbody>
+                        <tbody>
+                            <tr v-if="!tableList.length">
+                                <td colspan="4">
+                                    无数据
+                                </td>
+                            </tr>
+                        </tbody>
                     </table>
-                    <div id="page" class="ac Mg-T30"></div>
+                    <div id="page" v-show="tableList.length" class="ac Mg-T30"></div>
                 </div>
             </div>
         </div>
-        <p class="ac"><span class="Color_white Ft-S16 goback pointer" @click="go('/server/doctorParabiose')">返回</span></p>
+        <p class="ac"><span class="Color_white Ft-S16 goback pointer" @click="go('/server/equipmenApply')">返回</span></p>
         <div id="sendgoods" class="hide delcode">
             <div style="width: 640px;" class="Mg-T26">
                 <div class="table-head ac">
@@ -88,9 +95,7 @@
                     </table>
                 </div>
             </div>
-            <p class="ac">
-                <span><button class="send pointer">返回</button></span>
-            </p>
+           
         </div>
     </div>
 </template>
@@ -100,8 +105,8 @@ export default {
     data() {
         return {
             inactive: 0,
-            start_time: '',
-            end_time: '',
+            start_time: '', // 搜索开始时间
+            end_time: '',   //  搜索结束时间
             page: 1,
             limit: 10,
             tableList: '',
@@ -112,6 +117,19 @@ export default {
         this.initdata(1)
     },
     methods: {
+        search() {
+            var _this = this;
+            layui.use('layer', function(){
+                var layer = layui.layer;
+                _this.start_time = $('#date').val();
+                _this.end_time = $('#date1').val();
+                if (!_this.start_time) {
+                    layer.msg('请选择时间',{icon:2});
+                    return false;
+                }
+                _this.initdata(1)
+            });  
+        },
         initdata(num) {
             let _this = this;
             layui.use(["laypage", "layer", "laydate", "element"], function () {
@@ -128,7 +146,7 @@ export default {
                 var oDate1 = new Date($('#date').val());
                 var oDate2 = new Date($('#date1').val());
                 if (oDate1.getTime() > oDate2.getTime()) {
-                    layer.msg('开始时间不能大于结束时间');
+                    layer.msg('开始时间不能大于结束时间', { icon: 2});
                     return
                 }
                 _this.page = num;
@@ -178,9 +196,11 @@ export default {
                     shade: 0.2,
                     shadeClose: true,
                     closeBtn: 1,
+                    btnAlign: 'c',
+                    btn:['返回'],
                     title: "医疗申请单",
                     content: $(".delcode"),
-                    area: ["720px", "640px"],
+                    area: ["720px", "600px"],
                     cancel: function () { }
                 });
                 $(".layui-layer-title").css({
@@ -194,7 +214,9 @@ export default {
         },
         looktable(num) {
             let _this = this;
+            _this.tableulayerList = ''
             _this.$http.post('/shv2/deviceapply/list_data', { apply_code:num }, function (res) {//
+                console.log(res)
                 if (res.code == 1) {
                     _this.tableulayerList = res.data;
                 } 

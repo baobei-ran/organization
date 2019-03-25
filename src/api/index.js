@@ -1,7 +1,7 @@
 import axios from "axios";
-// var baseURL="https://www.yunyikang.cn"//正式
+// var baseURL="http://www.yunyikang.cn"//正式
 var baseURL = "http://test99.yunyikang.cn"; //
-// var baseURL="http://192.168.8.106/"//
+// var baseURL="http://192.168.8.107"//
 axios.defaults.withCredentials = true;
 let http = axios.create({
   baseURL: baseURL,
@@ -23,6 +23,14 @@ let http = axios.create({
     }
   ]
 });
+http.interceptors.request.use(function (config) {
+  // console.log(config)
+  return config;
+}, function (error) {
+  return Promise.reject(error);
+});
+
+
 http.interceptors.response.use(function(res) {
   //全局拦截处理未登录
   // console.log(res)

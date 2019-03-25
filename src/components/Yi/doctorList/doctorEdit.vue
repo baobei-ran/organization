@@ -130,7 +130,7 @@
                                 <p class="line"></p>
                             </li>
                             <li class="fl">
-                                <div class="Mg-L60"><img id='esitImg3' src="" alt=""><span class="reset_up">重新上传</span><input class="pointer files3" type="file"></div>
+                                <div class="Mg-L60"><img id='esitImg3' ref='zheng' src="" alt=""><span class="reset_up">重新上传</span><input class="pointer files3" type="file"></div>
                                 <p class="Mg-T10 Mg-L30 Ft-S14 Color_black">执业证 / 资质证 / 职称证（三选一）</p>
                             </li>
                         </ul>
@@ -145,14 +145,14 @@
                     <tr>
                         <td width="33.3%" class="Pd-T12 Pd-B12">
                             <span class="Color_black Ft-S14">开通服务：</span>
-                            <el-checkbox-group style='display: inline-block;' v-model='editList.business' >
+                            <el-checkbox-group style='display: inline-block;' v-model='servers' >
                                 <el-checkbox v-for="city in endList.business" :label="city.id" :key="city.id">{{city.name}}</el-checkbox>
                             </el-checkbox-group>
-                            <!-- <input type="checkbox" v-for='(val, i) in endList.business' :key='i' class='serverNum' name="" :value='val.id' :title="val.name" lay-skin="primary"> -->
-                            <!-- <input type="checkbox" class='serverNum' name="" title="图文问诊" lay-skin="primary">
-                            <input type="checkbox" class='serverNum' name="" title="语音问诊" lay-skin="primary">
-                            <input type="checkbox" class='serverNum' name="" title="视频问诊" lay-skin="primary">
-                            <input type="checkbox" class='serverNum' name="" title="院后指导" lay-skin="primary"> -->
+                            <!-- <input type="checkbox" class='serverNum' name="" value='1' title="预约挂号" lay-skin="primary">
+                            <input type="checkbox" class='serverNum' name="" value="3" title="图文问诊" lay-skin="primary">
+                            <input type="checkbox" class='serverNum' name="" value="4" title="语音问诊" lay-skin="primary">
+                            <input type="checkbox" class='serverNum' name="" value="12" title="视频问诊" lay-skin="primary">
+                            <input type="checkbox" class='serverNum' name="" value="2"  title="私人医生" lay-skin="primary"> -->
                         </td>
                     </tr>
                 </table>
@@ -194,6 +194,8 @@ export default {
             SSScard: '',         // 三选一证图
             sort: '1',           //  是否开启推荐
             grade: '',          // 获取职称id
+            servers: [],        // 选择服务
+            
         }
     },
     mounted() {
@@ -214,9 +216,14 @@ export default {
                 
                 _this.$http.post('/shv2/data/doc_look', _this.$route.query, function (res) {    //  传递 id 获取对应详情
                     var code = res.code.toString()
-                    // console.log(res)
+                    console.log(res)
                     if (code.includes('1')) {
                         _this.editList = res.data
+                        res.data.business.forEach(val => {
+                            _this.servers.push(Number(val))
+                        })
+                        console.log(_this.servers)
+                        console.log(_this.editList)
                         var list = _this.endList.grade
                         for (var k in list) {
                             if (_this.editList.name == list[k].name) {
@@ -229,14 +236,19 @@ export default {
                         _this.id=res.data.tid       // 科室id
                         if (res.data.zcard) {
                             _this.zCard = res.data.zcard
-                            _this.$refs.zImg.src = _this.$http.baseURL + res.data.zcard
+                            _this.$refs.zImg.src = _this.$http.baseURL + res.data.zcard     // 身份证正面
                         }
                         if (res.data.fcard) {
                             _this.fCard = res.data.fcard
-                            _this.$refs.fImg.src = _this.$http.baseURL + res.data.fcard
+                            _this.$refs.fImg.src = _this.$http.baseURL + res.data.fcard      // 身份正反面
+                        }
+
+                        if (res.data.zcz.length > 0) {
+                            _this.SSScard = res.data.zcz[0].img
+                            _this.$refs.zheng.src = _this.$http.baseURL + res.data.zcz[0].img     // 获取三证中的职称证
                         }
                         
-                        if (res.data.tid) {
+                        if (res.data.tid) {         // 找出医生职称
                             setTimeout(() => {
                             var keshi = '';
                             for(var i=0;i<_this.depLsit.length;i++) {
@@ -293,15 +305,16 @@ export default {
             layui.use('layer', function(){
             var layer = layui.layer;
             var list = _this.editList;
+            var reg = new RegExp("^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$");  // 邮箱验证
             var exgphone = /^1(3|4|5|7|8|9)\d{9}$/;
             var cardid = /^[1-9][0-9]{5}(19|20)[0-9]{2}((01|03|05|07|08|10|12)(0[1-9]|[1-2][0-9]|31)|(04|06|09|11)(0[1-9]|[1-2][0-9]|30)|02(0[1-9]|[1-2][0-9]))[0-9]{3}([0-9]|x|X)$/;
             console.log(list.name)
             if (!list.true_name) {
-                layer.msg('请输入姓名！')
+                layer.msg('请输入真实姓名！')
                 return false;
             }
-            if (!list.mailbox) {
-                layer.msg('请输入邮箱！')
+            if (!list.mailbox || !reg.test(list.mailbox)) {
+                layer.msg('请输入正确邮箱！')
                 return false;
             }
             if (!_this.grade) {
@@ -346,11 +359,11 @@ export default {
                 formdata.append('depid', _this.id)
                 formdata.append('disid[]', _this.addSublevel)
                 formdata.append('IDnumber', list.IDnumber)
-                formdata.append('business[]', list.business)         // 服务信息
+                formdata.append('business[]', _this.servers)         // 服务信息
                 formdata.append('sort', _this.sort)
                 formdata.append('zcard[]', _this.zCard)
                 formdata.append('fcard[]', _this.fCard)
-                formdata.append('zzz[]', _this.SSScard)
+                formdata.append('zcz[]', _this.SSScard)
                 _this.$http.upload('/shv2/data/edit_doc', formdata, function (res) {
                     console.log(res)
                     if(res.code == 1) {

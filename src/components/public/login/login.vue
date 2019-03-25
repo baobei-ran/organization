@@ -74,7 +74,7 @@ export default {
                 }
                 if (checkpress()) {
                     _this.$http.post('/shv2/login/login', { phone: $('#phone').val(), code: $('#code').val(), pwd: $('#pass').val() }, function (res) {// 登录
-                        // console.log(res)
+                        console.log(res)
                         if (res.code == 1) {
                             _this.localstorage.put('logindata', res.data);
                             if (res.data.hospital_status == 0 || res.data.hospital_status == 2 || res.data.hospital_status == 3) {
@@ -83,6 +83,9 @@ export default {
                                 _this.go('/?login=true')
                             }
 
+                        } else if (res.code == 3) {
+                           layer.msg(res.msg)
+                           $('#imgcode').attr('src', _this.$http.baseURL+'/captcha.html')
                         } else {
                             layer.msg(res.msg)
                         }

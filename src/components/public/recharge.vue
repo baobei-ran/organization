@@ -205,7 +205,7 @@ export default {
                                     area: ["400px", "460px"], //宽高
                                     content: $(".wx_dialig")
                                 });
-                                if (_this.chongzhiTime !== '') {
+                                if (_this.chongzhiTime !== '') {    // 调用前先查看一遍，如果有定时器存在就清除
                                     clearInterval(_this.chongzhiTime)
                                 }
                                _this.chongzhiTime = setInterval(() => {    // 调用微信二维码后，进行充值查询
@@ -233,23 +233,24 @@ export default {
                                 type: 1,
                                 title: "支付宝充值",
                                 shadeClose: true,
-                                shade: 0.8,
+                                shade: 0.6,
                                 area: ["400px", "460px"],
                                 content: $(".alipay_dialog") //iframe的弹框
                             });
-                           if (_this.chongzhiTime !== '') {
+                           if (_this.chongzhiTime !== '') {         // 调用前先查看一遍，如果有定时器存在就清除
                                     clearInterval(_this.chongzhiTime)
                                 }
-                        //        _this.chongzhiTime = setInterval(() => {    // 调用支付宝二维码后，进行充值查询
-                        //             _this.payResult(res.order_code, res.type).then(res => {
-                        //                 console.log(res)
-                        //                 if (res.code == 1) {
-                        //                     clearInterval(_this.chongzhiTime)
-                        //                      layer.closeAll();
-                        //                     selectstatus()              // 充值成功后弹出成功框
-                        //                 }
-                        //             })
-                        //         }, 1000)
+                                var user = _this.localstorage.get('logindata');
+                               _this.chongzhiTime = setInterval(() => {    // 调用支付宝二维码后，进行充值查询
+                                    _this.payResult(user.number, user.type).then(res => {
+                                        console.log(res)
+                                        if (res.code == 1) {
+                                            clearInterval(_this.chongzhiTime)
+                                             layer.closeAll();
+                                            selectstatus()              // 充值成功后弹出成功框
+                                        }
+                                    })
+                                }, 1000)
                     } else {
                         // 在此判断有无绑定银行卡
                         // window.location.href = "/shanghu/account/recharge_bank";

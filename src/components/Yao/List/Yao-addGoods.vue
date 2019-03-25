@@ -925,10 +925,12 @@ export default {
                 _this.$http.upload('/shv2/goods/save_goods?XDEBUG_SESSION_START=17401', formdata, function (res) {
                     console.log(res)
                     if (res.code == 1) {
-                        layer.msg(res.msg)
-                        _this.go('/jgmall/goodsList')
+                        layer.msg(res.msg, { icon:1})
+                        setTimeout(()=> {
+                            _this.go('/jgmall/goodsList')
+                        }, 1000)
                     } else {
-                        layer.msg(res.msg);
+                        layer.msg(res.msg, { icon:2 });
                     }
                 }, function (err) { console.log(err);})
                

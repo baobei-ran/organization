@@ -104,7 +104,7 @@
                                             <div class="layui-input-inline" id='fileList'>
                                                 <!-- 主图片上传 -->
                                                 <div class="layui-input-inline uploadimg Mg-R10" id='files1'>
-                                                    <div><span class="Ft-S14">点击上传主图</span> <input id='zhuFile' type="file" class="pointer" placeholder="" /></div>
+                                                    <div><span class="Ft-S14">重新上传主图</span> <input id='zhuFile' type="file" class="pointer" placeholder="" /></div>
                                                     <img style='width: 145px;height: 147px;border-radius: 4px;' id='zhuImg' src="" alt="">
                                                     <label class="zhuFileLabel" for="zhuFile">重新上传</label>
                                                 </div>
@@ -364,7 +364,7 @@
                         </div>
                     </div>
                 </div>
-        <p class="ac Mg-T24 goback"><button class="pointer Color_blue Mg-R24" @click="go('/jgmall/List')" style="background:#fff; border:1px solid rgba(49,150,255,1)">取消</button> 
+        <p class="ac Mg-T24 goback"><button class="pointer Color_blue Mg-R24" @click="go('/jgmall/goodsList')" style="background:#fff; border:1px solid rgba(49,150,255,1)">取消</button> 
             <button type='submit'  style='vertical-align: top;' @click='obsubmit'><button style='vertical-align: top;' class="layui-btn site-demo-layedit" id='btn' data-type='content'>保存</button></button>
         </p>
     </div>
@@ -556,8 +556,9 @@ export default {
                     
 
                     // 图片操作 
-                        _this.zPic = data.pic
-                         if (_this.zPic) {
+                        
+                         if (data.pic != null) {
+                            _this.zPic = data.pic
                             $('#zhuImg').attr('src', _this.$http.baseURL+_this.zPic)    // 获取主图
                          }   
 
@@ -569,8 +570,6 @@ export default {
                             //  console.log(a)
                             _this.fPic2.push(a)
                         })
-                        console.log(_this.fPic2)
-
 
                     form.render();  // 重新渲染
                 } else {
@@ -685,7 +684,20 @@ export default {
                 var layedit = layui.layedit,
                     $ = layui.jquery;
                 var index = layedit.build('demos',{
-                    height:'160px'
+                    height:'160px',
+                    tool: [
+                        'strong' //加粗
+                        ,'italic' //斜体
+                        ,'underline' //下划线
+                        ,'del' //删除线
+                        ,'|' //分割线
+                        ,'left' //左对齐
+                        ,'center' //居中对齐
+                        ,'right' //右对齐
+                        ,'link' //超链接
+                        ,'unlink' //清除链接
+                        ,'face' //表情
+                    ]
                 }); //建立编辑器
                 form.verify({
                     content: function(value) { 
@@ -709,9 +721,12 @@ export default {
                     }
                 };
 
-                if (_this.details) {    // 赋值失败
-                    layedit.setContent(index, _this.details);
-                }
+               var ti = setTimeout(() => {
+                    if (_this.details) {    // 赋值失败
+                        layedit.setContent(index, _this.details);
+                    }
+                    clearTimeout(ti)
+               }, 1000)
                    
                 form.render()//防止渲染失败
             });
@@ -854,8 +869,11 @@ export default {
                 _this.$http.upload('/shv2/goods/save_goods?XDEBUG_SESSION_START=17401', formdata, function (res) {
                     console.log(res)
                     if (res.code == 1) {
-                        layer.msg(res.msg)
-                        _this.go('/jgmall/goodsList')
+                        layer.msg(res.msg, { icon: 1, time: 1000})
+                       var time = setTimeout(()=> {
+                           clearTimeout(time)
+                            _this.go('/jgmall/goodsList')
+                        }, 1000)
                     } else {
                         layer.msg(res.msg);
                     }
@@ -882,6 +900,11 @@ export default {
     }
 }
 </script>
+<style>
+.layui-layedit-tool {
+    text-align: left;
+}
+</style>
 
 <style scoped lang="less">
 #addGoods {

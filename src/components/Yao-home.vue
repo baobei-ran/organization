@@ -57,24 +57,24 @@
                         <p class="Pd-T20 Pd-B20 Pd-L18 Ft-S16 Color_black">功能分类</p>
                         <div class="layui-row Pd-B20 Mg-T20 ac">
                             <div class="layui-col-md3">
-                                <p class="Ft-S14 Color_black Mg-B18 icon1 pointer">发货单列表</p>
+                               <p class="Ft-S14 Color_black Mg-B18 icon1 pointer" @click="list(1)">发货单列表</p>
                             </div>
                             <div class="layui-col-md3">
-                                <p class="Ft-S14 Color_black Mg-B18 icon2 pointer">商品列表</p>
+                               <p class="Ft-S14 Color_black Mg-B18 icon2 pointer" @click="list(2)">商品列表</p>
                             </div>
                             <div class="layui-col-md3">
-                                <p class="Ft-S14 Color_black Mg-B18 icon3 pointer">交易账单</p>
+                               <p class="Ft-S14 Color_black Mg-B18 icon3 pointer" @click="list(3)">交易账单</p>
                             </div>
                             <div class="layui-col-md3">
-                                <p class="Ft-S14 Color_black Mg-B18 icon4 pointer">机构关联</p>
+                              <p class="Ft-S14 Color_black Mg-B18 icon4 pointer" @click="list(4)" >机构关联</p>
                             </div>
                         </div>
                         <div class="layui-row Pd-B20 ac">
                             <div class="layui-col-md3">
-                                <p class="Ft-S14 Color_black Mg-B18 icon5 pointer">店铺设置</p>
+                                <p class="Ft-S14 Color_black Mg-B18 icon5 pointer" @click="list(5)">店铺设置</p>
                             </div>
                             <div class="layui-col-md3">
-                                <p class="Ft-S14 Color_black Mg-B18 icon6 pointer">机构设置</p>
+                                <p class="Ft-S14 Color_black Mg-B18 icon6 pointer" @click="list(6)">机构设置</p>
                             </div>
                         </div>
                     </div>
@@ -136,6 +136,17 @@ export default {
                     }
                 }, function (err) {console.log(err)})
             }); 
+        },
+        list (num) {
+            switch (num) {
+                case 1:  this.$router.push({path:'/jgmall/sendGoodsList'}); break;
+                case 2: this.$router.push({path:'/jgmall/goodsList'}); break;
+                case 3: this.$router.push({path:'/finance/tradingBill'}); break;
+                case 4: this.$router.push({path:'/server/YaodrugParabiose'}); break;
+                case 5: this.$router.push({path:'/jgmall/mallAdmin'}); break;
+                case 6: this.$router.push({path:'/setting/YaomechanismMsg/Yaocheckmemsg'}); break;
+            }
+            
         }
     }
 }
@@ -189,6 +200,9 @@ export default {
         }
         .left_box2 {
             div {
+                .link:hover {
+                    text-decoration: none;
+                }
                 p {
                     height: 36px;
                     line-height: 36px;

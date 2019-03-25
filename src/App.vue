@@ -400,6 +400,9 @@ export default {
             case '1':  this.sliderMenu = true; break;   // 医院 
             case '8':  this.sliderMenu = false; break;  // 药店菜单
         }
+
+        
+        
     },
     mounted() {
         this.tabListActive();
@@ -420,11 +423,35 @@ export default {
             }
         }
 
+         
     },
     watch: {
-        '$route': 'tabListActive'
+        '$route': 'tabListActive',
+    },
+    updated () {    // URL 变化，样式跟随变化
+        this.listStyle()
     },
     methods: {
+        listStyle () { // URL 变化，样式跟随变化
+            let li = $('.floor_container>li');
+            for (var j=0;j<li.length;j++) {   
+                if (this.$route.fullPath !== '/') {
+                    if (li[j].getAttribute("name") != '' && this.$route.path.includes(li[j].getAttribute("name"))) {
+                        li[j].setAttribute('class', 'active')
+                    } else {
+                        li[j].removeAttribute('class', 'active')
+                    }
+                } else {
+                    if (li[j].getAttribute("name") == '' && this.$route.path == '/') {
+                        li[j].setAttribute('class', 'active');//首页
+                    } else {
+                        this.childShow = false;
+                        li[j].removeAttribute('class', 'active')
+                    }
+                }
+            }
+        },
+        
         tabListActive() {//页面刷新保持选中状态
             this.initdata()
             this.pdleft = this.$route.path == '/' ? document.body.clientWidth < 1200 ? '50px' : '152px' : document.body.clientWidth < 1200 ? '240px' : '342px';//侧边菜单栏根据屏幕width缩小
@@ -541,7 +568,8 @@ export default {
         }
     },
     computed: {
-    }
+    },
+     
 };
 </script>
 

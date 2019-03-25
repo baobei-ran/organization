@@ -72,7 +72,7 @@ import Purchase from '@/components/Yi/Yi-purchase';   // 采购首页
 
 // 药店端
 import shopMsg from "@/components/public/shopMsg"; //店铺信息
-import goodsList from "@/components/Yao/goodsList/testtable"; //商品列表  test
+import goodsList from "@/components/Yao/Yao-goodsList"; //商品列表 
 import addGoods from "@/components/Yao/list/Yao-addGoods"; //新增商品
 import editGoods from "@/components/Yao/list/Yao-editGoods"; //编辑商品
 import List from "@/components/Yao/Yao-List"; //列表

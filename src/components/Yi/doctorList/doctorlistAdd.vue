@@ -43,6 +43,7 @@
                             </span>
                             <span class="Color_gray6">
                                 <select name="" id="" v-model="addList.grade">
+                                     <option value="">请选择</option>
                                     <option :value="val.id" v-for="val in serverdata.grade" v-text="val.name"></option>
                                 </select>
                             </span>
@@ -161,7 +162,7 @@ export default {
         return {
             inactive: 1,//  关联疾病的选中样式
             name: '',//     
-            settop: '',//
+            settop: '1',//
             tabletype: '',
             allillness: '',
             selectfilter: [],
@@ -305,6 +306,7 @@ export default {
             });
         },
         onsubmit() {    // 添加
+            var reg = new RegExp("^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$");  // 邮箱验证
             var exgphone = /^1(3|4|5|7|8)\d{9}$/;
             var cardid = /^[1-9][0-9]{5}(19|20)[0-9]{2}((01|03|05|07|08|10|12)(0[1-9]|[1-2][0-9]|31)|(04|06|09|11)(0[1-9]|[1-2][0-9]|30)|02(0[1-9]|[1-2][0-9]))[0-9]{3}([0-9]|x|X)$/;
             let _this = this;
@@ -317,8 +319,8 @@ export default {
                     layui.layer.msg('请填写医生手机号')
                     return false;
                 }
-                if (!_this.addList.mailbox) {
-                    layui.layer.msg('请填写医生邮箱')
+                if (!_this.addList.mailbox || !reg.test(_this.addList.mailbox)) {
+                    layui.layer.msg('请填写正确的邮箱')
                     return false;
                 }
                 if (!_this.addList.grade) {
@@ -330,7 +332,7 @@ export default {
                     return false;
                 }
                 if (!cardid.test(_this.addList.IDnumber)) {
-                    layui.layer.msg('请填写身份证号')
+                    layui.layer.msg('请填写正确身份证号')
                     return false;
                 }
                 if (!_this.addList.true_name) {
@@ -346,7 +348,7 @@ export default {
                     return false;
                 }
                 if (!$('#zyz').val()&&!$('#zzz').val()&&!$('#zcz').val()) {
-                    layui.layer.msg('请上传身份证正面')
+                    layui.layer.msg('请上传执业证、资质证、职称证')
                     return false;
                 }
            
@@ -393,8 +395,10 @@ export default {
                 _this.$http.upload('/shv2/data/add_doc', formdata, function (res) {// 添加医生
                 console.log(res)
                     if (res.code == 1) {
-                        layer.msg(res.msg);
-                        _this.go('/data/doctorList')
+                        layer.msg(res.msg, { icon:1});
+                        setTimeout(()=> {
+                            _this.go('/data/doctorList')
+                        }, 1000)
                     } else {
                         // layer.msg(res.msg);
                     }
