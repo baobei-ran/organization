@@ -1,6 +1,5 @@
 import Vue from "vue";
 import Router from "vue-router";
-import R404 from '@/components/404/404'
 import Index from "@/components/index"; //首页
 import login from "@/components/public/login/login"; //登录
 import register from "@/components/public/login/register"; //注册
