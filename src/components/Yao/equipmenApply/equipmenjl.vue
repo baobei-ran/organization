@@ -8,7 +8,7 @@
                             <div class="layui-col-md4">
                                 <div class="layui-inline lay_width">
                                     <label class="layui-form-label">申请时间</label>
-                                    <div class="layui-input-block">
+                                    <div class="layui-input-block" style='display:flex;'>
                                         <div class="layui-input-inline">
                                             <input type="text" name="price_min" placeholder="yyyy-MM-dd" id="date" autocomplete="off" class="layui-input">
                                         </div>
@@ -21,7 +21,7 @@
                             </div>
                             <div class="layui-col-md1">
                                 <div class="layui-input-inline">
-                                    <span class="Ft-S14 selectbtn ac pointer">查询</span>
+                                    <span class="Ft-S14 selectbtn ac pointer" @click='search'>查询</span>
                                 </div>
                             </div>
                         </div>
@@ -35,14 +35,19 @@
                                 <td>操作</td>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr v-for="val in 10">
-                                <td>0001</td>
-                                <td>推车式彩超、推车式彩超、推车式彩超、推车式彩超、推车式彩超、推车式彩超、推车式彩超...</td>
-                                <td>2018-09-04 01:53</td>
+                        <tbody v-if='listarr.length'>
+                            <tr v-for="(val,i) in listarr" :key='i'>
+                                <td>{{ i+1 }}</td>
+                                <td>{{ val.content }}</td>
+                                <td>{{ val.addtime }}</td>
                                 <td>
-                                    <span class="Color_blue pointer" @click="eqlist">查看</span>
+                                    <span class="Color_blue pointer" @click="eqlist(val.apply_code)">查看</span>
                                 </td>
+                            </tr>
+                        </tbody>
+                        <tbody v-else>
+                            <tr>
+                                <td colspan="4">无数据</td>
                             </tr>
                         </tbody>
                     </table>
@@ -50,7 +55,7 @@
                 </div>
             </div>
         </div>
-        <p class="ac"><span class="Color_white Ft-S16 goback pointer" @click="go('/server/doctorParabiose')">返回</span></p>
+        <p class="ac"><span class="Color_white Ft-S16 goback pointer" @click="go('/server/YaoequipmenApply')">返回</span></p>
         <div id="sendgoods" class="hide delcode">
             <div style="width: 640px;" class="Mg-T26">
                 <div class="table-head ac">
@@ -67,7 +72,6 @@
                                 </td>
                                 <td width="120px">价格</td>
                                 <td width="80px">数量</td>
-                                <td width="110px">操作</td>
                             </tr>
                         </thead>
                     </table>
@@ -78,13 +82,17 @@
                             <col style="width: 80px;" />
                             <col />
                         </colgroup>
-                        <tbody>
-                            <tr v-for="val in 30">
-                                <td class="Color_black Ft-S16" width="160px">推车式彩超</td>
-                                <td width="120px"> H2468595</td>
-                                <td width="120px">50000.00</td>
-                                <td width="80px">2</td>
-                                <td width="110px"><span class="pointer Color_blue">删除</span></td>
+                        <tbody v-if='list_data.length'>
+                            <tr v-for="(val,i) in list_data" :key='i'>
+                                <td class="Color_black Ft-S16" width="160px">{{ val.name }}</td>
+                                <td width="120px">{{ val.model }}</td>
+                                <td width="120px">{{ val.price }}</td>
+                                <td width="80px">{{ val.num }}</td>
+                            </tr>
+                        </tbody>
+                        <tbody v-if='!list_data.length'> 
+                            <tr>
+                                <td style='color:#999;' colspan="4">无数据</td>
                             </tr>
                         </tbody>
                     </table>
@@ -101,14 +109,49 @@ export default {
     name: 'equipmentjl',
     data() {
         return {
-            inactive: 0
+            inactive: 0,
+            start_time: '',
+            end_time: '',
+            page: 1,
+            limit: 10,
+            listarr: [],    //  数据
+            list_data: []   //  查看数据
         }
     },
     mounted() {
+        this.initlist(1)
         this.initdata()
     },
     methods: {
-        initdata() {
+        search () {
+            var _this = this;
+            layui.use('layer', function(){
+                var layer = layui.layer;
+                 var val = $('#date').val()
+                if (!val) {
+                    layer.msg('请选择日期');
+                    return
+                }
+                _this.start_time = val;
+                _this.end_time = $('#date1').val()
+                _this.initlist(1)
+                
+            });  
+        },
+        initlist(num) {
+            var _this = this;
+            var obj = { start_time: _this.start_time, end_time: _this.end_time, page: _this.page, limit: _this.limit  }
+            _this.$http.post('/shv2/deviceapply/apply_list', obj, function (res) {
+                console.log(res)
+                if (res.code == 1) {
+                    _this.listarr = res.data
+                    if (num == 1) {
+                        _this.initdata(res.count)
+                    }
+                }
+            }, function (err) { console.log(err)})
+        },
+        initdata(total) {
             layui.use(["laypage", "layer", "laydate", "element"], function () {
                 var element = layui.element;
                 var laypage = layui.laypage;
@@ -121,28 +164,33 @@ export default {
                 });
                 laypage.render({
                     elem: "page", //注意，这里的 test1 是 ID，不用加 # 号
-                    count: 50, //数据总数，从服务端得到
+                    count: total, //数据总数，从服务端得到
                     limit: 10, //每页条数
                     layout: ["prev", "page", "next", "skip"],
                     groups: 4,
-                    // prev:
-                    //     '<img src="../../common/image/pages/account/icon_left.png" style="margin-top:-3px;" alt="" />',
-                    // next:
-                    //     '<img src="../../common/image/pages/account/icon_right.png" style="margin-top:-3px;"  alt="" />'
+                    jump: function(obj, first){
+                        if(!first){
+                            _this.page = obj.curr
+                            _this.initlist(obj.curr)
+                        }
+                    }
                 });
             });
         },
-        godetail() {
+        
+        eqlist(id) {  // 查看
 
-        },
-        select(num) {
-            this.inactive = num
-        },
-        eqlist() {
+            var _this = this;
+            this.$http.post('/shv2/deviceapply/list_data', { apply_code: id }, function (res) {
+                if (res.code == 1) {
+                    _this.list_data = res.data
+                }
+            }, function (err) { console.log(err)})
+
             layui.use(["layer"], function () {
                 var layer = layui.layer;
                 var $ = layui.jquery;
-                layer.open({
+                var index = layer.open({
                     type: 1,
                     shade: 0.2,
                     shadeClose: true,
@@ -152,6 +200,10 @@ export default {
                     area: ["720px", "640px"],
                     cancel: function () { }
                 });
+                $('.send').on('click', function () {    // 关闭弹框
+                    layer.closeAll('page')
+                })
+                    
                 $(".layui-layer-title").css({
                     height: "50px",
                     background: "#ECF2FB",

@@ -216,14 +216,14 @@ export default {
                 
                 _this.$http.post('/shv2/data/doc_look', _this.$route.query, function (res) {    //  传递 id 获取对应详情
                     var code = res.code.toString()
-                    console.log(res)
+                    // console.log(res)
                     if (code.includes('1')) {
                         _this.editList = res.data
                         res.data.business.forEach(val => {
                             _this.servers.push(Number(val))
                         })
-                        console.log(_this.servers)
-                        console.log(_this.editList)
+                        // console.log(_this.servers)
+                        // console.log(_this.editList)
                         var list = _this.endList.grade
                         for (var k in list) {
                             if (_this.editList.name == list[k].name) {
@@ -290,7 +290,7 @@ export default {
                     var code = res.code.toString()
                     if (code.includes('1')) {
                         _this.endList = res.data
-                        console.log(res)
+                        // console.log(res)
                     }
                 }, function (err) { console.log(err)})
 

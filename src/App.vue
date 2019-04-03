@@ -341,7 +341,7 @@ export default {
                         },
                         {
                             title: '处方单医生列表',
-                            url: '/server/Yaoprescription',
+                            url: '/server/Yaodoctorprescription',
                         },
                         {
                             title:'处方单列表',
@@ -395,10 +395,12 @@ export default {
     },
     created() {
         var user = this.localstorage.get('logindata');
-        var type = user.type.toString()                 // 根据type来区分医院 药店菜单
-        switch(type) {
-            case '1':  this.sliderMenu = true; break;   // 医院 
-            case '8':  this.sliderMenu = false; break;  // 药店菜单
+        if (user) {
+            var type = user.type.toString()                 // 根据type来区分医院 药店菜单
+            switch(type) {
+                case '1':  this.sliderMenu = true; break;   // 医院 
+                case '8':  this.sliderMenu = false; break;  // 药店菜单
+            }
         }
 
         
@@ -434,6 +436,7 @@ export default {
     methods: {
         listStyle () { // URL 变化，样式跟随变化
             let li = $('.floor_container>li');
+            var _this = this;
             for (var j=0;j<li.length;j++) {   
                 if (this.$route.fullPath !== '/') {
                     if (li[j].getAttribute("name") != '' && this.$route.path.includes(li[j].getAttribute("name"))) {
@@ -476,7 +479,7 @@ export default {
                                     childli[index].setAttribute('style', '');//子菜单初始化选中
                                     if (_this.$route.path.includes(val.url)) {//子路由对应url
                                         childli[index].setAttribute('style', 'color:#3196FF!important');//子菜单初始化选中
-                                    }
+                                    } 
                                 })
                             }, 200)
                         }
@@ -509,6 +512,7 @@ export default {
             this.$http.post('/shv2/login/quit', {}, function (res) {
                 if (res.code == 1) {
                     _this.localstorage.remove('logindata');
+                    _this.localstorage.clear()
                     _this.go('/login');
                 }
             }, function () { })

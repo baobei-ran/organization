@@ -206,7 +206,7 @@
                             min-width="80%"
                             nin-height = '70px'
                             prop="goodList"
-                            label="商品名称"
+                            label="商品图片"
                            align ='center' style='width:300px!mportant;'>
                            <template slot-scope="scope">
                                 <div  style='-webkit-display:flex;display:flex;align-items: center;'>
@@ -283,7 +283,7 @@
                     </el-table>
                 </div> 
 
-                    <div v-show='goodList.length' id='page'></div>
+                    <div style='background:#fff;' v-show='goodList.length' id='page'></div>
                            
                 </div>
             </div>
@@ -440,6 +440,7 @@ export default {
                     ,jump: function(obj, first){
                         if(!first){
                             _this.goodLists(obj.curr) // /得到当前页，以便向服务端请求对应页的数据
+                            _this.page = obj.curr
                         }
                     }
                 });
@@ -455,9 +456,14 @@ export default {
             layui.use('layer', function(){
             var layer = layui.layer;
             _this.$http.post('/shv2/goods/recommend', {id:id}, function (res) {
-                // console.log(res)
+                console.log(res)
                 if (res.code == 1) {
                     layer.msg(res.msg, { icon:1});
+                } else if(res.code == 3) {
+                    layer.msg(res.msg, { icon:2, time: 2000});
+                    setTimeout(()=> {
+                        _this.goodLists(_this.page)
+                    }, 1000)
                 } else {
                     layer.msg(res.msg, { icon:2});
                 }
@@ -719,6 +725,7 @@ export default {
         }
     }
     .tab_content {
+        background: #fff;
         .layui-tab {
             .layui-tab-title {
                 font-size: 16px;

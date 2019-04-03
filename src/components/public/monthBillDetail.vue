@@ -32,24 +32,24 @@
                     </tr>
                 </thead>
                 <tbody v-if='monthList.length'>
-                    <!-- <tr v-for='(val, index) in monthList'>
-                        <td v-text='index+1'>0001</td>
-                        <td v-text='val.month'>2019-11-11</td>
-                        <td v-text='val.shou'>+787888.00</td>
-                        <td v-text='val.zhi'>+787888.00</td>
+                    <tr v-for='(val, index) in monthList'>
+                        <td v-text='index+1'></td>
+                        <td v-text='val.month'></td>
+                        <td v-text='val.shou'></td>
+                        <td v-text='val.zhi'></td>
+                    </tr>
+                    <!-- <tr>
+                        <td >0001</td>
+                        <td>2019-11-11</td>
+                        <td >+787888.00</td>
+                        <td >+787888.00</td>
+                    </tr>
+                    <tr>
+                        <td >0001</td>
+                        <td>2019-11-11</td>
+                        <td >+787888.00</td>
+                        <td >+787888.00</td>
                     </tr> -->
-                    <tr>
-                        <td >0001</td>
-                        <td>2019-11-11</td>
-                        <td >+787888.00</td>
-                        <td >+787888.00</td>
-                    </tr>
-                    <tr>
-                        <td >0001</td>
-                        <td>2019-11-11</td>
-                        <td >+787888.00</td>
-                        <td >+787888.00</td>
-                    </tr>
                     
                 </tbody>
                 <tbody v-if='!monthList.length'>

@@ -3,21 +3,21 @@
         <div class="bg_f" style="width:87.7%">
             <p class="equipmentdetail_tit Pd-B24 Pd-T24 Pd-L24 Ft-S16 Mg-B24 Color_black">设备详情</p>
             <div class="clear detail_head Pd-B46 Pd-L24">
-                <div class="fl silder">
+                <div class="fl silder Mg-B20">
                     <div class="layui-carousel" id="play" lay-filter="play">
                         <div carousel-item>
-                            <div v-for="(val,index) in 10">{{index+1}}<img src="../../../common/image/pages/yi/supply_03.jpg" alt=""></div>
+                            <div v-for="(val,index) in arrimg" :key='index'><img style='width: 100%;' :src="$http.baseURL+val.img" alt=""></div>
                         </div>
-                        <p class="ar"><span class="slider_num">{{index+1}}/10</span></p>
+                        <p class="ar"><span class="slider_num">{{index+1}}/{{ arrimg.length }}</span></p>
                     </div>
                 </div>
                 <div class="fl Mg-L24" style="width:55%">
-                    <p class="Ft-S18 Color_black Mg-B22">凯尔推车式B超 彩超</p>
+                    <p class="Ft-S18 Color_black Mg-B22">{{ devdata.name }}</p>
                     <p class="Ft-S14 Mg-B22">
                         <table width="100%">
                             <tr>
-                                <td width="50%"><span class="Color_black">产品型号：</span><span class="Color_gray6">CDAAA555A</span></td>
-                                <td width="50%"><span class="Color_black">供货方式：</span><span class="Color_gray6">物流</span></td>
+                                <td width="50%"><span class="Color_black">产品型号：</span><span class="Color_gray6">{{ devdata.model }}</span></td>
+                                <td width="50%"><span class="Color_black">供货方式：</span><span class="Color_gray6">{{ devdata.supply }}</span></td>
                             </tr>
                         </table>
                     </p>
@@ -25,28 +25,35 @@
 
                         <table width="100%">
                             <tr>
-                                <td width="50%"><span class="Color_black">生产品牌：</span><span class="Color_gray6">一路高歌</span></td>
-                                <td width="50%"><span class="Color_black">产品价格：</span><span class="Color_orange">¥50000-¥80000</span></td>
+                                <td width="50%"><span class="Color_black">生产品牌：</span><span class="Color_gray6">{{ devdata.brand }}</span></td>
+                                <td width="50%"><span class="Color_black">产品价格：</span><span class="Color_orange">{{ devdata.price }}</span></td>
                             </tr>
                         </table>
                     </p>
-                    <p class="Ft-S14 Mg-B22"><span class="Color_black">适用范围：</span><span class="Color_gray6">医用</span></p>
-                    <p class="Ft-S14 Mg-B60"><span class="Color_black">产品特点：</span><span class="Color_gray6">AAAAA</span></p>
+                    <p class="Ft-S14 Mg-B22"><span class="Color_black">适用范围：</span><span class="Color_gray6">{{ devdata.sphere }}</span></p>
+                    <p class="Ft-S14 Mg-B60"><span class="Color_black">产品特点：</span><span class="Color_gray6">{{ devdata.specialty }}</span></p>
                     <p class="Ft-S14 Pd-T20 Mg-B22">
                         <span class="Color_gray6">数量</span>
                         <el-input-number class="Mg-L36" v-model="num1" size="small" @change="handleChange" :min="1" label="描述文字"></el-input-number>
                     </p>
-                    <p class="Pd-L60"><span class="addbtn Mg-L10">加入申请单</span></p>
+                    <p class="Pd-L60"><span class="addbtn Mg-L10" @click='submitCart(devdata.id)'>加入申请单</span></p>
                 </div>
             </div>
             <div class="Pd-L24 Pd-R24 Pd-B24 detail_content">
                 <div>
                     <p class="con_tab Mg-B24"><span>设备详情</span></p>
-                    <p class="Mg-B24 Pd-L32 Pd-R32 Ft-S14 Color_black">凯尔B超—专业超声制造商。本公司大量供应KR系列全数字B超，分为：便携式B超、笔记本式B超、推车式B超、一体化B超、超导可视人流B超、兽用B超等十几个品种型号。</p>
-                    <p class="Pd-L32 Mg-B24 "><img src="../../../common/image/pages/yi/1234_03.jpg" alt=""></p>
+                    <p class="Mg-B24 Pd-L32 Pd-R32 Ft-S14 Color_black" v-html='devdata.content'></p>
+                    <!-- <p class="Pd-L32 Mg-B24 "><img src="../../../common/image/pages/yi/1234_03.jpg" alt=""></p> -->
                 </div>
             </div>
         </div>
+
+
+            
+            
+
+
+
         <div id="sendgoods" class="hide delcode">
             <div style="width: 720px;" class="Mg-T26">
                 <div class="table-head ac">
@@ -74,27 +81,39 @@
                             <col style="width: 80px;" />
                             <col />
                         </colgroup>
-                        <tbody>
-                            <tr v-for="val in 30">
-                                <td class="Color_black Ft-S16" width="150px">推车式彩超</td>
-                                <td width="130px"> H2468595</td>
-                                <td width="130px">50000.00</td>
-                                <td width="130px">2</td>
-                                <td width="110px"><span class="pointer Color_blue">删除</span></td>
+                        <tbody v-if='cart.length'>
+                            <tr v-for="val in cart" :key='val.id'>
+                                <td class="Color_black Ft-S16" width="150px">{{ val.name }}</td>
+                                <td width="130px">{{ val.model }}</td>
+                                <td width="130px">{{ val.price }}</td>
+                                <td width="130px">{{ val.num }}</td>
+                                <td width="110px"><span class="pointer Color_blue" @click='del(val.id)'>删除</span></td>
+                            </tr>
+                        </tbody>
+                        <tbody v-if='!cart.length'>
+                            <tr>
+                                <td colspan="6">无数据</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
             <p class="ac">
-                <span class="Mg-R24"><button class="cancel pointer">返回</button></span>
-                <span class=""><button class="send pointer">提交</button></span>
+                <span class="Mg-R24"><button class="cancel pointer" @click='close' >返回</button></span>
+                <span class=""><button class="send pointer" @click='submitCartlist'>提交</button></span>
             </p>
         </div>
         <ul class="aside">
-            <li class="pointer" @click="eqlist"><span class="icon_num"><i class="add_num">0</i></span></li>
+            <li class="pointer" @click="eqlist"><span class="icon_num"><i class="add_num">{{ numbers }}</i></span>
+                <transition-group @before-enter='beforeEnter' @enter='enter' @after-enter='afterEnter'>
+                    <div class="ball" v-for="item in balls" :key="item.id" v-show="item.show" transition='drop'>
+                        <div class="inner inner-hook"></div>
+                    </div>
+                </transition-group>
+            
+            </li>
             <li class="pointer"><span class="icon_up"></span></li>
-            <li class="pointer">
+            <li class="pointer" @click="go('/server/YaoequipmenApply')">
                 <p>返回首页</p>
             </li>
         </ul>
@@ -105,14 +124,121 @@ export default {
     name: 'equipmentdetail',
     data() {
         return {
+            balls: [        // 动画
+                { show: false, id: 1 },
+                { show: false, id: 2 },
+                { show: false, id: 3 }
+            ],
+            dropBalls: [],  // 收集动画小球
             index: 0,
-            num1: 1
+            num1: 1,            // 数量
+            devdata: {                      // 数据
+                brand: "一路高歌",
+                content: "",
+                manufacturers: "北京云医康",
+                model: "CDAAA555A",
+                name: "【凯尔】凯尔监护仪",
+                price: "6000.00",
+                specialty: "AAAAAAAAAAAAAAAAAAAA",
+                sphere: "医用",
+                supply: "物流",
+                tname: "监护仪"
+            },
+            arrimg: [],                 //  图片
+            cart: [],                   //  购物车
+            numbers: 0,                 //  购物车数量
         }
     },
     mounted() {
         this.initdata()
+        this.Cartdata()
     },
     methods: {
+        submitCart(id, num) {   // 填加购物车
+            this.drop(event.target);  // 执行动画
+            let _this = this
+            num = num ? num : this.num1
+            setTimeout(() => {          
+                _this.$http.post('/shv2/deviceapply/add_apply', { did: id, num: num }, function (res) {//添加购物车
+                    if (res.code == 1) {
+                    _this.Cartdata()
+                    }
+                }, function (err) { })
+            }, 300)
+        },
+        drop(target) {
+            for (var i = 0; i < this.balls.length; i++) {
+                var ball = this.balls[i];
+                if (!ball.show) {
+                    ball.show = true
+                    ball.el = target
+                    this.dropBalls.push(ball)
+                    return
+                }
+            }
+        },
+        beforeEnter(el) {
+            let count = this.balls.length
+            while (count--) {
+                let ball = this.balls[count]
+                if (ball.show) {
+                    let rect = ball.el.getBoundingClientRect() // 获取小球的相对于视口的位移(小球高度)
+                    let x = -(window.innerWidth - rect.left - 140)
+                    let y = rect.top - 550 // 负数是从左上角往下的的方向, 正数是往上
+                    el.style.display = '' // 清空display
+                    el.style.webkitTransform = `translate3d(0, ${y}px, 0)`
+                    el.style.transform = `translate3d(0, ${y}px, 0)`
+                    // 处理内层动画
+                    let inner = el.getElementsByClassName('inner-hook')[0] // 使用inner-hook类来单纯被js操作
+                    inner.style.webkitTransform = `translate3d(${x}px, 0, 0)`
+                    inner.style.transform = `translate3d(${x}px, 0, 0)`
+                }
+            }
+        },
+        enter(el, done) {
+            let rf = el.offsetHeight // 触发重绘html
+            this.$nextTick(() => {
+                // 让动画效果异步执行,提高性能
+                el.style.webkitTransform = 'translate3d(0, 0, 0)'
+                el.style.transform = 'translate3d(0, 0, 0)'
+                // 处理内层动画
+                let inner = el.getElementsByClassName('inner-hook')[0] // 使用inner-hook类来单纯被js操作
+                inner.style.webkitTransform = 'translate3d(0, 0, 0)'
+                inner.style.transform = 'translate3d(0, 0, 0)'
+                el.addEventListener('transitionend', done) // Vue为了知道过渡的完成，必须设置相应的事件监听器。
+            })
+        },
+        afterEnter(el) {
+            let ball = this.dropBalls.shift() // 完成一次动画就删除一个dropBalls的小球
+            if (ball) {
+                ball.show = false;
+                el.style.display = 'none'; // 隐藏小球
+            }
+        },
+      
+        // 以上为加入购物车动画效果
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+        Cartdata () {   // 获取购物车数据
+            var _this = this;
+            this.$http.post('/shv2/deviceapply/apply_data', {}, function (res) {
+                if (res.code == 1) {
+                    _this.cart = res.data
+                    var num = 0;
+                    _this.cart.map(val => {
+                        num += val.num
+                    })
+                    _this.numbers = num
+                } else {
+                    _this.cart = [];
+                    _this.numbers = 0;
+                }
+            }, function (err) { console.log(err)})
+        },
         initdata() {
             var _this = this;
             layui.use(["laypage", "layer", "laydate", "element", "carousel"], function () {
@@ -132,30 +258,52 @@ export default {
                     layout: ["prev", "page", "next", "skip"],
                     groups: 4,
                 });
-                var carousel = layui.carousel;
-                carousel.on('change(play)', function (obj) {
+
+                _this.$http.post('/shv2/deviceapply/detail', _this.$route.query, function (res) {
+                console.log(res)
+                if(res.code == 1) {
+                    _this.devdata = res.data
+                    _this.arrimg = res.pic
+                setTimeout(() => {
+                        var carousel = layui.carousel;
+                        carousel.render({
+                            elem: '#play'
+                            , width: '100%' //设置容器宽度
+                            , arrow: 'always', //始终显示箭头
+                            indicator: 'none'
+                        });
+                    carousel.on('change(play)', function (obj) {
                     _this.index = obj.index;
                 });
-                carousel.render({
-                    elem: '#play'
-                    , width: '100%' //设置容器宽度
-                    , arrow: 'always', //始终显示箭头
-                    indicator: 'none'
-                });
+                }, 200)
+                   
+                }
+            }, function (err) { console.log(err)})
 
             });
 
         },
-        godetail() {
-
+        del(id) {   // 购物车删除
+            var _this = this;
+            layui.use('layer', function(){
+                var layer = layui.layer;
+                _this.$http.post('/shv2/deviceapply/del_apply', { id: id}, function (res) {
+                    console.log(res)
+                    if (res.code == 1) {
+                        layer.msg(res.msg, { icon: 1, time: 1500});
+                        _this.Cartdata()
+                    } else {
+                        layer.msg(res.msg, { icon: 2, time: 1500});
+                    }
+                })
+                
+            }); 
         },
-        handleChange(value) {
-            console.log(value);
+        
+        handleChange (event) {  // 数量处理
+           
         },
-        select(num) {
-            this.inactive = num
-        },
-        eqlist() {
+        eqlist() {          // 打开购物车
             layui.use(["layer"], function () {
                 var layer = layui.layer;
                 var $ = layui.jquery;
@@ -178,6 +326,34 @@ export default {
                 $(".layui-layer-setwin").css("top", "19px");
             });
         },
+        submitCartlist() {      // 提交购物车
+            var _this = this;
+            layui.use(["layer"], function () {
+                var layer = layui.layer;
+                if (_this.cart.length > 0) {
+                    layer.msg('success')
+                    _this.$http.post('/shv2/deviceapply/sub_apply', {}, function (res) {
+                    console.log(res) 
+                        if (res.code == 1) {
+                            layer.msg(res.msg, { icon: 1, time: 1500});
+                            var time = setTimeout(() => {
+                                clearTimeout(time)
+                                _this.Cartdata()
+                                layer.closeAll();
+                            }, 1000)
+                        } else {
+                            layer.msg(res.msg, { icon: 2, time: 1500});
+                        }
+                    }, function (err) { console.log(err)})
+                }
+            })
+        },
+        close () {  // 购物车返回键
+            layui.use(["layer"], function () {
+                var layer = layui.layer;
+                layer.closeAll();
+            })
+        }
     }
 }
 </script>
@@ -196,6 +372,25 @@ export default {
 </style>
 
 <style scoped lang="less">
+
+.ball {
+    &.v-enter-active {
+        /* 可以在上面的工具里跳出自己想要的曲线，调整参数 */
+        transition: all 0.6s cubic-bezier(0.11, 0.92, 0.98, 0.75);
+    }
+
+    .inner {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: #f00;
+        transition: all 0.6s linear;
+        position: absolute;
+        z-index: 666;
+    }
+}
+
+
 #equipmentdetail {
     .equipmentdetail_tit {
         border-bottom: 1px solid #f1f2f9;
@@ -203,11 +398,11 @@ export default {
     .detail_head {
         .silder {
             width: 380px;
-            height: 382px;
+            height: 282px;
             text-align: center;
             border: 1px solid #e6e6e6;
             #play {
-                height: 380px !important;
+                height: 280px !important;
                 .slider_num {
                     position: relative;
                     top: -30px;
@@ -234,6 +429,7 @@ export default {
             font-weight: 400;
             color: rgba(255, 255, 255, 1);
             line-height: 40px;
+            cursor: pointer;
         }
     }
     .detail_content {

@@ -250,7 +250,7 @@ export default {
                     _this.$http.post('/shv2/account/resendSms', { merchantFlowId: _this.phone }, function (res) {   // 绑卡重发验证码
                         console.log(res)
                         if (res.code == 1) {
-                            layer.msg(res.msg)
+                            // layer.msg(res.msg)
                              noneclick = true
                             if (noneclick) {
                                 var time = 60;
@@ -267,7 +267,7 @@ export default {
                             }
                             
                         } else {
-                            layer.msg(res.msg)
+                            // layer.msg(res.msg)
                             noneclick = false
                         }
                     }, function (err) { console.log(err)})

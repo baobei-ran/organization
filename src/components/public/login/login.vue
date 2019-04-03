@@ -1,7 +1,7 @@
 <template>
     <div id="base">
         <div id="login">
-            <div class="input_box">
+            <form class="input_box" @submit.prevent='submitFun'>
                 <div class="title_logo">
                     <img src="@/common/image/pages/login/icon_dblogo@3x.png" alt="">
                 </div>
@@ -16,11 +16,12 @@
                     <span class="reset pointer" @click="go('/forgetpass')">忘记密码</span>
                 </div>
                 <div class="my_group">
-                    <button class="login_btn pointer" @click="submitFun" @keyup.enter="submitFun">
+                    <!-- <button class="login_btn pointer" @click="submitFun" @keyup.enter="submitFun">
                         立即登录
-                    </button>
+                    </button> -->
+                    <input type="submit" class="login_btn pointer" @click="submitFun" @keyup.enter="submitFun" value="立即登录" />
                 </div>
-            </div>
+            </form>
             <div class="footer">
                 登录即代表您已阅读并同意《云医康用户注册协议》《法律声明及隐私权政策》
             </div>
@@ -91,7 +92,9 @@ export default {
                         }
                     }, function (err) { console.log(err) });
                 }
+                return false;
             });
+           
         }
     },
     directives: {
@@ -194,7 +197,6 @@ export default {
                 background: rgba(78, 140, 216, 1);
                 color: #fff;
                 text-align: center;
-                line-height: 42px;
                 -webkit-border-radius: 2px;
                 -moz-border-radius: 2px;
                 border-radius: 2px;

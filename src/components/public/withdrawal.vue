@@ -428,7 +428,7 @@ export default {
                     _this.$http.post('/shv2/Alidayu/sendSMS', { telphone: _this.withdraw_deposit.login_phone }, function (res) {  // 获取验证码      
                         console.log(res)
                         if (res.code == 1) {
-                            layer.msg('已发送验证码')
+                            // layer.msg('已发送验证码')
                         } else {
                             layer.msg(res.msg)
                         }

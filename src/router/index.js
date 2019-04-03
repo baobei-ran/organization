@@ -91,6 +91,9 @@ import YaoequipmenApply from "@/components/Yao/Yao-equipmenApply"; //设备申�
 import Yaoequipmendetail from "@/components/Yao/equipmenApply/equipmendetail"; //设备详情
 import Yaoequipmenjl from "@/components/Yao/equipmenApply/equipmenjl"; //记录
 import Yaoprescription from '@/components/Yao/Yao-prescription';       // 处方医生列表
+import PrescriptionList from '@/components/Yao/prescription/prescriptionList';  // 处方单申请页
+import PrescriptionApply from '@/components/Yao/prescription/prescriptionApply'; // 处方单申请列表页
+
 import YaoprescriptionList from '@/components/Yao/Yao-prescriptionList';  // 处方单列表
 import statisticsHome from '@/components/Yao/Yao-statistics';                 // 统计首页
 import Vipmember from '@/components/Yao/Yao-member';                    //  药店会员首页
@@ -433,10 +436,21 @@ export default new Router({
 
     // 处方
     {
-      path: '/server/Yaoprescription',
+      path: '/server/Yaodoctorprescription',
       name: '处方单医生列表',
       component: Yaoprescription
-    },  
+    },
+    {
+      path: '/server/Yaodoctorprescription/prescriptionList',
+      name: '处方单申请',
+      component: PrescriptionList
+    },
+    {
+      path: '/server/Yaodoctorprescription/prescriptionApply',
+      name: '处方单申请列表',
+      component: PrescriptionApply
+    },
+
     {
       path: '/server/YaoprescriptionList',
       name: '处方单列表',

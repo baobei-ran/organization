@@ -13,8 +13,7 @@ let http = axios.create({
       let newData = "";
       for (let k in data) {
         if (data.hasOwnProperty(k) === true) {
-          newData +=
-            encodeURIComponent(k) + "=" + encodeURIComponent(data[k]) + "&";
+          newData += encodeURIComponent(k) + "=" + encodeURIComponent(data[k]) + "&";
         }
       }
       newData = newData.substr(0, newData.length - 1)
@@ -91,7 +90,7 @@ function apiAxios(method, url, params, response, error) {
     method: method,
     url: url,
     data: method === "post" || method === "put" ? params : null,
-    params: method === "GET" || method === "delelte" ? params : null
+    params: method === "GET" || method === "delete" ? params : null
   })
     .then(function(res) {
       response(res.data);

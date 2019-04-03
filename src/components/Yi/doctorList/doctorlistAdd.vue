@@ -192,19 +192,17 @@ export default {
       //当上传图片后，调用onchange方法，获取图片本地路径
       onchange(file,fileList){  // 
           var _this = this;
-            var event = event || window.event;
-            var filea = event.target.files[0];
-                var reader = new FileReader(); 
-                reader.readAsDataURL(filea);
+            var reader = new FileReader(); 
+            reader.readAsDataURL(file.raw);
             //转base64
             reader.onload = function(e) {
                 _this.imageUrl = e.target.result //将图片路径赋值给src进行预览
             }
-            
+        return false;
       },
 
 
-        initdata() {
+        initdata() {    // 操作jquery
             let _this = this;
             for (var i = 0; i < $('.select_type span').length; i++) {
                 $('.select_type input')[i].onchange = function () {

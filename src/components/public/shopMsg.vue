@@ -77,7 +77,8 @@
                         </tr>
                     </thead>
 
-                    <tr>
+                    <tbody v-if='dataList.length'>
+                        <!-- <tr>
                         <td>0002</td>
                         <td>3332018092700012121</td>
                         <td>2019-11-11 11:11:11</td>
@@ -112,10 +113,16 @@
                         <td>0.3</td>
                         <td>提现失败</td>
                         <td>工商银行（尾数2333）</td>
-                    </tr>
+                    </tr> -->
+                    </tbody>
+                    <tbody v-if='!dataList.length'>
+                        <tr>
+                            <td colspan="7">暂无数据</td>
+                        </tr>
+                    </tbody>
                 </table>
 
-                <div id="page" class="ac Mg-T20"></div>
+                <div v-show='dataList.length' id="page" class="ac Mg-T20"></div>
             </div>
         </div>
         <div id="SectionBox">
@@ -176,7 +183,7 @@ export default {
     name: '',
     data() {
         return {
-
+            dataList: []        // 数据列表
         }
     },
     mounted() {

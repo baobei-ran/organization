@@ -4,7 +4,7 @@
         <ul class="aside">
             <li class="pointer" @click="eqlist">
                 <span class="icon_num">
-                    <i class="add_num" v-text="goodstypes?goodstypes:num">0</i>
+                    <i class="add_num" >{{ numbers }}</i>
                     <transition-group @before-enter='beforeEnter' @enter='enter' @after-enter='afterEnter'>
                         <div class="ball" v-for="item in balls" :key="item.id" v-show="item.show" transition='drop'>
                             <div class="inner inner-hook"></div>
@@ -14,7 +14,7 @@
             </li>
             <li class="pointer" @click="goup" id="goup"><span class="icon_up"></span></li>
             <li class="pointer" v-show="backindex" >
-                <p>返回首页</p>
+                <p @click='Return'>返回首页</p>
             </li>
         </ul>
         <div id="sendgoods" class="hide delcode">
@@ -44,8 +44,8 @@
                             <col style="width: 80px;" />
                             <col />
                         </colgroup>
-                        <tbody v-show="layerData">
-                            <tr v-for="val in layerData">
+                        <tbody v-show="layerData.length">
+                            <tr v-for="(val,i) in layerData" :key='i'>
                                 <td class="Color_black Ft-S16" width="150px" v-text="val.name">推车式彩超</td>
                                 <td width="130px" v-text="val.model"> H2468595</td>
                                 <td width="130px" v-text="val.price">50000.00</td>
@@ -53,7 +53,7 @@
                                 <td width="110px"><span class="pointer Color_blue" @click="deldata(val.id)">删除</span></td>
                             </tr>
                         </tbody>
-                        <tbody v-show="!layerData">
+                        <tbody v-show="!layerData.length">
                             <tr>
                                 <td class="Color_black Ft-S16" colspan="5">暂无数据</td>
                             </tr>
@@ -80,46 +80,68 @@ export default {
                 { show: false, id: 3 }
             ],
             dropBalls: [],
-            goodstypes: this.num,
-            layerData: '',
+            numbers: 0,             // 购物车数量
+            layerData: [],          // 购物车数据
             backindex:this.$route.path=='/server/equipmenApply/equipmendetail',
         }
     },
     computed: {
         
     },
+    updated () {
+        
+    },
     mounted() {
-        console.log()
+        let _this = this;
+            this.$http.post('/shv2/deviceapply/apply_data', {}, function (res) { //  获取购物车的数据
+                if (res.code == 1) {
+                    _this.layerData = res.data;
+                    var num = 0;
+                    _this.layerData.map(val => {
+                         num += val.num
+                    })
+                    _this.numbers = num
+                } else {
+                    _this.layerData = []
+                    _this.numbers = 0
+                }
+            }, function (err) { })
     },
     methods: {
-        submitdata() {
+        
+        Return () {
+            this.$router.push('/server/equipmenApply')
+        },
+        submitdata() {      // 提交购物车
             let _this = this
             layui.use(["layer"], function () {
                 var layer = layui.layer;
-                _this.$http.post('/shv2/deviceapply/sub_apply', {}, function (res) {//添加购物车
+                if (_this.layerData) {
+                     _this.$http.post('/shv2/deviceapply/sub_apply', {}, function (res) {
                     if (res.code == 1) {
                         _this.$emit('clickinit',1);
-                         _this.goodstypes='';
+                         _this.goodstypes= [];
                         layer.closeAll()
-                        layer.msg(res.msg);
+                        _this.updan()
+                        layer.msg(res.msg, { icon: 1, time: 1500});
                     } else {
                         layer.msg(res.msg);
                     }
-                }, function (err) { })
+                    }, function (err) { })
+                }
+               
             })
         },
+        // 绑定在父组件上了
         initdata(id, num) {
-            if (!this.goodstypes) {
-                this.goodstypes = this.num;
-            }
             let _this = this
             this.$http.post('/shv2/deviceapply/add_apply', { did: id, num: num }, function (res) {//添加购物车
                 if (res.code == 1) {
-                    _this.goodstypes += num;
+                   _this.updan()
                 }
             }, function (err) { })
         },
-        close(){
+        close() {
             layui.use(["layer"], function () {
                 var layer = layui.layer;
                 layer.closeAll()
@@ -152,11 +174,17 @@ export default {
         },
         updan() {
             let _this = this;
-            this.$http.post('/shv2/deviceapply/apply_data', {}, function (res) {//添加购物车
+            this.$http.post('/shv2/deviceapply/apply_data', {}, function (res) { //  获取购物车的数据
                 if (res.code == 1) {
                     _this.layerData = res.data;
+                    var num = 0;
+                    _this.layerData.map(val => {
+                         num += val.num
+                    })
+                    _this.numbers = num
                 } else {
-                    _this.layerData = ''
+                    _this.layerData = []
+                    _this.numbers = 0
                 }
             }, function (err) { })
         },
@@ -164,10 +192,10 @@ export default {
             let _this = this;
             layui.use(["layer"], function () {
                 var layer = layui.layer;
-                _this.$http.post('/shv2/deviceapply/del_apply', { id: id }, function (res) {//添加购物车
+                _this.$http.post('/shv2/deviceapply/del_apply', { id: id }, function (res) {// 删除购物车
                     if (res.code == 1) {
-                        layer.msg('删除成功');
                         _this.updan()
+                        layer.msg('删除成功', { icon:1, time: 1500});
                     }
                 }, function (err) { })
             })
@@ -193,7 +221,6 @@ export default {
             for (var i = 0; i < this.balls.length; i++) {
                 var ball = this.balls[i];
                 if (!ball.show) {
-
                     ball.show = true
                     ball.el = target
                     this.dropBalls.push(ball)

@@ -3,9 +3,9 @@
         <div class="tab_content Pd-L24 Pd-R24">
             <div class="layui-tab Pd-T24">
                 <ul class="layui-tab-title">
-                    <li class="layui-this" @click="tab(0)">全部关联（1000）</li>
-                    <li @click="tab(1)">收到的关联（100）</li>
-                    <li @click="tab(2)">添加的关联（100）</li>
+                    <li class="layui-this" @click="tab(0)">全部关联（{{ tabdata.count }}）</li>
+                    <li @click="tab(1)">收到的关联（{{ tabdata.count1 }}）</li>
+                    <li @click="tab(2)">添加的关联（{{ tabdata.count2 }}）</li>
                     <li class="fr"><span class="adddoctor pointer" @click="go('/server/YaodrugParabiose/YaoaddDrugParabiose')">增加关联</span></li>
                 </ul>
                 <div class="layui-tab-content">
@@ -15,7 +15,7 @@
                                 <div class="layui-inline lay_width">
                                     <label class="layui-form-label">关联机构</label>
                                     <div class="layui-input-inline">
-                                        <input type="text" name="" autocomplete="off" class="layui-input">
+                                        <input type="text" name="" autocomplete="off" v-model='name' class="layui-input">
                                     </div>
                                 </div>
                             </div>
@@ -34,15 +34,12 @@
                             <div class="layui-col-md2 ">
                                 <div class="layui-inline lay_width">
                                     <label class="layui-form-label">业务状态</label>
-                                    <select name="city" lay-verify="required" class="select_class">
-                                        <option value="">全部</option>
-                                        <option value="010">xx</option>
-                                        <option value="021">xx</option>
-                                        <option value="0571">xx</option>
+                                    <select name="city" lay-verify="required" class="select_class" v-model='state'>
+                                        <option v-for="(val,i) in statuslist" :value="val.id" :key='i'>{{ val.name }}</option>
                                     </select>
                                 </div>
                             </div>
-                            <div class="layui-col-md2">
+                            <!-- <div class="layui-col-md2">
                                 <div class="layui-inline lay_width">
                                     <label class="layui-form-label" style="width:90px;">上/下级机构</label>
                                     <select name="city" lay-verify="required" class="select_class">
@@ -52,10 +49,10 @@
                                         <option value="0571">xx</option>
                                     </select>
                                 </div>
-                            </div>
+                            </div> -->
                             <div class="layui-col-md2">
                                 <div class="layui-input-inline">
-                                    <span class="Ft-S14 selectbtn ac pointer">查询</span>
+                                    <span class="Ft-S14 selectbtn ac pointer" @click='search'>查询</span>
                                 </div>
                             </div>
                         </div>
@@ -72,24 +69,29 @@
                                 <td>操作</td>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr v-for="val in 10">
-                                <td>0001</td>
-                                <td><i class="icon_star"></i>北京市同仁医院</td>
-                                <td><i class="icon_star"></i>北京市同济医院</td>
-                                <td>2018-09-04 01:53</td>
-                                <td>单向关联</td>
+                        <tbody v-if='listdata.length'>
+                            <tr v-for="(val,i) in listdata" :key='val.id'>
+                                <td v-text='i+1'>0001</td>
+                                <td><i class="icon_star"></i>{{ val.dname }}</td>
+                                <td><i class="icon_star"></i>{{ val.uname }}</td>
+                                <td>{{ val.addtime }}</td>
+                                <td>{{ val.status }}</td>
                                 <td>
-                                  <span class="Color_blue pointer Mg-R36" @click="godetail">查看</span>
+                                  <span class="Color_blue pointer Mg-R36" @click="godetail(val.down_hid, val.up_hid)">查看</span>
                                   <!-- <span class="Color_default">开启合作</span>
                                   <span class="Color_blue pointer">提成设置</span> -->
-                                  <span class="Color_blue pointer" @click="go('/server/YaodrugParabiose/Yaodrugrecord')">合作记录</span>
+                                  <!-- <span class="Color_blue pointer" @click="go('/server/YaodrugParabiose/Yaodrugrecord')">合作记录</span> -->
                                   <!-- <span class="Color_default">合作开启中</span> -->
                                 </td>
                             </tr>
                         </tbody>
+                        <tbody v-if='!listdata.length'>
+                            <tr>
+                                <td colspan="6">无数据</td>
+                            </tr>
+                        </tbody>
                     </table>
-                    <div id="page" class="ac Mg-T30"></div>
+                    <div id="page" v-show='listdata.length' class="ac Mg-T30"></div>
                 </div>
             </div>
         </div>
@@ -100,14 +102,48 @@ export default {
     name: 'doctorParabiose',
     data() {
         return {
-
+            num: 0,             // tab
+            name: '',           // 关联机构的名称
+            start_time: '',     // 时间
+            end_time: '',       // end 时间
+            state: 0,          // 业务状态
+            page: 1,            // 页数
+            limit: 10,          // 每页数据
+            statuslist: [{id: 0, name: '全部'},{id: 1, name: '单项关联'},{id: 2, name: '双向关联 '},{id: 3, name: '合作开启中'},{id: 4, name: '已合作'}],
+            listdata: [],       // 列表数据
+            tabdata: ''         //  tab数据
         }
     },
     mounted() {
-        this.initdata()
+        this.yaolist(1)
     },
     methods: {
-        initdata() {
+        tab(num) {
+            this.num = num;
+            this.yaolist(1)
+        },
+        search () {
+            this.num = 1
+            this.yaolist(1)
+        },
+        yaolist (num) {
+            var _this = this;
+            _this.start_time = $('#date').val()
+            _this.end_time = $('#date1').val()
+            var obj = {type:_this.num, name: _this.name,start_time: _this.start_time, end_time: _this.end_time, state: _this.state, page: num, limit: _this.limit}
+            _this.$http.post('/shv2/medicine/relevance_list', obj, function (res) {
+                console.log(res)
+                if (res.code == 1) {
+                    _this.tabdata = res;
+                    _this.listdata = res.data
+                    if (num == 1) {
+                        _this.initdata(res.count)
+                    }
+                }
+            }, function (err) { console.log(err)})
+        },
+        initdata(total) {
+            var _this = this;
             layui.use(["laypage", "layer", "laydate", "element"], function () {
                 var element = layui.element;
                 var laypage = layui.laypage;
@@ -120,22 +156,22 @@ export default {
                 });
                 laypage.render({
                     elem: "page", //注意，这里的 test1 是 ID，不用加 # 号
-                    count: 50, //数据总数，从服务端得到
+                    count: total, //数据总数，从服务端得到
                     limit: 10, //每页条数
                     layout: ["prev", "page", "next", "skip"],
                     groups: 4,
-                    // prev:
-                    //     '<img src="../../common/image/pages/account/icon_left.png" style="margin-top:-3px;" alt="" />',
-                    // next:
-                    //     '<img src="../../common/image/pages/account/icon_right.png" style="margin-top:-3px;"  alt="" />'
+                    jump: function(obj, first){
+                        if(!first){ 
+                            _this.page = obj.curr
+                            _this.yaolist(obj.curr)
+                        }
+                    }
                 });
             });
         },
-        tab(num) {
-            this.tdlast = num
-        },
-        godetail() {
-            this.go('/server/YaodrugParabiose/YaodrugParabiosemsg')
+        
+        godetail(hid, id) {  // 查看
+            this.$router.push({ path: '/server/YaodrugParabiose/YaodrugParabiosemsg', query: { down_hid: hid, up_hid: id } })
         }
     }
 }

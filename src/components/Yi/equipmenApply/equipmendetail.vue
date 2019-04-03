@@ -6,9 +6,9 @@
                 <div class="fl silder">
                     <div class="layui-carousel" id="play" lay-filter="play">
                         <div carousel-item>
-                            <div v-for="val in detailPic" style="line-height:380px;"><img :src="$http.baseURL+val.img" alt="" width="100%"></div>
+                            <div v-for="(val, index) in detailPic" :key='index' style="line-height:380px;"><img :src="$http.baseURL+val.img" alt="" width="100%"></div>
                         </div>
-                        <p class="ar"><span class="slider_num">{{mindex+1}}/{{detailPic.length}}</span></p>
+                        <p class="ar"><span class="slider_num">{{index+1}}/{{detailPic.length}}</span></p>
                     </div>
                 </div>
                 <div class="fl Mg-L24" style="width:55%">
@@ -48,7 +48,7 @@
             </div>
         </div>
 
-        <shopping-cart ref="shapcart" :num="count2"  v-on:clickinit="initdata"></shopping-cart>
+        <shopping-cart ref="shapcart" :num='num1' v-on:clickinit="initdata"></shopping-cart>
     </div>
 
 </template>
@@ -62,9 +62,8 @@ export default {
     },
     data() {
         return {
-            mindex: 0,
+            index: 0,
             num1: 1,
-            count2: '',
             detailData: '',
             detailPic: ''
         }
@@ -79,19 +78,18 @@ export default {
                 var element = layui.element;
                 _this.$http.post('/shv2/deviceapply/detail', _this.$route.query, function (res) {//
                     if (res.code == 1) {
-                        _this.count2 = res.count;
                         _this.detailData = res.data;
                         _this.detailPic = res.pic;
                         setTimeout(() => {
                             var carousel = layui.carousel;
-                            carousel.on('change(play)', function (obj) {
-                                _this.mindex = obj.index;
-                            });
                             carousel.render({
                                 elem: '#play'
                                 , width: '100%' //设置容器宽度
                                 , arrow: 'always', //始终显示箭头
                                 indicator: 'none'
+                            });
+                            carousel.on('change(play)', function (obj) {
+                                _this.index = obj.index;
                             });
                         }, 200)
 

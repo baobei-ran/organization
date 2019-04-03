@@ -14,22 +14,29 @@
                     <li class="fl Mg-R32 pointer" :class="{'Color_blue':inactive==7}" @click="select(7)">超声仪器</li>
                     <li class="fl pointer" :class="{'Color_blue':inactive==8}" @click="select(8)">医用病床</li>
                 </ul>
-                <span class="fr head_btn pointer" @click="go('/server/equipmenApply/equipmenjl')">申请记录</span>
+                <span class="fr head_btn pointer" @click="go('/server/YaoequipmenApply/Yaoequipmenjl')">申请记录</span>
             </div>
-            <ul class="good_list clear">
-                <li class="good_list_li ac fl Mg-R24 Mg-B24" v-for="val in 15">
+
+            <ul class="good_list clear" v-if="facilityList.length">
+                <li class="good_list_li ac fl Mg-R24 Mg-B24" v-for="val in facilityList" :key='val.id'>
                     <div>
-                        <img src="../../common/image/pages/yi/supply_03.jpg" width="206px" height="188px" alt="">
+                        <img :src="$http.baseURL + val.img" width="206px" height="188px" alt="">
                     </div>
-                    <p class="Mg-T16 Ft-S14 Color_black">【必利劲】推车式彩超</p>
-                    <p class="Mg-T10 Ft-S14 Color_orange">￥5000.00-10000.00</p>
-                    <span class="Mg-T12 adddan pointer" @click="godetail">加入申请单</span>
+                    <p class="Mg-T16 Ft-S14 Color_black">{{ val.name }}</p>
+                    <p class="Mg-T10 Ft-S14 Color_orange">￥{{ val.price }}</p>
+                    <span class="Mg-T12 adddan pointer" @click="godetail(val.id)">查看详情</span>
                 </li>
             </ul>
-            <div id="page" class="ac Mg-T30"></div>
+            <ul class="good_list clear" v-else>
+                <li class="a_center Mg-R24 Mg-B24" >
+                    无数据
+                </li>
+            </ul>
+            <div id="page" v-show='facilityList.length'  class="ac Mg-T30"></div>
         </div>
+        
         <ul class="aside">
-            <li class="pointer" @click="eqlist"><span class="icon_num"><i class="add_num">0</i></span></li>
+            <li class="pointer" @click="eqlist"><span class="icon_num"><i class="add_num">{{ cart.length }}</i></span></li>
             <li class="pointer"><span class="icon_up"></span></li>
         </ul>
         <div id="sendgoods" class="hide delcode">
@@ -59,13 +66,18 @@
                             <col style="width: 80px;" />
                             <col />
                         </colgroup>
-                        <tbody>
-                            <tr v-for="val in 30">
-                                <td class="Color_black Ft-S16" width="150px">推车式彩超</td>
-                                <td width="130px"> H2468595</td>
-                                <td width="130px">50000.00</td>
-                                <td width="130px">2</td>
-                                <td width="110px"><span class="pointer Color_blue">删除</span></td>
+                        <tbody v-if='cart.length'>
+                            <tr v-for="val in cart" :key='val.id'>
+                                <td class="Color_black Ft-S16" width="150px">{{ val.name }}</td>
+                                <td width="130px">{{ val.model }}</td>
+                                <td width="130px">{{ val.price }}</td>
+                                <td width="130px">{{ val.num }}</td>
+                                <td width="110px"><span class="pointer Color_blue" @click='del(val.id)'>删除</span></td>
+                            </tr>
+                        </tbody>
+                        <tbody v-if='!cart.length'>
+                            <tr>
+                                <td colspan="6">无数据</td>
                             </tr>
                         </tbody>
                     </table>
@@ -73,7 +85,7 @@
             </div>
             <p class="ac">
                 <span class="Mg-R24"><button class="cancel pointer">返回</button></span>
-                <span class=""><button class="send pointer">提交</button></span>
+                <span class=""><button class="send pointer" @click='snbmitCart'>提交</button></span>
             </p>
         </div>
     </div>
@@ -83,14 +95,49 @@ export default {
     name: 'equipmentApply',
     data() {
         return {
-            inactive: 0
+            inactive: 0,        // tab选择分类
+            page:1,             // 页数
+            limit: 10,          // 每页数据
+            facilityList: [],   // 数据
+            cart: [],           // 购物车
         }
     },
     mounted() {
-        this.initdata()
+        this.initlist(1);
+        this.Cartdata()
     },
     methods: {
-        initdata() {
+        Cartdata () {   // 购物车数据
+            var _this = this;
+            if (_this.cart) {
+                _this.cart = []
+            }
+            this.$http.post('/shv2/deviceapply/apply_data',{}, function (res) {
+                console.log(res)
+                if (res.code == 1) {
+                    _this.cart = res.data
+                }
+            }, function (err) { console.log(err)})
+        },
+        initlist(num) {
+            var _this = this;
+            layui.use('layer', function(){
+            var layer = layui.layer;
+            var obj = { type: _this.inactive, page: _this.psge, limit: _this.limit }
+            _this.$http.post('/shv2/deviceapply/index', obj, function(res) {
+                console.log(res)
+                if(res.code == 1) {
+                    _this.facilityList = res.data
+                    if (num == 1) {
+                        _this.initdata(res.count)
+                    }
+                   
+                }
+            }, function (err) { console.log(err)})
+            }); 
+        },
+        initdata(tatol) {
+            var _this = this;
             layui.use(["laypage", "layer", "laydate", "element"], function () {
                 var element = layui.element;
                 var laypage = layui.laypage;
@@ -103,22 +150,25 @@ export default {
                 });
                 laypage.render({
                     elem: "page", //注意，这里的 test1 是 ID，不用加 # 号
-                    count: 50, //数据总数，从服务端得到
-                    limit: 10, //每页条数
+                    count: tatol, //数据总数，从服务端得到
+                    limit: 5, //每页条数
                     layout: ["prev", "page", "next", "skip"],
                     groups: 4,
-                    // prev:
-                    //     '<img src="../../common/image/pages/account/icon_left.png" style="margin-top:-3px;" alt="" />',
-                    // next:
-                    //     '<img src="../../common/image/pages/account/icon_right.png" style="margin-top:-3px;"  alt="" />'
+                    jump: function(obj, first){
+                        if(!first){
+                            _this.page = obj.curr
+                            _this.initlist(obj.curr)
+                        }
+                    }
                 });
             });
         },
-        godetail(){
-            this.go('/server/equipmenApply/equipmendetail')
+        godetail(id){   // 查看详情
+            this.go('/server/YaoequipmenApply/Yaoequipmendetail?id=' + id)
         },
         select(num) {
             this.inactive = num
+            this.initlist(num)
         },
         eqlist() {
             layui.use(["layer"], function () {
@@ -134,6 +184,9 @@ export default {
                     area: ["800px", "640px"],
                     cancel: function () { }
                 });
+                $('.cancel').on('click', function () {
+                    layer.closeAll('page');
+                })
                 $(".layui-layer-title").css({
                     height: "50px",
                     background: "#ECF2FB",
@@ -143,6 +196,44 @@ export default {
                 $(".layui-layer-setwin").css("top", "19px");
             });
         },
+        del(id) {   // 购物车删除
+            var _this = this;
+            layui.use('layer', function(){
+                var layer = layui.layer;
+                _this.$http.post('/shv2/deviceapply/del_apply', { id: id}, function (res) {
+                    console.log(res)
+                    if (res.code == 1) {
+                        layer.msg(res.msg, { icon: 1, time: 1500});
+                        _this.Cartdata()
+                    } else {
+                        layer.msg(res.msg, { icon: 2, time: 1500});
+                    }
+                })
+                
+            }); 
+            
+        },
+        snbmitCart () {     // 提交购物车数据
+            var _this = this;
+            layui.use('layer', function(){
+                var layer = layui.layer;
+                if (_this.cart.length <= 0) {
+                    return false;
+                }
+                _this.$http.post('/shv2/deviceapply/sub_apply', {}, function (res) {
+                    console.log(res) 
+                    if (res.code == 1) {
+                        layer.msg(res.msg, { icon: 1, time: 1500});
+                        var time = setTimeout(() => {
+                            clearTimeout(time)
+                            _this.Cartdata()
+                        }, 1000)
+                    } else {
+                        layer.msg(res.msg, { icon: 2, time: 1500});
+                    }
+                }, function (err) { console.log(err)})
+            }); 
+        }
     }
 }
 </script>
@@ -218,6 +309,11 @@ export default {
         }
     }
     .good_list {
+        .a_center {
+            text-align: center;
+            border: 1px solid #e6e6e6;
+            line-height: 40px;
+        }
         .good_list_li {
             width: 240px;
             height: 350px;

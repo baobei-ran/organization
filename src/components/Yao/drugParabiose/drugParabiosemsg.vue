@@ -9,7 +9,7 @@
                             <span class="Color_black">
                                 机构名称:
                             </span>
-                            <span class="Color_gray6">
+                            <span class="Color_gray6" v-text='dataVal.hname'>
                                 北京市同济医院
                             </span>
                         </p>
@@ -19,8 +19,8 @@
                             <span class="Color_black">
                                 机构地址:
                             </span>
-                            <span class="Color_gray6">
-                                辽宁省-营口市-站前区
+                            <span class="Color_gray6" >
+                               <span>{{ dataVal.province }}</span> - <span>{{ dataVal.city }}</span> - <span>{{ dataVal.county }}</span>
                             </span>
                         </p>
                     </td>
@@ -29,7 +29,7 @@
                             <span class="Color_black v-top" style="width:60px;">
                                 机构简介:
                             </span>
-                            <span class="Color_gray6" style="width:326px;display:inline-block">
+                            <span class="Color_gray6" style="width:326px;display:inline-block" v-text="dataVal.introduction">
                                 首都医科大学附属北京朝阳医院建院于1958年2月24日，是北京市医院管理局直属，集医疗、教学、科研、预防为一体的三级甲等医院，是首都医科...
                                 <span class="Color_blue pointer">
                                     更多
@@ -44,7 +44,7 @@
                             <span class="Color_black">
                                 机构电话:
                             </span>
-                            <span class="Color_gray6">
+                            <span class="Color_gray6" v-text='dataVal.telephone'>
                                 010-44582125
                             </span> </p>
                     </td>
@@ -53,7 +53,7 @@
                             <span class="Color_black">
                                 详细地址:
                             </span>
-                            <span class="Color_gray6">
+                            <span class="Color_gray6" v-text='dataVal.address'>
                                 辽宁省营口市站前区金牛山大街306号
                             </span>
                         </p>
@@ -71,7 +71,10 @@
                                 业务状态:
                             </span>
                             <span class="Color_gray6">
-                                单向关联
+                                <span v-if='dataVal.state == 1'>单向关联</span>  
+                                <span v-if='dataVal.state == 2'>双向关联</span>
+                                <span v-if='dataVal.state == 3'>提成设置</span>
+                                <span v-if='dataVal.state == 4'>已合作</span>
                             </span>
                         </p>
                     </td>
@@ -80,8 +83,8 @@
                             <span class="Color_black">
                                 关联时间:
                             </span>
-                            <span class="Color_gray6">
-                                2018.19.19 09:09:09
+                            <span class="Color_gray6" >
+                                {{ dataVal.addtime | moment }}
                             </span>
                         </p>
                     </td>
@@ -128,8 +131,8 @@
                 </table>
             </form>
         </div>
-        <p class="ac hide"><span class="Color_white Ft-S16 goback pointer" @click="go('/server/YaodrugParabiose')">返回</span></p>
-        <p class="ac"><span class="Color_white Ft-S16 goback pointer Mg-R28" @click="go('/server/YaodrugParabiose')" style="background:#fff;color:rgba(49, 150, 255, 1)!important;border:1px solid rgba(49, 150, 255, 1)">返回</span><span class="Color_white Ft-S16 goback pointer" @click="go('/server/YaodrugParabiose/Yaodrugrecord')">合作记录</span></p>
+        <p class="ac"><span class="Color_white Ft-S16 goback pointer" @click="go('/server/YaodrugParabiose')">返回</span></p>
+        <p class="ac hide"><span class="Color_white Ft-S16 goback pointer Mg-R28" @click="go('/server/YaodrugParabiose')" style="background:#fff;color:rgba(49, 150, 255, 1)!important;border:1px solid rgba(49, 150, 255, 1)">返回</span><span class="Color_white Ft-S16 goback pointer" @click="go('/server/YaodrugParabiose/Yaodrugrecord')">合作记录</span></p>
         <p class="ac hide"><span class="Color_white Ft-S16 goback pointer Mg-R28" @click="go('/server/YaodrugParabiose')" style="background:#fff;color:rgba(49, 150, 255, 1)!important;border:1px solid rgba(49, 150, 255, 1)">返回</span><span class="Color_white Ft-S16 goback pointer">开启双向关联</span></p>
         <p class="ac hide"><span class="Color_white Ft-S16 goback pointer Mg-R28" @click="go('/server/YaodrugParabiose')" style="background:#fff;color:rgba(49, 150, 255, 1)!important;border:1px solid rgba(49, 150, 255, 1)">返回</span><span class="Color_white Ft-S16 goback pointer">开启合作</span></p>
     </div>
@@ -139,11 +142,18 @@ export default {
     name: 'doctorparabiosemsg',
     data() {
         return {
-
+            dataVal:[]
         }
     },
     mounted() {
         this.initdata()
+        var _this = this;
+        _this.$http.post('/shv2/dcouplet/look', _this.$route.query, function(res) {
+            console.log(res)
+            if(res.code == 1) {
+                _this.dataVal = res.data;
+            }
+        }, function (err) { console.log(err)})
     },
     methods: {
         initdata() {

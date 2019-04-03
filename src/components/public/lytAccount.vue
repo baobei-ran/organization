@@ -66,16 +66,16 @@
                 </thead>
 
                 <tbody  v-if='todayList.length'>
-                    <tr>
-                        <td>0002</td>
-                        <td>3332018092700012121</td>
-                        <td>2019-11-11 11:11:11</td>
-                        <td>收入</td>
-                        <td>冻结中</td>
-                        <td>预约挂号 订单号：6876765758</td>
-                        <td>+1000.00</td>
-                        </tr>
-                    <tr>
+                    <tr v-for='(val,i) in accountList' :key='i'>
+                        <td>{{ i+1 }}</td>
+                        <td>{{ val.number }}</td>
+                        <td>{{ val.creatime }}</td>
+                        <td>{{ val.change }}</td>
+                        <td>{{ val.status }}</td>
+                        <td>{{ val.payment }}</td>
+                        <td>{{ val.money }}</td>
+                    </tr>
+                    <!-- <tr>
                         <td>0002</td>
                         <td>3332018092700012121</td>
                         <td>2019-11-11 11:11:11</td>
@@ -92,7 +92,7 @@
                         <td>冻结中</td>
                         <td>预约挂号 订单号：6876765758</td>
                         <td>+1000.00</td>
-                    </tr>
+                    </tr> -->
                 </tbody>
                 <tbody v-if='!todayList.length'>
                     <tr>
@@ -110,14 +110,14 @@ export default {
     name: 'lytAccount',
     data() {
         return {
-            page: 1,    // 当前页
-            limit: 10,  // 每页数据
-            accountList: '', // 数据
-            all_money: '',  // 总资产
-            money_lock: '', // 冻结余额
-            today_money: '', //  今日收入
+            page: 1,          // 当前页
+            limit: 10,        // 每页数据
+            accountList: '',  // 数据
+            all_money: '',    // 总资产
+            money_lock: '',   // 冻结余额
+            today_money: '',  //  今日收入
             hname: '',        // 机构名称
-            todayList: []      // 今日收入明细
+            todayList: []     // 今日收入明细
         }
     },
     mounted() {
