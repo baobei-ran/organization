@@ -2,7 +2,7 @@
     <div id="orderList" class="bg_f" style="height:100%">
         <p class="orderList_tit Color_black Ft-S16 Pd-T24 Pd-B24 Pd-L24">处方单申请</p>
         <div class="tab_content Pd-L24 Pd-R24">
-            <div class="layui-tab Pd-T20">
+            <div class="layui-tab Pd-T20 ">
                
                 <div class="layui-tab-content" style="height:100%">
                     <div class="screen_type Pd-B24 Mg-B24">
@@ -22,7 +22,18 @@
                             <div class="layui-inline layui-col-md3 lay_width">
                                 <label class="layui-form-label">医生职称</label>
                                 <div class="layui-input-inline" >
-                                    <input type="text" name="" v-model="list.grade" autocomplete="off" class="layui-input">
+                                    <el-select v-model="list.grade" placeholder="请选择">
+                                        <el-option
+                                        v-for="item in doctorType"
+                                        :key="item.id"
+                                        :label="item.name"
+                                        :value="item.id">
+                                        </el-option>
+                                    </el-select>
+                                    <!-- <select name="city" lay-verify="" v-model="list.grade"  class="layui-input">
+                                        <option value="">请选择</option>
+                                        <option v-for='val in doctorType' :key='val.id' :value="val.id" >{{ val.name }}</option>
+                                    </select>   -->
                                 </div>
                             </div>
                         </div>
@@ -30,16 +41,24 @@
                             <div class="layui-inline layui-col-md3">
                                 <label class="layui-form-label">服务时间段</label>
                                 <div class="layui-input-inline" style="width:180px">
-                                    <input type="text" name="price_min" placeholder="" v-model="list.ktime" id="date" autocomplete="off" class="layui-input ">
+                                    <el-select v-model="tdlast" placeholder="请选择">
+                                        <el-option
+                                        v-for="item in timers"
+                                        :key="item.id"
+                                        :label="item.time"
+                                        :value="item.id">
+                                        </el-option>
+                                    </el-select>
+                                    <!-- <input type="text" name="price_min" placeholder="" v-model="" id="date" autocomplete="off" class="layui-input "> -->
                                 </div>
                             </div>
-                            <div  class="layui-inline layui-col-md3">
+                            <!-- <div  class="layui-inline layui-col-md3">
                                 <label class="layui-form-label">当前距离</label>
                                 <div class="layui-input-inline" style="width:180px">
                                     <input type="text" name="price_max" placeholder="" v-model="list.dis" id="date1" autocomplete="off" class="layui-input">
                                 </div>
-                            </div>
-                            <p class="Mg-L30 Pd-L50 layui-col-md4">
+                            </div> -->
+                            <p class="Mg-L10 Pd-L50 layui-col-md4">
                                 <span class="Ft-S14 selectbtn ac pointer" @click="search">筛选</span>
                                 <span class="Color_blue pointer Ft-S14 Mg-L24" @click='empty'>清空筛选条件</span>
                             </p>
@@ -54,7 +73,7 @@
                                 <td>医生职称</td>
                                 <td>医生执业医院</td>
                                 <td>服务时间段</td>
-                                <td>当前距离</td>
+                                <!-- <td>当前距离</td> -->
                                 <td>操作</td>
                             </tr>
                         </thead>
@@ -65,49 +84,42 @@
                                 <td>{{ val.gname }}</td>
                                 <td>{{ val.hospital_name }}</td>
                                 <td>{{ val.busktime }} - {{ val.busjtime }} </td>
-                                <td>{{ val.distince }}m</td>
+                                <!-- <td>{{ val.distince }}m</td> -->
                                 <td class='dis_f dis_js'>
                                     <div>
-                                        <p class="pointer Ft-S14 Color_blue al" v-show='val.type == 1' @click="delcode(val.did, 1)">申请合作</p>
-                                        <p class="pointer Ft-S14 Color_blue al" v-show='val.type == 2' @click="delcode(val.did, 2)">开启合作</p>
-                                        <p class="Ft-S14 al" style="display:none;">申请中</p>
-                                        <p class="Ft-S14 al" style="display:none;">已合作</p>
+                                        <p class="pointer Ft-S14 Color_blue al" v-show='val.state == 1' @click="delcode(val.did, 1)">申请合作</p>
+                                        <p class="pointer Ft-S14 Color_blue al" v-show='val.state == 4' @click="delcode(val.did, 2)">开启合作</p>
+                                        <p class="Ft-S14 al" v-show='val.state == 2'>申请中</p>
+                                        <p class="Ft-S14 al" v-show='val.state == 3'>已合作</p>
+                                        <!-- <p class="pointer Ft-S14 Color_blue al" v-show='val.state == 5' @click="delcode(val.did, 2)">终止合作</p> -->
                                     </div>
-                                    <div>
-                                        <p class="pointer Ft-S14 Color_blue al" style="display:none;" v-show='val.type == 3' @click="">申诉解除关联</p>
-                                        <p class="Ft-S14 al" style="display:none;">解除关联申诉中</p>
-                                        <p class="Ft-S14 al" style="">申诉解除关联</p>
-                                    </div>
+                                    <!-- <div>
+                                        <p class="pointer Ft-S14 Color_blue al" v-show='val.type == 2' @click="">申诉解除关联</p>
+                                        <p class="Ft-S14 al" v-show='val.type == 3' >解除关联申诉中</p>
+                                        <p class="Ft-S14 al" v-show='val.type == 1'>申诉解除关联</p>
+                                        <p class="Ft-S14 al" v-show='val.type == 4'>终止合作</p>
+                                    </div> -->
                                 </td>
                             </tr>
                         </tbody>
                         <tbody v-else>
                             <tr class="table_con Color_black ac" >
-                                <td colspan='7'>暂无数据</td>
+                                <td colspan='6'>暂无数据</td>
                             </tr>
                         </tbody>
                     </table>
-                    <div id="page" v-show='tableList.length' class="ac Mg-T30"></div>
+                    <div id="page" v-show='tableList.length' class="ac Mg-T30"></div>  
+                    <div class="returns"><button class="layui-btn layui-btn-normal" @click="go('/server/Yaodoctorprescription/prescriptionList')">返回</button></div>
                 </div>
             </div>
         </div>
-        <div id="sendgoods" class="hide">
-            <table width="100%">
-                <tr>
-                    <td class="Color_black Ft-S16" width="90px"><span class="Color_red">*</span>配送公司</td>
-                    <td><input type="text" v-model="company"></td>
-                </tr>
-                <tr>
-                    <td class="Color_black Ft-S16"><span class="Color_red">*</span>物流单号</td>
-                    <td><input type="text" v-model="logistics_number"></td>
-                </tr>
-            </table>
+
+            <div id="sendgoods" class="hide">
+            <p class="txt">合作申请中，请等待医生回复！</p>
             <p class="clear">
-                <span class="fl"><button class="cancel pointer" @click='cancel'>取消</button></span>
-                <span class="fr"><button class="send pointer" @click="sendup">发货</button></span>
+                <span class=""><button class="send pointer" @click="cancel">确定</button></span>
             </p>
-        </div>
-       
+            </div>
     </div>
 </template>
 <script>
@@ -115,8 +127,8 @@ export default {
     name: 'orderList',
     data() {
         return {
-            tdlast: 0,
-            list: {
+            tdlast: '',             // 获取时间的id
+            list: {                 // 传入的数据
                name: '',
                true_name: '',
                grade: '',
@@ -126,15 +138,19 @@ export default {
                page: 1,
                limit: 10
             },
-            tableList: '',
+            tableList: [],
             headernum: '',
             company: '',
             logistics_number: '',
             number: '',
             doctorType: [],         // 医生职称
             teamwork: 0,             // 合作数量
-            lng: '',
-            lat:''
+            timers: [
+                {id:1, time:' 00:00:00 - 06:00:00'},
+                {id:2, time:' 06:00:00 - 12:00:00'},
+                {id:3, time:' 12:00:00 - 18:00:00'},
+                {id:4, time:' 18:00:00 - 00:00:00'},
+            ]
         }
     },
     mounted() {
@@ -148,9 +164,6 @@ export default {
             }
         }, function (err) { console.log(err)})
 
-        // 地图
-        
-        
     },
     methods: {
         docType () {    // 获取医生职称
@@ -164,23 +177,26 @@ export default {
         },
         initdata(num) {   // 数据
             let _this = this;
+            var a = '00:00', b = '06:00', c = '12:00', d = '18:00'
+            if (this.tdlast == 1) {
+                this.list.ktime = a
+                this.list.jtime = b
+            } else if (this.tdlast == 2) {
+                this.list.ktime = b
+                this.list.jtime = c
+            } else if (this.tdlast == 3) {
+                this.list.ktime = c
+                this.list.jtime = d
+            } else if (this.tdlast == 4) {
+                this.list.ktime = d
+                this.list.jtime = a
+            } else {
+                this.list.ktime = ''
+                this.list.jtime = ''
+            }
             layui.use(["laypage", "layer", "laydate", "element"], function () {
                 var element = layui.element;
                 var laydate = layui.laydate;
-                // laydate.render({
-                //     elem: "#date",
-                // });
-                // laydate.render({
-                //     elem: "#date1",
-                // });
-                // var oDate1 = new Date($('#date').val());
-                // var oDate2 = new Date($('#date1').val());
-                // if (oDate1.getTime() > oDate2.getTime()) {
-                //     layer.msg('开始时间不能大于结束时间');
-                //     return
-                // }
-                // _this.list.start_time = $('#date').val();
-                // _this.list.end_time = $('#date1').val();
                 
                 _this.$http.post('/shv2/Recipe/recipe_list', _this.list, function (res) {//
                     console.log(res)
@@ -191,7 +207,7 @@ export default {
                             _this.pageFun(res.count)
                         }
                     } else {
-                        _this.tableList = false;
+                        _this.tableList = [];
                         _this.pageFun(0)
                     }
                 }, function (err) { console.log(err) });
@@ -206,7 +222,7 @@ export default {
                 laypage.render({
                     elem: "page", //注意，这里的 test1 是 ID，不用加 # 号
                     count: total, //数据总数，从服务端得到
-                    limit: 10, //每页条数
+                    limit: _this.list.limit, //每页条数
                     layout: ["prev", "page", "next", "skip"],
                     groups: 4,
                     jump: function (obj, first) {
@@ -219,7 +235,15 @@ export default {
             });
         },
         search() {  // 搜索
-            this.initdata(this.tdlast, 1)
+            var _this = this;
+            layui.use('layer', function(){
+                var layer = layui.layer;
+                if (!_this.list.name && !_this.list.true_name && !_this.list.grade && !_this.tdlast) {
+                    layer.msg('请输入要搜索的内容', { icon: 5, time: 1500});
+                    return false;
+                }
+                 _this.initdata(1)
+            }); 
         },
        
         delcode(id, type) { // 申请合作
@@ -234,82 +258,28 @@ export default {
                 var obj = { id: id, type: type }
                 _this.$http.post('/shv2/Recipe/recipe_alter', obj, function (res) {
                     console.log(res)
-                }, function (err) { console.log(err)})
-
-
-                // layer.open({
-                //     type: 1,
-                //     shade: 0.2,
-                //     shadeClose: true,
-                //     closeBtn: 1,
-                //     title: "自取核销",
-                //     content: $(".delcode"),
-                //     area: ["500px", "300px"],
-                //     cancel: function () { }
-                // });
-                // $(".layui-layer-title").css({
-                //     height: "50px",
-                //     background: "#ECF2FB",
-                //     "line-height": "50px",
-                //     fontSize: '18px'
-                // });
-                // $(".layui-layer-setwin").css("top", "19px");
-            });
-        },
-        sendgoods(num) {    // 发货
-            this.number = num;
-            layui.use(["layer"], function () {
-                var layer = layui.layer;
-                var $ = layui.jquery;
-                layer.open({
-                    type: 1,
-                    shade: 0.2,
-                    shadeClose: true,
-                    closeBtn: 1,
-                    title: "订单发货",
-                    content: $("#sendgoods"),
-                    area: ["560px", "340px"],
-                    cancel: function () { }
-                });
-                $(".layui-layer-title").css({
-                    height: "50px",
-                    background: "#ECF2FB",
-                    "line-height": "50px",
-                    fontSize: '18px'
-                });
-                $(".layui-layer-setwin").css("top", "19px");
-            });
-        },
-        sendup() {  // 发货
-            let _this=this;
-            layui.use(["layer"], function () {
-                var layer = layui.layer;
-                if (!_this.number) {
-                    layer.msg('订单号为空')
-                    return;
-                }
-                if (!_this.company) {
-                    layer.msg('请填写物流公司')
-                    return;
-                }
-                if (!_this.logistics_number) {
-                    layer.msg('请填写物流单号')
-                    return;
-                }
-                _this.$http.post('/shv2/goodsorder/order_delivery', { number: _this.number, company: _this.company, logistics_number: _this.logistics_number }, function (res) {
-                    if(res.code==1){
-                        layer.closeAll();
-                        layer.msg(res.msg);
+                    if (res.code == 1) {
+                        layer.open({
+                            type: 1,
+                            shade: 0.2,
+                            shadeClose: true,
+                            closeBtn: 1,
+                            title: "",
+                            content: $("#sendgoods"),
+                            area: ["400px", "300px"],
+                            cancel: function () {}
+                        });
+                        _this.initdata(_this.list.page)
+                    } else {
+                        layer.msg('申请失败, 请联系客服', { icon: 5})
                     }
-                }, function () {
-
-                });
-            })
-        },  
+                }, function (err) { console.log(err)})
+            });
+        },
+       
         cancel () {     // 取消关闭弹框
             layui.use('layer', function(){
             var layer = layui.layer;
-            
                 layer.closeAll();
             }); 
         },
@@ -317,10 +287,10 @@ export default {
             this.list.true_name = '';
             this.list.name = '';
             this.list.grade = '';
-            this.list.ktime = '';
+            this.tdlast = '';
             this.list.jtime = '';
-            this.list.dis = '';
-        }
+            this.list.ktime = '';
+        },
     }
 }
 </script>
@@ -348,7 +318,7 @@ export default {
                 .layui-input-inline {
                     width: 50%;
                     input {
-                        height: 34px;
+                        height: 40px;
                     }
                 }
             }
@@ -362,7 +332,7 @@ export default {
                 .layui-input-inline {
                     width: 50%;
                     input {
-                        height: 34px;
+                        height: 40px;
                     }
                     .date_icon {
                         background: url(../../../common/image/pages/account/icon_sj.png)
@@ -383,8 +353,12 @@ export default {
         }
     }
     .tab_content {
-        height: 100%;
+        
+        overflow-y: auto;
+        background: #fff;
         .layui-tab {
+            background: #fff;
+            
             .layui-tab-title {
                 font-size: 16px;
                 color: #666666;
@@ -401,7 +375,15 @@ export default {
         .layui-tab-content {
             padding-left: 1px;
             padding-right: 1px;
-            overflow: hidden;
+            overflow: auto;
+            .returns {
+                width:100%;
+                text-align: center;
+                padding-top: 20px;
+                    >button {
+                        padding: 0 28px;
+                    }
+                }
             .layui-table {
                 text-align: center;
                 border: 1px solid #DDDDDD;
@@ -416,6 +398,7 @@ export default {
                     }
                 }
                 tbody {
+                    
                     tr:nth-child(even) {
                         background:#E5F0FF;
                     }
@@ -467,43 +450,20 @@ export default {
     padding-left: 53px;
     padding-right: 53px;
 
-    table {
-        margin-top: 27px;
-        tr {
-            height: 64px;
-            td {
-                input {
-                    width: 100%;
-                    height: 40px;
-                    padding-left: 10px;
-                    border-radius: 3px;
-                }
-                input,
-                input:hover,
-                input:focus {
-                    border: 1px solid #c2c3c3;
-                }
-                .tan_icon {
-                    background: url(../../../common/image/icon/icon_hxcw.png)
-                        no-repeat;
-                    width: 13px;
-                    height: 13px;
-                    display: inline-block;
-                    position: relative;
-                    z-index: 66;
-                    top: 2px;
-                    margin-right: 4px;
-                }
-            }
-        }
+    .txt {
+        padding: 80px 0;
+        font-size: 16px;
+        color: #333;
+    }
+    p {
+        text-align: center;
     }
     button {
-        width: 160px;
-        height: 46px;
+        width: 120px;
+        height: 40px;
         border-radius: 4px;
         border: none;
-        font-size: 18px;
-        margin-top: 46px;
+        font-size: 16px;
     }
     .cancel {
         border: 1px solid #128dff;

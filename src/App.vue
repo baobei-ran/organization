@@ -619,12 +619,12 @@ export default {
     height: 100%;
 }
 
-//绝对定位
+//相对定位
 .position(r) {
     position: relative;
 }
 
-//相对定位
+//绝对定位
 .position(a) {
     position: absolute;
 }

@@ -1,7 +1,9 @@
 import axios from "axios";
-// var baseURL="http://www.yunyikang.cn"//正式
+// var baseURL="https://www.yunyikang.cn"//正式
 var baseURL = "http://test99.yunyikang.cn"; //
 // var baseURL="http://192.168.8.107"//
+import { Loading } from 'element-ui';
+var loadingInstance;
 axios.defaults.withCredentials = true;
 let http = axios.create({
   baseURL: baseURL,
@@ -23,6 +25,7 @@ let http = axios.create({
   ]
 });
 http.interceptors.request.use(function (config) {
+  loadingInstance = Loading.service({ fullscreen: true });
   // console.log(config)
   return config;
 }, function (error) {
@@ -33,7 +36,7 @@ http.interceptors.request.use(function (config) {
 http.interceptors.response.use(function(res) {
   //全局拦截处理未登录
   // console.log(res)
-  
+    loadingInstance.close();
   if (res.data.code == 406) {
     localStorage.clear();
     window.location.href = "/login";

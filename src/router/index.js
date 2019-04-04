@@ -90,11 +90,15 @@ import Yaodrugrecorddetail from "@/components/Yao/drugParabiose/recorddetail"; /
 import YaoequipmenApply from "@/components/Yao/Yao-equipmenApply"; //设备申请
 import Yaoequipmendetail from "@/components/Yao/equipmenApply/equipmendetail"; //设备详情
 import Yaoequipmenjl from "@/components/Yao/equipmenApply/equipmenjl"; //记录
-import Yaoprescription from '@/components/Yao/Yao-prescription';       // 处方医生列表
+import Yaoprescription from '@/components/Yao/Yao-prescription';       // 处方医生列表资料上传
 import PrescriptionList from '@/components/Yao/prescription/prescriptionList';  // 处方单申请页
 import PrescriptionApply from '@/components/Yao/prescription/prescriptionApply'; // 处方单申请列表页
+import PrescriptionRecords from '@/components/Yao/prescription/prescriptionRecords'; // 处方单记录
+import AddApply from '@/components/Yao/prescription/addApply';  // 创建处方单
 
 import YaoprescriptionList from '@/components/Yao/Yao-prescriptionList';  // 处方单列表
+import PrescriptionCheck from '@/components/Yao/prescriptionList/prescriptionCheck';   //  处方单审核
+
 import statisticsHome from '@/components/Yao/Yao-statistics';                 // 统计首页
 import Vipmember from '@/components/Yao/Yao-member';                    //  药店会员首页
 import Marketing from '@/components/Yao/Yao-marketing';                 // 供销页
@@ -437,12 +441,12 @@ export default new Router({
     // 处方
     {
       path: '/server/Yaodoctorprescription',
-      name: '处方单医生列表',
+      name: '处方单医生资料上传',
       component: Yaoprescription
     },
     {
       path: '/server/Yaodoctorprescription/prescriptionList',
-      name: '处方单申请',
+      name: '处方单医生列表',
       component: PrescriptionList
     },
     {
@@ -450,13 +454,28 @@ export default new Router({
       name: '处方单申请列表',
       component: PrescriptionApply
     },
+    {
+      path: '/server/Yaodoctorprescription/prescriptionRecords',
+      name: '处方单申记录',
+      component: PrescriptionRecords
+    },
+    {
+      path: '/server/Yaodoctorprescription/addApply',
+      name: '创建处方单',
+      component: AddApply
+    },
+    
 
     {
       path: '/server/YaoprescriptionList',
       name: '处方单列表',
       component: YaoprescriptionList
     },
-
+    {
+      path: '/server/YaoprescriptionList/prescriptionCheck',
+      name: '处方单详情',
+      component: PrescriptionCheck
+    },
 
 
 

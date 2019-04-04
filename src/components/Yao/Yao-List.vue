@@ -30,8 +30,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="layui-form-item selecttime layui-row">
-                            <div class="layui-inline layui-col-md12">
+                        <div class="layui-form-item selecttime dis_f">
+                            <div class="layui-inline">
                                 <label class="layui-form-label">订单时间</label>
                                 <div class="layui-input-inline" style="width:180px">
                                     <input type="text" name="price_min" placeholder="" v-model="list.start_time" id="date" autocomplete="off" class="layui-input date_icon">
@@ -41,8 +41,13 @@
                                     <input type="text" name="price_max" placeholder="" v-model="list.end_time" id="date1" autocomplete="off" class="layui-input date_icon">
                                 </div>
                             </div>
+                            <p class="Mg-L30 Pd-L50">
+                                <span class="Ft-S14 selectbtn ac pointer" @click="search">筛选订单</span>
+                                <span class="Color_blue pointer Ft-S14 Mg-L24" @click='empty'>清空筛选条件</span>
+                            </p>
+
                         </div>
-                        <p class="Mg-L30 Pd-L50"><span class="Ft-S14 selectbtn ac pointer" @click="search">筛选订单</span><span class="Color_blue pointer Ft-S14 Mg-L24" @click='empty'>清空筛选条件</span></p>
+                       
                     </div>
                     <table class="layui-table" lay-skin="">
                         <thead>

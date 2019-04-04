@@ -23,7 +23,7 @@
                     <div class="layui-form-item">
                         <label class="layui-form-label"><span class="Ft-S16 Color_red">*</span>登录密码</label>
                         <div class="layui-input-block">
-                            <input type="password" name="pwd" id="pass" maxlength="12" autocomplete="off" placeholder="请设置您的登录密码" class="layui-input">
+                            <input type="password" name="pwd" id="pass" maxlength="12" autocomplete="off" placeholder="请设置您的登录密码, 长度为6~12位" class="layui-input">
                         </div>
                     </div>
                     <div class="layui-form-item Agreement">

@@ -19,7 +19,7 @@
                     <!-- <button class="login_btn pointer" @click="submitFun" @keyup.enter="submitFun">
                         立即登录
                     </button> -->
-                    <input type="submit" class="login_btn pointer" @click="submitFun" @keyup.enter="submitFun" value="立即登录" />
+                    <input type="submit" :disabled='flag' class="login_btn pointer" value="立即登录" />
                 </div>
             </form>
             <div class="footer">
@@ -33,16 +33,7 @@ export default {
     name: '',
     data() {
         return {
-
-        }
-    },
-    mounted() {
-        var lett = this;
-            document.onkeydown = function(e) {
-            var key = window.event.keyCode;
-            if (key == 13) {
-                lett.submitFun();
-            }
+            flag: false
         }
     },
     methods: {
@@ -59,23 +50,25 @@ export default {
 
                 var checkpress = function () {
                     if (!exgphone.test($('#phone').val())) {
-                        layer.msg('请输入正确的手机号');
+                        layer.msg('请输入正确的手机号',{ icon: 2});
                         return false
                     }
 
                     if (!ispass.test($('#pass').val())) {
-                        layer.msg('请输入正确的密码')
+                        layer.msg('请输入正确的密码',{ icon: 2})
                         return false
                     }
                     if (!isNumber.test($('#code').val())) {
-                        layer.msg('请输入正确的图片验证码')
+                        layer.msg('请输入正确的验证码',{ icon: 2})
                         return false
                     }
                     return true
                 }
                 if (checkpress()) {
+                    _this.flag = true
                     _this.$http.post('/shv2/login/login', { phone: $('#phone').val(), code: $('#code').val(), pwd: $('#pass').val() }, function (res) {// 登录
-                        console.log(res)
+                        // console.log(res)
+                        _this.flag = false
                         if (res.code == 1) {
                             _this.localstorage.put('logindata', res.data);
                             if (res.data.hospital_status == 0 || res.data.hospital_status == 2 || res.data.hospital_status == 3) {
@@ -85,10 +78,10 @@ export default {
                             }
 
                         } else if (res.code == 3) {
-                           layer.msg(res.msg)
+                           layer.msg(res.msg, { icon: 2})
                            $('#imgcode').attr('src', _this.$http.baseURL+'/captcha.html')
                         } else {
-                            layer.msg(res.msg)
+                            layer.msg(res.msg, { icon: 2})
                         }
                     }, function (err) { console.log(err) });
                 }
