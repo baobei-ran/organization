@@ -1,6 +1,6 @@
 import vue from 'vue'
 import moment from 'moment/moment';
-vue.filter('money', function(val) {
+vue.filter('money', function(val) { // 千分位金钱转换加逗号
     val = val.toString().replace(/\$|\,/g,'');
     if(isNaN(val)) {
       val = "0";  
@@ -18,6 +18,7 @@ vue.filter('money', function(val) {
 
     return (((sign)?'':'-') + val + '.' + cents);
 })
+
 vue.filter('moment', function (value, formatString) {
     formatString = formatString || 'YYYY-MM-DD HH:mm:ss';
     return moment.unix(value).format(formatString); // 这是时间戳转时间

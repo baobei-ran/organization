@@ -50,61 +50,40 @@
                             </tr>
                         </thead>
                         <tbody v-if='tableList.length'>
-                            <tr class="table_con Color_black ac" >
-                                <td>1</td>
-                                <td>csjh1229299999999</td>
-                                <td>2019-09-02 11:00:00</td>
-                                <td>未接单</td>
+                            <tr class="table_con Color_black ac" v-for='(val,i) in tableList' :key='i'>
+                                <td>{{ i+1 }}</td>
+                                <td>{{ val.number }}</td>
+                                <td>{{ val.creatime | moment }}</td>
                                 <td>
-                                    <p>李一一 未接单</p>
-                                    <p>李二二 未接单</p>
-                                    <p>李三三 未接单</p>
-                                    <p>李四四 未接单</p>
-                                    <p>李五五 未接单</p>
+                                    <span v-if='val.status == 1'>未接单</span>
+                                    <span v-if='val.status == 2'>等待中</span>
+                                    <span v-if='val.status == 3'>已开具</span>
+                                    <span v-if='val.status == 4'>已拒绝</span>
                                 </td>
-                                <td>CDFS22333333333</td>
                                 <td>
-                                    <p class="pointer Ft-S14 Color_blue al" style="width:80px;margin:0 auto" @click="godetail()">查看详情</p>
-                                    <p class="pointer Ft-S14 Color_blue al" style="width:80px;margin:0 auto" @click="del()">删除</p>
-                                    <p class="pointer Ft-S14 Color_blue al" style="width:80px;margin:0 auto" @click="delcode">再次提交</p>
+                                    <div class="doctor dis_f dis_js">
+                                        <ul>
+                                            <li v-for='(user,index) in val.name' :key='index'>{{ user }}</li>
+                                        </ul>
+                                        <ul>
+                                            <li v-for='(state) in val.state' >
+                                                <span v-if='state == 1'>未接单</span>
+                                                <span v-if='state == 2'>已接单</span>
+                                                <span v-if='state == 3'>已拒绝</span>
+                                                <span v-if='state == 4'>已超时</span>
+                                                <span v-if='state == 5'>已开具</span>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </td>
-                            </tr>
-                            <tr class="table_con Color_black ac" >
-                                <td>1</td>
-                                <td>csjh1229299999999</td>
-                                <td>2019-09-02 11:00:00</td>
-                                <td>未接单</td>
                                 <td>
-                                    <p>李一一 未接单</p>
-                                    <p>李二二 未接单</p>
-                                    <p>李三三 未接单</p>
-                                    <p>李四四 未接单</p>
-                                    <p>李五五 未接单</p>
+                                    <span v-text='val.order_code != null ? val.order_code : "---" '></span>
                                 </td>
-                                <td>CDFS22333333333</td>
                                 <td>
-                                    <p class="pointer Ft-S14 Color_blue al" style="width:80px;margin:0 auto" @click="godetail()">查看详情</p>
-                                    <p class="pointer Ft-S14 Color_blue al" style="width:80px;margin:0 auto" @click="del()">删除</p>
-                                    <p class="pointer Ft-S14 Color_blue al" style="width:80px;margin:0 auto" @click="delcode">再次提交</p>
-                                </td>
-                            </tr>
-                            <tr class="table_con Color_black ac" >
-                                <td>1</td>
-                                <td>csjh1229299999999</td>
-                                <td>2019-09-02 11:00:00</td>
-                                <td>未接单</td>
-                                <td>
-                                    <p>李一一 未接单</p>
-                                    <p>李二二 未接单</p>
-                                    <p>李三三 未接单</p>
-                                    <p>李四四 未接单</p>
-                                    <p>李五五 未接单</p>
-                                </td>
-                                <td>CDFS22333333333</td>
-                                <td>
-                                    <p class="pointer Ft-S14 Color_blue al" style="width:80px;margin:0 auto" @click="godetail()">查看详情</p>
-                                    <p class="pointer Ft-S14 Color_blue al" style="width:80px;margin:0 auto" @click="del(1)">删除</p>
-                                    <p class="pointer Ft-S14 Color_blue al" style="width:80px;margin:0 auto" @click="delcode">再次提交</p>
+                                    <p class="pointer Ft-S14 Color_blue al" style="width:80px;margin:0 auto" @click="godetail(val.id)">查看详情</p>
+                                    <p class="pointer Ft-S14 Color_blue al" style="width:80px;margin:0 auto" @click="del(val.id)">删除</p>
+                                    <p class="pointer Ft-S14 Color_blue al" style="width:80px;margin:0 auto" v-if='val.status == 4' @click="delcode(val.id)">再次提交</p>
+                                    <p class="Ft-S14 al" style="width:80px;margin:0 auto" v-else>再次提交</p>
                                 </td>
                             </tr>
                         </tbody>
@@ -121,15 +100,18 @@
 
        
         <div id="sendgoods" class="hide delcode">
-            <table width="100%" class="Mg-T50">
-                <tr>
-                    <td class="Color_black Ft-S16" width="90px"><span class="Color_red">*</span>核销码</td>
-                    <td>
-                        <input type="text">
-                        <p class="Color_red Ft-S12" style="position:absolute; z-index:100;margin-top:5px"><i class="tan_icon"></i>核销码不存在</p>
-                    </td>
-                </tr>
-            </table>
+            <ul class="Pd-T14 Pd-B14 header dis_f">
+                <li class="layui-input-block">
+                    <label class="layui-form-label">请选择医生</label>
+                     <el-checkbox v-model="checkAll" @change="handleCheckAllChange" v-show='doctorList.length'>全选</el-checkbox>
+                     <span class="Color_red" v-show='!doctorList.length'>无医生， 无法生成处方</span>
+                </li>
+                <li>
+                    <el-checkbox-group v-model="checkedCities" @change="handleCheckedCitiesChange">
+                            <el-checkbox v-for="(city,i) in doctorList" :label="city" :key="i">{{city.true_name}}</el-checkbox>
+                        </el-checkbox-group>
+                </li>
+            </ul>
             <p class="clear">
                 <span class="fl"><button class="cancel pointer" @click='cancel'>取消</button></span>
                 <span class="fr"><button class="send pointer">发货</button></span>
@@ -143,6 +125,9 @@ export default {
     name: 'orderList',
     data() {
         return {
+            doctorList: [],             // 医生列表
+            checkAll: false,            // 全选按钮操作
+            checkedCities: [],          // 选择医生的数据liebaio
             list: {
                 status: 0,
                 order_code: '',
@@ -152,10 +137,18 @@ export default {
                 limit: 10
             },
             tableList: [],
+            status: 0           // tab 列表
         }
     },
     mounted() {
         this.tab(0)
+        var self = this;
+        self.$http.post('/shv2/Recipe/recipe_seldoc', {}, function (res) {
+            // console.log(res)
+            if (res.code == 1) {
+                self.doctorList = res.data
+            }
+        }, function (err) { console.log(err)})
     },
     methods: {
         tab(type) {
@@ -193,7 +186,7 @@ export default {
                             _this.pageFun(res.count)
                         }
                     } else {
-                        _this.tableList = ['1'];
+                        _this.tableList = [];
                         _this.pageFun(0)
                     }
                 }, function (err) { console.log(err) });
@@ -234,9 +227,9 @@ export default {
            
         },
         godetail(val) {    // 查看详情
-            this.go('/server/YaoprescriptionList/prescriptionCheck')
+            this.go('/server/YaoprescriptionList/prescriptionCheck?id='+ val)
         },
-        delcode() { // 核销
+        delcode(id) { // 再次提交
             layui.use(["layer"], function () {
                 var layer = layui.layer;
                 var $ = layui.jquery;
@@ -245,7 +238,7 @@ export default {
                     shade: 0.2,
                     shadeClose: true,
                     closeBtn: 1,
-                    title: "自取核销",
+                    title: "",
                     content: $(".delcode"),
                     area: ["500px", "300px"],
                     cancel: function () { }
@@ -261,7 +254,7 @@ export default {
         },
        
         del(id) {  // 删除
-            var self = this;
+          var self = this;
           layui.use('layer', function(){
             var layer = layui.layer;
             layer.confirm('删除后不可恢复，是否确定删除？', {
@@ -272,6 +265,7 @@ export default {
                   console.log(res)
                   if (res.code == 1) {
                       layer.msg('删除成功', { icon:1});
+                      self.tab(self.status)
                   } else {
                       layer.msg('删除失败', { icon: 2});
                   }
@@ -295,6 +289,25 @@ export default {
                 order_code: '',
                 ktime: '',
                 jtime: '',
+            }
+        },
+         handleCheckAllChange(val) {     // 全选
+            if(val) {
+                this.checkedCities = this.doctorList 
+                this.isIndeterminate = false;
+            } else {
+                this.checkedCities = [] 
+                this.isIndeterminate = true;
+            }
+        },
+        handleCheckedCitiesChange(value) {  // 单选
+            if (value.length > 0) {
+                let checkedCount = value.length;
+                if (checkedCount == this.doctorList.length) {
+                    this.checkAll = true;
+                } else {
+                    this.checkAll = false;
+                }
             }
         }
     }
@@ -394,11 +407,18 @@ export default {
                         background: #fff;
 
                         td {
-                            padding: 20px 0px;
+                            padding: 15px 0px;
                             font-size: 14px;
                             border:0;
                             >p {
                             line-height: 30px;
+                          }
+                          .doctor {
+                              ul {
+                                  li {
+                                      line-height: 30px;
+                                  }
+                              }
                           }
                         }
                         td:last-child {
@@ -450,11 +470,11 @@ export default {
         }
     }
     button {
-        width: 160px;
-        height: 46px;
+        width: 120px;
+        height: 40px;
         border-radius: 4px;
         border: none;
-        font-size: 18px;
+        font-size: 15px;
         margin-top: 46px;
     }
     .cancel {

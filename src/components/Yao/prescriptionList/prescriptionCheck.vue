@@ -173,10 +173,17 @@ export default {
         }
     },
     mounted() {
-       
+       console.log(this.$route)
+       this.datadetail()
     },
     methods: {
-        initdata() {
+        datadetail () {
+            let self = this;
+            self.$http.post('/shv2/recipe/recipe_look', this.$route.query, function (res) {
+                console.log(res)
+            }, function (err) {})
+        },
+        initdata() {    // 审核调取弹框
             var self = this;
            layui.use(["layer"], function () {
                 var layer = layui.layer;
@@ -203,7 +210,7 @@ export default {
         sendup () {     // 审核通过
 
         },
-        cancel () {
+        cancel () { // 审核拒绝
             layui.use('layer', function(){
             var layer = layui.layer;
                 layer.closeAll();

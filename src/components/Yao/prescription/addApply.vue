@@ -1,15 +1,16 @@
 <template>
     <div id="orderList" style="height:100%">
         <div class="bg_f">
-            <ul class="Pd-T14 Pd-B14 layui-form header">
+            <ul class="Pd-T14 Pd-B14 header dis_f">
                 <li class="layui-input-block">
                     <label class="layui-form-label">请选择医生</label>
-                    <input type="radio" name="sex" value="男" title="全选" checked>
-                    <input type="radio" name="sex" value="女" title="女" >
-                    <input type="radio" name="sex" value="男" title="男">
-                    <input type="radio" name="sex" value="女" title="女" >
-                    <input type="radio" name="sex" value="男" title="男">
-                    <input type="radio" name="sex" value="女" title="女" >
+                     <el-checkbox v-model="checkAll" @change="handleCheckAllChange" v-show='doctorList.length'>全选</el-checkbox>
+                     <span class="Color_red" v-show='!doctorList.length'>无医生， 无法生成处方</span>
+                </li>
+                <li>
+                    <el-checkbox-group v-model="checkedCities" @change="handleCheckedCitiesChange">
+                            <el-checkbox v-for="(city,i) in doctorList" :label="city" :key="i">{{city.true_name}}</el-checkbox>
+                        </el-checkbox-group>
                 </li>
             </ul>
         </div>
@@ -22,14 +23,14 @@
                             <span class="Color_red">*</span>
                             <label>患者姓名</label>
                             <div class="layui-input-inline">
-                                <input type="text" name="" autocomplete="off" class="layui-input">
+                                <input type="text" name="" v-model='username' autocomplete="off" class="layui-input">
                             </div>
                         </li>
                         <li class="lay_width">
                             <span class="Color_red">*</span>
                             <label >性别</label>
                             <div class="layui-input-inline" >
-                                <input type="text" name="price_min" autocomplete="off" class="layui-input">
+                                <input type="text" name="price_min" v-model='sex' autocomplete="off" class="layui-input">
                             </div>
                             
                         </li>
@@ -37,7 +38,7 @@
                             <span class="Color_red">*</span>
                             <label >年龄</label>
                             <div class="layui-input-inline" >
-                                <input type="text" name="price_max" autocomplete="off" class="layui-input">
+                                <input type="text" name="price_max" v-model='age' autocomplete="off" class="layui-input">
                             </div>
                         </li>
                         
@@ -45,7 +46,7 @@
                             <span class="Color_red">*</span>
                             <label>联系电话</label>
                             <div class="layui-input-inline">
-                                <input type="text" name="" autocomplete="off" class="layui-input">
+                                <input type="text" name="" v-model='phone' autocomplete="off" class="layui-input">
                             </div>
                         </li>
 
@@ -56,27 +57,27 @@
                         <ul>
                             <li>
                                 <label>肝功能</label>
-                                <input type="text" name="" autocomplete="off" placeholder="（默认为正常）" class="layui-input">
+                                <input type="text" name="" v-model='liver' autocomplete="off" placeholder="（默认为正常）" class="layui-input">
                             </li>
                             <li>
                                 <label>肾功能</label>
-                                <input type="text" name="" autocomplete="off"  placeholder="（默认为正常）" class="layui-input">
+                                <input type="text" name="" v-model='kidney' autocomplete="off"  placeholder="（默认为正常）" class="layui-input">
                             </li>
                             <li>
                                 <label>过敏史</label>
-                                <input type="text" name="" autocomplete="off"  placeholder="（默认为正常）" class="layui-input">
+                                <input type="text" name="" v-model='allergy' autocomplete="off"  placeholder="（默认为正常）" class="layui-input">
                             </li>
                             <li>
                                 <label>过往病史</label>
-                                <input type="text" name="" autocomplete="off"  placeholder="（默认为正常）" class="layui-input">
+                                <input type="text" name="" v-model='ago' autocomplete="off"  placeholder="（默认为正常）" class="layui-input">
                             </li>
                             <li>
                                 <label>备孕情况</label>
-                                <input type="text" name="" autocomplete="off"  placeholder="（默认为正常）" class="layui-input">
+                                <input type="text" name="" v-model='yun' autocomplete="off"  placeholder="（默认为正常）" class="layui-input">
                             </li>
                             <li>
                                 <label><span class="Color_red">*</span>症状</label>
-                                <textarea name="desc" required class="layui-textarea"  placeholder="（必填）" ></textarea>
+                                <textarea name="desc" required class="layui-textarea"  v-model='disease' placeholder="（必填）" ></textarea>
                             </li>
                         </ul>
                     </div>
@@ -96,37 +97,15 @@
                         </tr>
                     </thead>
                     <tbody >
-                        <tr class="table_con Color_black ac">
+                        <tr class="table_con Color_black ac" @change='changeDrug' v-for='val in size' :key='val' >
                             <td>
-                                <input type="text" name="title" required  lay-verify="required" placeholder="【药品名称】" autocomplete="off" class="layui-input">
+                                <input type="text" name="title" lay-verify="required" placeholder="【药品名称】" autocomplete="off" class="layui-input">
                             </td>
                             <td>
-                                <input type="text" name="title" required  lay-verify="required" placeholder="【药品数量】" autocomplete="off" class="layui-input">
+                                <input type="text" name="title" lay-verify="required" placeholder="【药品数量】" autocomplete="off" class="layui-input">
                             </td>
                             <td>
-                                <input type="text" name="title" required  lay-verify="required" placeholder="【用法及用量】" autocomplete="off" class="layui-input">
-                            </td>
-                        </tr>
-                        <tr class="table_con Color_black ac">
-                            <td>
-                                <input type="text" name="title" required  lay-verify="required" placeholder="【药品名称】" autocomplete="off" class="layui-input">
-                            </td>
-                            <td>
-                                <input type="text" name="title" required  lay-verify="required" placeholder="【药品数量】" autocomplete="off" class="layui-input">
-                            </td>
-                            <td>
-                                <input type="text" name="title" required  lay-verify="required" placeholder="【用法及用量】" autocomplete="off" class="layui-input">
-                            </td>
-                        </tr>
-                        <tr class="table_con Color_black ac">
-                            <td>
-                                <input type="text" name="title" required  lay-verify="required" placeholder="【药品名称】" autocomplete="off" class="layui-input">
-                            </td>
-                            <td>
-                                <input type="text" name="title" required  lay-verify="required" placeholder="【药品数量】" autocomplete="off" class="layui-input">
-                            </td>
-                            <td>
-                                <input type="text" name="title" required  lay-verify="required" placeholder="【用法及用量】" autocomplete="off" class="layui-input">
+                                <input type="text" name="title" lay-verify="required" placeholder="【用法及用量】" autocomplete="off" class="layui-input">
                             </td>
                         </tr>
                     </tbody>
@@ -139,59 +118,155 @@
         <div class="tab_content Mg-T20 bg_f">
             <div class="dis_f msgs">
                 <label>药店留言</label>
-                <textarea name="desc" required class="layui-textarea"  placeholder="（选填）" ></textarea>
+                <textarea name="desc" required class="layui-textarea" v-model='shop_word'  placeholder="（选填）" ></textarea>
             </div>
         </div>
         <div class="returns Mg-T24">
                 <button class="layui-btn" @click='go("/server/Yaodoctorprescription/prescriptionList")'>取消</button>
-                <button class="layui-btn layui-btn-normal" @click='submitdata'>立即提交</button>
+                <button class="layui-btn layui-btn-normal" :disabled='disabled' @click='submitdata'>立即提交</button>
         </div>
     </div>
 </template>
 <script>
 export default {
-    name: 'orderList',
+    name: 'addApply',
     data() {
         return {
-            
+            doctorList: [],             // 医生列表
+            checkAll: false,            // 全选按钮操作
+            checkedCities: [],          // 选择医生的数据liebaio
+            username: '',               // 名字
+            sex: '',                    // 性别
+            age: '',                    // 年龄
+            phone: '',                  // 电话
+            liver: '',                  // 肝功能
+            kidney: '',                 // 肾功能
+            allergy: '',                // "过敏史
+            ago: '',                    // 过往病史
+            yun: '',                    // 备孕情况
+            disease: '',                // 病症
+            drugArr: [],                // 药品名称
+            drugNum: [],                // 药品数量
+            usage: [],                  // 用法及用量
+            shop_word: '',              // 药店留言
+            size: 3,                    // 处方药品的列表数量
+            disabled: true              // 按钮
             
         }
     },
     mounted() {
       var self = this;
-      layui.use('form', function(){
-        var form = layui.form;
-        form.render()
         self.$http.post('/shv2/Recipe/recipe_seldoc', {}, function (res) {
             console.log(res)
+            if (res.code == 1) {
+                self.doctorList = res.data
+                self.disabled = false
+            }
         }, function (err) { console.log(err)})
-        form.on('', function(data){
-            
-        });
-      });
     },
     methods: {
         submitdata() {   // 提交
             let _this = this;
-            _this.go('/server/YaoprescriptionList')
+            
             layui.use("layer", function () {
                 var layer = layui.layer;
+                var isphone = /^1[3456789]\d{9}$/;
+                var isNum = /\d/;
+                if (_this.checkedCities.length <= 0) {
+                    layer.msg('请选择医生')
+                    return;
+                }
+                if (!_this.username) {
+                    layer.msg('请输入姓名')
+                    return;
+                }
+                if(!_this.sex) {
+                    layer.msg('请输入性别')
+                    return;
+                }
+                if(!_this.age) {
+                    layer.msg('请输入年龄')
+                    return;
+                } else if (!isNum.test(_this.age)) {
+                    layer.msg('请输入正确年龄')
+                    return;
+                }
+                if(!_this.phone || !isphone.test(_this.phone)) {
+                    layer.msg('请输入正确电话')
+                    return;
+                }
+                if (!_this.disease) {
+                    layer.msg('请输入症状')
+                    return;
+                }
+                var formdata = new FormData();
+                var doctorId = [];
+                _this.checkedCities.map(val => {
+                    doctorId.push(val.did)
+                })
                 
-                var obj = { }
-                
-                // _this.$http.post('/shv2/Recipe/recipe_record', obj, function (res) {//
-                //     console.log(res)
-                //     if (res.code == 1) {
-                //        _this.tableList = res.data
-                //     } else {
+                formdata.append('did[]', doctorId)
+                formdata.append('names', _this.username)
+                formdata.append('sex', _this.sex)
+                formdata.append('age', _this.age)
+                formdata.append('phone', _this.phone)
+
+                formdata.append('liver', _this.liver != '' ? _this.liver: '正常')
+                formdata.append('kidney', _this.kidney != ''? _this.kidney : '正常')
+                formdata.append('allergy', _this.allergy != ''? _this.allergy : '正常')
+                formdata.append('ago', _this.ago != ''? _this.ago : '正常')
+                formdata.append('yun', _this.yun != ''? _this.yun : '正常')
+                formdata.append('disease', _this.disease)
+
+                var a = ['白云', '数据', '可接受的']
+                a.forEach(val => {
+                    formdata.append('name[]', val)
+                })
+                var b = ['3', '5', '34']
+                b.map(val => {
+                    formdata.append('num[]', val)
+                })
+                var c = ['吃完就上天了', 'shuasaeds', '金沙岛色鬼']
+                c.map(val => {
+                    formdata.append('usage[]', val)
+                })
+
+                formdata.append('shop_word', _this.shop_word)
+                _this.$http.upload('/shv2/Recipe/recipe_add', formdata, function (res) {//
+                    console.log(res)
+                    if (res.code == 1) {
+                    //    _this.go('/server/YaoprescriptionList')
+                    } else {
                         
-                //     }
-                // }, function (err) { console.log(err) });
+                    }
+                }, function (err) { console.log(err) });
                 
             });
         },
+        changeDrug (e) {
+            console.log(e.target)
+        },  
         addtabel () {   // 添加表格
-
+            this.size +=1
+        },
+        handleCheckAllChange(val) {     // 全选
+            if(val) {
+                this.checkedCities = this.doctorList 
+                this.isIndeterminate = false;
+            } else {
+                this.checkedCities = [] 
+                this.isIndeterminate = true;
+            }
+        },
+        handleCheckedCitiesChange(value) {  // 单选
+            if (value.length > 0) {
+                let checkedCount = value.length;
+                if (checkedCount == this.doctorList.length) {
+                    this.checkAll = true;
+                } else {
+                    this.checkAll = false;
+                }
+            }
         }
        
     }
@@ -215,12 +290,17 @@ export default {
     .header {
         >li {
             margin: 0;
+            line-height: 40px;
             // padding-left: 30px;
            .layui-form-label {
                 margin-right: 10px;
                 width: 120px;
+                vertical-align: middle;
             }
             
+        }
+        >li:last-child {
+            margin-left: 20px;
         }
     }
     .orderList_tit {

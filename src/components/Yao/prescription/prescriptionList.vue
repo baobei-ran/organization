@@ -86,20 +86,36 @@ export default {
     mounted() {
        this.initdata()
        var self = this;
-       self.$http.post('/shv2/Recipe/recipe_doccount', {}, function (res) {
-           console.log(res)
+       function doctorLength() {   // 添加了几位医生
+          return self.$http.$post('/shv2/Recipe/recipe_doccount')
+       }
+      function know () {    // 通过审核，我知道了
+          return self.$http.$post('/shv2/Recipe/recipe_check')
+      }
+      self.$http.all([doctorLength(), know()], function (res, res2) {
+          console.log(res, res2)
            if(res.code == 1) {
-               if (res.data.type >= 5) {
-                   self.doctorNum = true
-               } else {
-                   self.doctorNum = false
-               }
+                if (res.data.type == 1) {
+                    self.doctorNum = true
+                } else {
+                    self.doctorNum = false
+                }
+            }
+
+            if (res2.code == 1) {
+               self.tests = res2.data.if == 0 ? true : false
            }
-       }, function (err) {})
+      })
+      
+       
     },
     methods: {
         cancelTest() {  // 关闭审核通过提示
             this.tests = !this.tests
+            let self = this;
+            self.$http.post('/shv2/recipe/recipe_if', {}, function (res) {
+                console.log(res)
+            }, function (err) { })
         },
         initdata() {   // 数据
             let _this = this;
