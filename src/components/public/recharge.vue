@@ -17,7 +17,7 @@
             <span class="paytype icon_yl">银行卡</span>
         </div>
         <div class="layui-form-item Mg-T40">
-            <button class="layui-btn layui-btn-normal" style="margin-left:150px" id="onsubmit">
+            <button class="layui-btn layui-btn-normal" :disabled='disabled' style="margin-left:150px" id="onsubmit">
                 立即充值
             </button>
         </div>
@@ -75,13 +75,15 @@ export default {
     name: '',
     data() {
         return {
-            price: '',      // 监听金额
-            wxUrl: '',      //  微信返回的二维码
-            zfbUrl: '',     // 支付宝的路径
-            maxPrice: '1',   // 充值最大金额
-            minPrice: '0.01',    // 充值最小金额
-            Tied_card: false,    // 是否绑定银行卡
-            chongzhiTime: ''     // 二维码充值时间查询
+            price: '',              // 监听金额
+            wxUrl: '',              //  微信返回的二维码
+            zfbUrl: '',             // 支付宝的路径
+            maxPrice: '1',          // 充值最大金额
+            minPrice: '0.01',       // 充值最小金额
+            Tied_card: false,       // 是否绑定银行卡
+            chongzhiTime: '',       // 二维码充值时间查询
+            disabled: false,        // 按钮
+            session: '',            // 支付宝订单号
         }
     },
     computed: {
@@ -171,9 +173,15 @@ export default {
                     }
                 }, function (err) { console.log(err) })
 
-
+                
 
                 $("#onsubmit").on("click", function () {
+                    
+                    _this.disabled = true
+                    var time = setTimeout(() => {
+                         _this.disabled = false
+                         clearTimeout(time)
+                    }, 2000)
                     var money = $('#money').val(); //金额 各种验证规则不太清楚
                     if (money <= 0) {
                         // layer.msg('充值金额不能小于100');
@@ -194,7 +202,7 @@ export default {
                     }
                     if (paytext == "微信支付") {
                         _this.$http.post('/shv2/account/charge', {money: _this.price, type: 2}, function (res) {
-                            console.log(res)
+                            // console.log(res)
                             if (res.code == 1) {
                                 _this.wxUrl = res.code_url
                                 layer.open({   // 调取弹框
@@ -217,7 +225,7 @@ export default {
                                             selectstatus()              // 充值成功后弹出成功框
                                         }
                                     })
-                                }, 1000)
+                                }, 3000)
                             } else {
                                 layer.msg(res.msg);
                             }
@@ -226,31 +234,52 @@ export default {
                     } else if (paytext == "支付宝支付") {
                         _this.zfbUrl = '/shv2/account/charge?money='+_this.price+'&type=1';  // 支付宝地址
                        $('#aliurl').attr('src', _this.$http.baseURL+_this.zfbUrl)            // 把地址发给 iframe
-                            
-                            
-
+                            var bao = $('#aliurl').attr('src')
                             layer.open({    // 弹框
                                 type: 1,
                                 title: "支付宝充值",
                                 shadeClose: true,
                                 shade: 0.6,
                                 area: ["400px", "460px"],
-                                content: $(".alipay_dialog") //iframe的弹框
+                                content: $(".alipay_dialog"), //iframe的弹框
+                                cancel: function () {
+                                    $('#aliurl').attr('src', '')   // 关闭按钮，进行清空，防止发生二次请求
+                                 }
                             });
-                           if (_this.chongzhiTime !== '') {         // 调用前先查看一遍，如果有定时器存在就清除
-                                    clearInterval(_this.chongzhiTime)
-                                }
-                                var user = _this.localstorage.get('logindata');
-                               _this.chongzhiTime = setInterval(() => {    // 调用支付宝二维码后，进行充值查询
-                                    _this.payResult(user.number, user.type).then(res => {
-                                        console.log(res)
-                                        if (res.code == 1) {
-                                            clearInterval(_this.chongzhiTime)
-                                             layer.closeAll();
-                                            selectstatus()              // 充值成功后弹出成功框
-                                        }
-                                    })
-                                }, 1000)
+                            if (_this.chongzhiTime !== '') {         // 调用前先查看一遍，如果有定时器存在就清除
+                                clearInterval(_this.chongzhiTime)
+                            }
+                        if (bao !== '') {
+                           var timer = setTimeout(() => { //  调取支付宝二维码后，获取订单号
+                                _this.$http.post('/shv2/account/get_session', {}, function (res) {
+                                    // console.log(res)
+                                    if (res.code == 1) {
+                                        _this.session = res.data
+                                    }
+                                }, function (err) { console.log(err)})
+                                clearTimeout(timer)
+                            }, 1500)  
+                            
+                            _this.chongzhiTime = setInterval(() => {    // 调用支付宝二维码后，进行充值查询
+                            if (_this.session !== '') {
+                                _this.payResult(_this.session.order_code, _this.session.type).then(res => {
+                                    console.log(res)
+                                    if (res.code == 1) {
+                                        clearInterval(_this.chongzhiTime)
+                                        layer.closeAll();
+                                        selectstatus()              // 充值成功后弹出成功框
+                                    }
+                                })
+                            } else {
+                                console.log('获取支付宝订单号失败，请重新发起请求')
+                            }
+                        }, 3000)
+                                 
+                        }
+                            
+                            
+                                    
+                              
                     } else {
                         // 在此判断有无绑定银行卡
                         // window.location.href = "/shanghu/account/recharge_bank";
@@ -307,7 +336,7 @@ export default {
                 // }
             });
         },
-        payResult: function (order, type) {    // 信支付宝充值是否成功
+        payResult: function (order, type) {    //封装， 微信支付宝充值调用是否成功
             return new Promise((resolve, reject) => {
                 this.$http.post('/mobile/order/pay_result',{order_code: order, type:type}, function (res) {
                     resolve(res)

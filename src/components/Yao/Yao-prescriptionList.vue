@@ -100,21 +100,22 @@
 
        
         <div id="sendgoods" class="hide delcode">
-            <ul class="Pd-T14 Pd-B14 header dis_f">
-                <li class="layui-input-block">
-                    <label class="layui-form-label">请选择医生</label>
-                     <el-checkbox v-model="checkAll" @change="handleCheckAllChange" v-show='doctorList.length'>全选</el-checkbox>
-                     <span class="Color_red" v-show='!doctorList.length'>无医生， 无法生成处方</span>
+            <ul class="Pd-T14 Pd-B14 kuang">
+                <li class="title">
+                    <label>请选择医生</label>
                 </li>
-                <li>
+                <li class="dis_f flex_w dis_js">
+                    <div>
+                        <el-checkbox v-model="checkAll" @change="handleCheckAllChange" >全选</el-checkbox>
+                    </div>
                     <el-checkbox-group v-model="checkedCities" @change="handleCheckedCitiesChange">
                             <el-checkbox v-for="(city,i) in doctorList" :label="city" :key="i">{{city.true_name}}</el-checkbox>
-                        </el-checkbox-group>
+                    </el-checkbox-group>
                 </li>
             </ul>
             <p class="clear">
                 <span class="fl"><button class="cancel pointer" @click='cancel'>取消</button></span>
-                <span class="fr"><button class="send pointer">发货</button></span>
+                <span class="fr"><button class="send pointer" @click='outdoctor'>确认提交</button></span>
             </p>
         </div>
 
@@ -128,6 +129,7 @@ export default {
             doctorList: [],             // 医生列表
             checkAll: false,            // 全选按钮操作
             checkedCities: [],          // 选择医生的数据liebaio
+            doctorId: '',               // 再次提价发起，获取医生id
             list: {
                 status: 0,
                 order_code: '',
@@ -179,7 +181,6 @@ export default {
                 _this.$http.post('/shv2/recipe/recipe_index', _this.list, function (res) {//
                     console.log(res)
                     if (res.code == 1) {
-                        _this.headernum = res;
                         _this.tableList = res.data;
                         if (num == 1) {
                             //分页
@@ -229,7 +230,8 @@ export default {
         godetail(val) {    // 查看详情
             this.go('/server/YaoprescriptionList/prescriptionCheck?id='+ val)
         },
-        delcode(id) { // 再次提交
+        delcode(id) { // 再次提交弹框
+            this.doctorId = id
             layui.use(["layer"], function () {
                 var layer = layui.layer;
                 var $ = layui.jquery;
@@ -243,14 +245,35 @@ export default {
                     area: ["500px", "300px"],
                     cancel: function () { }
                 });
-                $(".layui-layer-title").css({
-                    height: "50px",
-                    background: "#ECF2FB",
-                    "line-height": "50px",
-                    fontSize: '18px'
-                });
-                $(".layui-layer-setwin").css("top", "19px");
+                
             });
+        },
+
+        outdoctor () {  // 再次提交确认
+            var _this = this;
+            layui.use('layer', function(){
+                var layer = layui.layer;
+                if(_this.checkedCities.length <= 0) {
+                    layer.msg('请选择医生',{icon: 2, time:1500});
+                    return 
+                }
+                var arr = []
+                _this.checkedCities.map(val => {
+                    arr.push(val.did)
+                })
+                console.log(arr, _this.doctorId)
+                var formdata = new FormData();
+                    formdata.append('id', _this.doctorId);
+                    formdata.append('did[]', arr)
+                _this.$http.upload('/shv2/recipe/recipe_again', formdata, function (res) {
+                    console.log(res)
+                    if (res.code == 1) {
+                        layer.closeAll('page');
+                        layer.msg('提交成功',{icon: 1, time:1500});
+                        _this.initdata(_this.status, _this.list.page)
+                    }
+                }, function (err) { console.log(err)})
+            }); 
         },
        
         del(id) {  // 删除
@@ -294,10 +317,8 @@ export default {
          handleCheckAllChange(val) {     // 全选
             if(val) {
                 this.checkedCities = this.doctorList 
-                this.isIndeterminate = false;
             } else {
                 this.checkedCities = [] 
-                this.isIndeterminate = true;
             }
         },
         handleCheckedCitiesChange(value) {  // 单选
@@ -438,40 +459,22 @@ export default {
 #sendgoods {
     padding-left: 53px;
     padding-right: 53px;
-
-    table {
-        margin-top: 27px;
-        tr {
-            height: 64px;
-            td {
-                input {
-                    width: 100%;
-                    height: 40px;
-                    padding-left: 10px;
-                    border-radius: 3px;
-                }
-                input,
-                input:hover,
-                input:focus {
-                    border: 1px solid #c2c3c3;
-                }
-                .tan_icon {
-                    background: url(../../common/image/icon/icon_hxcw.png)
-                        no-repeat;
-                    width: 13px;
-                    height: 13px;
-                    display: inline-block;
-                    position: relative;
-                    z-index: 66;
-                    top: 2px;
-                    margin-right: 4px;
-                }
-            }
+    .kuang {
+        width: 100%;
+        padding: 30px 0;
+        li {
+            text-align: center;
+            font-size: 16px;
+        }
+        .title {
+             padding-bottom: 20px;
+             font-size: 18px;
         }
     }
+    
     button {
         width: 120px;
-        height: 40px;
+        height: 36px;
         border-radius: 4px;
         border: none;
         font-size: 15px;

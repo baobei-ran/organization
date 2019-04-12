@@ -7,7 +7,7 @@
         <div class="Pd-T24 Pd-L24 Pd-R24" v-show="auditingmsg.hospital_status!=1"> 
             <p class="sh_status" v-show="auditingmsg.hospital_status!=1&&auditingmsg.hospital_status!=2">当前审核状态：<span>审核中</span></p>
             <div class="sh_status" v-show="auditingmsg.hospital_status==2">
-                当前审核状态：审核未通过 <button class="onup" @click="go('/setting/mechanismMsg')">重新上传</button>
+                当前审核状态：审核未通过 <button class="onup" @click="go('/setting/boxMechanismMsg')">重新上传</button>
                 <p class="Ft-S14 Color_gray6 Mg-T24">
                     未通过原因：{{auditingmsg.remark}}
                 </p>

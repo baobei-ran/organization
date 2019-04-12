@@ -41,7 +41,7 @@
                     </td>
                     <td class="Pd-L40 Ft-S16 Color_gray6">
                         <div class="layui-input-inline">
-                            <input type="radio" v-model="tabledata.ablock" name="tuij" value="1" id="success" title="是"><label for="success" class="Mg-R14 pointer"><span style="position:relative;top:2px">是</span></label>
+                            <input type="radio" v-model="tabledata.ablock" name="tuij" value="1" id="success" title="是" checked><label for="success" class="Mg-R14 pointer"><span style="position:relative;top:2px">是</span></label>
                             <input type="radio" v-model="tabledata.ablock" name="tuij" value="2" id="close" title="否"><label for="close" class="pointer"><span style="position:relative;top:2px">否</span></label>
                         </div>
                     </td>
@@ -53,16 +53,19 @@
                     <td class="Pd-L40 Ft-S16 Color_gray6">
                         <div class="layui-input-inline">
                             <select name="" id="sheng" @change="selectcity(tabledata.province)" v-model="tabledata.province" style="width: 200px;">
+                                <option value="">请选择省份</option>
                                 <option :value="val.aid" v-for="val in provinceList" v-text="val.aname">请选择省</option>
                             </select>
                         </div>
                         <div class="layui-input-inline">
                             <select name="" id="city" @change="selectcounty(tabledata.city)" v-model="tabledata.city" style="width: 200px;">
+                                <option value="">请选择城市</option>
                                 <option :value="val.aid" v-for="val in cityList" v-text="val.aname">请选择市</option>
                             </select>
                         </div>
                         <div class="layui-input-inline">
                             <select name="" id="city" v-model="tabledata.county" style="width: 200px;">
+                                <option value="">请选择县/区</option>
                                 <option :value="val.aid" v-for="val in countyList" v-text="val.aname">请选择县/区</option>
                             </select>
                         </div>
@@ -113,13 +116,13 @@
                         <span class="Color_red">*</span> 机构简介：
                     </td>
                     <td class="Pd-L40 Ft-S16 Color_gray6">
-                        <textarea name="desc" v-model="tabledata.introduction" placeholder="请输入内容" class="layui-textarea next_textarea"></textarea>
+                        <textarea style='width: 100%;' name="desc" v-model="tabledata.introduction" placeholder="请输入内容" class="layui-textarea next_textarea"></textarea>
                     </td>
                 </tr>
                 <tr>
                     <td></td>
                     <td class="Pd-L44 Pd-T40">
-                        <button class="Ft-S16 onsubmit" @click="sunmithos">
+                        <button class="Ft-S16 onsubmit" :disabled='disabled' @click="sunmithos">
                             提交信息
                         </button>
                     </td>
@@ -136,22 +139,23 @@ export default {
             lng: '',
             lat: '',
             tabledata: {//
-                name: '马云',
-                mobile: '13232386992',
-                province: '1',
-                city: '1',
-                county: '2',
-                telephone: '01025854454',
-                mail: '1204794@qq.com',
-                address: '北京市西城区广安门车站西街2号院',
-                introduction: '北京市西城区广安门车站西街2号院北京市西城区广安门车站西街2号院',
+                name: '',
+                mobile: '',
+                province: '',
+                city: '',
+                county: '',
+                telephone: '',
+                mail: '',
+                address: '',
+                introduction: '',
                 ablock: '1'
             },
             gradeList: '',
             typeList: '',
             provinceList: '',
             cityList: '',
-            countyList: ''
+            countyList: '',
+            disabled: false             // 按钮
         }
     },
     mounted() {
@@ -206,51 +210,56 @@ export default {
         },
         sunmithos() {//
             let _this = this;
+            this.disabled = true
+            var time = setTimeout(() => {
+                this.disabled = false
+                clearTimeout(time)
+            }, 3000)
             let regmail = /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/;
-            let Regphone = /^((0\d{2,3}-\d{7,8})|(1[3584]\d{9}))$/;
+            let Regphone = /^((0\d{2,3}-\d{7,8})|(1[35894]\d{9}))$/;
             layui.use(["layer"], function () {
                 if (!_this.tabledata.name) {
-                    layer.msg('请填写业务联系人姓名');
+                    layer.msg('请填写业务联系人姓名', { icon: 2});
                     return false
                 }
                 if (!Regphone.test(_this.tabledata.mobile)) {
-                    layer.msg('请填写业务联系人电话');
+                    layer.msg('请填写正确业务联系人电话', { icon: 2});
                     return false
                 }
                 if (!_this.tabledata.province) {
-                    layer.msg('请选择省份');
+                    layer.msg('请选择省份', { icon: 2});
                     return false
                 }
                 if (!_this.tabledata.city) {
-                    layer.msg('请选择城市');
+                    layer.msg('请选择城市', { icon: 2});
                     return false
                 }
                 if (!_this.tabledata.county) {
-                    layer.msg('请选择县、区');
+                    layer.msg('请选择县、区', { icon: 2});
                     return false
                 }
                 if (!Regphone.test(_this.tabledata.telephone)) {
-                    layer.msg('请填写机构电话');
+                    layer.msg('请填写正确机构电话', { icon: 2});
                     return false
                 }
                 if (!regmail.test(_this.tabledata.mail)) {
-                    layer.msg('请填写机构邮箱');
+                    layer.msg('请填写正确机构邮箱', { icon: 2});
                     return false
                 }
                 if (!_this.tabledata.address) {
-                    layer.msg('请填写机构经营地址');
+                    layer.msg('请填写机构经营地址', { icon: 2});
                     return false
                 }
                 if (!_this.lng) {
-                    layer.msg('请选择经度');
+                    layer.msg('请选择经度', { icon: 2});
                     return false
                 }
                 if (!_this.lat) {
-                    layer.msg('请选择纬度');
+                    layer.msg('请选择纬度', { icon: 2});
                     return false
                 }
                 if (!_this.tabledata.introduction) {
-                    layer.msg('请填写机构简介');
+                    layer.msg('请填写机构简介', { icon: 2});
                     return false
                 }
 
@@ -268,8 +277,16 @@ export default {
                 fromdata.append('latitude', _this.lat);
                 fromdata.append('introduction', _this.tabledata.introduction);
                 _this.$http.upload('/shv2/Setting/whole_add', fromdata, function (res) {
+                    console.log(res)
                     if (res.code == 1) {
-                        _this.go('/setting/YaomechanismMsg/Yaocheckmemsg')
+                        layer.msg('提交成功', { icon: 1});
+                        var timer = setTimeout(() => {
+                           _this.go('/setting/boxMechanismMsg/Yaocheckmemsg')
+                           clearTimeout(timer)
+                        }, 1500)
+                        
+                    } else {
+                        layer.msg('提交失败', { icon: 5});
                     }
                 })
             });

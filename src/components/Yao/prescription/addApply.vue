@@ -30,7 +30,12 @@
                             <span class="Color_red">*</span>
                             <label >性别</label>
                             <div class="layui-input-inline" >
-                                <input type="text" name="price_min" v-model='sex' autocomplete="off" class="layui-input">
+                                <select name="city" lay-verify="" style='width:165px;'  v-model='sex'  class="layui-input">
+                                    <option value="">请选择</option>
+                                    <option value="0">男</option>
+                                    <option value="1">女</option>
+                                </select>
+                                <!-- <input type="text" name="price_min" v-model='sex' autocomplete="off" class="layui-input"> -->
                             </div>
                             
                         </li>
@@ -38,7 +43,7 @@
                             <span class="Color_red">*</span>
                             <label >年龄</label>
                             <div class="layui-input-inline" >
-                                <input type="text" name="price_max" v-model='age' autocomplete="off" class="layui-input">
+                                <input type="number" name="price_max" v-model='age' autocomplete="off" class="layui-input">
                             </div>
                         </li>
                         
@@ -97,15 +102,15 @@
                         </tr>
                     </thead>
                     <tbody >
-                        <tr class="table_con Color_black ac" @change='changeDrug' v-for='val in size' :key='val' >
+                        <tr class="table_con Color_black ac" v-for='(val,i) in tablelist' :key='i' >
                             <td>
-                                <input type="text" name="title" lay-verify="required" placeholder="【药品名称】" autocomplete="off" class="layui-input">
+                                <input type="text" name="title" v-model='val.name' lay-verify="required" placeholder="【药品名称】" autocomplete="off" class="layui-input">
                             </td>
                             <td>
-                                <input type="text" name="title" lay-verify="required" placeholder="【药品数量】" autocomplete="off" class="layui-input">
+                                <input type="number" name="title" v-model="val.num"  lay-verify="required" placeholder="【药品数量】" autocomplete="off" class="layui-input">
                             </td>
                             <td>
-                                <input type="text" name="title" lay-verify="required" placeholder="【用法及用量】" autocomplete="off" class="layui-input">
+                                <input type="text" name="title" v-model="val.usage" lay-verify="required" placeholder="【用法及用量】" autocomplete="off" class="layui-input">
                             </td>
                         </tr>
                     </tbody>
@@ -150,7 +155,12 @@ export default {
             usage: [],                  // 用法及用量
             shop_word: '',              // 药店留言
             size: 3,                    // 处方药品的列表数量
-            disabled: true              // 按钮
+            disabled: true,             // 按钮
+            tablelist: [                // 获取处方药品的数据
+                {name: '', num: '', usage: ''},
+                {name: '', num: '', usage: ''},
+                {name: '', num: '', usage: ''},
+            ]
             
         }
     },
@@ -167,11 +177,16 @@ export default {
     methods: {
         submitdata() {   // 提交
             let _this = this;
-            
-            layui.use("layer", function () {
+            layui.use(["layer", 'table'], function () {
                 var layer = layui.layer;
+                var table = layui.table;
                 var isphone = /^1[3456789]\d{9}$/;
                 var isNum = /\d/;
+
+                table.on('text(test)', function(obj){
+                    console.log(obj)
+                });
+
                 if (_this.checkedCities.length <= 0) {
                     layer.msg('请选择医生')
                     return;
@@ -181,7 +196,7 @@ export default {
                     return;
                 }
                 if(!_this.sex) {
-                    layer.msg('请输入性别')
+                    layer.msg('请选择性别')
                     return;
                 }
                 if(!_this.age) {
@@ -199,6 +214,7 @@ export default {
                     layer.msg('请输入症状')
                     return;
                 }
+                _this.disabled = true
                 var formdata = new FormData();
                 var doctorId = [];
                 _this.checkedCities.map(val => {
@@ -218,44 +234,45 @@ export default {
                 formdata.append('yun', _this.yun != ''? _this.yun : '正常')
                 formdata.append('disease', _this.disease)
 
-                var a = ['白云', '数据', '可接受的']
-                a.forEach(val => {
-                    formdata.append('name[]', val)
+                var tabledata = _this.tablelist.filter(val => {
+                    return val.name != '' && val.num != '' && val.usage != ''
                 })
-                var b = ['3', '5', '34']
-                b.map(val => {
-                    formdata.append('num[]', val)
+                tabledata.forEach(val => {
+                    formdata.append('name[]', val.name)
+                    formdata.append('num[]', val.num)
+                    formdata.append('usage[]', val.usage)
                 })
-                var c = ['吃完就上天了', 'shuasaeds', '金沙岛色鬼']
-                c.map(val => {
-                    formdata.append('usage[]', val)
-                })
-
                 formdata.append('shop_word', _this.shop_word)
                 _this.$http.upload('/shv2/Recipe/recipe_add', formdata, function (res) {//
                     console.log(res)
+                    var time = setTimeout(() => {
+                        _this.disabled = false
+                        clearTimeout(time)
+                    }, 3000)
                     if (res.code == 1) {
-                    //    _this.go('/server/YaoprescriptionList')
-                    } else {
-                        
+                        layer.msg('提交成功', { icon:1 , time: 1000})
+                       setTimeout(() => {
+                           _this.go('/server/YaoprescriptionList')
+                       }, 1000)
+                    } else if (res.code == 0) {
+                        layer.msg('请填写处方药品')
                     }
-                }, function (err) { console.log(err) });
+                }, function (err) { console.log(err) 
+                    _this.disabled = false
+                });
                 
             });
         },
-        changeDrug (e) {
-            console.log(e.target)
-        },  
+         
         addtabel () {   // 添加表格
-            this.size +=1
+            var obj = {name: '', num: '', usage: ''}
+            this.tablelist.push(obj)
         },
         handleCheckAllChange(val) {     // 全选
             if(val) {
                 this.checkedCities = this.doctorList 
-                this.isIndeterminate = false;
             } else {
                 this.checkedCities = [] 
-                this.isIndeterminate = true;
             }
         },
         handleCheckedCitiesChange(value) {  // 单选

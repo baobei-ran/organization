@@ -9,55 +9,54 @@
                     <td width="100px" class="Ft-S14 Color_gray6" align="right">
                         机构类型：
                     </td>
-                    <td class="Pd-L40 Ft-S14 Color_black">药店</td>
+                    <td class="Pd-L40 Ft-S14 Color_black">{{ msgdata.structureType }}</td>
                 </tr>
                 <tr class="" height="34px">
                     <td width="100px" class="Ft-S14 Color_gray6" align="right">机构名称：</td>
-                    <td class="Pd-L40 Ft-S14 Color_black">北京同仁堂大药房</td>
+                    <td class="Pd-L40 Ft-S14 Color_black">{{ msgdata.hospital_name }}</td>
                 </tr>
 
                 <tr>
                     <td colspan="2">
                         <p style="border-top:1px solid #E6E6E6;" class="Mg-T20 Pd-B20"></p>
                     </td>
-
                 </tr>
                 <tr class="" height="34px">
                     <td width="100px" class="Ft-S14 Color_gray6" align="right">
                         业务联系人：
                     </td>
-                    <td class="Pd-L40 Ft-S14 Color_black">张三</td>
+                    <td class="Pd-L40 Ft-S14 Color_black">{{ msgdata.owner_name }}</td>
                 </tr>
                 <tr class="" height="34px">
                     <td width="100px" class="Ft-S14 Color_gray6" align="right">
                         联系电话：
                     </td>
-                    <td class="Pd-L40 Ft-S14 Color_black">197****3333</td>
+                    <td class="Pd-L40 Ft-S14 Color_black">{{ msgdata.owner_mobile }}</td>
                 </tr>
                 <tr class="" height="34px">
                     <td width="100px" class="Ft-S14 Color_gray6" align="right">
                         机构经营地址：
                     </td>
-                    <td class="Pd-L40 Ft-S14 Color_black">北京市朝阳区安定门外小关街51号</td>
+                    <td class="Pd-L40 Ft-S14 Color_black">{{ msgdata.address }}</td>
                 </tr>
                 <tr class="" height="34px">
                     <td width="100px" class="Ft-S14 Color_gray6" align="right">
                         机构电话：
                     </td>
-                    <td class="Pd-L40 Ft-S14 Color_black">（010）51190889</td>
+                    <td class="Pd-L40 Ft-S14 Color_black">{{ msgdata.telephone }}</td>
                 </tr>
                 <tr class="" height="34px">
                     <td width="100px" class="Ft-S14 Color_gray6" align="right">
                         经纬度：
                     </td>
-                    <td class="Pd-L40 Ft-S14 Color_black">经度（Y）232.32|纬度（X）232.32</td>
+                    <td class="Pd-L40 Ft-S14 Color_black">经度（Y）{{ msgdata.longitude }}|纬度（X）{{ msgdata.latitude }}</td>
                 </tr>
                 <tr class="" height="34px">
                     <td width="100px" class="Ft-S14 Color_gray6 v-top Pd-T10" align="right">
                         机构简介：
                     </td>
                     <td class="Pd-L40 Ft-S14 Color_black Pd-T10">
-                        <p style="max-width:993px">医院（Hospital）一词是来自于拉丁文原意为“客人”，因为一开始设立时，是供人避难，还备有休息间，使来者舒适，有招待意图。后来，才逐渐成为满足人类医疗需求，提供医疗服务的专业机构，收容和治疗病人的服务场所。</p>
+                        <p style="max-width:993px">{{ msgdata.introduction }}</p>
                     </td>
                 </tr>
             </table>
@@ -70,7 +69,7 @@ export default {
     name: '',
     data() {
         return {
-
+            msgdata: {}
         }
     },
     mounted() {
@@ -78,7 +77,13 @@ export default {
     },
     methods: {
         initdata() {
-
+            var _this = this;
+            this.$http.post('/shv2/Setting/look_hos', {}, function (res) {
+                console.log(res)
+                if (res.code == 1) {
+                    _this.msgdata = res.data
+                }
+            }, function (err) { })
 
         }
     }

@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import App from './App';
-import router from './router';
+import router from './router/index';
 import ElementUI from 'element-ui';
 import Config from '@/common/js/config.js';
 import API from '@/api/index.js';
@@ -16,8 +16,8 @@ import "@/common/css/Size.css"
 // import axios from "axios";
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
-// var VueCookie = require('vue-cookie');
-// Vue.use(VueCookie);
+var VueCookie = require('vue-cookie');
+Vue.use(VueCookie);
 import moment from 'moment'//导入文件
 
 Vue.prototype.$moment = moment;//赋值使用

@@ -72,7 +72,7 @@ export default {
                         if (res.code == 1) {
                             _this.localstorage.put('logindata', res.data);
                             if (res.data.hospital_status == 0 || res.data.hospital_status == 2 || res.data.hospital_status == 3) {
-                                _this.go('/setting/mechanismMsg?upload=true')
+                                _this.go('/setting/boxMechanismMsg?upload=true')
                             } else {
                                 _this.go('/?login=true')
                             }

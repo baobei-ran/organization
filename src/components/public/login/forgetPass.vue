@@ -5,17 +5,17 @@
             <div class="title_logo">
                 <img src="@/common/image/pages/login/icon_dblogo@3x.png" alt="">
             </div>
-            <p>找回密码</p>
+            <p>忘记密码</p>
             <form id="myform" action="" onsubmit="return false">
-            <div class="my_group"><input type="text" id="phone" name="phone" placeholder="手机号"></div>
-            <div class="my_group code"><input type="text" id="code" name="code" placeholder="请输入验证码"><button id="sendCode">发送验证码</button></div>
-            <div class="my_group"><input type="text" id="pwd" name="pwd" placeholder="请输入密码"></div>
+            <div class="my_group"><input type="tel" id="phone" v-model='phone' name="phone" placeholder="手机号"></div>
+            <div class="my_group code"><input type="text" id="code" v-model='code' name="code" placeholder="请输入验证码"><button id="sendCode">发送验证码</button></div>
+            <div class="my_group"><input type="text" id="pwd" v-model='newPass' name="pwd" placeholder="请输入密码"></div>
             <div class="my_group link_box">
                 <span class="login pointer" @click="go('/login')">返回登录</span>
                 <span class="register pointer" @click="go('/register')">注册账号</span>
             </div>
             <div class="my_group">
-                <div class="login_btn">
+                <div class="login_btn" :disabled="disabled" @click='initdata'>
                     确定
                 </div>
             </div>
@@ -29,17 +29,91 @@ export default {
     name: '',
     data() {
         return {
-
+            phone: '',
+            code: '',
+            newPass: '',
+            disabled: false,
         }
     },
     mounted() {
-        this.initdata()
+        // this.getCode()
     },
     methods: {
-        initdata() {
+        initdata() {  // 提交
+            var _this = this;
             layui.use(["laypage", "layer", "laydate"], function () {
-
+                var layer = layui.layer;
+                _this.disabled = true
+                var reg = /^1[3456789]\d{9}$/;  //11位手机号
+                 var ispass = /^\d{6,12}$/; //验证密码
+                var time = setTimeout(() => {
+                  _this.disabled = false
+                  clearTimeout(time)
+                }, 3000)
+                if (!_this.phone && !reg.test(_this.phone)) {
+                  layer.msg('请输入正确手机号', { icon: 2});
+                    return;
+                }
+                if (!_this.code) {
+                  layer.msg('请输入正确验证码', { icon: 2});
+                    return;
+                }
+                if (!_this.newPass && !ispass.test(_this.newPass)) {
+                  layer.msg('请输入6~12位数字为密码', { icon: 7});
+                    return;
+                }
+                var obj = { phone: _this.phone, code: _this.code, pwd: _this.newPass }
+                // _this.$http.post('', obj, function (res) {
+                //     console.log(res)
+                //     if (res.code == 1) {
+                //         layer.msg('密码修改成功', { icon: 1, time: 1000});
+                //         setTimeout (() => {
+                //           _this.go('/login')
+                //         }, 1000)
+                //     } else {
+                //         layer.msg(res.msg, { icon: 2});
+                //     }
+                // })
             });
+        },
+        getCode () {  // 获取验证码
+            var _self = this;
+            layui.use(["layer"], function () {
+                var layer = layui.layer;
+                var noneclick = false;
+                $("#sendCode").on("click", function () {
+                    var isphone = /^1[345789]\d{9}$/;
+                    if (!isphone.test($('#phone').val())) {
+                        layer.msg("请输入确的手机号");
+                        return;
+                    }
+                    //获取验证码
+                    if (noneclick) {
+                        return;
+                    }
+                    var time = 60;
+                    $(this).text("(60s)重获");
+                    var _this = $(this);
+                    var settime = setInterval(function () {
+                        if (!time) {
+                            noneclick = false;
+                            _this.text("重新获取");
+                            clearInterval(settime);
+                            return;
+                        }
+                        noneclick = true;
+                        time--;
+                        _this.text("(" + time + "s)重获");
+                    }, 1000);
+                    _self.$http.post('/shv2/Alidayu/sendSMS', { telphone: $('#phone').val() }, function (res) {//
+                        if (res.code == 1) {
+                            
+                        }
+                    }, function (err) { console.log(err) });
+                });
+            });
+        
+
         }
     }
 }

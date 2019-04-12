@@ -26,6 +26,7 @@ const webpackConfig = merge(baseWebpackConfig, {
   devtool: config.build.productionSourceMap ? config.build.devtool : false,
   output: {
     path: config.build.assetsRoot,
+    // publicPath: './',               
     filename: utils.assetsPath('js/[name].[chunkhash].js'),
     chunkFilename: utils.assetsPath('js/[id].[chunkhash].js')
   },
@@ -40,7 +41,7 @@ const webpackConfig = merge(baseWebpackConfig, {
           warnings: false,
           drop_debugger: true,//console
           drop_console: true,
-          pure_funcs: ['console.log']//移除console
+          // pure_funcs: ['console.log']//移除console
         }
       },
       sourceMap: config.build.productionSourceMap,
@@ -74,7 +75,7 @@ const webpackConfig = merge(baseWebpackConfig, {
       minify: {
         removeComments: true,
         collapseWhitespace: true,
-        removeAttributeQuotes: true
+        removeAttributeQuotes: false   //  false 是加引号
         // more options:
         // https://github.com/kangax/html-minifier#options-quick-reference
       },

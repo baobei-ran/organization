@@ -122,7 +122,7 @@ export default {
                     console.log(res)
                         if (res.code == 1) {
                             _this.localstorage.put('logindata',{hospital_status:0})
-                            _this.go('/setting/mechanismMsg?upload=true')
+                            _this.go('/setting/boxMechanismMsg?upload=true')
                         }
                     }, function (err) { console.log(err) });
                 }

@@ -5,8 +5,8 @@ import PrescriptionList from '@/components/Yao/prescription/prescriptionList';  
 import PrescriptionApply from '@/components/Yao/prescription/prescriptionApply'; // 处方单申请列表页
 import PrescriptionRecords from '@/components/Yao/prescription/prescriptionRecords'; // 处方单记录
 import AddApply from '@/components/Yao/prescription/addApply';  // 创建处方单
-const YaoprescriptionList = () => import('@/components/Yao/Yao-prescriptionList');  // 处方单列表
-const PrescriptionCheck = () => import('@/components/Yao/prescriptionList/prescriptionCheck');   //  处方单审核
+import YaoprescriptionList from '@/components/Yao/Yao-prescriptionList';  // 处方单列表
+import PrescriptionCheck from '@/components/Yao/prescriptionList/prescriptionCheck';   //  处方单审核
 
 export default [
     // 处方

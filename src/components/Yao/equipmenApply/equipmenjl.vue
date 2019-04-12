@@ -38,7 +38,7 @@
                         <tbody v-if='listarr.length'>
                             <tr v-for="(val,i) in listarr" :key='i'>
                                 <td>{{ i+1 }}</td>
-                                <td>{{ val.content }}</td>
+                                <td>{{ val.name }}</td>
                                 <td>{{ val.addtime }}</td>
                                 <td>
                                     <span class="Color_blue pointer" @click="eqlist(val.apply_code)">查看</span>
@@ -51,7 +51,7 @@
                             </tr>
                         </tbody>
                     </table>
-                    <div id="page" class="ac Mg-T30"></div>
+                    <div id="page" v-show='listarr.length' class="ac Mg-T30"></div>
                 </div>
             </div>
         </div>

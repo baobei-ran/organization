@@ -46,6 +46,7 @@
                     <td class="Pd-L40 Ft-S16 Color_gray6">
                         <div class="layui-input-inline" style="width: 300px;">
                             <select name="" v-model="tabledata.grade" style="width: 300px;">
+                                <option value=''>请选择机构等级</option>
                                 <option :value="val.id" v-for="val in gradeList" v-text="val.name"></option>
                             </select>
                         </div>
@@ -58,6 +59,7 @@
                     <td class="Pd-L40 Ft-S16 Color_gray6">
                         <div class="layui-input-inline" style="width: 300px;">
                             <select name="" v-model="tabledata.type" style="width: 300px;">
+                                <option value=''>请选择医院类型</option>
                                 <option :value="val.id" v-for="val in typeList" v-text="val.name">药店</option>
                             </select>
                         </div>
@@ -120,15 +122,15 @@
                         <span class="Color_red">*</span> 机构简介：
                     </td>
                     <td class="Pd-L40 Ft-S16 Color_gray6">
-                        <textarea name="desc" v-model="tabledata.introduction" placeholder="请输入内容" class="layui-textarea next_textarea"></textarea>
+                        <textarea name="desc" style='width:100%;' v-model="tabledata.introduction" placeholder="请输入内容" class="layui-textarea next_textarea"></textarea>
                     </td>
                 </tr>
                 <tr>
                     <td></td>
                     <td class="Pd-L44 Pd-T40">
-                        <p class="Ft-S16 onsubmit pointer" @click="sunmithos">
+                        <button class="Ft-S16 onsubmit pointer" :disabled='disabled' @click="sunmithos">
                             提交信息
-                        </p>
+                        </button>
                     </td>
                 </tr>
             </table>
@@ -157,8 +159,9 @@ export default {
                 introduction: '',
                 picture: ''
             },
-            gradeList: '',
-            typeList: ''
+            gradeList: '',  // 医院等级
+            typeList: '',    // 医院类型
+            disabled: false     // 按钮
         }
     },
     mounted() {
@@ -172,7 +175,12 @@ export default {
             let _this=this;
             layui.use(["layer", "form"], function () {
                 var form = layui.form;
+                
                 form.render()
+                 $('#showimg').on('change', function () {
+                    $('#showimg3').attr('style', 'background:url(' + window.URL.createObjectURL(this.files[0]) + ');background-size:cover');
+                    $('#showimg3').text('')
+                })
             })
             var map = new AMap.Map("container", {   // 地图
                 resizeEnable: true,
@@ -182,11 +190,19 @@ export default {
                 _this.lng=e.lnglat.getLng();
                 _this.lat=e.lnglat.getLat();
             });
+           
+            _this.$http.post('/shv2/Setting/hos_set',{}, function (res) {
+                console.log(res)
+                if(res.code == 1) {
+                    _this.gradeList = res.grade         
+                    _this.typeList = res.type
+                }
+            }, function (err) { console.log(res)})
         },
         inithospital() {//初始化医院类型级别
             $('#showimg').on('change', function () {
-                $('#showimg3').attr('style', 'background:url(' + window.URL.createObjectURL(this.files[0]) + ');background-size:cover');
-                $('#showimg3').text('')
+                $('#showimg7').attr('style', 'background:url(' + window.URL.createObjectURL(this.files[0]) + ');background-size:cover');
+                $('#showimg7').text('')
             })
             let _this = this
             this.$http.post('/shv2/Setting/hos_set', {}, function (res) {
@@ -200,51 +216,56 @@ export default {
         },
         sunmithos() {//医院提交
             let _this = this;
+            this.disabled = true
+            var time = setTimeout(() => {
+                this.disabled = false
+                clearTimeout(time)
+            }, 3000)
             let regmail = /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/;
-            let Regphone = /^((0\d{2,3}-\d{7,8})|(1[3584]\d{9}))$/;
+            let Regphone = /^((0\d{2,3}-\d{7,8})|(1[35894]\d{9}))$/;
             layui.use(["layer"], function () {
                 if (!_this.tabledata.name) {
-                    layer.msg('请填写业务联系人姓名');
+                    layer.msg('请填写业务联系人姓名',{icon:2});
                     return false
                 }
                 if (!Regphone.test(_this.tabledata.mobile)) {
-                    layer.msg('请填写业务联系人电话');
+                    layer.msg('请填写业务联系人电话',{icon:2});
                     return false
                 }
                 if (!_this.tabledata.grade) {
-                    layer.msg('请选择医院等级');
+                    layer.msg('请选择医院等级',{icon:2});
                     return false
                 }
                 if (!_this.tabledata.type) {
-                    layer.msg('请选择机构类型');
+                    layer.msg('请选择机构类型',{icon:2});
                     return false
                 }
                 if (!Regphone.test(_this.tabledata.telephone)) {
-                    layer.msg('请填写机构电话');
+                    layer.msg('请填写机构电话',{icon:2});
                     return false
                 }
                 if (!regmail.test(_this.tabledata.mail)) {
-                    layer.msg('请填写机构邮箱');
+                    layer.msg('请填写机构邮箱',{icon:2});
                     return false
                 }
                 if (!_this.tabledata.address) {
-                    layer.msg('请填写机构经营地址');
+                    layer.msg('请填写机构经营地址',{icon:2});
                     return false
                 }
                 if (!_this.lng) {
-                    layer.msg('请选择经度');
+                    layer.msg('请选择经度',{icon:2});
                     return false
                 }
                 if (!_this.lat) {
-                    layer.msg('请选择纬度');
+                    layer.msg('请选择纬度',{icon:2});
                     return false
                 }
                 if (!_this.tabledata.introduction) {
-                    layer.msg('请填写机构简介');
+                    layer.msg('请填写机构简介',{icon:2});
                     return false
                 }
                 if (!$('#showimg').val()) {
-                    layer.msg('请添加照片');
+                    layer.msg('请添加照片',{icon:2});
                     return false
                 }
                 var fromdata = new FormData()
@@ -263,7 +284,14 @@ export default {
                 });
                 _this.$http.upload('/shv2/Setting/perfect', fromdata, function (res) {
                     if (res.code == 1) {
-                        _this.go('/setting/mechanismMsg/checkmemsg')
+                        layer.msg('提交成功',{icon:1});
+                        var time = setTimeout(() => {
+                            _this.go('/setting/boxMechanismMsg/checkmemsg')
+                            clearTimeout(time)
+                        }, 1500)
+                        
+                    } else {
+                        layer.msg('提交失败',{icon:2});
                     }
                 })
             });

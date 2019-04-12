@@ -163,7 +163,9 @@
                                 <input type="file" id="uploadfile" placeholder="" />
                                 <span class="file-up" id="uptext">上传相关证件缺失申请</span>
                             </div>
-                            <span id="getmodle" class="pointer" style="font-size:12px; color: #3196FF;margin-left: 180px; line-height: 36px;">下载相关证件缺失申请模板</span>
+                            <span id="getmodle" class="pointer" style="font-size:12px; color: #3196FF;margin-left: 180px; line-height: 36px;">
+                                <a style="color: #3196FF;" :href="$http.baseURL+'/file/application_form.docx'" download="">下载相关证件缺失申请模板</a>
+                            </span>
                         </div>
 
                         <p class="Color_gray6 Mg-T10 Mg-B10" style="font-size:12px;">
@@ -219,7 +221,7 @@ export default {
                 _this.go('/setting/mechanismMsg/checkmemsg')
             } else {
                 switch (res.data) {
-                    case 1: return; break;
+                    case 1: ; break;
                     case 2: _this.go(''); break;
                     case 3: _this.go(''); break;
                     case 4: _this.go(''); break;

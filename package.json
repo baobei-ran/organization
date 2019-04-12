@@ -18,6 +18,7 @@
     "babel-polyfill": "^6.26.0",
     "cz-storage": "^1.0.1",
     "element-ui": "^2.4.11",
+    "html2canvas": "^1.0.0-rc.1",
     "jquery": "^3.3.1",
     "layui": "^0.0.1",
     "less": "^3.9.0",

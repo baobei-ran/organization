@@ -1,44 +1,7 @@
 <template>
-    <div id="mechanismMsg" class="bg_f">
-        <p class="mechanismMsg_tit Ft-S18 Color_black Pd-L22 Pd-T24 Pd-B24 Mg-B24">
-            认证机构信息
-        </p>
-        <div class="Pd-L24 Pd-R24">
-            <div class="progress">
-                <p class="bold_line"><span class="ins-line"></span></p>
-                <ul class="clear pro_circle">
-                    <li class="fl"><span class="active"><i></i></span>
-                        <p>填写认证信息</p>
-                    </li>
-                    <li class="fl"><span class="end"><i></i></span>
-                        <p>完善机构信息</p>
-                    </li>
-                    <li class="fl"><span class="end"><i></i></span>
-                        <p>提交审核</p>
-                    </li>
-                </ul>
-            </div>
-            <table class="Mg-T24 mgtab">
-                <tr class="" height="60px">
-                    <td width="160px" class="Ft-S14 Color_black" align="right">
-                        <span class="Color_red">*</span> 机构类型：
-                    </td>
-                    <td class="Pd-L40 Ft-S16 Color_gray6">
-                        <div class="layui-input-inline" style="width: 200px;">
-                            <select name="" v-model="formdata.type" @change="selectname" style="width: 200px;">
-                                <option value="">请选择</option>
-                                <option value="8">药店</option>
-                                <option value="1">医院</option>
-                                <option value="2">体检机构</option>
-                                <option value="3">乡镇卫生院</option>
-                                <option value="4">社区服务中心</option>
-                                <option value="5">社区服务站 </option>
-                                <option value="6">村卫生室</option>
-                                <option value="7">个人诊所</option>
-                            </select>
-                        </div>
-                    </td>
-                </tr>
+    <div id="YiMsg" class="bg_f">
+        
+            <table class="mgtab">
                 <tr class="" height="60px">
                     <td width="160px" class="Ft-S14 Color_black" align="right">
                         <span class="Color_red">*</span> 机构名称：
@@ -77,16 +40,19 @@
                     <td class="Pd-L40 Ft-S16 Color_gray6">
                         <div class="layui-input-inline">
                             <select name="" id="sheng" @change="selectcity(formdata.province)" v-model="formdata.province" style="width: 200px;">
+                                <option value="">请选择省</option>
                                 <option :value="val.aid" v-for="val in provinceList" v-text="val.aname">请选择省</option>
                             </select>
                         </div>
                         <div class="layui-input-inline">
                             <select name="" id="city" @change="selectcounty(formdata.city)" v-model="formdata.city" style="width: 200px;">
+                                <option value="">请选择市</option>
                                 <option :value="val.aid" v-for="val in cityList" v-text="val.aname">请选择市</option>
                             </select>
                         </div>
                         <div class="layui-input-inline">
                             <select name="" v-model="formdata.county" style="width: 200px;">
+                                <option value="">请选择县/区</option>
                                 <option :value="val.aid" v-for="val in countyList" v-text="val.aname">请选择县/区</option>
                             </select>
                         </div>
@@ -110,19 +76,10 @@
                 </tr>
                 <tr class="" height="60px">
                     <td width="160px" class="Ft-S14 Color_black" align="right">
-                        <span class="Color_red">*</span> 经营面积：
-                    </td>
-                    <td class="Pd-L40 Ft-S16 Color_gray6">
-                        <input type="text" v-model="formdata.area" placeholder="请输入经营面积" style="width: 200px;" />
-                        <span style="font-size:12px" class="Color_gray6">㎡</span>
-                    </td>
-                </tr>
-                <tr class="" height="60px">
-                    <td width="160px" class="Ft-S14 Color_black" align="right">
                         <span class="Color_red">*</span> 法人姓名：
                     </td>
                     <td class="Pd-L40 Ft-S16 Color_gray6">
-                        <input type="text" v-model="formdata.method_name" placeholder="请输入法人姓名" style="width: 200px;" />
+                        <input type="text" v-model="formdata.method_name" placeholder="请输入真实姓名" style="width: 200px;" />
                     </td>
                 </tr>
                 <tr class="" height="60px">
@@ -130,7 +87,7 @@
                         <span class="Color_red">*</span> 法人身份证号：
                     </td>
                     <td class="Pd-L40 Ft-S16 Color_gray6">
-                        <input type="text" v-model="formdata.method_prove" placeholder="请输入法人身份证号" style="width: 500px;" />
+                        <input type="text" v-model="formdata.method_prove" maxlength="18" placeholder="请输入法人身份证号" style="width: 500px;" />
                     </td>
                 </tr>
                 <tr class="" height="182px">
@@ -155,20 +112,8 @@
                     <td class="Pd-L40 Ft-S16 Color_gray6 Pd-B30">
                         <p class="Color_red Pd-B12 Ft-S12">请上传小于5MB的jpg/jpeg/png格式的图片，图片细节必须清晰可见</p>
                         <div class="fl uploadimg Mg-R24">
-                            <span class="Ft-S14" id="showimg3">点击上传</span> <input type="file" id="gpspho" placeholder="" />
-                            <p class="Ft-S14 Color_gray6">GSP认证证书*</p>
-                        </div>
-                        <div class="fl uploadimg Mg-R24">
-                            <span class="Ft-S14" id="showimg4">点击上传</span> <input type="file" id="durgpho" placeholder="" />
-                            <p class="Ft-S14 Color_gray6">药品经营许可证*</p>
-                        </div>
-                        <div class="fl uploadimg Mg-R24">
-                            <span class="Ft-S14" id="showimg5">点击上传</span> <input type="file" id="docpho" placeholder="" />
-                            <p class="Ft-S14 Color_gray6">药师资格证*</p>
-                        </div>
-                        <div class="fl uploadimg Mg-R24">
-                            <span class="Ft-S14" id="showimg6">点击上传</span> <input type="file" id="otherpho" placeholder="" />
-                            <p class="Ft-S14 Color_gray6">其他相关证明*</p>
+                            <span class="Ft-S14" id="showimg7">点击上传</span> <input type="file" id="yljgpho" placeholder="" />
+                            <p class="Ft-S14 Color_gray6">医疗机构执业许可证**</p>
                         </div>
                     </td>
                 </tr>
@@ -185,7 +130,7 @@
                                 <input type="file" id="uploadfile" placeholder="" />
                                 <span class="file-up" id="uptext">上传相关证件缺失申请</span>
                             </div>
-                            <span id="getmodle" class="pointer" style="font-size:12px; margin-left: 180px; line-height: 36px;;">
+                            <span id="getmodle" class="pointer" style="font-size:12px; color: #3196FF;margin-left: 180px; line-height: 36px;">
                                 <a style="color: #3196FF;" :href="$http.baseURL+'/file/application_form.docx'" download="">下载相关证件缺失申请模板</a>
                             </span>
                         </div>
@@ -201,7 +146,7 @@
                 <tr>
                     <td></td>
                     <td class="Pd-L44 Pd-T40">
-                        <button class="Ft-S16 onsubmit" @click="submitFun">
+                        <button class="Ft-S16 onsubmit" :disabled='disabled' @click="submitFun">
                             下一步
                         </button>
                     </td>
@@ -217,62 +162,54 @@ export default {
         return {
             formdata: {
                 name: '',
-                type: '',
+                type: '1',
                 number: '',
                 province: '',
                 city: '',
                 county: '',
                 address: '',
-                area:'',
                 method_name: '',
                 method_prove: '',
             },
             provinceList: '',
             cityList: '',
-            countyList: ''
+            countyList: '',
+            leixing: '',         // 选择的 机构类型
+            disabled: false,     // 按钮
         }
     },
     mounted() {
         this.selectprovince();
         this.initdata();
-        let _this = this
-        this.$http.post('/shv2/Setting/step', {}, function (res) {
-            console.log(res)
-            if (res.code == 223 && res.data == 0) {
-                // _this.ifcontent()
-            } else if (res.code == 224) { //
-                
-                switch (res.data) {
-                    case 1: _this.go('/setting/mechanismMsg'); break;
-                    case 2: _this.go(''); break;
-                    case 3: _this.go(''); break;
-                    case 4: _this.go(''); break;
-                    case 5: _this.go(''); break;
-                    case 6: _this.go(''); break;
-                    case 7: _this.go(''); break;
-                    case 8: _this.go('/setting/YaomechanismMsg/Yaocheckmemsg'); break;
-                }
-            }
-        }, function () {
-
-        })
     },
     methods: {
-        selectname() {
-            let _this = this;
-            switch (_this.formdata.type) {
-                case '1': _this.go('/setting/mechanismMsg'); break;
-                case '2': _this.go(''); break;
-                case '3': _this.go(''); break;
-                case '4': _this.go(''); break;
-                case '5': _this.go(''); break;
-                case '6': _this.go(''); break;
-                case '7': _this.go(''); break;
-                case '8':
-                 _this.go('/setting/YaomechanismMsg');
-                 _this.formdata.type = '8'   
-                 break;
-            }
+       
+        ifcontent() {
+            let _this = this
+            this.$http.post('/shv2/Setting/look_write', {}, function (res) {
+                console.log(res)
+                _this.formdata = {
+                    name: res.data.hospital_name,
+                    type: res.data.structureType,
+                    number: res.data.license_number,
+                    province: res.data.license_province,
+                    city: res.data.license_city,
+                    county: res.data.license_county,
+                    address: res.data.license_address,
+                    method_name: res.data.method_name,
+                    method_prove: res.data.method_prove,
+                }
+                // $('#showimg').attr('style', 'background:url(' + _this.$http.baseURL+res.data.license + ');background-size:cover');
+                // $('#showimg').text('');
+                // $('#showimg1').attr('style', 'background:url(' + _this.$http.baseURL+res.data.zcard + ');background-size:cover');
+                // $('#showimg1').text('');
+                // $('#showimg2').attr('style', 'background:url(' + _this.$http.baseURL+res.data.fcard + ');background-size:cover');
+                // $('#showimg2').text('');
+                // $('#showimg7').attr('style', 'background:url(' + _this.$http.baseURL+res.data.yljgzy + ');background-size:cover');
+                // $('#showimg7').text('')
+            }, function () {
+
+            })
         },
         initdata() {
             layui.use(["laydate"], function () {
@@ -296,22 +233,6 @@ export default {
             $('#idcardf').on('change', function () {
                 $('#showimg2').attr('style', 'background:url(' + window.URL.createObjectURL(this.files[0]) + ');background-size:cover');
                 $('#showimg2').text('')
-            })
-            $('#gpspho').on('change', function () {
-                $('#showimg3').attr('style', 'background:url(' + window.URL.createObjectURL(this.files[0]) + ');background-size:cover');
-                $('#showimg3').text('')
-            })
-            $('#durgpho').on('change', function () {
-                $('#showimg4').attr('style', 'background:url(' + window.URL.createObjectURL(this.files[0]) + ');background-size:cover');
-                $('#showimg4').text('')
-            })
-            $('#docpho').on('change', function () {
-                $('#showimg5').attr('style', 'background:url(' + window.URL.createObjectURL(this.files[0]) + ');background-size:cover');
-                $('#showimg5').text('')
-            })
-            $('#otherpho').on('change', function () {
-                $('#showimg6').attr('style', 'background:url(' + window.URL.createObjectURL(this.files[0]) + ');background-size:cover');
-                $('#showimg6').text('')
             })
             $('#yljgpho').on('change', function () {
                 $('#showimg7').attr('style', 'background:url(' + window.URL.createObjectURL(this.files[0]) + ');background-size:cover');
@@ -356,72 +277,70 @@ export default {
             var _this = this;
             var regyyzz = /(^(?:(?![IOZSV])[\dA-Z]){2}\d{6}(?:(?![IOZSV])[\dA-Z]){10}$)|(^\d{15}$)/;
             var cardid = /^[1-9][0-9]{5}(19|20)[0-9]{2}((01|03|05|07|08|10|12)(0[1-9]|[1-2][0-9]|31)|(04|06|09|11)(0[1-9]|[1-2][0-9]|30)|02(0[1-9]|[1-2][0-9]))[0-9]{3}([0-9]|x|X)$/;
-
+            this.disabled = true
+            var time = setTimeout(() => {
+                this.disabled = false
+                clearTimeout(time)
+            }, 3000)
             layui.use(["layer"], function () {
-                if (!_this.formdata.type) {
-                    layer.msg('请选择机构类型');
-                    return false
-                }
+                var layer=layui.layer;
+                
                 if (!_this.formdata.name) {
-                    layer.msg('请填写机构名称');
+                    layer.msg('请填写机构名称',{ icon:2});
                     return false
                 }
                 if (!$('#yyzz').val()) {
-                    layer.msg('请上传营业执照图片');
+                    layer.msg('请上传营业执照图片',{ icon:2});
                     return false
                 }
-                if (!regyyzz.test(_this.formdata.number)) {
-                    layer.msg('请填写营业执照号');
+                if (!_this.formdata.number) {
+                    layer.msg('请填写正确营业执照号',{ icon:2});
                     return false
                 }
                 if (!_this.formdata.province) {
-                    layer.msg('请选择营业执照所在地');
+                    layer.msg('请选择营业执照省所在地',{ icon:2});
                     return false
                 }
                 if (!_this.formdata.city) {
-                    layer.msg('请选择营业执照所在地');
+                    layer.msg('请选择营业执照所市在地',{ icon:2});
                     return false
                 }
                 if (!_this.formdata.county) {
-                    layer.msg('请选择营业执照所在地');
+                    layer.msg('请选择营业执照区、县所在地',{ icon:2});
                     return false
                 }
                 if (!_this.formdata.address) {
-                    layer.msg('请填写营业执照地址');
-                    return false
-                }
-                if (!_this.formdata.area) {
-                    layer.msg('请填写经营面积');
+                    layer.msg('请填写营业执照地址',{ icon:2});
                     return false
                 }
                 if (!$('#date').val()) {
-                    layer.msg('请选择营业执照有效期开始时间');
+                    layer.msg('请选择营业执照有效期开始时间',{ icon:2});
                     return false
                 }
                 if (!$('#date1').val()) {
-                    layer.msg('请选择营业执照有效期结束时间');
+                    layer.msg('请选择营业执照有效期结束时间',{ icon:2});
                     return false
                 }
                 var oDate1 = new Date($('#date').val());
                 var oDate2 = new Date($('#date1').val());
                 if (oDate1.getTime() > oDate2.getTime()) {
-                    layer.msg('开始时间不能大于结束时间');
+                    layer.msg('开始时间不能大于结束时间',{ icon:2});
                     return false
                 }
                 if (!_this.formdata.method_name) {
-                    layer.msg('请填写法人姓名');
+                    layer.msg('请填写法人姓名',{ icon:2});
                     return false
                 }
                 if (!cardid.test(_this.formdata.method_prove)) {
-                    layer.msg('请填写法人身份证号');
+                    layer.msg('请填写正确法人身份证号',{ icon:2});
                     return false
                 }
                 if (!$('#idcardz').val()) {
-                    layer.msg('请上传身份证正面');
+                    layer.msg('请上传身份证正面',{ icon:2});
                     return false
                 }
                 if (!$('#idcardf').val()) {
-                    layer.msg('请上传身份证反面');
+                    layer.msg('请上传身份证反面',{ icon:2});
                     return false
                 }
 
@@ -437,7 +356,6 @@ export default {
                 fromdata.append('jtime', $('#date').val());
                 fromdata.append('method_name', _this.formdata.method_name);
                 fromdata.append('method_prove', _this.formdata.method_prove);
-                fromdata.append('area', _this.formdata.area);
                 $.each($('#yyzz')[0].files, function (i, file) {
                     fromdata.append('license', file);
                 });
@@ -447,27 +365,22 @@ export default {
                 $.each($('#idcardf')[0].files, function (i, file) {
                     fromdata.append('fcard', file);
                 });
-                $.each($('#gpspho').files, function (i, file) {
-                    fromdata.append('gsp[]', file);
-                });
-                $.each($('#durgpho').files, function (i, file) {
-                    fromdata.append('yqjy[]', file);
-                });
-                $.each($('#docpho').files, function (i, file) {
-                    fromdata.append('yszkz[]', file);
-                });
-                $.each($('#otherpho').files, function (i, file) {
-                    fromdata.append('rests[]', file);
+                $.each($('#yljgpho')[0].files, function (i, file) {
+                    fromdata.append('yljgzy', file);
                 });
                 $.each($('#uploadfile')[0].files, function (i, file) {//证件
                     fromdata.append('zjqs', file);
                 });
-
-                _this.$http.upload('/shv2/Setting/add_drug', fromdata, function (res) {
+                _this.$http.upload('/shv2/Setting/add_write', fromdata, function (res) {
                     if (res.code == 1) {
-                        if (res.code == 1) {
-                            _this.go('/setting/YaomechanismMsg/YaomechanismNext')
-                        }
+                        layer.msg('上传成功', { icon: 6, time: 1500})
+                        var timer = setTimeout(() => {
+                            _this.go('/setting/boxMechanismMsg/mechanismNext')
+                            clearTimeout(timer)
+                        }, 1500)
+                        
+                    } else {
+                        layer.msg('上传失败', { icon: 5})
                     }
                 })
             });
@@ -477,7 +390,7 @@ export default {
 </script>
 
 <style scoped lang="less">
-#mechanismMsg {
+#YiMsg {
     .mechanismMsg_tit {
         border-bottom: 1px solid #f1f2f9;
     }
@@ -596,7 +509,7 @@ export default {
                 width: 158px;
                 height: 158px;
                 padding-top: 100px;
-                background: url(../../common/image/pages/account/icon_pic.png)
+                background: url(../../../common/image/pages/account/icon_pic.png)
                     no-repeat center 44px;
                 position: absolute;
                 z-index: 0;
@@ -626,7 +539,7 @@ export default {
                     line-height: 36px;
                     padding-left: 28px;
                     background: #3196ff
-                        url(../../common/image/pages/account/icon_sc.png)
+                        url(../../../common/image/pages/account/icon_sc.png)
                         no-repeat 10px;
                     font-size: 14px;
                     color: #fff;

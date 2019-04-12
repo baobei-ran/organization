@@ -1,5 +1,6 @@
 import Vue from "vue";
 import Router from "vue-router";
+import Home from '@/home'
 import Index from "@/components/index"; //首页
 import login from "@/components/public/login/login"; //登录
 import register from "@/components/public/login/register"; //注册
@@ -15,12 +16,14 @@ import withdrawalResult from "@/components/public/withdrawal/withdrawalResult"; 
 import checkprice from "@/components/public/withdrawal/checkprice"; //提现验证
 import outToBank from "@/components/public/withdrawal/outToBank"; //取出到银行卡
 import bankcardadmin from "@/components/public/bankcardAdmin"; //银行卡管理
-import mechanismMsg from "@/components/public/mechanismMsg"; //机构信息
+// import mechanismMsg from "@/components/public/mechanismMsg"; //机构信息
 import mechanismNext from "@/components/public/mechanismMsg/mechanismNext"; //机构信息下一步
 import checkmemsg from "@/components/public/mechanismMsg/checkbank"; //机构信息审核
 import mesuccess from "@/components/public/mechanismMsg/mesuccess"; //机构信息成功
 
-import YaomechanismMsg from "@/components/Yao/Yao-mechanismMsg"; //药店机构信息
+import BoxMechanismMsg from "@/components/public/boxMechanismMsg";  // 机构认证信息填写
+
+// import YaomechanismMsg from "@/components/Yao/Yao-mechanismMsg"; //药店机构信息
 import YaomechanismNext from "@/components/Yao/mechanismMsg/Yao-mechanismNext"; //药店机构信息下一步
 import Yaocheckmemsg from "@/components/Yao/mechanismMsg/Yao-checkbank"; //药店机构信息审核
 import Yaomesuccess from "@/components/Yao/mechanismMsg/Yao-mesuccess"; //药店机构信息成功
@@ -98,42 +101,19 @@ import statisticsHome from '@/components/Yao/Yao-statistics';                 //
 import Vipmember from '@/components/Yao/Yao-member';                    //  药店会员首页
 import Marketing from '@/components/Yao/Yao-marketing';                 // 供销页
 import InfromMsg from '@/components/Yao/Yao-informMsg';                 //  通知页
+import Error404 from '@/components/404/404'
 
 import YaoRouter from './Yao-index' // 处方单列表路由
 // console.log(YaoRouter)
 Vue.use(Router);
 
+  
 
-
-export default new Router({
-  mode: "history",
-  routes: [
+  let allroutes = [
     {
-      path: "/",
-      name: "首页",
-      meta: 99,
+      path: "",
+      // name: '首页',
       component: Index
-    },
-    {
-      path: "/login",
-      name: "登录",
-      components: {
-        login: login
-      }
-    },
-    {
-      path: "/register",
-      name: "注册",
-      components: {
-        login: register
-      }
-    },
-    {
-      path: "/forgetpass",
-      name: "忘记密码",
-      components: {
-        login: forgetpass
-      }
     },
     {
       path: "/finance/lytAccount",
@@ -220,23 +200,20 @@ export default new Router({
       name: "再次提交",
       component: otherform
     },
+    
+
     {
-      path: "/setting/mechanismMsg",
-      name: "机构信息",
-      component: mechanismMsg
-    },
-    {
-      path: "/setting/mechanismMsg/mechanismNext",
+      path: "/setting/boxMechanismMsg/mechanismNext",
       name: "机构信息第二步",
       component: mechanismNext
     },
     {
-      path: "/setting/mechanismMsg/checkmemsg",
+      path: "/setting/boxMechanismMsg/checkmemsg",
       name: "机构信息审核",
       component: checkmemsg
     },
     {
-      path: "/setting/mechanismMsg/mesuccess",
+      path: "/setting/boxMechanismMsg/mesuccess",
       name: "机构信息成功",
       component: mesuccess
     },
@@ -255,24 +232,27 @@ export default new Router({
       name: '消息通知',
       component: Inform
     },
-    // 药店机构信息
+
     {
-      path: "/setting/YaomechanismMsg",
-      name: "药店机构信息",
-      component: YaomechanismMsg
+      path: "/setting/boxMechanismMsg",   // 机构认证 医院和药店共享页面
+      name: "机构认证信息添加",
+      component: BoxMechanismMsg
     },
+
+    // 药店机构信息
+    
     {
-      path: "/setting/YaomechanismMsg/YaomechanismNext",
+      path: "/setting/boxMechanismMsg/YaomechanismNext",
       name: "药店机构信息第二步",
       component: YaomechanismNext
     },
     {
-      path: "/setting/YaomechanismMsg/Yaocheckmemsg",
+      path: "/setting/boxMechanismMsg/Yaocheckmemsg",
       name: "药店机构信息审核",
       component: Yaocheckmemsg
     },
     {
-      path: "/setting/YaomechanismMsg/Yaomesuccess",
+      path: "/setting/boxMechanismMsg/Yaomesuccess",
       name: "药店机构信息成功",
       component: Yaomesuccess
     },
@@ -555,7 +535,45 @@ export default new Router({
       name: '通知',
       component: InfromMsg
     }
-  ].concat(YaoRouter)
-});
+  ]
+
+  allroutes = allroutes.concat(YaoRouter)
+  // console.log(allroutes)
+  const routes = [
+    {
+      path: "/",
+      name: "首页",
+      meta: 99,
+      component: Home,
+      children: allroutes // 二级路由
+    },
+    {
+      path: "/login",
+      name: "登录",
+      component: login
+      
+    },
+    {
+      path: "/register",
+      name: "注册",
+      component: register
+      
+    },
+    {
+      path: "/forgetpass",
+      name: "忘记密码",
+      component: forgetpass
+    },
+    {
+      path: "*",
+      name: '404',
+      component: Error404
+    }
+  ]
+  export default new Router({
+    mode: "history",
+    base: 'shanghu', 
+    routes
+  });
 
 

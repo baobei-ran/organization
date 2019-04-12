@@ -294,6 +294,17 @@ input::-webkit-input-placeholder {
   align-items: center;
 }
 
+.flex_w {
+  /* 09版 */
+  -webkit-box-lines: multiple;
+  /* 12版 */
+  -webkit-flex-wrap: wrap;
+  -moz-flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+  -o-flex-wrap: wrap;
+  flex-wrap: wrap;
+}
+
 /* 以下是去除右侧的滚动条隐藏 */
 /*webkit内核*/  
 /* .scroll::-webkit-scrollbar {

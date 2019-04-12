@@ -14,17 +14,33 @@
                         </thead>
                         <tbody >
                             <tr>
-                                <td>csjh1229299999999</td>
-                                <td>2019-09-02 11:00:00</td>
-                                <td>未接单</td>
+                                <td>{{ prescriptiondata.number }}</td>
+                                <td>{{ prescriptiondata.creatime | moment }}</td>
                                 <td>
-                                    <p>李一一 未接单</p>
-                                    <p>李二二 未接单</p>
-                                    <p>李三三 未接单</p>
-                                    <p>李四四 未接单</p>
-                                    <p>李五五 未接单</p>
+                                    <span v-if='prescriptiondata.status == 1'>未接单</span>
+                                    <span v-if='prescriptiondata.status == 2'>等待中</span>
+                                    <span v-if='prescriptiondata.status == 3'>已开具</span>
+                                    <span v-if='prescriptiondata.status == 4'>已拒绝</span>
                                 </td>
-                                <td>CDFS22333333333</td>
+                                <td>
+                                    <div class="doctor dis_f dis_js">
+                                        <ul>
+                                            <li v-for='(user,index) in prescriptiondata.doc_name' :key='index'>{{ user }}</li>
+                                        </ul>
+                                        <ul>
+                                            <li v-for='(state) in prescriptiondata.state' >
+                                                <span v-if='state == 1'>未接单</span>
+                                                <span v-if='state == 2'>已接单</span>
+                                                <span v-if='state == 3'>已拒绝</span>
+                                                <span v-if='state == 4'>已超时</span>
+                                                <span v-if='state == 5'>已开具</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span v-text='prescriptiondata.order_code !=null?prescriptiondata.order_code:"---"'></span>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -32,86 +48,75 @@
                 <div class="Mg-T20 bg_f prescription">
                     <div class="orderList_tit dis_f dis_sb Pd-T20 Pd-B20 Pd-L24 Pd-R24 flex-vc">
                         <p class="Color_black Ft-S16 ">处方样式</p>
-                        <div>
-                            <button class="layui-btn layui-btn-normal">在线浏览打印</button>
-                            <button class="layui-btn layui-btn-normal">下载处方单</button>
+                        <div v-show='prescriptiondata.flag==1 && prescriptiondata.status == 3'>
+                            <button class="layui-btn layui-btn-normal" @click='browse'>在线浏览打印</button>
+                            <button class="layui-btn layui-btn-normal" @click='donwload'>下载处方单</button>
                         </div>
                     </div>
                     <!-- 处方单 -->
-                <div class="prescription_box" ref='prescription_box'>
+                <div class="prescription_box" ref='prescription_box' id='html'>
                     <div class="prescription_content">
                         <ul class="dis_f msg_title">
                             <li>
-                                药店机构编码：<span>01122210</span>
+                                药店机构编码：<span>{{ num }}</span>
                             </li>
                             <li>
-                                处方编号：<span>——</span>
+                                处方编号：<span>{{ prescriptiondata.order_code }}</span>
                             </li>
                             <li>
-                                处方有效期：<span>——</span>
+                                处方有效期：<span>{{ prescriptiondata.undue_time | moment }}</span>
                             </li>
                         </ul>
                         <h1>云医康互联网药店电子处方</h1>
                         <div class="usermsg">
                             <ul class="dis_f">
                                 <li>
-                                    姓名：<span>李小小</span>
+                                    姓名：<span>{{ prescriptiondata.name }}</span>
                                 </li>
                                 <li>
-                                    性别：<span>女</span>
+                                    性别：<span v-text="prescriptiondata.sex == 1? '女': '男'"></span>
                                 </li>
                                 <li>
-                                    年龄：<span>21岁</span>
+                                    年龄：<span>{{ prescriptiondata.age }}</span>
                                 </li>
                                 <li>
-                                    联系电话：<span>123****3322</span>
+                                    联系电话：<span>{{ prescriptiondata.phone }}</span>
                                 </li>
                             </ul>
                             <ul class="dis_f">
                                 <li>
-                                    肝功能：<span>正常</span>
+                                    肝功能：<span v-text='prescriptiondata.liver'></span>
                                 </li>
                                 <li>
-                                    肾功能：<span>正常</span>
+                                    肾功能：<span>{{ prescriptiondata.kidney }}</span>
                                 </li>
                                 <li>
-                                    过敏史：<span>无</span>
+                                    过敏史：<span>{{ prescriptiondata.allergy }}</span>
                                 </li>
                                 <li>
-                                    备孕情况：<span>无</span>
-                                </li>
-                            </ul>
-                            <ul>
-                                <li>
-                                    过往病史：<span>无</span>
+                                    备孕情况：<span>{{ prescriptiondata.yun }}</span>
                                 </li>
                             </ul>
                             <ul>
                                 <li>
-                                    临床诊断：<span>过敏性结膜炎</span>
+                                    过往病史：<span>{{ prescriptiondata.ago }}</span>
+                                </li>
+                            </ul>
+                            <ul>
+                                <li>
+                                    临床诊断：<span>{{ prescriptiondata.result }}</span>
                                 </li>
                             </ul>
                         </div>
                         <div class="drug">
                             <p class="rp">Rp : </p>
-                            <ol class="dis_f">
-                                <li>阿莫西林胶囊15mg*2板*盒 <span>X2</span></li>
+                            <ol class="dis_f" v-for='(val,i) in prescriptiondata.recipe_eat' :key='i'>
+                                <li>{{ val.name }} <span>x{{ val.num }}</span></li>
                                 <li>
-                                    用法：<b>口服 每次1片 每日3片</b>
+                                    用法：<b>{{ val.usage }}</b>
                                 </li>
                             </ol>
-                            <ol class="dis_f">
-                                <li>阿莫西林胶囊15mg*2板*盒 <span>X2</span></li>
-                                <li>
-                                    用法：<b>口服 每次1片 每日3片</b>
-                                </li>
-                            </ol>
-                            <ol class="dis_f">
-                                <li>阿莫西林胶囊15mg*2板*盒 <span>X2</span></li>
-                                <li>
-                                    用法：<b>口服 每次1片 每日3片</b>
-                                </li>
-                            </ol>
+                            
                         </div>
                         <div class="message">
                             （以下空白，手写无效）
@@ -119,10 +124,10 @@
                         <div class="signature">
                             <ul class="dis_f flex-vc">
                                 <li>
-                                    处方医师：<img src="../../../common/image/pages/login/img_jgbg@2x.png" alt="">
+                                    处方医师：<img :src="$http.baseURL+prescriptiondata.signpic" alt="">
                                 </li>
                                 <li>
-                                    审核药师：<img src="" alt="">
+                                    审核药师：<img :src="$http.baseURL+prescriptiondata.yname_pic" alt="">
                                 </li>
                             </ul>
                         </div>
@@ -130,25 +135,31 @@
                             药师提示：1、请遵医嘱服药；2、请在窗口点清药品；3、发出药品不予退换
                         </div>
                     </div>
+                        <div class="come" v-if='prescriptiondata.status == 4'>
+                            <img src="../../../common/image/check/wtg.png" alt="">
+                        </div>
+                        <div class="come" v-if='prescriptiondata.flag == 2'>
+                            <img src="../../../common/image/check/yswtg.png" alt="">
+                        </div>
                     </div>
                 </div>
 
                 <!-- 审核未通过原因 -->
-                <div class="defeated bg_f Mg-T20">
+                <div class="defeated bg_f Mg-T20" v-if="prescriptiondata.flag == 2">
                     <p class="orderList_tit Color_black Ft-S16 Pd-T20 Pd-B20 Pd-L24">审核未通过原因</p>
                     <ul>
+                        <li v-for="(val,i) in prescriptiondata.doc_remark" :key='i'>{{val.name}}:<span>{{ val.remark }}</span></li>
+                        <!-- <li>李二二：<span>药量过大，且与实际病情不符，不建议服用此类药品。</span></li>
                         <li>李一一：<span>药量过大，且与实际病情不符，不建议服用此类药品。建议重新评估病人病情及用药。</span></li>
                         <li>李二二：<span>药量过大，且与实际病情不符，不建议服用此类药品。</span></li>
                         <li>李一一：<span>药量过大，且与实际病情不符，不建议服用此类药品。建议重新评估病人病情及用药。</span></li>
                         <li>李二二：<span>药量过大，且与实际病情不符，不建议服用此类药品。</span></li>
                         <li>李一一：<span>药量过大，且与实际病情不符，不建议服用此类药品。建议重新评估病人病情及用药。</span></li>
-                        <li>李二二：<span>药量过大，且与实际病情不符，不建议服用此类药品。</span></li>
-                        <li>李一一：<span>药量过大，且与实际病情不符，不建议服用此类药品。建议重新评估病人病情及用药。</span></li>
-                        <li>李二二：<span>药量过大，且与实际病情不符，不建议服用此类药品。</span></li>
+                        <li>李二二：<span>药量过大，且与实际病情不符，不建议服用此类药品。</span></li> -->
                     </ul>
                 </div>
                 <div class="prescription_btn">
-                    <button class="layui-btn layui-btn-normal" @click='initdata'>药师审核</button>
+                    <button class="layui-btn layui-btn-normal" @click='initdata' v-show='prescriptiondata.flag == 0 && prescriptiondata.status == 3'>药师审核</button>
                     <button class="layui-btn Return_btn" @click='go("/server/YaoprescriptionList")'>返回</button>
                 </div>
         </div>
@@ -158,30 +169,46 @@
                 <p>审核并添加药师电子签名？</p>
             </div>
             <p class="clear">
-                <span><button class="layui-btn cancel" @click='cancel'>审核拒绝</button></span>
-                <span><button class="layui-btn layui-btn-normal" @click="sendup">审核通过</button></span>
+                <span><button class="layui-btn cancel" @click='cancel(2)'>审核拒绝</button></span>
+                <span><button class="layui-btn layui-btn-normal" @click="cancel(1)">审核通过</button></span>
+            </p>
+        </div> 
+        <div id="sendgood" class="hide">
+            <div class="images">
+                <img src="" ref='imgs' alt="">
+            </div>
+            <p class="clears">
+                <button class="layui-btn layui-btn-normal" @click="donwload">打印</button>
             </p>
         </div> 
     </div>
 </template>
 <script>
+import html2canvas from 'html2canvas'
 export default {
     name: 'prescriptionCheck',
     data() {
         return {
-            
+            prescriptiondata: {},   // 数据
+            num: '',                // 
+            doctorId: '',           // 获取id
         }
     },
     mounted() {
-       console.log(this.$route)
-       this.datadetail()
+        this.doctorId = this.$route.query.id
+        var user = this.localstorage.get('logindata')
+        this.num = user.number
+        this.datadetail()
     },
     methods: {
         datadetail () {
             let self = this;
             self.$http.post('/shv2/recipe/recipe_look', this.$route.query, function (res) {
                 console.log(res)
-            }, function (err) {})
+                if (res.code == 1) {
+                    self.prescriptiondata = res.data
+                }
+            }, function (err) { console.log(err)})
         },
         initdata() {    // 审核调取弹框
             var self = this;
@@ -207,14 +234,97 @@ export default {
                 $(".layui-layer-setwin").css("top", "19px");
             });
         },
-        sendup () {     // 审核通过
-
-        },
-        cancel () { // 审核拒绝
+        
+        cancel (num) { // 审核成功或者拒绝
+            var _this = this;
+            console.log(_this.doctorId, num)
             layui.use('layer', function(){
             var layer = layui.layer;
-                layer.closeAll();
+            _this.$http.post('/shv2/recipe/recipe_teacher', { id: _this.doctorId, flag: num }, function (res) {
+                console.log(res)
+                if (res.code == 1) {
+                    layer.closeAll('page');
+                    layer.msg('审核成功', {icon:1})
+                    _this.datadetail()
+                } else if (res.code == 3) {
+                    layer.closeAll('page');
+                    layer.msg('审核成功', {icon:1})
+                    _this.datadetail()
+                } else {
+                    layer.closeAll('page');
+                    layer.msg('审核失败', { icon: 2})
+                }
+            }, function (err) { console.log(err)})
+                
             }); 
+        },
+         
+        donwload () {
+            /*图片跨域及截图模糊处理*/
+            let shareContent = document.getElementById('html'),//需要截图的包裹的（原生的）DOM 对象
+                width = shareContent.clientWidth,//shareContent.offsetWidth; //获取dom 宽度
+                height = shareContent.clientHeight,//shareContent.offsetHeight; //获取dom 高度
+                canvas = document.createElement("canvas"), //创建一个canvas节点
+                scale = 2; //定义任意放大倍数 支持小数
+            canvas.width = width * scale; //定义canvas 宽度 * 缩放
+            canvas.height = height * scale; //定义canvas高度 *缩放
+            canvas.style.width = shareContent.clientWidth * scale + "px";
+            canvas.style.height = shareContent.clientHeight * scale + "px";
+            canvas.getContext("2d").scale(scale, scale); //获取context,设置scale
+            let opts = {
+                scale: scale, // 添加的scale 参数
+                canvas: canvas, //自定义 canvas
+                logging: false, //日志开关，便于查看html2canvas的内部执行流程
+                width: width, //dom 原始宽度
+                height: height,
+                // useCORS: true // 【重要】开启跨域配置
+            };
+            html2canvas(shareContent,opts).then(function(canvas) {
+                var url = canvas.toDataURL();
+                var triggerDownload = $("<a>").attr("href", url).attr("download", "处方单.png").appendTo("body");
+                triggerDownload[0].click();
+                triggerDownload.remove();
+            })
+        },
+
+        browse () { // 浏览
+            var _this = this;
+            let shareContent = document.getElementById('html'),//需要截图的包裹的（原生的）DOM 对象
+                width = shareContent.clientWidth,//shareContent.offsetWidth; //获取dom 宽度
+                height = shareContent.clientHeight,//shareContent.offsetHeight; //获取dom 高度
+                canvas = document.createElement("canvas"), //创建一个canvas节点
+                scale = 4; //定义任意放大倍数 支持小数
+            canvas.width = width * scale; //定义canvas 宽度 * 缩放
+            canvas.height = height * scale; //定义canvas高度 *缩放
+            canvas.style.width = shareContent.clientWidth * scale + "px";
+            canvas.style.height = shareContent.clientHeight * scale + "px";
+            canvas.getContext("2d").scale(scale, scale); //获取context,设置scale
+            let opts = {
+                scale: scale, // 添加的scale 参数
+                canvas: canvas, //自定义 canvas
+                logging: false, //日志开关，便于查看html2canvas的内部执行流程
+                width: width, //dom 原始宽度
+                height: height
+            };
+            html2canvas(shareContent,opts).then(function(canvas) {
+                var url = canvas.toDataURL();
+                _this.$refs.imgs.src = url
+            })
+
+             layui.use(["layer"], function () {
+                var layer = layui.layer;
+                var $ = layui.jquery;
+                layer.open({
+                    type: 1,
+                    shade: 0.4,
+                    shadeClose: true,
+                    closeBtn: 1,
+                    title: "在线预览",
+                    content: $("#sendgood"),
+                    area: ["900px", "700px"],
+                    cancel: function () { }
+                });
+            });
         }
       
     }
@@ -248,6 +358,13 @@ export default {
                         p {
                             line-height: 30px;
                         }
+                        .doctor {
+                            ul {
+                                li {
+                                    line-height: 25px;
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -260,6 +377,16 @@ export default {
             }
             .prescription_box {
                 padding: 20px;
+                position: relative;
+                .come {
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    img {
+                        width: 100%;
+                    }
+                }
             .prescription_content {
                 padding: 30px 50px;
                 border:1px solid #C2C2C3;
@@ -298,8 +425,9 @@ export default {
                         >li {
                             width: 30%;
                             line-height: 50px;
+                            margin-right: 30px;
                             >span {
-                                margin-left: 30px;
+                                float: right;
                             }
                             >b {
                                 font-weight: 500;
@@ -382,6 +510,21 @@ export default {
                 border:1px solid #128DFF;
                 margin-right: 20px;
             }
+        }
+    }
+
+    #sendgood {
+       padding: 30px;
+        .images {
+            width: 99%;
+            height: 90%;
+            img {
+                width: 100%;
+                height: 100%;
+            }
+        }
+        .clears {
+            text-align: center;
         }
     }
 }
