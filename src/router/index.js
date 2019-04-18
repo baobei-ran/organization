@@ -537,8 +537,8 @@ Vue.use(Router);
     }
   ]
 
-  allroutes = allroutes.concat(YaoRouter)
-  // console.log(allroutes)
+  allroutes = allroutes.concat(YaoRouter) // 合并
+  
   const routes = [
     {
       path: "/",
@@ -570,10 +570,18 @@ Vue.use(Router);
       component: Error404
     }
   ]
-  export default new Router({
+  const router =  new Router({
     mode: "history",
     base: 'shanghu', 
     routes
   });
 
 
+
+  //导航钩子
+  router.beforeEach((to, from, next) => {
+      next()
+  })
+
+
+  export default router

@@ -100,19 +100,19 @@ export default {
 
                 var checkpress = function () {
                     if (!exgphone.test($('#phone').val())) {
-                        layer.msg('请输入正确的手机号');
+                        layer.msg('请输入正确的手机号',{icon:2});
                         return false
                     }
                     if (!isNumber.test($('#code').val())) {
-                        layer.msg('请输入正确的验证码')
+                        layer.msg('请输入正确的验证码',{icon:2})
                         return false
                     }
                     if (!ispass.test($('#pass').val())) {
-                        layer.msg('请输入正确的密码')
+                        layer.msg('请输入正确的密码',{icon:2})
                         return false
                     }
                     if (!$('#check').is(':checked')) {
-                        layer.msg('请阅读协议')
+                        layer.msg('请勾选阅读协议',{icon:2})
                         return false
                     }
                     return true
@@ -123,6 +123,8 @@ export default {
                         if (res.code == 1) {
                             _this.localstorage.put('logindata',{hospital_status:0})
                             _this.go('/setting/boxMechanismMsg?upload=true')
+                        } else {
+                            layer.msg(res.msg, { icon: 5})
                         }
                     }, function (err) { console.log(err) });
                 }

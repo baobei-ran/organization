@@ -168,10 +168,10 @@ export default {
                             title: '会员',
                             url: '/vip/vipmember',
                         },
-                        {
-                            title: '会员',
-                            url: '',
-                        }
+                        // {
+                        //     title: '会员',
+                        //     url: '',
+                        // }
                     ]
                 },
                 {
@@ -182,10 +182,10 @@ export default {
                             title: '采购',
                             url: '/supply/purchase',
                         },
-                        {
-                            title: '采购',
-                            url: '',
-                        }
+                        // {
+                        //     title: '采购',
+                        //     url: '',
+                        // }
                     ]
                 },
                 {
@@ -196,10 +196,10 @@ export default {
                             title: '通知',
                             url: '/message/inform',
                         },
-                        {
-                            title: '通知',
-                            url: '',
-                        }
+                        // {
+                        //     title: '通知',
+                        //     url: '',
+                        // }
                     ]
                 },
                 {
@@ -208,7 +208,7 @@ export default {
                     children: [
                         {
                             title: '机构信息',
-                            url: '/setting/mechanismMsg',
+                            url: '/setting/boxMechanismMsg',
                         },
                         {
                             title: '修改密码',
@@ -391,7 +391,7 @@ export default {
             resize: false,//点击事件中判断当前窗口是否《1200
             isstatus: false,//认证信息审核
             hospitalName: this.localstorage.get('logindata') ? this.localstorage.get('logindata') : '',
-            attestation: false, // 判断是否认证
+            attestation: false,     // 判断是否认证
         }
     },
     created() {
@@ -401,14 +401,13 @@ export default {
             switch(type) {
                 case 1:  this.sliderMenu = true; break;   // 医院 
                 case 8:  this.sliderMenu = false; break;  // 药店菜单
-                
             }
         }
         
         if (user) {
             var _this = this;
             function Status () {
-               return _this.$http.$post('/shv2/Setting/look_hos',{},)   // 认证状态
+               return _this.$http.$post('/shv2/Setting/look_hos',{})   // 认证状态
             }
             
             function Msg () {
@@ -417,39 +416,40 @@ export default {
 
             this.$http.all([Msg(), Status()], function (res, rea) {     // 并发请求
                 console.log(res, rea)
-                    if (res.code == 223 && res.data == 0 ) {
+                if (res.code == 223 && res.data == 0 ) {
                         _this.attestation = true
                         _this.go('/setting/boxMechanismMsg')  // 去填写认证信息
                         return;
-                    } 
+                } 
                 if (rea.data.hospital_status !== 1) {
                     // 药店的判断
                     if (res.code == 224 && res.data == 8 && rea.data.hospital_status == 0) {
                         _this.attestation = true
-                        _this.go('/setting/boxMechanismMsg')  // 去填写认证信息
+                        _this.$router.replace('/setting/boxMechanismMsg')  // 去填写认证信息
                     } else if (res.code == 224 && res.data == 8 && rea.data.hospital_status == 3) {
-                    _this.go('/setting/boxMechanismMsg/Yaocheckmemsg')       // 3、药店待审核
+                        _this.$router.replace('/setting/boxMechanismMsg/Yaocheckmemsg')       // 3、药店待审核
                     } else if (res.code == 224 && res.data == 8 && rea.data.hospital_status == 2 ) {
-                        _this.go('/setting/boxMechanismMsg/Yaocheckmemsg')      // 2、药店审核失败
+                        _this.$router.replace('/setting/boxMechanismMsg/Yaocheckmemsg')      // 2、药店审核失败
                     } 
 
                     // 医院的判断
                     if (res.code == 224 && res.data == 1 && rea.data.hospital_status == 0) {
                         _this.attestation = true
-                        _this.go('/setting/boxMechanismMsg')  // 去填写认证信息
+                        _this.$router.replace('/setting/boxMechanismMsg')  // 去填写认证信息
                     } else if (res.code == 224 && res.data == 1 && rea.data.hospital_status == 3 ) {
-                        _this.go('/setting/boxMechanismMsg/checkmemsg') // 医院待审核
+                        _this.$router.replace('/setting/boxMechanismMsg/checkmemsg') // 医院待审核
                     } else if (res.code == 224 && res.data == 1 && rea.data.hospital_status == 2 ) {
-                        _this.go('/setting/boxMechanismMsg/checkmemsg') // 医院审核失败
+                        _this.$router.replace('/setting/boxMechanismMsg/checkmemsg') // 医院审核失败
                     }
-                }
+                } 
+               
             })
                
                
            
             
         } else {
-            this.go('/login')
+            this.$router.replace('/login')
         }
         
         
@@ -510,7 +510,7 @@ export default {
             let _this = this;
 
             for (var i = 0; i < li.length; i++) {
-                if (li[i].getAttribute("name") != '' && this.$route.path.includes(li[i].getAttribute("name"))) {
+                if (li[i].getAttribute("name") !== '' && this.$route.path.includes(li[i].getAttribute("name"))) {
                     li[i].setAttribute('class', 'active');//属性赋值
                     _this.childShow = true;//子菜单显示
                     if (_this.sliderMenu) {//判断子菜单显示 医院或者药店
@@ -548,9 +548,9 @@ export default {
             var rzstatus = this.localstorage.get('logindata');
             // console.log(rzstatus)
             if (rzstatus) {     // 判断是否审核通过
-                if (rzstatus.hospital_status == 0 || rzstatus.hospital_status == 2 || rzstatus.hospital_status == 3) {
+                if (rzstatus.hospital_status == 0 || rzstatus.hospital_status == 2 || rzstatus.hospital_status == 3  ) {
                     this.isstatus = true;
-                }
+                } 
             }
         },
         loginout() {    // 退出登录
@@ -561,7 +561,7 @@ export default {
                 if (res.code == 1) {
                     _this.localstorage.remove('logindata');
                     // _this.localstorage.clear()
-                    _this.go('/login');
+                    _this.$router.replace('/login');
                 }
             }, function () { })
 

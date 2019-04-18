@@ -91,7 +91,7 @@
                                         <p class="pointer Ft-S14 Color_blue al" v-show='val.state == 4' @click="delcode(val.did, 2)">开启合作</p>
                                         <p class="Ft-S14 al" v-show='val.state == 2'>申请中</p>
                                         <p class="Ft-S14 al" v-show='val.state == 3'>已合作</p>
-                                        <!-- <p class="pointer Ft-S14 Color_blue al" v-show='val.state == 5' @click="delcode(val.did, 2)">终止合作</p> -->
+                                        <p class="Ft-S14 al" v-show='val.state == 5' >终止合作</p>
                                     </div>
                                     <!-- <div>
                                         <p class="pointer Ft-S14 Color_blue al" v-show='val.type == 2' @click="">申诉解除关联</p>
@@ -290,6 +290,7 @@ export default {
             this.tdlast = '';
             this.list.jtime = '';
             this.list.ktime = '';
+            this.initdata(1)
         },
     }
 }

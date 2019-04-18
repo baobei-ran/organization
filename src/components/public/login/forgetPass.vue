@@ -8,7 +8,7 @@
             <p>忘记密码</p>
             <form id="myform" action="" onsubmit="return false">
             <div class="my_group"><input type="tel" id="phone" v-model='phone' name="phone" placeholder="手机号"></div>
-            <div class="my_group code"><input type="text" id="code" v-model='code' name="code" placeholder="请输入验证码"><button id="sendCode">发送验证码</button></div>
+            <div class="my_group code"><input type="text" id="code" v-model='code' name="code" placeholder="请输入验证码"><button id="sendCode" >发送验证码</button></div>
             <div class="my_group"><input type="text" id="pwd" v-model='newPass' name="pwd" placeholder="请输入密码"></div>
             <div class="my_group link_box">
                 <span class="login pointer" @click="go('/login')">返回登录</span>
@@ -36,7 +36,7 @@ export default {
         }
     },
     mounted() {
-        // this.getCode()
+        this.getCode()
     },
     methods: {
         initdata() {  // 提交
@@ -63,17 +63,17 @@ export default {
                     return;
                 }
                 var obj = { phone: _this.phone, code: _this.code, pwd: _this.newPass }
-                // _this.$http.post('', obj, function (res) {
-                //     console.log(res)
-                //     if (res.code == 1) {
-                //         layer.msg('密码修改成功', { icon: 1, time: 1000});
-                //         setTimeout (() => {
-                //           _this.go('/login')
-                //         }, 1000)
-                //     } else {
-                //         layer.msg(res.msg, { icon: 2});
-                //     }
-                // })
+                _this.$http.post('/shv2/login/pwd_edit', obj, function (res) {
+                    console.log(res)
+                    if (res.code == 1) {
+                        layer.msg('密码修改成功', { icon: 1, time: 1000});
+                        setTimeout (() => {
+                          _this.go('/login')
+                        }, 1000)
+                    } else {
+                        layer.msg(res.msg, { icon: 2});
+                    }
+                })
             });
         },
         getCode () {  // 获取验证码

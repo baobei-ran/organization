@@ -1,9 +1,9 @@
 <template>
     <div id="index" class="" style="width:100%">
         <p class="Pd-T28 Pd-B28 Pd-L20 Mg-B24 bg_f">
-            <span class="Ft-S18 Color_black">北京市安大药房</span>
+            <span class="Ft-S18 Color_black">{{ user.name }}</span>
             <span class="Ft-S12 btn_rz">机构认证</span>
-            <span class="Ft-S14 Color_black leftline">机构编码：820182</span>
+            <span class="Ft-S14 Color_black leftline">机构编码：{{ user.number }}</span>
         </p>
         <div class="section1">
             <div class="layui-row layui-col-space22">
@@ -121,7 +121,8 @@ export default {
     name: 'index',
     data() {
         return {
-            datas: ''
+            datas: '',
+            user: ''
         }
     },
     mounted(){
@@ -142,6 +143,7 @@ export default {
                     }
                 }, function (err) {console.log(err)})
             }); 
+            this.user = this.localstorage.get('logindata')
         },
         list (num) {    // 功能分类跳转链接
             switch(num) {
@@ -152,7 +154,7 @@ export default {
                 case 5: this.$router.push({path: '/data/doctorList'}); break;
                 case 6: this.$router.push({path: '/data/departmentList'}); break;
                 case 7: this.$router.push({path: '/server/equipmenApply'}); break;
-                case 8: this.$router.push({path: '/setting/mechanismMsg/checkmemsg'}); break;
+                case 8: this.$router.push({path: '/setting/boxMechanismMsg/mesuccess'}); break;
             }
         }
     }

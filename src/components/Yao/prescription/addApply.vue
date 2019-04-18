@@ -182,46 +182,42 @@ export default {
                 var table = layui.table;
                 var isphone = /^1[3456789]\d{9}$/;
                 var isNum = /\d/;
-
-                table.on('text(test)', function(obj){
-                    console.log(obj)
-                });
+                console.log(_this.checkedCities)
 
                 if (_this.checkedCities.length <= 0) {
-                    layer.msg('请选择医生')
+                    layer.msg('请选择医生',{icon:2})
                     return;
                 }
                 if (!_this.username) {
-                    layer.msg('请输入姓名')
+                    layer.msg('请输入姓名',{icon:2})
                     return;
                 }
                 if(!_this.sex) {
-                    layer.msg('请选择性别')
+                    layer.msg('请选择性别',{icon:2})
                     return;
                 }
                 if(!_this.age) {
-                    layer.msg('请输入年龄')
+                    layer.msg('请输入年龄',{icon:2})
                     return;
                 } else if (!isNum.test(_this.age)) {
-                    layer.msg('请输入正确年龄')
+                    layer.msg('请输入正确年龄',{icon:2})
                     return;
                 }
                 if(!_this.phone || !isphone.test(_this.phone)) {
-                    layer.msg('请输入正确电话')
+                    layer.msg('请输入正确电话',{icon:2})
                     return;
                 }
                 if (!_this.disease) {
-                    layer.msg('请输入症状')
+                    layer.msg('请输入症状',{icon:2})
                     return;
                 }
                 _this.disabled = true
                 var formdata = new FormData();
-                var doctorId = [];
+                
                 _this.checkedCities.map(val => {
-                    doctorId.push(val.did)
+                    formdata.append('did[]', val.did)
                 })
                 
-                formdata.append('did[]', doctorId)
                 formdata.append('names', _this.username)
                 formdata.append('sex', _this.sex)
                 formdata.append('age', _this.age)
@@ -255,7 +251,7 @@ export default {
                            _this.go('/server/YaoprescriptionList')
                        }, 1000)
                     } else if (res.code == 0) {
-                        layer.msg('请填写处方药品')
+                        layer.msg('请填写处方药品',{icon:2})
                     }
                 }, function (err) { console.log(err) 
                     _this.disabled = false

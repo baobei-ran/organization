@@ -38,7 +38,7 @@
             </div>
             <p class="txt Ft-S14 Pd-T24 Pd-B24 Pd-L24">注：持有药师资格证的药师人员必须为当前药房工作人员药师签名由药师在白色背景纸张上书写清晰可辨的药师真实签名后拍照</p>
 
-            <span v-show='disBtn' class="btn"><button class="layui-btn layui-btn-normal" @click="submitFile" :class='{ "layui-btn-disabled": btnss }'>立即提交</button></span>
+            <span v-show='disBtn' class="btn"><button class="layui-btn layui-btn-normal" @click="submitFile" :disabled='btnss' :class='{ "layui-btn-disabled": btnss }'>立即提交</button></span>
         </div>
     </div>
 </template>
@@ -49,7 +49,7 @@ export default {
             return {
                 img1: '',           //  显示预览
                 img2: '',           // 显示预览图
-                btnss: true,        // 按钮类名
+                btnss: true,        // 按钮类名绑定
                 labelTxt: '点击上传',
                 labelTxt2: '点击上传',
                 files1: '',         //   上传图

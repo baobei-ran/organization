@@ -257,14 +257,12 @@ export default {
                     layer.msg('请选择医生',{icon: 2, time:1500});
                     return 
                 }
-                var arr = []
-                _this.checkedCities.map(val => {
-                    arr.push(val.did)
-                })
-                console.log(arr, _this.doctorId)
                 var formdata = new FormData();
+                _this.checkedCities.map(val => {
+                    formdata.append('did[]', val.did)
+                })
                     formdata.append('id', _this.doctorId);
-                    formdata.append('did[]', arr)
+                    
                 _this.$http.upload('/shv2/recipe/recipe_again', formdata, function (res) {
                     console.log(res)
                     if (res.code == 1) {
@@ -313,6 +311,9 @@ export default {
                 ktime: '',
                 jtime: '',
             }
+            $('#date').val('');
+            $('#date1').val('');
+            this.initdata(this.status, 1)
         },
          handleCheckAllChange(val) {     // 全选
             if(val) {
