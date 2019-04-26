@@ -338,6 +338,7 @@ export default {
 
 <style scoped lang="less">
 #orderList {
+    height: 100%;
     .orderList_tit {
         border-bottom: 1px solid #e6e6e6;
     }
@@ -395,6 +396,9 @@ export default {
         }
     }
     .tab_content {
+        height: 100%;
+        background-color: #fff;
+        
         .layui-tab {
             .layui-tab-title {
                 font-size: 16px;

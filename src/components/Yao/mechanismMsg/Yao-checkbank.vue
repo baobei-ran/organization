@@ -4,15 +4,19 @@
             认证机构信息
         </p>
 
-        <div class="Pd-T24 Pd-L24 Pd-R24" v-show="auditingmsg.hospital_status!=1"> 
-            <p class="sh_status" v-show="auditingmsg.hospital_status!=1&&auditingmsg.hospital_status!=2">当前审核状态：<span>审核中</span></p>
+        <div class="Pd-T24 Pd-L24 Pd-R24" > 
+            <p class="sh_status" v-show="auditingmsg.hospital_status==3">当前审核状态：<span>审核中</span></p>
             <div class="sh_status" v-show="auditingmsg.hospital_status==2">
                 当前审核状态：审核未通过 <button class="onup" @click="go('/setting/boxMechanismMsg')">重新上传</button>
                 <p class="Ft-S14 Color_gray6 Mg-T24">
                     未通过原因：{{auditingmsg.remark}}
                 </p>
             </div>
+            <div class="sh_status" v-show="auditingmsg.hospital_status==1">
+                当前审核状态：审核通过 <button class="onup" @click="Returns">返回首页</button>
+            </div>
         </div>
+        
         <!-- 药店审核中 -->
         <div class="Pd-L24 Pd-R24" v-if="auditingmsg.hospital_status!=1">
             <table class="Mg-T24" width="100%">
@@ -190,13 +194,32 @@ export default {
         return {
             auditingmsg: '',
             ishospital: this.$route.query.hospital,
+            isStatus: '',
         }
     },
     mounted() {
         this.initdata()
+        var _this = this;
+        this.isStatus = setInterval(function () {
+            _this.initStatus()
+        }, 5000)
     },
     methods: {
-        initdata() {//初始化医院
+        initStatus() {// 查询状态
+            var _this = this
+            _this.$http.post('/shv2/Setting/look_hos', {}, function (res) {
+                console.log(res)
+                if (res.code == 1) {
+                    if (res.data.hospital_status == 1 || res.data.hospital_status == 2 ) {
+                        _this.initdata()
+                        clearInterval(_this.isStatus)
+                    } 
+                }
+            }, function () {
+
+            })
+        },
+        initdata() {//  药店状态和数据
             let _this = this
             layui.use(["layer"], function () {
                 let layer = layui.layer
@@ -214,7 +237,13 @@ export default {
             $('#showimg').on('change', function () {//医院上传图片
                 $('#showimg3').attr('style', 'background:url(' + window.URL.createObjectURL(this.files[0]) + ');background-size:cover');
             })
+        },
+        Returns () {
+            this.$router.replace('/?login=true')
         }
+    },
+    beforeDestroy () {
+        clearInterval(this.isStatus)
     }
 }
 </script>

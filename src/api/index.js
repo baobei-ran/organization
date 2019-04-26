@@ -5,7 +5,7 @@ var baseURL = "http://test99.yunyikang.cn"; //
 
 
 axios.defaults.retry = 3;           //  发起请求次数
-axios.defaults.retryDelay = 1000;   //  每次请求时间
+axios.defaults.retryDelay = 2000;   //  每次请求时间
 
 import { Loading } from 'element-ui';
 var loadingInstance;
@@ -45,7 +45,7 @@ http.interceptors.response.use(function(res) {
     // loadingInstance.close();
   if (res.data.code == 406) {
     localStorage.clear();
-    window.location.href = "/shanghu/login";
+    window.location.href = "/shanghu/#/login";
   }
   return res;
 }, function (error) {

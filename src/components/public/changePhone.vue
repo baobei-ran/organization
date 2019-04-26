@@ -18,7 +18,7 @@
                         验证码：
                     </td>
                     <td class="Pd-L24 Ft-S16 Color_gray6">
-                        <input type="text" maxlength="4" id="code" @keypress="errcode=''" v-model="form.code" placeholder="请输入验证码" style="width: 210px;" class="Pd-L10" /><span class="getcode" @click="getcode">获取验证码</span>
+                        <input type="text" maxlength="4" id="code" @keypress="errcode=''" autocomplete="off" v-model="form.code" placeholder="请输入验证码" style="width: 210px;" class="Pd-L10" /><span class="getcode" @click="getcode">获取验证码</span>
                         <p class="Ft-S12 errmsg" >{{errcode}}</p>
                     </td>
                 </tr>

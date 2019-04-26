@@ -1,7 +1,8 @@
 <template>
     <div id="addGoods" style="height:100%">
         <p class="Color_black Ft-S16 Pd-T24 Pd-B24 Pd-L24 Pd-R24 Mg-B24 clear bg_f"><span class="fl">创建商品/增加商品</span><span class="fr onbtn pointer">
-                <button type='submit' class='rightBtn'  @click='obsubmit'><button class="layui-btn site-demo-layedit rightBtn" data-type='content'>保存</button></button>
+                <!-- <button type='submit' class='rightBtn'  @click='obsubmit'><button class="layui-btn site-demo-layedit rightBtn" data-type='content'>保存</button></button> -->
+                <el-button type="primary" :loading="disabled" :disabled='disabled' style='vertical-align: top;'  class="layui-btn site-demo-layedit rightBtn btn_preserve" data-type='content'>保存</el-button>
             </span><span class="fr cancelbtn Mg-R24 pointer" @click='back'>取消</span></p>
         <div class="layui-row layui-col-space22 head_msg">
             <div class="layui-col-md8">
@@ -365,7 +366,8 @@
                     </div>
                 </div>
         <p class="ac Mg-T24 goback"><button class="pointer Color_blue Mg-R24" @click="go('/jgmall/goodsList')" style="background:#fff; border:1px solid rgba(49,150,255,1)">取消</button> 
-            <button type='submit'  style='vertical-align: top;' @click='obsubmit'><button style='vertical-align: top;' class="layui-btn site-demo-layedit" id='btn' data-type='content'>保存</button></button>
+            <!-- <button type='submit'  style='vertical-align: top;' @click='obsubmit'><button style='vertical-align: top;' class="layui-btn site-demo-layedit" id='btn' data-type='content'>保存</button></button> -->
+            <el-button type="primary" :loading="disabled" :disabled='disabled' style='vertical-align: top;'  class="layui-btn site-demo-layedit btn_preserve" data-type='content'>保存</el-button>
         </p>
     </div>
 </template>
@@ -426,6 +428,7 @@ export default {
             fPic1: [],           // 附图5个
             fPic2: [],           // 附图预览
             size: 5,             // 控制附图预览的数量
+            disabled: false,     // 按钮控制
         }
     },
     created() {
@@ -556,20 +559,19 @@ export default {
                     
 
                     // 图片操作 
-                        
-                         if (data.pic != null) {
-                            _this.zPic = data.pic
-                            $('#zhuImg').attr('src', _this.$http.baseURL+_this.zPic)    // 获取主图
-                         }   
+                    if (data.pic != null) {
+                        // _this.zPic = data.pic    // 不更换图片就不用上传了
+                        $('#zhuImg').attr('src', _this.$http.baseURL+data.pic)    // 获取主图
+                    }   
 
 
-                        var imgData = res.imgdata   // 图片数组 附图
-                        
-                        imgData.forEach(val => {
-                           var a = _this.$http.baseURL + val.img
-                            //  console.log(a)
-                            _this.fPic2.push(a)
-                        })
+                    var imgData = res.imgdata   // 图片数组 附图
+                    
+                    imgData.forEach(val => {
+                        var a = _this.$http.baseURL + val.img
+                        //  console.log(a)
+                        _this.fPic2.push(a)
+                    })
 
                     form.render();  // 重新渲染
                 } else {
@@ -704,9 +706,10 @@ export default {
                         return layedit.sync(index);
                     }
                 })
-                $('#btn').on('click', function(){
+                $('.btn_preserve').on('click', function(){
                     var type = $(this).data('type');
                     active[type] ? active[type].call(this) : '';
+                    _this.obsubmit()
                 });
                 //编辑器外部操作
                 var active = {
@@ -714,10 +717,10 @@ export default {
                         _this.details = layedit.getContent(index); //获取编辑器内容
                     },
                     text: function(){
-                        alert(layedit.getText(index)); //获取编辑器纯文本内容
+                        console.log(layedit.getText(index)); //获取编辑器纯文本内容
                     }
                     ,selection: function(){
-                        alert(layedit.getSelection(index));
+                        console.log(layedit.getSelection(index));
                     }
                 };
 
@@ -736,7 +739,7 @@ export default {
         },
         obsubmit() {    // 添加商品、保存
             var _this = this;
-            console.log(this.details, _this.attending_functions)
+            console.log(_this.details)
             var formdata = new FormData();
             layui.use(['layer','form'], function(){
             var layer = layui.layer;
@@ -758,10 +761,12 @@ export default {
             } else if (!_this.labelText) {
                 layer.msg('请输入商品标签')
                 return
-            } else if (!_this.zPic) {
-                layer.msg('请上传商品图片')
-                return
-            } else if (_this.freight == 1 && !_this.setPrice) {
+            } 
+            // else if (!_this.zPic ) {
+            //     layer.msg('请上传商品图片')
+            //     return
+            // } 
+            else if (_this.freight == 1 && !_this.setPrice) {
                  layer.msg('请输入运费信息')
                 return
             } else if (!_this.dname) {
@@ -820,6 +825,12 @@ export default {
                 layer.msg('请输入详情内容')
                 return
             }
+
+                _this.disabled = true
+                var times = setTimeout(function () {
+                    _this.disabled = false
+                    clearTimeout(times)
+                }, 3000)
                 var arr = [];
                 arr.push(_this.fPic1, _this.fPic2, _this.fPic3, _this.fPic4, _this.fPic5)
                 arr = arr.filter((val, i) => {  // 过滤一下
@@ -838,7 +849,9 @@ export default {
                 formdata.append('brand', _this.brandId);
                 formdata.append('name', _this.name);
                 formdata.append('vicename', _this.ftitle);
-                formdata.append('pic', _this.zPic);           // 主图
+                if (_this.zPic) {
+                    formdata.append('pic', _this.zPic);           // 主图
+                }
                 formdata.append("freight_status", _this.freight);
                 formdata.append("freight_money", _this.setPrice);
                 formdata.append('gtype', _this.gtype);
@@ -869,11 +882,11 @@ export default {
                 _this.$http.upload('/shv2/goods/save_goods?XDEBUG_SESSION_START=17401', formdata, function (res) {
                     console.log(res)
                     if (res.code == 1) {
-                        layer.msg(res.msg, { icon: 1, time: 1000})
+                        layer.msg(res.msg, { icon: 1, time: 1500})
                        var time = setTimeout(()=> {
                            clearTimeout(time)
                             _this.go('/jgmall/goodsList')
-                        }, 1000)
+                        }, 1500)
                     } else {
                         layer.msg(res.msg);
                     }

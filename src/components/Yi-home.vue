@@ -135,8 +135,7 @@ export default {
             var layer = layui.layer;
                 _this.$http.post('/shv2/index/hos_index', {}, function (res) {
                     // console.log(res)
-                    var code = res.code.toString()
-                    if (code.includes('1')) {
+                    if (res.code == 1) {
                         _this.datas = res.data
                     } else {
                         layer.msg(res.msg);

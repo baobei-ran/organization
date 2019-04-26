@@ -70,7 +70,7 @@
                         <span class="Color_red">*</span> 机构电话：
                     </td>
                     <td class="Pd-L40 Ft-S16 Color_gray6">
-                        <input type="text" id="" maxlength="11" v-model="tabledata.telephone" placeholder="请输入机构电话" style="width: 500px;" />
+                        <input type="text" id="" maxlength="16" v-model="tabledata.telephone" placeholder="请输入机构电话" style="width: 500px;" />
                     </td>
                 </tr>
                 <tr class="" height="60px">
@@ -215,14 +215,15 @@ export default {
             })
         },
         sunmithos() {//医院提交
-            let _this = this;
+            var _this = this;
             this.disabled = true
             var time = setTimeout(() => {
                 this.disabled = false
                 clearTimeout(time)
-            }, 3000)
-            let regmail = /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/;
-            let Regphone = /^((0\d{2,3}-\d{7,8})|(1[35894]\d{9}))$/;
+            }, 3000);
+            var regmail = /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/;
+            var Regphone = /^((0\d{2,3}-\d{7,8})|(1[35894]\d{9}))$/;
+            var isguhua = /^([0-9]{3,4}-)?[0-9]{7,8}$/;
             layui.use(["layer"], function () {
                 if (!_this.tabledata.name) {
                     layer.msg('请填写业务联系人姓名',{icon:2});
@@ -240,7 +241,7 @@ export default {
                     layer.msg('请选择机构类型',{icon:2});
                     return false
                 }
-                if (!Regphone.test(_this.tabledata.telephone)) {
+                if (!Regphone.test(_this.tabledata.telephone) || !isguhua.test(_this.tabledata.telephone)) {
                     layer.msg('请填写机构电话',{icon:2});
                     return false
                 }

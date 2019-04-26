@@ -6,9 +6,9 @@
                     <img src="@/common/image/pages/login/icon_dblogo@3x.png" alt="">
                 </div>
                 <p>机构登录</p>
-                <div class="my_group"><input type="text" id="phone" maxlength="11" v-focus placeholder="账号/手机号"></div>
-                <div class="my_group"><input type="password" id="pass" placeholder="请输入密码"></div>
-                <div class="my_group code"><input type="text" id="code" maxlength="4" placeholder="请输入验证码">
+                <div class="my_group"><input type="text" id="phone" maxlength="11" autocomplete="on" v-focus placeholder="账号/手机号"></div>
+                <div class="my_group"><input type="password" id="pass" autocomplete="current-password" placeholder="请输入密码"></div>
+                <div class="my_group code"><input type="text" id="code" autocomplete="off" maxlength="4" placeholder="请输入验证码">
                     <img :src="$http.baseURL+'/captcha.html'" id="imgcode" alt="" onclick="this.src=this.src+'?'">
                 </div>
                 <div class="my_group link_box">
@@ -23,7 +23,7 @@
                 </div>
             </form>
             <div class="footer">
-                登录即代表您已阅读并同意《云医康用户注册协议》《法律声明及隐私权政策》
+                软件版本号：1.2.0 登录即代表您已阅读并同意《云医康用户注册协议》《法律声明及隐私权政策》
             </div>
         </div>
     </div>

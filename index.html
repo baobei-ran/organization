@@ -19,7 +19,7 @@
       var logindata = localStorage.getItem("logindata"); //无登录缓存 跳转登录页面
       if (logindata == "" || logindata == null) {
         if (!window.location.href.includes("login")) {
-          window.location.href = "/shanghu/login";
+          window.location.href = "/shanghu/#/login";
         }
       }
     </script>

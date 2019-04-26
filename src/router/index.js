@@ -18,7 +18,7 @@ import outToBank from "@/components/public/withdrawal/outToBank"; //取出到银
 import bankcardadmin from "@/components/public/bankcardAdmin"; //银行卡管理
 // import mechanismMsg from "@/components/public/mechanismMsg"; //机构信息
 import mechanismNext from "@/components/public/mechanismMsg/mechanismNext"; //机构信息下一步
-import checkmemsg from "@/components/public/mechanismMsg/checkbank"; //机构信息审核
+import Checkbank from "@/components/public/mechanismMsg/checkbank"; //机构信息审核
 import mesuccess from "@/components/public/mechanismMsg/mesuccess"; //机构信息成功
 
 import BoxMechanismMsg from "@/components/public/boxMechanismMsg";  // 机构认证信息填写
@@ -101,7 +101,7 @@ import statisticsHome from '@/components/Yao/Yao-statistics';                 //
 import Vipmember from '@/components/Yao/Yao-member';                    //  药店会员首页
 import Marketing from '@/components/Yao/Yao-marketing';                 // 供销页
 import InfromMsg from '@/components/Yao/Yao-informMsg';                 //  通知页
-import Error404 from '@/components/404/404'
+import Error404 from '@/components/404/404'                             //  404页
 
 import YaoRouter from './Yao-index' // 处方单列表路由
 // console.log(YaoRouter)
@@ -112,7 +112,7 @@ Vue.use(Router);
   let allroutes = [
     {
       path: "",
-      // name: '首页',
+      name: 'index',
       component: Index
     },
     {
@@ -210,7 +210,7 @@ Vue.use(Router);
     {
       path: "/setting/boxMechanismMsg/checkmemsg",
       name: "机构信息审核",
-      component: checkmemsg
+      component: Checkbank
     },
     {
       path: "/setting/boxMechanismMsg/mesuccess",
@@ -537,6 +537,11 @@ Vue.use(Router);
     }
   ]
 
+
+
+
+
+  
   allroutes = allroutes.concat(YaoRouter) // 合并
   
   const routes = [
@@ -572,7 +577,7 @@ Vue.use(Router);
   ]
   const router =  new Router({
     mode: "history",
-    base: 'shanghu', 
+    base: 'shanghu',
     routes
   });
 

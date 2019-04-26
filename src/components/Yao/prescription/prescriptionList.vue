@@ -153,10 +153,9 @@ export default {
                 });
             });
         },
-       
-       
         delcode(val) { // 处方记录
-           this.$router.push({ path: '/server/Yaodoctorprescription/prescriptionRecords', query: { id: val}})
+           var obj = { id: val.did, busjtime: val.busjtime, busktime: val.busktime, gname: val.gname, hospital_name: val.hospital_name, true_name: val.true_name, type: val.type }
+           this.$router.push({ path: '/server/Yaodoctorprescription/prescriptionRecords', query: obj })
         },
         sendgoods(val) {    // 申诉解除机构
             var _this = this;

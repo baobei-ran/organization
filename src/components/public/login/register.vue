@@ -59,9 +59,9 @@ export default {
                 var layer = layui.layer;
                 var noneclick = false;
                 $("#sendCode").on("click", function () {
-                    var isphone = /^1[345789]\d{9}$/;
+                    var isphone = /^1[3456789]\d{9}$/;
                     if (!isphone.test($('#phone').val())) {
-                        layer.msg("请输入确的手机号");
+                        layer.msg("请输入正确的手机号");
                         return;
                     }
                     //获取验证码
@@ -84,7 +84,7 @@ export default {
                     }, 1000);
                     _self.$http.post('/shv2/Alidayu/sendSMS', { telphone: $('#phone').val() }, function (res) {//
                         if (res.code == 1) {
-                            
+                            console.log('已发送')
                         }
                     }, function (err) { console.log(err) });
                 });
@@ -107,8 +107,13 @@ export default {
                         layer.msg('请输入正确的验证码',{icon:2})
                         return false
                     }
-                    if (!ispass.test($('#pass').val())) {
-                        layer.msg('请输入正确的密码',{icon:2})
+                        var pass = $('#pass').val();
+                    if (pass.length < 6) {
+                        layer.msg('请设置正确的密码，密码长度为6~12位数字',{icon:2})
+                        return false
+                    }
+                    if (!ispass.test(pass)) {
+                        layer.msg('请设置正确的密码，不能有特殊字符',{icon:2})
                         return false
                     }
                     if (!$('#check').is(':checked')) {

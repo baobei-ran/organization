@@ -28,8 +28,9 @@
                                     <dd class="ac pointer" @click="loginout">退出登录</dd>
                                 </dl>
                             </transition>
-                            <span class="pointer" @click="ShowMenu=!ShowMenu">{{hospitalName.name}}<i class="layui-nav-more"></i></span>
+                            <span class="pointer" @click="ShowMenu=!ShowMenu"><span v-text='hospitalName.name ? hospitalName.name: "退出"'></span><i class="layui-nav-more"></i></span>
                         </li>
+                        <li class="versions">软件版本号：1.2.0</li>
                     </ul>
                     <ul class="menu_show minwidlogin hide">
                         <li class="ac">
@@ -390,19 +391,12 @@ export default {
             pdleft: '152px',//内容区距离惨淡的距离
             resize: false,//点击事件中判断当前窗口是否《1200
             isstatus: false,//认证信息审核
-            hospitalName: this.localstorage.get('logindata') ? this.localstorage.get('logindata') : '',
+            hospitalName: '',
             attestation: false,     // 判断是否认证
         }
     },
     created() {
         var user = this.localstorage.get('logindata');
-        if (user && user.type != null ) {
-            var type = Number(user.type)                // 根据type来区分医院 药店菜单
-            switch(type) {
-                case 1:  this.sliderMenu = true; break;   // 医院 
-                case 8:  this.sliderMenu = false; break;  // 药店菜单
-            }
-        }
         
         if (user) {
             var _this = this;
@@ -425,7 +419,7 @@ export default {
                     // 药店的判断
                     if (res.code == 224 && res.data == 8 && rea.data.hospital_status == 0) {
                         _this.attestation = true
-                        _this.$router.replace('/setting/boxMechanismMsg')  // 去填写认证信息
+                        _this.$router.replace('/setting/boxMechanismMsg/YaomechanismNext')  // 去填写认证信息
                     } else if (res.code == 224 && res.data == 8 && rea.data.hospital_status == 3) {
                         _this.$router.replace('/setting/boxMechanismMsg/Yaocheckmemsg')       // 3、药店待审核
                     } else if (res.code == 224 && res.data == 8 && rea.data.hospital_status == 2 ) {
@@ -435,13 +429,25 @@ export default {
                     // 医院的判断
                     if (res.code == 224 && res.data == 1 && rea.data.hospital_status == 0) {
                         _this.attestation = true
-                        _this.$router.replace('/setting/boxMechanismMsg')  // 去填写认证信息
+                        _this.$router.replace('/setting/boxMechanismMsg/mechanismNext')  // 去填写认证信息
                     } else if (res.code == 224 && res.data == 1 && rea.data.hospital_status == 3 ) {
                         _this.$router.replace('/setting/boxMechanismMsg/checkmemsg') // 医院待审核
                     } else if (res.code == 224 && res.data == 1 && rea.data.hospital_status == 2 ) {
                         _this.$router.replace('/setting/boxMechanismMsg/checkmemsg') // 医院审核失败
                     }
-                } 
+                } else {
+                    var userStatus = _this.localstorage.get('logindata')
+                   if (userStatus.hospital_status !== 1) {
+                       userStatus.hospital_status = 1
+                       userStatus.name =  rea.data.hospital_name
+                       userStatus.uid = rea.data.uid
+                       userStatus.number = rea.data.hospital_number
+                       userStatus.phone = rea.data.login_phone
+                       userStatus.type = rea.data.htype
+                       _this.localstorage.put('logindata',userStatus);
+                       window.location.reload(force)
+                   }
+                }
                
             })
                
@@ -452,9 +458,17 @@ export default {
             this.$router.replace('/login')
         }
         
+        if (user && user.type != null ) {
+            var type = Number(user.type)                // 根据type来区分医院 药店菜单
+            switch(type) {
+                case 1:  this.sliderMenu = true; break;   // 医院 
+                case 8:  this.sliderMenu = false; break;  // 药店菜单
+            }
+        }
         
     },
     mounted() {
+        this.hospitalName = this.localstorage.get('logindata') ? this.localstorage.get('logindata') : '';
         this.tabListActive();
         this.initdata()
         layui.use('element', function () {
@@ -546,7 +560,6 @@ export default {
                 this.go('/')
             }
             var rzstatus = this.localstorage.get('logindata');
-            // console.log(rzstatus)
             if (rzstatus) {     // 判断是否审核通过
                 if (rzstatus.hospital_status == 0 || rzstatus.hospital_status == 2 || rzstatus.hospital_status == 3  ) {
                     this.isstatus = true;
@@ -876,6 +889,7 @@ export default {
                 color: #bfbfc1;
                 font-size: 16px;
                 padding: 10px 24px 10px 14px;
+
                 li {
                     span {
                         display: inline-block;
@@ -921,6 +935,10 @@ export default {
                         left: 5px;
                         top: auto;
                     }
+                }
+                .versions {
+                    font-size: 10px;
+                    margin-top: 20px;
                 }
             }
             .minwidlogin {
@@ -1010,10 +1028,36 @@ export default {
 
 #viewheight {
     overflow-y: auto;
+    // height: 100%;
     overflow-x: hidden;
+    background-color: #fff;
+}
+::-webkit-scrollbar  
+{  
+    width: 10px;  
+    height: 10px 
+}  
+::-webkit-scrollbar-track  
+{  
+    box-shadow:0px 1px 3px rgba(0,0,0,0.3) inset;
+    border-radius: 10px;  
+    background-color: #fff;
+}  
+
+::-webkit-scrollbar-thumb  
+{  
+    box-shadow:0px 1px 3px rgba(0,0,0,0.3) inset;
+    border-radius: 10px;
+    background-color: #f1f1f1;  
+    background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, .2) 25%, transparent 25%, transparent 50%,
+         rgba(255, 255, 255, .2) 50%, rgba(255, 255, 255, .2) 75%, transparent 75%, transparent);
+
+}  
+::-webkit-scrollbar-thumb:hover {
+    background-color: #ddd;
 }
 
-// 一下input中 type=number 的文本框（数字框） 去掉箭头
+// 把input中 type=number 的文本框（数字框） 去掉箭头
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
     -webkit-appearance: none;

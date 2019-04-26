@@ -147,15 +147,9 @@
                 <!-- 审核未通过原因 -->
                 <div class="defeated bg_f Mg-T20" v-if="prescriptiondata.flag == 2">
                     <p class="orderList_tit Color_black Ft-S16 Pd-T20 Pd-B20 Pd-L24">审核未通过原因</p>
-                    <ul>
+                    <div v-if='!prescriptiondata.doc_remark.length'>无信息</div>
+                    <ul v-if='prescriptiondata.doc_remark.length'>
                         <li v-for="(val,i) in prescriptiondata.doc_remark" :key='i'>{{val.name}}:<span>{{ val.remark }}</span></li>
-                        <!-- <li>李二二：<span>药量过大，且与实际病情不符，不建议服用此类药品。</span></li>
-                        <li>李一一：<span>药量过大，且与实际病情不符，不建议服用此类药品。建议重新评估病人病情及用药。</span></li>
-                        <li>李二二：<span>药量过大，且与实际病情不符，不建议服用此类药品。</span></li>
-                        <li>李一一：<span>药量过大，且与实际病情不符，不建议服用此类药品。建议重新评估病人病情及用药。</span></li>
-                        <li>李二二：<span>药量过大，且与实际病情不符，不建议服用此类药品。</span></li>
-                        <li>李一一：<span>药量过大，且与实际病情不符，不建议服用此类药品。建议重新评估病人病情及用药。</span></li>
-                        <li>李二二：<span>药量过大，且与实际病情不符，不建议服用此类药品。</span></li> -->
                     </ul>
                 </div>
                 <div class="prescription_btn">
@@ -307,7 +301,13 @@ export default {
                 height: height
             };
             html2canvas(shareContent,opts).then(function(canvas) {
-                var url = canvas.toDataURL();
+                 var context = canvas.getContext('2d');
+                // 【重要】关闭抗锯齿
+                context.mozImageSmoothingEnabled = false;
+                context.webkitImageSmoothingEnabled = false;
+                context.msImageSmoothingEnabled = false;
+                context.imageSmoothingEnabled = false;
+                var url = canvas.toDataURL('image/png');
                 _this.$refs.imgs.src = url
             })
 
@@ -321,7 +321,7 @@ export default {
                     closeBtn: 1,
                     title: "在线预览",
                     content: $("#sendgood"),
-                    area: ["900px", "700px"],
+                    area: ["900px", "600px"],
                     cancel: function () { }
                 });
             });
@@ -333,6 +333,7 @@ export default {
 
 <style scoped lang="less">
 #prescriptionCheck {
+    padding-bottom: 20px;
     .layui-table[lay-even] tr:nth-child(even) {
         background-color: #e5f0ff;
     }
@@ -443,10 +444,12 @@ export default {
                 }
                 .signature {
                     > ul {
+                        width: 100%;
                         li {
                             width: 50%;
                             >img {
-                                max-width: 100px;
+                                max-width: 80px;
+
                             }
                         }
                     }
@@ -516,8 +519,8 @@ export default {
     #sendgood {
        padding: 30px;
         .images {
-            width: 99%;
-            height: 90%;
+            width: 100%;
+            height: 98%;
             img {
                 width: 100%;
                 height: 100%;

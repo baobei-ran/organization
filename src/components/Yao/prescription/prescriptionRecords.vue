@@ -92,7 +92,8 @@
                                     <span v-show='val.flag == 2'>不通过</span>
                                 </td>
                                 <td>
-                                    <p class="pointer Ft-S14 Color_blue" @click="godetail(val.id)">查看详情</p>
+                                    <p class="pointer Ft-S14 Color_blue" v-if='false' @click="godetail(val.id)">查看详情</p>
+                                    <p class="pointer Ft-S14" >查看详情</p>
                                 </td>
                             </tr>
                         </tbody>
@@ -148,6 +149,7 @@ export default {
         }
     },
     mounted() {
+        this.doctormsg = this.$route.query
         this.initdata(1) 
     },
     methods: {
@@ -170,23 +172,20 @@ export default {
                 var oDate1 = new Date($('#date').val());
                 var oDate2 = new Date($('#date1').val());
                 if (oDate1.getTime() > oDate2.getTime()) {
-                    layer.msg('开始时间不能大于结束时间');
+                    layer.msg('开始时间不能大于结束时间', { icon: 2});
                     return
                 }
                 _this.page = num;
                 var start = $('#date').val();
                 var end_time = $('#date1').val();
-                let { id } = _this.$route.query;
-                _this.doctormsg = id
-                console.log(id)
-                var obj = { id: id.did, number: _this.number, ktime: start, jtime: end_time, flag: _this.flag }
-                console.log(obj)
+                var id = _this.$route.query.id
+                var obj = { id: id, number: _this.number, ktime: start, jtime: end_time, flag: _this.flag }
                 _this.$http.post('/shv2/Recipe/recipe_record', obj, function (res) {//
                     console.log(res)
                     if (res.code == 1) {
                        _this.tableList = res.data
                     } else {
-                        
+                        _this.tableList = []
                     }
                 }, function (err) { console.log(err) });
                 form.render();
@@ -256,6 +255,7 @@ export default {
             this.flag = '';
             $('#date').val('');
             $('#date1').val('');
+            this.initdata(1) 
         }
     }
 }

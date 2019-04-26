@@ -177,6 +177,12 @@ export default {
     methods: {
         submitdata() {   // 提交
             let _this = this;
+            this.disabled = true
+            var time = setTimeout(function () {
+                _this.disabled = false
+                clearTimeout(time)
+            }, 3000)
+            
             layui.use(["layer", 'table'], function () {
                 var layer = layui.layer;
                 var table = layui.table;

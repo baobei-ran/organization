@@ -9,7 +9,7 @@
             <form id="myform" action="" onsubmit="return false">
             <div class="my_group"><input type="tel" id="phone" v-model='phone' name="phone" placeholder="手机号"></div>
             <div class="my_group code"><input type="text" id="code" v-model='code' name="code" placeholder="请输入验证码"><button id="sendCode" >发送验证码</button></div>
-            <div class="my_group"><input type="text" id="pwd" v-model='newPass' name="pwd" placeholder="请输入密码"></div>
+            <div class="my_group"><input type="text" id="pwd" v-model='newPass' autocomplete="new-password" name="pwd" placeholder="请输入密码"></div>
             <div class="my_group link_box">
                 <span class="login pointer" @click="go('/login')">返回登录</span>
                 <span class="register pointer" @click="go('/register')">注册账号</span>
@@ -84,7 +84,7 @@ export default {
                 $("#sendCode").on("click", function () {
                     var isphone = /^1[345789]\d{9}$/;
                     if (!isphone.test($('#phone').val())) {
-                        layer.msg("请输入确的手机号");
+                        layer.msg("请输入确的手机号",{icon:2});
                         return;
                     }
                     //获取验证码

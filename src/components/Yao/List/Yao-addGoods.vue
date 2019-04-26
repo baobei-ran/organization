@@ -1,7 +1,7 @@
 <template>
     <div id="addGoods" style="height:100%">
         <p class="Color_black Ft-S16 Pd-T24 Pd-B24 Pd-L24 Pd-R24 Mg-B24 clear bg_f"><span class="fl">创建商品/增加商品</span><span class="fr onbtn pointer">
-                <button type='submit' class='rightBtn'  @click='obsubmit'><button class="layui-btn site-demo-layedit rightBtn" data-type='content'>保存</button></button>
+                <el-button type="primary" :loading="disabled" :disabled='disabled' style='vertical-align: top;'  class="layui-btn site-demo-layedit rightBtn btn_preserve" data-type='content'>保存</el-button>
             </span><span class="fr cancelbtn Mg-R24 pointer" @click='back'>取消</span></p>
         <div class="layui-row layui-col-space22 head_msg">
             <div class="layui-col-md8">
@@ -109,6 +109,7 @@
                                                     <label class="zhuFileLabel" for="zhuFile">重新上传</label>
                                                 </div>
                                                 <!--    剩余五张图片 -->
+                                                
                                                 <div class="layui-input-inline uploadimg Mg-R10 hide" >
                                                     <div><span class="Ft-S14">点击上传</span> <input id='zhuFile2' type="file" class="pointer" placeholder="" /></div>
                                                     <img style='width: 145px;height: 147px;border-radius: 4px;' id='zhuImg2' src="" alt="">
@@ -381,8 +382,8 @@
                         </div>
                     </div>
                 </div>
-        <p class="ac Mg-T24 goback"><button class="pointer Color_blue Mg-R24" @click="go('/jgmall/List')" style="background:#fff; border:1px solid rgba(49,150,255,1)">取消</button> 
-            <button type='submit'  style='vertical-align: top;' @click='obsubmit'><button style='vertical-align: top;' class="layui-btn site-demo-layedit" id='btn' data-type='content'>保存</button></button>
+        <p class="ac Mg-T24 goback"><button class="pointer Color_blue Mg-R24" @click="back" style="background:#fff; border:1px solid rgba(49,150,255,1)">取消</button> 
+            <el-button type="primary" :loading="disabled" :disabled='disabled' style='vertical-align: top;'  class="layui-btn site-demo-layedit btn_preserve" data-type='content'>保存</el-button>
         </p>
     </div>
 </template>
@@ -445,6 +446,7 @@ export default {
             fPic3: '',           // 附图3
             fPic4: '',           // 附图4
             fPic5: '',           // 附图5
+            disabled: false,     // 按钮控制
         }
     },
     created() {
@@ -453,160 +455,6 @@ export default {
     mounted() {
         this.initdata() // 富文本编辑器
         this.addList();
-
-
-        // 以下之前属于编辑跳转，重新生成了一个页面，暂不在使用
-        // var _this = this;
-        // if (this.$route.query.id) { // 获取编辑信息，对应的id
-        //    this.id = this.$route.query.id
-        //     layui.use(['layer', 'form'], function(){
-        //         var layer = layui.layer;
-        //         var form = layui.form;
-        //     _this.$http.post('/shv2/goods/edit_goodsInfo',_this.$route.query, function (res) {
-        //         console.log(res)
-        //         if (res.code == 1) {    
-        //             var data = res.data;    // data 数据
-
-        //             _this.brandId = data.brand
-        //             _this.attending_functions = data.attending_functions
-        //             _this.cautions = data.cautions
-
-        //             _this.classId = data.one == 0? '' : data.one
-        //             _this.classId2 = data.two == 0? "": data.two
-        //             _this.classId3 = data.class == 0? "": data.class
-        //             _this.classId4 = data.four == 0? '': data.four
-        //             _this.$nextTick(() => {
-        //             if (_this.classId) {     // 商品分类
-        //                _this.editClaaId(_this.classId).then(res => {
-        //                    if (res.code == 1) {
-        //                       _this.className2 = res.data
-        //                       if (_this.classId2) {
-        //                           _this.editClaaId(_this.classId2).then(res => {
-        //                               if (res.code == 1) {
-        //                                    _this.className3 = res.data
-        //                                    if (_this.classId3) {
-        //                                        _this.editClaaId(_this.classId3).then(res => {
-        //                                            if (res.code == 1) {
-        //                                                _this.className4 = res.data
-        //                                            }
-        //                                        })
-        //                                    }
-        //                               }
-                                     
-        //                           })
-        //                       }
-        //                    }
-        //                 })
-                   
-        //               }
-        //            })
-
-
-
-        //             _this.code = data.code
-        //             _this.contraindication = data.contraindication
-        //             _this.details = data.describe  // 详情内容
-        //             _this.dname = data.dname
-        //             _this.dose = data.dose
-        //             _this.enterprise = data.enterprise
-        //             _this.freight_money = data.freight_money
-        //             _this.freight_status = data.freight_status
-        //             _this.gtype = data.gtype
-        //             _this.ingredient = data.ingredient
-        //             _this.interaction = data.interaction
-        //             _this.labelText = data.label
-        //             _this.marketvalue = data.marketvalue
-        //             _this.money = data.money
-        //             _this.name = data.name
-        //             _this.pack = data.pack
-        //             _this.package = data.package
-        //             _this.properties = data.properties
-        //             _this.recipe = data.recipe
-        //             _this.recommend = data.recommend
-        //             _this.repertory = data.stock
-        //             _this.storage = data.storage
-        //             _this.type = data.type
-        //             _this.untoward_effect = data.untoward_effect
-        //             _this.uselife = data.uselife
-        //             _this.ftitle = data.vicename
-                    
-                    
-        //             for (var i=0; i<$('input[name=tuijian]').length; i++) {
-        //                 if ($('input[name=tuijian]')[i].value == _this.recommend) { // 是否推荐
-        //                     $('input[name=tuijian]')[i].checked = true
-        //                 } else {
-        //                     $('input[name=tuijian]')[i].checked = false
-        //                 }
-        //                 if($('input[name=gtype]')[i].value == _this.gtype) {    // 上架状态
-        //                     $('input[name=gtype]')[i].checked = true
-        //                 } else {
-        //                     $('input[name=gtype]')[i].checked = false
-        //                 }
-
-        //                 if($('input[name=price]')[i].value == _this.freight_status) {    // 运费
-        //                     $('input[name=price]')[i].checked = true
-        //                 } else {
-        //                     $('input[name=price]')[i].checked = false
-        //                 }
-
-        //                 if($('input[name=recipe]')[i].value == _this.recipe) {    // 处方
-        //                     $('input[name=recipe]')[i].checked = true
-        //                 } else {
-        //                     $('input[name=recipe]')[i].checked = false
-        //                 }
-
-        //                 if($('input[name=pack]')[i].value == _this.pack) {    // 包装
-        //                     $('input[name=pack]')[i].checked = true
-        //                 } else {
-        //                     $('input[name=pack]')[i].checked = false
-        //                 }
-        //             }
-
-        //             for (var j=0; j< $('input[name=type]').length; j++) {   // 剂型
-        //                 if ($('input[name=type]')[j].value == _this.type) {
-        //                     $('input[name=type]')[j].checked = true
-        //                 } else {
-        //                     $('input[name=type]')[j].checked = false
-        //                 }
-        //             }
-
-        //             if (_this.freight_status == 1) {    // 默认运费操作
-        //                 _this.setPrice = data.freight_money
-        //                 _this.yunfei = true
-        //             }
-
-                    
-
-        //             // 图片操作 
-        //                 _this.zPic = data.pic
-        //                  if (_this.zPic) {
-        //                     $('#zhuImg').attr('src', _this.$http.baseURL+_this.zPic)    // 获取主图
-        //                  }   
-        //                 var imgData = res.imgdata   // 图片数组 附图
-                        
-        //                 if (imgData.length) {
-        //                     for (var i=0; i<imgData.length;i++) {
-        //                         _this.fPic1 = imgData[0].img;
-        //                         _this.fPic2 = imgData[1].img;
-        //                         // _this.fPic3 = imgData[2].img;
-        //                         // _this.fPic4 = imgData[3].img;
-        //                         // _this.fPic5 = imgData[4].img;
-        //                     }
-        //                 }
-        //                 if (_this.fPic1) {
-        //                     $('#zhuImg2').attr('src', _this.$http.baseURL + _this.fPic1)
-        //                     $('#files1').next().show()
-        //                 }
-
-
-
-        //             form.render();  // 重新渲染
-        //         } else {
-        //             layer.msg(res.msg);
-        //         }
-        //     }, function (err) { console.log(err) })
-        // });  
-    //   }
     },
     methods: {  
         addList() { // 获取商品添加信息
@@ -763,9 +611,10 @@ export default {
                         return layedit.sync(index);
                     }
                 })
-                $('#btn').on('click', function(){
+                $('.btn_preserve').on('click', function() {     
                     var type = $(this).data('type');
                     active[type] ? active[type].call(this) : '';
+                    _this.obsubmit()    // 提交事件
                 });
                 //编辑器外部操作
                 var active = {
@@ -780,7 +629,7 @@ export default {
                     }
                 };
 
-                if (_this.details) {    // 赋值失败
+                if (_this.details) {    // 赋值
                     layedit.setContent(index, _this.details);
                 }
                    
@@ -792,7 +641,7 @@ export default {
         },
         obsubmit() {    // 添加商品、保存
             var _this = this;
-            console.log(this.details, _this.attending_functions)
+            console.log(this.details)
             var formdata = new FormData();
             layui.use(['layer','form'], function(){
             var layer = layui.layer;
@@ -862,13 +711,15 @@ export default {
             } else if (!_this.uselife) {
                 layer.msg('请输入有效期')
                 return
-            } else if (!_this.money) {
+            } else if (!_this.money || _this.money < 1) {
                 layer.msg('请输入商品价格')
                 return
-            } else if (!_this.marketvalue) {
+            } 
+            if (!_this.marketvalue ||  _this.marketvalue < 1 ) {
                 layer.msg('请输入市场价格')
                 return
-            } else if (!_this.repertory) {
+            } 
+            if (!_this.repertory ||  _this.repertory < 1) {
                 layer.msg('请输入库存')
                 return
             } 
@@ -876,6 +727,10 @@ export default {
                 layer.msg('请输入详情内容')
                 return
             }
+                _this.disabled = true;
+                var time = setTimeout(function () {
+                    _this.disabled = false
+                }, 3000)
                 var arr = [];
                 arr.push(_this.fPic1, _this.fPic2, _this.fPic3, _this.fPic4, _this.fPic5)
                 arr = arr.filter((val, i) => {  // 过滤一下
@@ -885,7 +740,7 @@ export default {
                     formdata.append('picarr[]', val)
                 })
                        //  商品图片  附图
-                console.log(arr);
+                
                 formdata.append("id", _this.id);
                 formdata.append("one", _this.classId);
                 formdata.append('two', _this.classId2);
@@ -925,10 +780,10 @@ export default {
                 _this.$http.upload('/shv2/goods/save_goods?XDEBUG_SESSION_START=17401', formdata, function (res) {
                     console.log(res)
                     if (res.code == 1) {
-                        layer.msg(res.msg, { icon:1})
+                        layer.msg(res.msg, { icon:1, time: 1500})
                         setTimeout(()=> {
                             _this.go('/jgmall/goodsList')
-                        }, 1000)
+                        }, 1500)
                     } else {
                         layer.msg(res.msg, { icon:2 });
                     }
