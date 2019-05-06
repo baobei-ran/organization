@@ -5,8 +5,8 @@
     </div>
 </template>
 <script>
-import YaoHome from './Yao-home.vue'
-import YiHome from './Yi-home.vue'
+const YaoHome = resolve => require(['./Yao-home.vue'], resolve);
+const YiHome = resolve => require(['./Yi-home.vue'], resolve);
 export default {
     components: {
         'yao-home': YaoHome,

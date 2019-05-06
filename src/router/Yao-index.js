@@ -1,13 +1,13 @@
 
 
 // 药店路由
-import Yaoprescription from '@/components/Yao/Yao-prescription';       // 处方医生列表资料上传
-import PrescriptionList from '@/components/Yao/prescription/prescriptionList';  // 处方单申请页
-import PrescriptionApply from '@/components/Yao/prescription/prescriptionApply'; // 处方单申请列表页
-import PrescriptionRecords from '@/components/Yao/prescription/prescriptionRecords'; // 处方单记录
-import AddApply from '@/components/Yao/prescription/addApply';  // 创建处方单
-import YaoprescriptionList from '@/components/Yao/Yao-prescriptionList';  // 处方单列表
-import PrescriptionCheck from '@/components/Yao/prescriptionList/prescriptionCheck';   //  处方单审核
+const Yaoprescription = () => import('@/components/Yao/Yao-prescription' /* webpackChunkName: "prescription" */ );       // 处方医生列表资料上传
+const PrescriptionList = () => import('@/components/Yao/prescription/prescriptionList' /* webpackChunkName: "prescription" */);  // 处方单申请页
+const PrescriptionApply = () => import('@/components/Yao/prescription/prescriptionApply' /* webpackChunkName: "prescription" */); // 处方单申请列表页
+const PrescriptionRecords = () => import('@/components/Yao/prescription/prescriptionRecords' /* webpackChunkName: "prescription" */); // 处方单记录
+const AddApply = () => import('@/components/Yao/prescription/addApply' /* webpackChunkName: "prescription" */);  // 创建处方单
+const YaoprescriptionList = () => import('@/components/Yao/Yao-prescriptionList' /* webpackChunkName: "prescription" */);  // 处方单列表
+const PrescriptionCheck = () => import('@/components/Yao/prescriptionList/prescriptionCheck' /* webpackChunkName: "prescription" */);   //  处方单审核
 
 export default [
     // 处方

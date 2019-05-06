@@ -15,14 +15,7 @@
       type="text/javascript"
       src="https://webapi.amap.com/demos/js/liteToolbar.js"
     ></script>
-    <script>
-      var logindata = localStorage.getItem("logindata"); //无登录缓存 跳转登录页面
-      if (logindata == "" || logindata == null) {
-        if (!window.location.href.includes("login")) {
-          window.location.href = "/shanghu/#/login";
-        }
-      }
-    </script>
+    
   </head>
   <body style="background:#F1F2F9">
     <div id="app"></div>

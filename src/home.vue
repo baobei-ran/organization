@@ -445,7 +445,9 @@ export default {
                        userStatus.phone = rea.data.login_phone
                        userStatus.type = rea.data.htype
                        _this.localstorage.put('logindata',userStatus);
-                       window.location.reload(force)
+                       setTimeout(() => {
+                           window.location.reload()
+                       }, 50);
                    }
                 }
                

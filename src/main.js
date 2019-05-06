@@ -52,6 +52,14 @@ Vue.prototype.$http = API;//ajax
 Vue.prototype.localstorage = cache;//缓存
 
 
+var logindata = localStorage.getItem("logindata"); //无登录缓存 跳转登录页面
+if (logindata == "" || logindata == null) {
+    if (!window.location.href.includes("login")) {
+        window.location.href = "/shanghu/#/login";
+    }
+}
+   
+
 new Vue({
     el: '#app',
     router,
