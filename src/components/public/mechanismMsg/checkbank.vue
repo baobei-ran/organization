@@ -266,7 +266,16 @@ export default {
     data() {
         return {
             auditingmsg: '',
-            isStatus: ''
+            isStatus: '',
+            isfalg: this.localstorage.get('flag')
+        }
+    },
+    created () {
+        var zheng = this.$route.query.zheng
+        console.log(zheng)
+        if (zheng) {
+            this.$router.replace('/setting/boxMechanismMsg/checkmemsg')
+            window.location.reload()
         }
     },
     mounted() {
@@ -275,6 +284,7 @@ export default {
         this.isStatus = setInterval(function () {
             _this.initStatus()
         }, 5000)
+        
     },
     methods: {
         initStatus() {// 查询状态
@@ -285,8 +295,44 @@ export default {
                     if (res.data.hospital_status == 1 || res.data.hospital_status == 2 ) {
                         _this.initdata()
                         clearInterval(_this.isStatus)
-                    } 
-                }
+                        if (res.data.hospital_status == 1) {
+                            var userStatus = _this.localstorage.get('logindata')
+                            if (userStatus.hospital_status !== 1) {
+                                userStatus.hospital_status = 1
+                                userStatus.name =  rea.data.hospital_name
+                                userStatus.uid = rea.data.uid
+                                userStatus.number = rea.data.hospital_number
+                                userStatus.phone = rea.data.login_phone
+                                userStatus.type = rea.data.htype
+                                _this.localstorage.put('logindata',userStatus);
+                                if (_this.isfalg) {
+                                    console.log('通过')
+                                    return 
+                                }
+                                var isF = _this.localstorage.put('flag', '1');
+                                function refresh(){
+                                    window.location.reload();
+                                    console.log('test')
+                                    setTimeout(refresh , 3000);   
+                                }
+                                refresh()  
+                            }
+                                
+                            } else if (res.data.hospital_status == 2) {
+                                if (_this.isfalg) {
+                                    console.log('通过')
+                                    return 
+                                }
+                                var isF = _this.localstorage.put('flag', '1');
+                                    function refresh(){
+                                        window.location.reload();
+                                        console.log('test')
+                                        setTimeout(refresh , 3000);   
+                                    }
+                                    refresh()  
+                                }
+                            }
+                        }
             }, function () {
 
             })

@@ -222,7 +222,7 @@ export default {
                 clearTimeout(time)
             }, 3000);
             var regmail = /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/;
-            var Regphone = /^((0\d{2,3}-\d{7,8})|(1[35894]\d{9}))$/;
+            var Regphone = /^((0\d{2,3}-\d{7,8})|(1[3456789]\d{9}))$/;
             var isguhua = /^([0-9]{3,4}-)?[0-9]{7,8}$/;
             layui.use(["layer"], function () {
                 if (!_this.tabledata.name) {
@@ -287,7 +287,7 @@ export default {
                     if (res.code == 1) {
                         layer.msg('提交成功',{icon:1});
                         var time = setTimeout(() => {
-                            _this.go('/setting/boxMechanismMsg/checkmemsg')
+                            _this.$router.replace('/setting/boxMechanismMsg/checkmemsg?zheng=true')
                             clearTimeout(time)
                         }, 1500)
                         

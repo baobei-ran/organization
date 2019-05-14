@@ -393,6 +393,7 @@ export default {
             isstatus: false,//认证信息审核
             hospitalName: '',
             attestation: false,     // 判断是否认证
+            bedefeated: false,      // 审核失败
         }
     },
     created() {
@@ -424,6 +425,7 @@ export default {
                         _this.$router.replace('/setting/boxMechanismMsg/Yaocheckmemsg')       // 3、药店待审核
                     } else if (res.code == 224 && res.data == 8 && rea.data.hospital_status == 2 ) {
                         _this.$router.replace('/setting/boxMechanismMsg/Yaocheckmemsg')      // 2、药店审核失败
+                        _this.bedefeated = true
                     } 
 
                     // 医院的判断
@@ -434,6 +436,7 @@ export default {
                         _this.$router.replace('/setting/boxMechanismMsg/checkmemsg') // 医院待审核
                     } else if (res.code == 224 && res.data == 1 && rea.data.hospital_status == 2 ) {
                         _this.$router.replace('/setting/boxMechanismMsg/checkmemsg') // 医院审核失败
+                        _this.bedefeated = true
                     }
                 } else {
                     var userStatus = _this.localstorage.get('logindata')
@@ -447,7 +450,7 @@ export default {
                        _this.localstorage.put('logindata',userStatus);
                        setTimeout(() => {
                            window.location.reload()
-                       }, 50);
+                       }, 30);
                    }
                 }
                
@@ -540,9 +543,11 @@ export default {
                             setTimeout(() => {//异步
                                 let childli = $('.childmenu li');//子菜单
                                 ele.children.forEach((val, index) => {
-                                    childli[index].setAttribute('style', '');//子菜单初始化选中
+                                    // childli[index].setAttribute('style', '');//子菜单初始化选中
+                                    childli[index].removeAttribute('class','enter')
                                     if (_this.$route.path.includes(val.url)) {//子路由对应url
-                                        childli[index].setAttribute('style', 'color:#3196FF!important');//子菜单初始化选中
+                                        // childli[index].setAttribute('style', 'color:#3196FF!important');//子菜单初始化选中
+                                        childli[index].setAttribute('class', 'enter');
                                     } 
                                 })
                             }, 200)
@@ -592,8 +597,12 @@ export default {
                     if (_this.attestation) {
                         layer.msg('请上传机构资料, 完成认证', { icon: 0})
                         return;
+                    } 
+                    if (_this.bedefeated) {
+                        layer.msg('审核失败，请重新上传机构资料, 完成认证', { icon: 2})
+                        return;
                     }
-                    layer.msg('当前审核未完成', { icon: 0})
+                    layer.msg('资料正在审核中', { icon: 0})
                 })
                 return false
             }
@@ -612,7 +621,7 @@ export default {
                     for (var i = 0; i < childli.length; i++) {
                         childli[i].setAttribute('style', '');//清除样式
                     }
-                    childli[0].setAttribute('style', 'color:#3196FF!important');
+                    // childli[0].setAttribute('style', 'color:#3196FF!important');
                 }, 200)
             }
             for (var i = 0; i < li.length; i++) {
@@ -630,7 +639,11 @@ export default {
                         layer.msg('请上传机构资料, 完成认证', { icon: 0})
                         return;
                     }
-                    layer.msg('当前审核未完成', { icon: 0})
+                     if (_this.bedefeated) {
+                        layer.msg('审核失败，请重新上传机构资料, 完成认证', { icon: 2})
+                        return;
+                    }
+                    layer.msg('资料正在审核中', { icon: 0})
                 })
                 return false
             }
@@ -639,7 +652,7 @@ export default {
                 childli[i].setAttribute('style', '');//清除样式
             }
             this.go(val.url)    // ---》 跳转
-            childli[index].setAttribute('style', 'color:#3196FF!important');
+            // childli[index].setAttribute('style', 'color:#3196FF!important');
         }
     },
     computed: {
@@ -1018,6 +1031,22 @@ export default {
         .float(left);
         .childhover:hover {
             color: #3196ff !important;
+        }
+        >ul {
+            li {
+                margin-bottom: 15px;
+                padding: 7.5px 30px;
+                font-size: 16px;
+                cursor: pointer;
+            }
+        }
+        .enter {
+            font-size: 16px;
+            font-weight: 550;
+            color:#3196FF!important;
+            background: rgba(49,150,255, 0.1) url("./common/image/icon/icon_enter.png") no-repeat right center;
+            background-size: 13%;
+            background-position: 150px 5.5px;
         }
     }
 }

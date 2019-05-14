@@ -23,7 +23,7 @@
                 </div>
             </form>
             <div class="footer">
-                软件版本号：1.2.0 登录即代表您已阅读并同意《云医康用户注册协议》《法律声明及隐私权政策》
+                软件版本号：1.2.0 登录即代表您已阅读并同意 《云医康用户注册协议》《法律声明及隐私权政策》
             </div>
         </div>
     </div>
@@ -203,6 +203,9 @@ export default {
             bottom: 40px;
             width: 100%;
             text-align: center;
+            a {
+                color: #fff;
+            }
         }
     }
 }

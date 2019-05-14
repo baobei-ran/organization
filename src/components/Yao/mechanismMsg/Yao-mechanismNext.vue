@@ -216,7 +216,7 @@ export default {
                 clearTimeout(time)
             }, 3000)
             let regmail = /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/;
-            let Regphone = /^((0\d{2,3}-\d{7,8})|(1[35894]\d{9}))$/;
+            let Regphone = /^((0\d{2,3}-\d{7,8})|(1[3456789]\d{9}))$/;
             layui.use(["layer"], function () {
                 if (!_this.tabledata.name) {
                     layer.msg('请填写业务联系人姓名', { icon: 2});
@@ -281,7 +281,7 @@ export default {
                     if (res.code == 1) {
                         layer.msg('提交成功', { icon: 1});
                         var timer = setTimeout(() => {
-                           _this.go('/setting/boxMechanismMsg/Yaocheckmemsg')
+                           _this.$router.replace('/setting/boxMechanismMsg/Yaocheckmemsg?zheng=true')
                            clearTimeout(timer)
                         }, 1500)
                         

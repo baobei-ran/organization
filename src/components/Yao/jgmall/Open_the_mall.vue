@@ -153,7 +153,7 @@ export default {
             this.$http.post('/shv2/store/isset_store', {}, function (res) {
                 console.log(res)
             if (res.code == 1) {
-                _this.$router.replace('/jgmall/mallAdmin')
+                _this.$router.replace('/jgmall/openmall/mallAdmin')
             } else if (res.code == 2){
                 _this.$router.replace('/jgmall/openmall')
             } else {

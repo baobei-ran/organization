@@ -18,7 +18,7 @@
                     </td>
                     <td class="Pd-L40 Ft-S16 Color_gray6 Pd-B30">
                         <div class="fl uploadimg Mg-R36">
-                            <span class="Ft-S14" id="showimg">点击上传</span> <input type="file" id="yyzz" placeholder="" />
+                            <span class="Ft-S14" id="showimg">点击上传</span> <input type="file" accept=".png,.jpg,.jpeg" id="yyzz" placeholder="" />
                             <p class="Ft-S14 Color_gray6">上传营业执照</p>
                         </div>
                     </td>
@@ -29,7 +29,7 @@
                     </td>
                     <td class="Pd-L40 Ft-S16 Color_gray6">
                         <div class="layui-input-inline">
-                            <input type="text" v-model="formdata.number" placeholder="请输入营业执照号" style="width: 500px;" />
+                            <input type="text" v-model="formdata.number" maxlength="20" placeholder="请输入营业执照号" style="width: 500px;" />
                         </div>
                     </td>
                 </tr>
@@ -79,7 +79,7 @@
                         <span class="Color_red">*</span> 经营面积：
                     </td>
                     <td class="Pd-L40 Ft-S16 Color_gray6">
-                        <input type="text" v-model="formdata.area" placeholder="请输入经营面积" style="width: 200px;" />
+                        <input type="number" v-model="formdata.area" placeholder="请输入经营面积" style="width: 200px;" />
                         <span style="font-size:12px" class="Color_gray6">㎡</span>
                     </td>
                 </tr>
@@ -105,11 +105,11 @@
                     </td>
                     <td class="Pd-L40 Ft-S16 Color_gray6 Pd-B50">
                         <div class="fl uploadimg Mg-R24">
-                            <span class="Ft-S14" id="showimg1">点击上传</span> <input type="file" id="idcardz" placeholder="" />
+                            <span class="Ft-S14" id="showimg1">点击上传</span> <input type="file" accept=".png,.jpg,.jpeg" id="idcardz" placeholder="" />
                             <p class="Ft-S14 Color_gray6">身份证照正面</p>
                         </div>
                         <div class="fl uploadimg">
-                            <span class="Ft-S14" id="showimg2">点击上传</span> <input type="file" id="idcardf" placeholder="" />
+                            <span class="Ft-S14" id="showimg2">点击上传</span> <input type="file" accept=".png,.jpg,.jpeg" id="idcardf" placeholder="" />
                             <p class="Ft-S14 Color_gray6">身份证照反面</p>
                         </div>
                     </td>
@@ -121,19 +121,19 @@
                     <td class="Pd-L40 Ft-S16 Color_gray6 Pd-B30">
                         <p class="Color_red Pd-B12 Ft-S12">请上传小于5MB的jpg/jpeg/png格式的图片，图片细节必须清晰可见</p>
                         <div class="fl uploadimg Mg-R24">
-                            <span class="Ft-S14" id="showimg3">点击上传</span> <input type="file" id="gpspho" placeholder="" />
+                            <span class="Ft-S14" id="showimg3">点击上传</span> <input type="file" accept=".png,.jpg,.jpeg" id="gpspho" placeholder="" />
                             <p class="Ft-S14 Color_gray6">GSP认证证书*</p>
                         </div>
                         <div class="fl uploadimg Mg-R24">
-                            <span class="Ft-S14" id="showimg4">点击上传</span> <input type="file" id="durgpho" placeholder="" />
+                            <span class="Ft-S14" id="showimg4">点击上传</span> <input type="file" accept=".png,.jpg,.jpeg" id="durgpho" placeholder="" />
                             <p class="Ft-S14 Color_gray6">药品经营许可证*</p>
                         </div>
                         <div class="fl uploadimg Mg-R24">
-                            <span class="Ft-S14" id="showimg5">点击上传</span> <input type="file" id="docpho" placeholder="" />
+                            <span class="Ft-S14" id="showimg5">点击上传</span> <input type="file" accept=".png,.jpg,.jpeg" id="docpho" placeholder="" />
                             <p class="Ft-S14 Color_gray6">药师资格证*</p>
                         </div>
                         <div class="fl uploadimg Mg-R24">
-                            <span class="Ft-S14" id="showimg6">点击上传</span> <input type="file" id="otherpho" placeholder="" />
+                            <span class="Ft-S14" id="showimg6">点击上传</span> <input type="file" accept=".png,.jpg,.jpeg" id="otherpho" placeholder="" />
                             <p class="Ft-S14 Color_gray6">其他相关证明*</p>
                         </div>
                     </td>
@@ -148,7 +148,7 @@
                         <p class="Color_red Pd-B12 Ft-S12 Pd-T24">仅当证件缺失情况下需要提交缺失申请</p>
                         <div class="clear upflie " style="overflow:hidden">
                             <div class="fl">
-                                <input type="file" id="uploadfile" placeholder="" />
+                                <input type="file" accept=".png,.jpg,.jpeg,.bmp,.gif" id="uploadfile" placeholder="" />
                                 <span class="file-up" id="uptext">上传相关证件缺失申请</span>
                             </div>
                             <span id="getmodle" class="pointer" style="font-size:12px; margin-left: 180px; line-height: 36px;;">
@@ -399,7 +399,7 @@ export default {
                     if (res.code == 1) {
                         layer.msg('上传成功', { icon: 6, time: 1500})
                         var timer = setTimeout(() => {
-                            _this.go('/setting/boxMechanismMsg/YaomechanismNext')
+                            _this.$router.replace('/setting/boxMechanismMsg/YaomechanismNext')
                             clearTimeout(timer)
                         }, 1500)
                     } else {

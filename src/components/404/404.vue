@@ -11,7 +11,7 @@
                 <p class="Ft-S48 Color_blue ">Page</p>
                 <p class="Ft-S48 Color_blue Mg-T16g-T16 Mg-B24 ">Not Found</p>
                 <p class="Ft-S20 Color_black Mg-B30">抱歉，您访问的页面出错了！</p>
-                <button class="pointer" @click="Return">返回首页</button>
+                <button class="pointer" @click="Return">返回</button>
             </div>
         </div>
     </div>

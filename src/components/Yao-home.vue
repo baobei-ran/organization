@@ -144,7 +144,7 @@ export default {
                 case 2: this.$router.push({path:'/jgmall/goodsList'}); break;
                 case 3: this.$router.push({path:'/finance/tradingBill'}); break;
                 case 4: this.$router.push({path:'/server/YaodrugParabiose'}); break;
-                case 5: this.$router.push({path:'/jgmall/mallAdmin'}); break;
+                case 5: this.$router.push({path:'/jgmall/openmall/mallAdmin'}); break;
                 case 6: this.$router.push({path:'/setting/boxMechanismMsg/Yaomesuccess'}); break;
             }
             
