@@ -75,7 +75,7 @@ export default {
     },
     methods: {
         initdata() {
-            let _this = this
+            var _this = this
             layui.use(["layer"], function () {
                 var layer = layui.layer;
                 _this.$http.post('/shv2/data/dep_look', _this.$route.query, function (res) {//

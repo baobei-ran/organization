@@ -397,9 +397,54 @@ export default {
         }
     },
     created() {
-        var user = this.localstorage.get('logindata');
+        this.user_authentication()
         
+    },
+    mounted() {
+        this.hospitalName = this.localstorage.get('logindata') ? this.localstorage.get('logindata') : '';
+        this.tabListActive();
+        this.initdata()
+        layui.use('element', function () {
+            var element = layui.element;
+        })
+        $('#viewheight').css('height', window.innerHeight - 84);
+        window.onresize = () => {
+            if (document.body.clientWidth < 1200) {//页面width发生变化
+                if (this.$route.path == '/') {
+                    this.pdleft = '50px'
+                } else {
+                    this.pdleft = '240px'
+                }
+            } else {
+                this.pdleft = this.$route.path == '/' ? '152px' : '342px'
+            }
+        }
+
+         
+    },
+    watch: {
+        '$route': ['tabListActive', 'isLogon'],
+    },
+    updated () {    // URL 变化，样式跟随变化
+        this.listStyle()
+    },
+    methods: {
+        isLogon () {    // 检测是否登录
+            var logindata = this.localstorage.get('logindata'); //无登录缓存 跳转登录页面
+            if (logindata == "" || logindata == null) {
+                if (!window.location.href.includes("login")) {
+                    console.log('未登录')
+                    this.$router.replace('/login')
+                }
+            }
+        },
+        user_authentication () {
+            var user = this.localstorage.get('logindata');
         if (user) {
+            if (user.hospital_status == 1) {
+                console.log(user)
+                return;
+            }
             var _this = this;
             function Status () {
                return _this.$http.$post('/shv2/Setting/look_hos',{})   // 认证状态
@@ -470,39 +515,9 @@ export default {
                 case 8:  this.sliderMenu = false; break;  // 药店菜单
             }
         }
-        
-    },
-    mounted() {
-        this.hospitalName = this.localstorage.get('logindata') ? this.localstorage.get('logindata') : '';
-        this.tabListActive();
-        this.initdata()
-        layui.use('element', function () {
-            var element = layui.element;
-        })
-        $('#viewheight').css('height', window.innerHeight - 84);
-        window.onresize = () => {
-            if (document.body.clientWidth < 1200) {//页面width发生变化
-                if (this.$route.path == '/') {
-                    this.pdleft = '50px'
-                } else {
-                    this.pdleft = '240px'
-                }
-            } else {
-                this.pdleft = this.$route.path == '/' ? '152px' : '342px'
-            }
-        }
-
-         
-    },
-    watch: {
-        '$route': 'tabListActive',
-    },
-    updated () {    // URL 变化，样式跟随变化
-        this.listStyle()
-    },
-    methods: {
+        },
         listStyle () { // URL 变化，样式跟随变化
-            let li = $('.floor_container>li');
+            var li = $('.floor_container>li');
             var _this = this;
             for (var j=0;j<li.length;j++) {   
                 if (this.$route.fullPath !== '/') {
@@ -525,8 +540,8 @@ export default {
         tabListActive() {//页面刷新保持选中状态
             this.initdata()
             this.pdleft = this.$route.path == '/' ? document.body.clientWidth < 1200 ? '50px' : '152px' : document.body.clientWidth < 1200 ? '240px' : '342px';//侧边菜单栏根据屏幕width缩小
-            let li = $('.floor_container>li');//主菜单
-            let _this = this;
+            var li = $('.floor_container>li');//主菜单
+            var _this = this;
 
             for (var i = 0; i < li.length; i++) {
                 if (li[i].getAttribute("name") !== '' && this.$route.path.includes(li[i].getAttribute("name"))) {
@@ -541,7 +556,7 @@ export default {
                         if (ele.urlIndexof == li[i].getAttribute("name")) {
                             _this.childlist = ele.children;//子菜单列表
                             setTimeout(() => {//异步
-                                let childli = $('.childmenu li');//子菜单
+                                var childli = $('.childmenu li');//子菜单
                                 ele.children.forEach((val, index) => {
                                     // childli[index].setAttribute('style', '');//子菜单初始化选中
                                     childli[index].removeAttribute('class','enter')
@@ -576,7 +591,7 @@ export default {
         loginout() {    // 退出登录
             //删除缓存
             // 
-            let _this=this;
+            var _this=this;
             this.$http.post('/shv2/login/quit', {}, function (res) {
                 if (res.code == 1) {
                     _this.localstorage.remove('logindata');
@@ -590,7 +605,7 @@ export default {
             this.ShowMenu = !this.ShowMenu;
         },
         clicktoggle(item, index) {//点击主菜单事件
-            let _this = this;
+            var _this = this;
             if (_this.isstatus) {
                 layui.use(["layer"], function () {
                     var layer = layui.layer;
@@ -606,7 +621,7 @@ export default {
                 })
                 return false
             }
-            let li = $('.floor_container>li');
+            var li = $('.floor_container>li');
             if (!item.children.length) {//点击主页
                 this.childShow = false;
                 this.go('/');
@@ -617,7 +632,7 @@ export default {
                 this.pdleft = document.body.clientWidth < 1200 ? '240px' : '342px';
                 this.go(item.children[0].url)//点击主菜单默认显示子菜单第一个
                 setTimeout(() => {//异步
-                    let childli = $('.childmenu li');//子菜单
+                    var childli = $('.childmenu li');//子菜单
                     for (var i = 0; i < childli.length; i++) {
                         childli[i].setAttribute('style', '');//清除样式
                     }
@@ -631,7 +646,7 @@ export default {
 
         },
         childselect(val, index) {   // 二级路由跳转
-            let _this = this;
+            var _this = this;
             if (_this.isstatus) {
                 layui.use(["layer"], function () {
                     var layer = layui.layer;
@@ -647,7 +662,7 @@ export default {
                 })
                 return false
             }
-            let childli = $('.childmenu li');//子菜单
+            var childli = $('.childmenu li');//子菜单
             for (var i = 0; i < childli.length; i++) {
                 childli[i].setAttribute('style', '');//清除样式
             }

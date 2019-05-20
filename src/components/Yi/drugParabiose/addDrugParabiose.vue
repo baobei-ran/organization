@@ -106,7 +106,7 @@ export default {
     },
     methods: {
         initdata(num) {
-            let _this = this;
+            var _this = this;
             layui.use(["laypage", "layer", "element"], function () {
                 var element = layui.element;
                 var laypage = layui.laypage;
@@ -126,7 +126,7 @@ export default {
             });
         },
         page(total) {
-            let _this = this;
+            var _this = this;
             layui.use(["laypage", "layer", "element"], function () {
                 var element = layui.element;
                 var laypage = layui.laypage;
@@ -146,7 +146,7 @@ export default {
             });
         },
         asother(num) {
-            let _this = this;
+            var _this = this;
             layui.use(["layer"], function () {
                 var layer = layui.layer;
                 _this.$http.post('/shv2/dcouplet/relevance', { type: 1, hid2: num }, function (res) {
@@ -160,7 +160,7 @@ export default {
             })
         },
         selectprovince() {//初始化下拉框 省份
-            let _this = this
+            var _this = this
             this.$http.post('/shv2/Setting/area', { fid: 1 }, function (res) {
                 if (res.code == 1) {
                     _this.provinceList = res.data;
@@ -170,7 +170,7 @@ export default {
             })
         },
         selectcity(num) {//市
-            let _this = this
+            var _this = this
             this.$http.post('/shv2/Setting/area', { fid: num }, function (res) {
                 if (res.code == 1) {
                     _this.cityList = res.data;
@@ -180,7 +180,7 @@ export default {
             })
         },
         selectcounty(num) { //区县
-            let _this = this
+            var _this = this
             this.$http.post('/shv2/Setting/area', { fid: num }, function (res) {
                 if (res.code == 1) {
                     _this.countyList = res.data;

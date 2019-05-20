@@ -8,7 +8,7 @@ import API from '@/api/index.js';
 import 'element-ui/lib/theme-chalk/index.css';
 import '../static/layui/css/layui.css'
 import 'jquery';
-import cache from 'cz-storage';
+import cache from './common/js/cz-storage.js';
 import '@/common/js/filter';
 //引入样式文件
 import "@/common/css/reset.css"
@@ -51,13 +51,6 @@ Vue.prototype.go = function (name) {    // 把go挂载在实例上，直接使�
 Vue.prototype.$http = API;//ajax
 Vue.prototype.localstorage = cache;//缓存
 
-
-var logindata = localStorage.getItem("logindata"); //无登录缓存 跳转登录页面
-if (logindata == "" || logindata == null) {
-    if (!window.location.href.includes("login")) {
-        window.location.href = "/shanghu/#/login";
-    }
-}
    
 
 new Vue({

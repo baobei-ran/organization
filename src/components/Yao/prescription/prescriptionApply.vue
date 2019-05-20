@@ -176,7 +176,7 @@ export default {
             }, function (err) { console.log(err)})
         },
         initdata(num) {   // 数据
-            let _this = this;
+            var _this = this;
             var a = '00:00', b = '06:00', c = '12:00', d = '18:00'
             if (this.tdlast == 1) {
                 this.list.ktime = a
@@ -215,7 +215,7 @@ export default {
             });
         },
         pageFun(total) {    // 分页
-            let _this = this;
+            var _this = this;
             layui.use(["laypage", "layer", "element"], function () {
                 var element = layui.element;
                 var laypage = layui.laypage;

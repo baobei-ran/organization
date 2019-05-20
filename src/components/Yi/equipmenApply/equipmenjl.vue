@@ -131,7 +131,7 @@ export default {
             });  
         },
         initdata(num) {
-            let _this = this;
+            var _this = this;
             layui.use(["laypage", "layer", "laydate", "element"], function () {
                 var element = layui.element;
                 var laypage = layui.laypage;
@@ -167,7 +167,7 @@ export default {
             });
         },
         pageFun(total) {
-            let _this = this;
+            var _this = this;
             layui.use(["laypage", "layer", "element"], function () {
                 var element = layui.element;
                 var laypage = layui.laypage;
@@ -213,7 +213,7 @@ export default {
             });
         },
         looktable(num) {
-            let _this = this;
+            var _this = this;
             _this.tableulayerList = ''
             _this.$http.post('/shv2/deviceapply/list_data', { apply_code:num }, function (res) {//
                 console.log(res)

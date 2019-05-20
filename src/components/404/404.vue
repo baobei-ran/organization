@@ -19,20 +19,6 @@
 
 <script>
 export default {
-    name: 'notfind',
-    data() {
-        return {
-        }
-    },
-    components: {
-
-    },
-    created() {
-
-    },
-    mounted() {
-
-    },
     methods: {
         Return () {
             this.$router.replace('/')

@@ -185,12 +185,12 @@ export default {
         
         Datelist() {
             this.datearr;   // 空数组，用来接收时间
-            let datetime = new Date().getTime();
-            let onedays = 24 * 60 * 60 * 1000
-            for (let i = 0; i < 20; i++) {
-                let month = (new Date(datetime).getMonth() + 1 + '').length > 1 ? new Date(datetime).getMonth() + 1 : '0' + (new Date(datetime).getMonth() + 1)     // 月份
-                let dates = (new Date(datetime).getDate() + '').length > 1 ? new Date(datetime).getDate() : '0' + new Date(datetime).getDate();                     // 几号
-                let week = new Date(datetime).getDay();     //  星期
+            var datetime = new Date().getTime();
+            var onedays = 24 * 60 * 60 * 1000
+            for (var i = 0; i < 20; i++) {
+                var month = (new Date(datetime).getMonth() + 1 + '').length > 1 ? new Date(datetime).getMonth() + 1 : '0' + (new Date(datetime).getMonth() + 1)     // 月份
+                var dates = (new Date(datetime).getDate() + '').length > 1 ? new Date(datetime).getDate() : '0' + new Date(datetime).getDate();                     // 几号
+                var week = new Date(datetime).getDay();     //  星期
                 switch (week) {
                     case 0: week = '周日'; break;
                     case 1: week = "周一"; break;
@@ -200,7 +200,7 @@ export default {
                     case 5: week = "周五"; break;
                     case 6: week = "周六"; break;
                 }
-                let dateobj = {
+                var dateobj = {
                     week: week,
                     date: month + '.' + dates,
                     up: 1,

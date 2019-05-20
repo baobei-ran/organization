@@ -49,6 +49,7 @@ export default {
                 var ispass = /^\d{6,12}$/; //验证密码
 
                 var checkpress = function () {
+                    console.log($('#phone').val())
                     if (!exgphone.test($('#phone').val())) {
                         layer.msg('请输入正确的手机号',{ icon: 2});
                         return false
@@ -67,7 +68,7 @@ export default {
                 if (checkpress()) {
                     _this.flag = true
                     _this.$http.post('/shv2/login/login', { phone: $('#phone').val(), code: $('#code').val(), pwd: $('#pass').val() }, function (res) {// 登录
-                        // console.log(res)
+                        console.log(res)
                         _this.flag = false
                         if (res.code == 1) {
                             _this.localstorage.put('logindata', res.data);

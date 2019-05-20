@@ -154,7 +154,7 @@ export default {
     },
     methods: {
         initdata(num) {   // 数据
-            let _this = this;
+            var _this = this;
             layui.use(["laypage", "layer", "laydate", "element", "form"], function () {
                 var element = layui.element;
                 var laydate = layui.laydate;
@@ -193,7 +193,7 @@ export default {
             });
         },
         pageFun(total) {    // 分页
-            let _this = this;
+            var _this = this;
             layui.use(["laypage", "layer", "element"], function () {
                 var element = layui.element;
                 var laypage = layui.laypage;

@@ -54,7 +54,7 @@
                                 </div>
                             </div>
                             <div class="fl">
-                                <span class="Ft-S14 selectbtn ac pointer" @click="search">查询</span>
+                                <span class="Ft-S14 selectbtn ac pointer " @click="search">查询</span>
                             </div>
                         </div>
 
@@ -70,7 +70,7 @@
                                 <td>操作</td>
                             </tr>
                         </thead>
-                        <tbody v-show="tableList">
+                        <tbody v-show="tableList.length">
                             <tr v-for="(val,index) in tableList">
                                 <td>{{index+1}}</td>
                                 <td><i class="icon_star" v-show="val.down_hid==hid"></i>{{val.dname}}</td>
@@ -94,13 +94,13 @@
                                 </td>
                             </tr>
                         </tbody>
-                        <tbody v-show="!tableList">
+                        <tbody v-show="!tableList.length">
                             <tr>
                                 <td colspan="6">暂无数据</td>
                             </tr>
                         </tbody>
                     </table>
-                    <div id="page" class="ac Mg-T30"></div>
+                    <div id="page" v-show="tableList.length" class="ac Mg-T30"></div>
                 </div>
             </div>
         </div>
@@ -121,7 +121,7 @@ export default {
                 page: 1,
                 limit: 10
             },
-            tableList: '',
+            tableList: [],
             headernum: '',
             hid: this.localstorage.get('logindata').hid
         }
@@ -135,7 +135,7 @@ export default {
             this.initdata(num, 1)
         },
         initdata(type, num) {
-            let _this = this;
+            var _this = this;
             layui.use(["laypage", "layer", "laydate", "element"], function () {
                 var element = layui.element;
                 var laypage = layui.laypage;
@@ -157,6 +157,7 @@ export default {
                 _this.list.start_time = $('#date').val();
                 _this.list.end_time = $('#date1').val();
                 _this.$http.post('/shv2/dcouplet/relevance_list', _this.list, function (res) {//
+                console.log(res)
                     if (res.code == 1) {
                         _this.headernum = res;
                         _this.tableList = res.data;
@@ -172,7 +173,7 @@ export default {
             });
         },
         page(total) {
-            let _this = this;
+            var _this = this;
             layui.use(["laypage", "layer", "element"], function () {
                 var element = layui.element;
                 var laypage = layui.laypage;

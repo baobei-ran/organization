@@ -195,7 +195,8 @@ export default {
             auditingmsg: '',
             ishospital: this.$route.query.hospital,
             isStatus: '',
-            isfalg: this.localstorage.get('flag')
+            isfalg: this.localstorage.get('flag'),
+            isfalg2: this.localstorage.get('flag2')
         }
     },
     created() {
@@ -236,7 +237,7 @@ export default {
                                     console.log('通过')
                                     return 
                                 }
-                                var isF = _this.localstorage.put('flag', '1');
+                                var isF = _this.localstorage.put('flag', '1', 1);
                                 function refresh(){
                                     window.location.reload();
                                     console.log('test')
@@ -245,11 +246,11 @@ export default {
                                 refresh()  
                             }
                         } else if (res.data.hospital_status == 2) {
-                            if (_this.isfalg) {
+                            if (_this.isfalg2) {
                                 console.log('test')
                                 return 
                             }
-                            var isF = _this.localstorage.put('flag', '1');
+                            var isF = _this.localstorage.put('flag2', '2', 1);
                             function refresh(){
                                 window.location.reload();
                                 console.log('test')
@@ -266,9 +267,9 @@ export default {
             })
         },
         initdata() {//  药店状态和数据
-            let _this = this
+            var _this = this
             layui.use(["layer"], function () {
-                let layer = layui.layer
+                var layer = layui.layer
                 _this.$http.post('/shv2/Setting/look_hos', {}, function (res) {
                     console.log(res)
                     if (res.code == 1) {

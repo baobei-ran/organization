@@ -173,7 +173,7 @@ export default {
                 $('#uploadfile').on('change', function () {  // 授权证明文件
                     $.each($('#uploadfile')[0].files, function (i, file) {
                         //  console.log(file.type)
-                        const isLt2M = file.size / 1024 / 1024 < 2;
+                        var isLt2M = file.size / 1024 / 1024 < 2;
                         if (file.type !== 'image/png' && file.type !== 'image/jpg' && file.type !== 'image/gif' &&  file.type !== 'image/jpeg' && file.type !== 'image/bmp') {
                             layer.msg("上传的文件格式错误");
                         } else if (!isLt2M){

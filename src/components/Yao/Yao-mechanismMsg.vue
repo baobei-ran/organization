@@ -235,7 +235,7 @@ export default {
     mounted() {
         this.selectprovince();
         this.initdata();
-        let _this = this
+        var _this = this
         this.$http.post('/shv2/Setting/step', {}, function (res) {
             console.log(res)
             if (res.code == 223 && res.data == 0) {
@@ -259,7 +259,7 @@ export default {
     },
     methods: {
         selectname() {
-            let _this = this;
+            var _this = this;
             switch (_this.formdata.type) {
                 case '1': _this.go('/setting/mechanismMsg'); break;
                 case '2': _this.go(''); break;
@@ -323,7 +323,7 @@ export default {
 
         },
         selectprovince() {//初始化下拉框 省份
-            let _this = this
+            var _this = this
             this.$http.post('/shv2/Setting/area', { fid: 1 }, function (res) {
                 if (res.code == 1) {
                     _this.provinceList = res.data;
@@ -333,7 +333,7 @@ export default {
             })
         },
         selectcity(num) {//市
-            let _this = this
+            var _this = this
             this.$http.post('/shv2/Setting/area', { fid: num }, function (res) {
                 if (res.code == 1) {
                     _this.cityList = res.data;
@@ -343,7 +343,7 @@ export default {
             })
         },
         selectcounty(num) { //区县
-            let _this = this
+            var _this = this
             this.$http.post('/shv2/Setting/area', { fid: num }, function (res) {
                 if (res.code == 1) {
                     _this.countyList = res.data;

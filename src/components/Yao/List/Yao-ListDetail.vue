@@ -258,7 +258,7 @@ export default {
     },
     methods: {
         initdata() {
-            let _this = this;
+            var _this = this;
             _this.$http.post('/shv2/goodsorder/detail', { number: _this.$route.query.number }, function (res) {//
                 if (res.code == 1) {
                     _this.detailList = res;
@@ -289,7 +289,7 @@ export default {
             });
         },
         exitadd() {//修改收货人地址
-            let _this = this;
+            var _this = this;
             layui.use(["layer"], function () {
                 var layer = layui.layer;
                 if (!_this.sname) {
@@ -358,7 +358,7 @@ export default {
             });
         },
         sendup() {//订单发货
-            let _this = this;
+            var _this = this;
             layui.use(["layer"], function () {
                 var layer = layui.layer;
                 if (!_this.company) {

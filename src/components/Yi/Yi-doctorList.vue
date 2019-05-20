@@ -90,7 +90,7 @@ export default {
             page: 1,
             limit: 10,
             count: '',
-            tableList: '',
+            tableList: [],
             gradeList: []   // 医生职称列表
         }
     },
@@ -106,11 +106,12 @@ export default {
     },
     methods: {
         initdata(num) { // 初始化调用或者查询
-            let _this = this;
+            var _this = this;
             layui.use(["laypage", "layer", "laydate", "element"], function () {
                 var element = layui.element;
                 _this.page = num;
                 _this.$http.post('/shv2/data/doc_list', { name: _this.name, grade: _this.grade, page: _this.page, limit: _this.limit }, function (res) {//
+                    console.log(res)
                     if (res.code == 1) {
                         _this.count = res.count;
                         _this.tableList = res.data;
@@ -124,7 +125,7 @@ export default {
             });
         },
         pageFun(total) {   // 分页
-            let _this = this;
+            var _this = this;
             layui.use(["laypage", "layer", "element"], function () {
                 var element = layui.element;
                 var laypage = layui.laypage;
@@ -144,7 +145,7 @@ export default {
             });
         },
         setdep_op(id, val) {    // 推荐按钮
-            let _this = this;
+            var _this = this;
             val ? val = 1 : val = 0
             layui.use(["layer"], function () {
                 _this.$http.post('/shv2/data/doc_op', { id: id, val: val }, function (res) {//
@@ -164,7 +165,7 @@ export default {
             this.go('/data/doctorList/doctorEdit?id='+id)
         },
         del(id) {   // 删除
-            let _this = this;
+            var _this = this;
             layui.use(["layer"], function () {
                 layui.layer.confirm('您确定要删除吗', {
                     btn: ['确定', '取消'] //按钮

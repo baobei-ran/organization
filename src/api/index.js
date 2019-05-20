@@ -10,15 +10,15 @@ axios.defaults.retryDelay = 2000;   //  每次请求时间
 import { Loading } from 'element-ui';
 var loadingInstance;
 axios.defaults.withCredentials = true;
-let http = axios.create({
+var http = axios.create({
   baseURL: baseURL,
   headers: {
     "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
   },
   transformRequest: [
     function(data) {    // 处理，转换成字符串
-      let newData = "";
-      for (let k in data) {
+      var newData = "";
+      for (var k in data) {
         if (data.hasOwnProperty(k) === true) {
           newData += encodeURIComponent(k) + "=" + encodeURIComponent(data[k]) + "&";
         }
@@ -125,7 +125,7 @@ function apiAxios(method, url, params, response, error) {
     });
 }
 function $upload(Url, data, handle) {
-  let instance = axios.create({
+  var instance = axios.create({
     baseURL: baseURL,
     headers: {
       "Content-Type": "multipart/form-data"

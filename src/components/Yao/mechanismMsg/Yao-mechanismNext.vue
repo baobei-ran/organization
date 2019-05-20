@@ -164,7 +164,7 @@ export default {
     },
     methods: {
         initdata() {
-            let _this = this;
+            var _this = this;
             layui.use(["layer", "form"], function () {
                 var form = layui.form;
                 form.render()
@@ -179,7 +179,7 @@ export default {
             });
         },
         selectprovince() {//初始化下拉框 省份
-            let _this = this
+            var _this = this
             this.$http.post('/shv2/Setting/area', { fid: 1 }, function (res) {
                 if (res.code == 1) {
                     _this.provinceList = res.data;
@@ -189,7 +189,7 @@ export default {
             })
         },
         selectcity(num) {//市
-            let _this = this
+            var _this = this
             this.$http.post('/shv2/Setting/area', { fid: num }, function (res) {
                 if (res.code == 1) {
                     _this.cityList = res.data;
@@ -199,7 +199,7 @@ export default {
             })
         },
         selectcounty(num) { //区县
-            let _this = this
+            var _this = this
             this.$http.post('/shv2/Setting/area', { fid: num }, function (res) {
                 if (res.code == 1) {
                     _this.countyList = res.data;
@@ -209,14 +209,14 @@ export default {
             })
         },
         sunmithos() {//
-            let _this = this;
+            var _this = this;
             this.disabled = true
             var time = setTimeout(() => {
                 this.disabled = false
                 clearTimeout(time)
             }, 3000)
-            let regmail = /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/;
-            let Regphone = /^((0\d{2,3}-\d{7,8})|(1[3456789]\d{9}))$/;
+            var regmail = /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/;
+            var Regphone = /^((0\d{2,3}-\d{7,8})|(1[3456789]\d{9}))$/;
             layui.use(["layer"], function () {
                 if (!_this.tabledata.name) {
                     layer.msg('请填写业务联系人姓名', { icon: 2});

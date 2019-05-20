@@ -13,7 +13,7 @@
                  <div class="layui-tab-content">
                     <div class="screen_type Mg-T14 ">
                         <div class="layui-form-item layui-row">
-                            <div class="layui-col-md2 ">
+                            <div class="layui-col-md3 ">
                                 <div class="layui-inline lay_width">
                                     <label class="layui-form-label">预约单号</label>
                                     <div class="layui-input-inline">
@@ -21,7 +21,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="layui-col-md2 ">
+                            <div class="layui-col-md3 ">
                                 <div class="layui-inline lay_width">
                                     <label class="layui-form-label">预约医生</label>
                                     <div class="layui-input-inline">
@@ -29,7 +29,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="layui-col-md2">
+                            <div class="layui-col-md3">
                                 <div class="layui-inline lay_width">
                                     <label class="layui-form-label">所属科室</label>
                                     <select name="city" lay-verify="required" v-model='depid' class="select_class">
@@ -38,7 +38,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="layui-col-md4 selecttime">
+                            <!-- <div class="layui-col-md4 selecttime">
                                 <label class="layui-form-label">预约时间</label>
                                 <div class="layui-input-block">
                                     <div class="layui-input-inline">
@@ -51,6 +51,26 @@
                                 </div>
                             </div>
                             <div class="layui-col-md1">
+                                <div class="layui-input-inline">
+                                    <span class="Ft-S14 selectbtn ac pointer" @click='search'>查询</span>
+                                </div>
+                            </div> -->
+                        </div>
+                        <div class="layui-form-item Mg-T20 layui-row">
+                            
+                            <div class="layui-col-md6 selecttime">
+                                <label class="layui-form-label">预约时间</label>
+                                <div class="layui-input-block">
+                                    <div class="layui-input-inline">
+                                        <input type="text" name="price_min" placeholder="请输入开始时间" id="date" autocomplete="off" class="layui-input">
+                                    </div>
+                                    <div class="layui-form-mid">-</div>
+                                    <div class="layui-input-inline">
+                                        <input type="text" name="price_max" placeholder="请输入结束时间" id="date1" autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md1 Mg-L20">
                                 <div class="layui-input-inline">
                                     <span class="Ft-S14 selectbtn ac pointer" @click='search'>查询</span>
                                 </div>
@@ -138,18 +158,29 @@ export default {
     methods: {
 
         search () {
-            
+            var oDate1 = new Date($('#date').val());
+            var oDate2 = new Date($('#date1').val());
+            if (oDate1.getTime() > oDate2.getTime()) {
+                layer.msg('开始时间不能大于结束时间');
+                return
+            }
+            this.ktime = $('#date').val()
+            this.jtime = $('#date1').val()
             this.initList(1)
         },
         //  数据
         initList(num) { // 和 搜索
             var _this = this;
-            this.$http.post('/shv2/server/make_list', {type: _this.tdlast, page: num,limit: _this.limit, number: _this.number, name: _this.name, depid: _this.depid, ktime: _this.ktime, jtime: _this.jtime }, function (res) {
+            var obj = {type: _this.tdlast, page: num,limit: _this.limit, number: _this.number, name: _this.name, depid: _this.depid, ktime: _this.ktime, jtime: _this.jtime }
+            console.log(obj)
+            this.$http.post('/shv2/server/make_list', obj, function (res) {
                 console.log(res)
                 if (res.code == 0) {
                     _this.orderList = res.data
                     _this.orderNavNum = res.type
-                        _this.initdata(res.count)
+                        if (num == 1) {
+                            _this.initdata(res.count)
+                        }
                 }
             }, function (err) { console.log(err)})
         },

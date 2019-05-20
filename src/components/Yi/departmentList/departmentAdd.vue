@@ -64,7 +64,7 @@ export default {
     },
     methods: {
         initdata() {    // 关联疾病列表如果选中就添加到已选关联疾病中去
-            let _this = this;
+            var _this = this;
             for (var i = 0; i < $('.select_type span').length; i++) {
                 $('.select_type input')[i].onchange = function () {
                     if ($(this)[0].checked) {
@@ -80,7 +80,7 @@ export default {
             }
         },
         deltype(name, index) { // 删除已选的关联疾病
-            let _this = this;
+            var _this = this;
             for (var i = 0; i < $('.select_type input').length; i++) {
                 if ($('.select_type input')[i].title == name) {
                     _this.selectfilter.splice(index, 1);
@@ -89,7 +89,7 @@ export default {
             }
         },
         select(num, list, name) {   // 选择科室名称
-            let _this = this;
+            var _this = this;
             this.inactive = num;
             this.name = name;
             this.allillness = list;
@@ -104,7 +104,7 @@ export default {
 
         },
         secarch() {//搜索筛选
-            let _this = this;
+            var _this = this;
             if (_this.searchname) {
                 for (var i = 0; i < _this.newarr.length; i++) {
                     if (_this.searchname.indexOf(_this.newarr[i].name) !== -1) {
@@ -116,7 +116,7 @@ export default {
             }
         },
         gettype() { // 接口调取
-            let _this = this;
+            var _this = this;
             layui.use(["layer"], function () {
                 _this.$http.post('/shv2/data/dep', {}, function (res) {//
                     console.log(res)
@@ -133,7 +133,7 @@ export default {
             });
         },
         onsubmit() {    // 提交保存
-            let _this = this;
+            var _this = this;
             var disid = [];
             var formdata = new FormData();
             _this.selectfilter.forEach((ele,index) => {
@@ -149,8 +149,12 @@ export default {
                 formdata.append("sort", 0);
                 _this.$http.upload('/shv2/data/dep_add', formdata, function (res) {//
                     if (res.code == 1) {
-                        layer.msg(res.msg);
-                        _this.go('/data/departmentList')
+                        layer.msg(res.msg, { icon:1, time: 2000 });
+                        setTimeout(() => {
+                            _this.go('/data/departmentList')
+                        }, 1000)
+                    } else {
+                        layer.msg(res.msg, { icon:2, time: 2000 });
                     }
                 });
             });

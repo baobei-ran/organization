@@ -317,8 +317,8 @@ export default {
         getcode(){  // 忘记密码弹框中的 获取验证码按钮
             var _salf = this;
             layui.use(["layer"], function () {
-                let layer = layui.layer;
-                let _layer = this;
+                var layer = layui.layer;
+                var _layer = this;
                 var isphone = /^1[345789]\d{9}$/;
                 if (!isphone.test(_salf.phone)) {
                     layer.msg("请输入正确的手机号");

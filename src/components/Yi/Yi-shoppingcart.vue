@@ -92,7 +92,7 @@ export default {
         
     },
     mounted() {
-        let _this = this;
+        var _this = this;
             this.$http.post('/shv2/deviceapply/apply_data', {}, function (res) { //  获取购物车的数据
                 if (res.code == 1) {
                     _this.layerData = res.data;
@@ -113,7 +113,7 @@ export default {
             this.$router.push('/server/equipmenApply')
         },
         submitdata() {      // 提交购物车
-            let _this = this
+            var _this = this
             layui.use(["layer"], function () {
                 var layer = layui.layer;
                 if (_this.layerData) {
@@ -134,7 +134,7 @@ export default {
         },
         // 绑定在父组件上了
         initdata(id, num) {
-            let _this = this
+            var _this = this
             this.$http.post('/shv2/deviceapply/add_apply', { did: id, num: num }, function (res) {//添加购物车
                 if (res.code == 1) {
                    _this.updan()
@@ -173,7 +173,7 @@ export default {
 
         },
         updan() {
-            let _this = this;
+            var _this = this;
             this.$http.post('/shv2/deviceapply/apply_data', {}, function (res) { //  获取购物车的数据
                 if (res.code == 1) {
                     _this.layerData = res.data;
@@ -189,7 +189,7 @@ export default {
             }, function (err) { })
         },
         deldata(id) {
-            let _this = this;
+            var _this = this;
             layui.use(["layer"], function () {
                 var layer = layui.layer;
                 _this.$http.post('/shv2/deviceapply/del_apply', { id: id }, function (res) {// 删除购物车
@@ -229,38 +229,38 @@ export default {
             }
         },
         beforeEnter(el) {
-            let count = this.balls.length
+            var count = this.balls.length
             while (count--) {
-                let ball = this.balls[count]
+                var ball = this.balls[count]
                 if (ball.show) {
-                    let rect = ball.el.getBoundingClientRect() // 获取小球的相对于视口的位移(小球高度)
-                    let x = -(window.innerWidth - rect.left - 136)
-                    let y = rect.top - 520 // 负数是从左上角往下的的方向, 正数是往上
+                    var rect = ball.el.getBoundingClientRect() // 获取小球的相对于视口的位移(小球高度)
+                    var x = -(window.innerWidth - rect.left - 136)
+                    var y = rect.top - 520 // 负数是从左上角往下的的方向, 正数是往上
                     el.style.display = '' // 清空display
                     el.style.webkitTransform = `translate3d(0, ${y}px, 0)`
                     el.style.transform = `translate3d(0, ${y}px, 0)`
                     // 处理内层动画
-                    let inner = el.getElementsByClassName('inner-hook')[0] // 使用inner-hook类来单纯被js操作
+                    var inner = el.getElementsByClassName('inner-hook')[0] // 使用inner-hook类来单纯被js操作
                     inner.style.webkitTransform = `translate3d(${x}px, 0, 0)`
                     inner.style.transform = `translate3d(${x}px, 0, 0)`
                 }
             }
         },
         enter(el, done) {
-            let rf = el.offsetHeight // 触发重绘html
+            var rf = el.offsetHeight // 触发重绘html
             this.$nextTick(() => {
                 // 让动画效果异步执行,提高性能
                 el.style.webkitTransform = 'translate3d(0, 0, 0)'
                 el.style.transform = 'translate3d(0, 0, 0)'
                 // 处理内层动画
-                let inner = el.getElementsByClassName('inner-hook')[0] // 使用inner-hook类来单纯被js操作
+                var inner = el.getElementsByClassName('inner-hook')[0] // 使用inner-hook类来单纯被js操作
                 inner.style.webkitTransform = 'translate3d(0, 0, 0)'
                 inner.style.transform = 'translate3d(0, 0, 0)'
                 el.addEventListener('transitionend', done) // Vue为了知道过渡的完成，必须设置相应的事件监听器。
             })
         },
         afterEnter(el) {
-            let ball = this.dropBalls.shift() // 完成一次动画就删除一个dropBalls的小球
+            var ball = this.dropBalls.shift() // 完成一次动画就删除一个dropBalls的小球
             if (ball) {
                 ball.show = false;
                 el.style.display = 'none'; // 隐藏小球

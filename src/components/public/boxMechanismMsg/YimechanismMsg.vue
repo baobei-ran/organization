@@ -185,7 +185,7 @@ export default {
     methods: {
        
         ifcontent() {
-            let _this = this
+            var _this = this
             this.$http.post('/shv2/Setting/look_write', {}, function (res) {
                 console.log(res)
                 _this.formdata = {
@@ -244,7 +244,7 @@ export default {
 
         },
         selectprovince() {//初始化下拉框 省份
-            let _this = this
+            var _this = this
             this.$http.post('/shv2/Setting/area', { fid: 1 }, function (res) {
                 if (res.code == 1) {
                     _this.provinceList = res.data;
@@ -254,7 +254,7 @@ export default {
             })
         },
         selectcity(num) {//市
-            let _this = this
+            var _this = this
             this.$http.post('/shv2/Setting/area', { fid: num }, function (res) {
                 if (res.code == 1) {
                     _this.cityList = res.data;
@@ -264,7 +264,7 @@ export default {
             })
         },
         selectcounty(num) { //区县
-            let _this = this
+            var _this = this
             this.$http.post('/shv2/Setting/area', { fid: num }, function (res) {
                 if (res.code == 1) {
                     _this.countyList = res.data;

@@ -267,7 +267,8 @@ export default {
         return {
             auditingmsg: '',
             isStatus: '',
-            isfalg: this.localstorage.get('flag')
+            isfalg: this.localstorage.get('flag'),
+            isfalg2: this.localstorage.get('flag2')
         }
     },
     created () {
@@ -309,7 +310,7 @@ export default {
                                     console.log('通过')
                                     return 
                                 }
-                                var isF = _this.localstorage.put('flag', '1');
+                                var isF = _this.localstorage.put('flag', '1', 1);
                                 function refresh(){
                                     window.location.reload();
                                     console.log('test')
@@ -319,11 +320,11 @@ export default {
                             }
                                 
                             } else if (res.data.hospital_status == 2) {
-                                if (_this.isfalg) {
+                                if (_this.isfalg2) {
                                     console.log('通过')
                                     return 
                                 }
-                                var isF = _this.localstorage.put('flag', '1');
+                                var isF = _this.localstorage.put('flag2', '2', 1);
                                     function refresh(){
                                         window.location.reload();
                                         console.log('test')
@@ -338,9 +339,9 @@ export default {
             })
         },
         initdata() {// 医院数据
-            let _this = this
+            var _this = this
             layui.use(["layer"], function () {
-                let layer = layui.layer
+                var layer = layui.layer
                 _this.$http.post('/shv2/Setting/look_hos', {}, function (res) {
                     if (res.code == 1) {
                         _this.auditingmsg = res.data;
@@ -359,7 +360,7 @@ export default {
             this.$router.replace('/?login=true')
         },
         onsubmit() {//医院最后保存
-            let _this = this;
+            var _this = this;
             var fromdata = new FormData()
             fromdata.append('introduction', _this.auditingmsg.introduction);
             fromdata.append('name', _this.auditingmsg.owner_name);
@@ -368,7 +369,7 @@ export default {
                 fromdata.append('pic', file);
             });
             layui.use(["layer"], function () {
-                let layer = layui.layer
+                var layer = layui.layer
                 _this.$http.upload('/shv2/Setting/edit_hos', fromdata, function (res) {
                     if (res.code == 1) {
                         layer.msg('保存成功')

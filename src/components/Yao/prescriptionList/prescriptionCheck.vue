@@ -196,7 +196,7 @@ export default {
     },
     methods: {
         datadetail () {
-            let self = this;
+            var self = this;
             self.$http.post('/shv2/recipe/recipe_look', this.$route.query, function (res) {
                 console.log(res)
                 if (res.code == 1) {
@@ -255,22 +255,23 @@ export default {
          
         donwload () {
             /*图片跨域及截图模糊处理*/
-            let shareContent = document.getElementById('html'),//需要截图的包裹的（原生的）DOM 对象
+            var shareContent = document.getElementById('html'),//需要截图的包裹的（原生的）DOM 对象
                 width = shareContent.clientWidth,//shareContent.offsetWidth; //获取dom 宽度
                 height = shareContent.clientHeight,//shareContent.offsetHeight; //获取dom 高度
                 canvas = document.createElement("canvas"), //创建一个canvas节点
-                scale = 2; //定义任意放大倍数 支持小数
+                scale = 4; //定义任意放大倍数 支持小数
             canvas.width = width * scale; //定义canvas 宽度 * 缩放
             canvas.height = height * scale; //定义canvas高度 *缩放
             canvas.style.width = shareContent.clientWidth * scale + "px";
             canvas.style.height = shareContent.clientHeight * scale + "px";
             canvas.getContext("2d").scale(scale, scale); //获取context,设置scale
-            let opts = {
+            var opts = {
                 scale: scale, // 添加的scale 参数
                 canvas: canvas, //自定义 canvas
                 logging: false, //日志开关，便于查看html2canvas的内部执行流程
                 width: width, //dom 原始宽度
                 height: height,
+                dpi: window.devicePixelRatio
                 // useCORS: true // 【重要】开启跨域配置
             };
             html2canvas(shareContent,opts).then(function(canvas) {
@@ -283,22 +284,23 @@ export default {
 
         browse () { // 浏览
             var _this = this;
-            let shareContent = document.getElementById('html'),//需要截图的包裹的（原生的）DOM 对象
+            var shareContent = document.getElementById('html'),//需要截图的包裹的（原生的）DOM 对象
                 width = shareContent.clientWidth,//shareContent.offsetWidth; //获取dom 宽度
                 height = shareContent.clientHeight,//shareContent.offsetHeight; //获取dom 高度
                 canvas = document.createElement("canvas"), //创建一个canvas节点
-                scale = 4; //定义任意放大倍数 支持小数
+                scale = 6; //定义任意放大倍数 支持小数
             canvas.width = width * scale; //定义canvas 宽度 * 缩放
             canvas.height = height * scale; //定义canvas高度 *缩放
-            canvas.style.width = shareContent.clientWidth * scale + "px";
-            canvas.style.height = shareContent.clientHeight * scale + "px";
+            canvas.style.width = shareContent.clientWidth * scale ;
+            canvas.style.height = shareContent.clientHeight * scale;
             canvas.getContext("2d").scale(scale, scale); //获取context,设置scale
-            let opts = {
+            var opts = {
                 scale: scale, // 添加的scale 参数
                 canvas: canvas, //自定义 canvas
-                logging: false, //日志开关，便于查看html2canvas的内部执行流程
+                logging: true, //日志开关，便于查看html2canvas的内部执行流程
                 width: width, //dom 原始宽度
-                height: height
+                height: height,
+                dpi: window.devicePixelRatio
             };
             html2canvas(shareContent,opts).then(function(canvas) {
                  var context = canvas.getContext('2d');
@@ -399,7 +401,7 @@ export default {
                 h1 {
                     padding: 30px 0;
                     text-align: center;
-                    font-size: 18px;
+                    font-size: 20px;
                     color: #333;
                     font-weight: 550;
                     letter-spacing:5px;
@@ -410,8 +412,8 @@ export default {
                         padding-bottom: 24px;
                         li {
                             width: 22%;
-                            font-size: 14px;
-                            font-weight: 520;
+                            font-size: 15px;
+                            font-weight: 540;
                         }
                     }
                 }
@@ -427,6 +429,8 @@ export default {
                             width: 30%;
                             line-height: 50px;
                             margin-right: 30px;
+                            font-weight: 540;
+                            font-size: 15px;
                             >span {
                                 float: right;
                             }

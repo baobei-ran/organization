@@ -471,7 +471,7 @@ export default {
             }); 
         },
         edits(data) { // 编辑
-            let { id } = data
+            var { id } = data
             // console.log(id)
             this.go('/jgmall/goodsList/editGoods?id='+id)
         },
@@ -550,7 +550,7 @@ export default {
 
         putaway (data) {    // 上架
             // console.log(data)
-            let { id } = data;
+            var { id } = data;
             var _this = this;
             layui.use('layer', function(){
             var layer = layui.layer;

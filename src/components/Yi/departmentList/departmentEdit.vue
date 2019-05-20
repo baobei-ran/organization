@@ -88,7 +88,7 @@ export default {
     },
     methods: {
         initdata() {
-            let _this = this
+            var _this = this
             layui.use(["layer"], function () {
                 var layer = layui.layer;
                 _this.$http.post('/shv2/data/dep_look', _this.$route.query, function (res) {//
@@ -106,7 +106,7 @@ export default {
             })
         },
         initb() {
-            let _this = this;
+            var _this = this;
             for (var i = 0; i < $('.select_type span').length; i++) {
                 _this.selectfilter.forEach(ele => {
                     if (ele.take_name == $('.select_type input')[i].title) {
@@ -127,7 +127,7 @@ export default {
             }
         },
         deltype(name, index) {
-            let _this = this;
+            var _this = this;
             for (var i = 0; i < $('.select_type input').length; i++) {
                 if ($('.select_type input')[i].title == name) {
                     _this.selectfilter.splice(index, 1);
@@ -136,7 +136,7 @@ export default {
             }
         },
         secarch() {//搜索筛选
-            let _this = this;
+            var _this = this;
             if (_this.searchname) {
                 for (var i = 0; i < _this.newarr.length; i++) {
                     if (_this.newarr[i].disease_name == _this.searchname) {
@@ -148,9 +148,9 @@ export default {
             }
         },
         onsubmit() {    // 提交保存
-                let num = this.selectfilter.length
+                var num = this.selectfilter.length
                 if (num) {
-                     let _this = this;
+                    var _this = this;
                     var disid = [];
                     var formdata = new FormData();
                     _this.selectfilter.forEach((ele, index) => {

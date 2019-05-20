@@ -5,8 +5,8 @@
     </div>
 </template>
 <script>
-const YaoHome = resolve => require(['./Yao-home.vue'], resolve);
-const YiHome = resolve => require(['./Yi-home.vue'], resolve);
+var YaoHome = resolve => require(['./Yao-home.vue'], resolve);
+var YiHome = resolve => require(['./Yi-home.vue'], resolve);
 export default {
     components: {
         'yao-home': YaoHome,

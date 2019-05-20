@@ -172,7 +172,7 @@ export default {
     },
     methods: {
         initdata() {
-            let _this=this;
+            var _this=this;
             layui.use(["layer", "form"], function () {
                 var form = layui.form;
                 
@@ -204,7 +204,7 @@ export default {
                 $('#showimg7').attr('style', 'background:url(' + window.URL.createObjectURL(this.files[0]) + ');background-size:cover');
                 $('#showimg7').text('')
             })
-            let _this = this
+            var _this = this
             this.$http.post('/shv2/Setting/hos_set', {}, function (res) {
                 if (res.code == 1) {
                     _this.gradeList = res.grade;

@@ -10,13 +10,16 @@
                                 <div class="layui-inline lay_width">
                                     <label class="layui-form-label" style="width:90px;">机构所在地</label>
                                     <select name="city" @change="selectcity(list.province)" v-model="list.province" class="select_class">
-                                        <option :value="val.aid" v-for="val in provinceList" v-text="val.aname">请选择省</option>
+                                        <option value="">请选择省</option>
+                                        <option :value="val.aid" v-for="val in provinceList" v-text="val.aname"></option>
                                     </select>
                                     <select name="city" @change="selectcounty(list.city)" v-model="list.city" class="select_class">
-                                        <option :value="val.aid" v-for="val in cityList" v-text="val.aname">请选择市</option>
+                                        <option value="" >请选择市</option>
+                                        <option :value="val.aid" v-for="val in cityList" v-text="val.aname"></option>
                                     </select>
                                     <select name="city" v-model="list.county" class="select_class">
-                                        <option :value="val.aid" v-for="val in countyList" v-text="val.aname">请选择县/区</option>
+                                        <option value=''>请选择市</option>
+                                        <option :value="val.aid" v-for="val in countyList" v-text="val.aname"></option>
                                     </select>
                                 </div>
                             </div>
@@ -69,7 +72,7 @@
                                 <td>操作</td>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody v-show='tableList.length'>
                             <tr v-for="(val,index) in tableList">
                                 <td>{{index+1}}</td>
                                 <td v-text="val.hospital_name"></td>
@@ -85,8 +88,13 @@
                                 </td>
                             </tr>
                         </tbody>
+                        <tbody v-show='!tableList.length'>
+                            <tr >
+                                <td colspan="9">暂无数据</td>
+                            </tr>
+                        </tbody>
                     </table>
-                    <div id="page" class="ac Mg-T30"></div>
+                    <div id="page" v-show='tableList.length' class="ac Mg-T30"></div>
                 </div>
             </div>
         </div>
@@ -109,12 +117,12 @@ export default {
                 limit: 10
             },
             count: 1,
-            provinceList: '',
-            cityList: '',
-            countyList: '',
+            provinceList: '', // 省
+            cityList: '',     // 市
+            countyList: '',   // 区/县
             structureType: '',
             hospitalgrade: '',
-            tableList: ''
+            tableList: []
         }
     },
     mounted() {
@@ -123,7 +131,7 @@ export default {
     },
     methods: {
         initdata(num) {
-            let _this = this;
+            var _this = this;
             layui.use(["laypage", "layer", "element"], function () {
                 var element = layui.element;
                 var laypage = layui.laypage;
@@ -142,7 +150,7 @@ export default {
             });
         },
         page(total) {
-            let _this = this;
+            var _this = this;
             layui.use(["laypage", "layer", "element"], function () {
                 var element = layui.element;
                 var laypage = layui.laypage;
@@ -162,7 +170,7 @@ export default {
             });
         },
         asother(num) {
-            let _this = this;
+            var _this = this;
             layui.use([ "layer"], function () {
                 var layer=layui.layer;
                 _this.$http.post('/shv2/dcouplet/relevance', { type: 1, hid2: num }, function (res) {
@@ -176,7 +184,9 @@ export default {
             })
         },
         selectprovince() {//初始化下拉框 省份
-            let _this = this
+            var _this = this
+            _this.cityList = []
+            _this.countyList = []
             this.$http.post('/shv2/Setting/area', { fid: 1 }, function (res) {
                 if (res.code == 1) {
                     _this.provinceList = res.data;
@@ -186,7 +196,8 @@ export default {
             })
         },
         selectcity(num) {//市
-            let _this = this
+            var _this = this
+             _this.countyList = []
             this.$http.post('/shv2/Setting/area', { fid: num }, function (res) {
                 if (res.code == 1) {
                     _this.cityList = res.data;
@@ -196,7 +207,7 @@ export default {
             })
         },
         selectcounty(num) { //区县
-            let _this = this
+            var _this = this
             this.$http.post('/shv2/Setting/area', { fid: num }, function (res) {
                 if (res.code == 1) {
                     _this.countyList = res.data;

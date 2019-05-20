@@ -176,7 +176,7 @@ export default {
     },
     methods: {
         submitdata() {   // 提交
-            let _this = this;
+            var _this = this;
             this.disabled = true
             var time = setTimeout(function () {
                 _this.disabled = false
@@ -279,7 +279,7 @@ export default {
         },
         handleCheckedCitiesChange(value) {  // 单选
             if (value.length > 0) {
-                let checkedCount = value.length;
+                var checkedCount = value.length;
                 if (checkedCount == this.doctorList.length) {
                     this.checkAll = true;
                 } else {

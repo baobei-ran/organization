@@ -183,7 +183,7 @@ export default {
     },
     methods: {
         initdata() {
-            let _this = this;
+            var _this = this;
             layui.use(['form', 'layer'], function () {
                 var layer = layui.layer;
                 _this.$http.post('/shv2/dcouplet/look', { up_hid: _this.$route.query.up_hid, down_hid: _this.$route.query.down_hid }, function (res) {//
@@ -222,7 +222,7 @@ export default {
             });
         },
         rebate_btn() {
-            let _this = this;
+            var _this = this;
             layui.use(['form', 'layer'], function () {
                 var layer = layui.layer;
                 if (!_this.yynumber) {

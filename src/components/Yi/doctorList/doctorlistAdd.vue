@@ -203,7 +203,7 @@ export default {
 
 
         initdata() {    // 操作jquery
-            let _this = this;
+            var _this = this;
             for (var i = 0; i < $('.select_type span').length; i++) {
                 $('.select_type input')[i].onchange = function () {
                     if ($(this)[0].checked) {
@@ -251,7 +251,7 @@ export default {
         },
         select(num, list, name) {
             console.log(num)
-            let _this = this;
+            var _this = this;
             list = list.split('、');
             this.inactive = num;
             this.name = name;
@@ -267,7 +267,7 @@ export default {
 
         },
         secarch() {//筛选
-            let _this = this;
+            var _this = this;
             if (_this.searchname) {
                 for (var i = 0; i < _this.newarr.length; i++) {
                     if (_this.newarr[i].name == _this.searchname) {
@@ -281,7 +281,7 @@ export default {
             
         },
         gettype() { // 调取接口，获取关联数据
-            let _this = this;
+            var _this = this;
             layui.use(["layer"], function () {
                 _this.$http.post('/shv2/data/dep_list', {}, function (res) {//
                 // console.log(res)
@@ -307,7 +307,7 @@ export default {
             var reg = new RegExp("^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$");  // 邮箱验证
             var exgphone = /^1(3|4|5|7|8)\d{9}$/;
             var cardid = /^[1-9][0-9]{5}(19|20)[0-9]{2}((01|03|05|07|08|10|12)(0[1-9]|[1-2][0-9]|31)|(04|06|09|11)(0[1-9]|[1-2][0-9]|30)|02(0[1-9]|[1-2][0-9]))[0-9]{3}([0-9]|x|X)$/;
-            let _this = this;
+            var _this = this;
             layui.use(["layer"], function () {
                 if (!_this.addList.true_name) {
                     layui.layer.msg('请填写医生姓名')

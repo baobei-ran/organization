@@ -84,7 +84,7 @@ export default {
             // this.form.phone=phone.substring(0,3)+'****'+phone.substring(7,11)
         },
         getcode() {
-            let _this = this
+            var _this = this
             //获取验证码
             layui.use(["layer"], function () {
                 var isphone = /^1[34578]\d{9}$/;
@@ -115,7 +115,7 @@ export default {
             })
         },
         onsubmit() {
-            let _this = this
+            var _this = this
             layui.use(["layer"], function () {
                 var layer=layui.layer
                 if (!_this.form.code || _this.form.code.length != 4) {

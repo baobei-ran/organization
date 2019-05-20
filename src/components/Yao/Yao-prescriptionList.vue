@@ -158,7 +158,7 @@ export default {
             this.initdata(type, 1)
         },
         initdata(type, num) {   // 数据
-            let _this = this;
+            var _this = this;
             layui.use(["laypage", "layer", "laydate", "element"], function () {
                 var element = layui.element;
                 var laydate = layui.laydate;
@@ -195,7 +195,7 @@ export default {
             });
         },
         pageFun(total) {    // 分页
-            let _this = this;
+            var _this = this;
             layui.use(["laypage", "layer", "element"], function () {
                 var element = layui.element;
                 var laypage = layui.laypage;
@@ -324,7 +324,7 @@ export default {
         },
         handleCheckedCitiesChange(value) {  // 单选
             if (value.length > 0) {
-                let checkedCount = value.length;
+                var checkedCount = value.length;
                 if (checkedCount == this.doctorList.length) {
                     this.checkAll = true;
                 } else {

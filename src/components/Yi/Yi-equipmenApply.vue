@@ -51,7 +51,7 @@ export default {
     },
     methods: {
         initdata(num) {
-            let _this = this;
+            var _this = this;
             layui.use(["laypage", "layer", "laydate", "element"], function () {
                 var element = layui.element;
                 _this.page = num;
@@ -76,7 +76,7 @@ export default {
             this.$refs.shapcart.initdata(id, 1);
         },
         pageFun(total) {
-            let _this = this;
+            var _this = this;
             layui.use(["laypage", "layer", "element"], function () {
                 var element = layui.element;
                 var laypage = layui.laypage;

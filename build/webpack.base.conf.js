@@ -1,5 +1,5 @@
-"use strict";
 require("babel-polyfill");
+"use strict";
 var webpack = require("webpack");
 const path = require("path");
 const utils = require("./utils");

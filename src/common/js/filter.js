@@ -5,9 +5,9 @@ vue.filter('money', function(val) { // 千分位金钱转换加逗号
     if(isNaN(val)) {
       val = "0";  
     } 
-    let sign = (val == (val = Math.abs(val)));
+    var sign = (val == (val = Math.abs(val)));
     val = Math.floor(val*100+0.50000000001);
-    let cents = val%100;
+    var cents = val%100;
     val = Math.floor(val/100).toString();
     if(cents<10) {
        cents = "0" + cents

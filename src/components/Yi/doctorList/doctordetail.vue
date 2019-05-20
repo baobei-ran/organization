@@ -158,7 +158,7 @@ export default {
     },
     methods: {
         initdata() {
-            let _this = this;
+            var _this = this;
                 _this.$http.post('/shv2/data/doc_look', _this.$route.query, function (res) { //  查看获取用户信息
                 console.log(res)
                     if (res.code == 1) {

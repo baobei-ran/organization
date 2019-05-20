@@ -23,15 +23,15 @@
                                 <label class="layui-form-label">关联时间</label>
                                 <div class="layui-input-block">
                                     <div class="layui-input-inline">
-                                        <input type="text" name="price_min" placeholder="yyyy-MM-dd" id="date" autocomplete="off" class="layui-input">
+                                        <input type="text" name="price_min" placeholder="请输入开始时间" id="date" autocomplete="off" class="layui-input">
                                     </div>
                                     <div class="layui-form-mid">-</div>
                                     <div class="layui-input-inline">
-                                        <input type="text" name="price_max" placeholder="yyyy-MM-dd" id="date1" autocomplete="off" class="layui-input">
+                                        <input type="text" name="price_max" placeholder="请输入结束时间" id="date1" autocomplete="off" class="layui-input">
                                     </div>
                                 </div>
                             </div>
-                            <div class="fl">
+                            <div class="fl Mg-R20">
                                 <div class="layui-inline lay_width">
                                     <label class="layui-form-label">业务状态</label>
                                     <select name="city" v-model="list.state" class="select_class">
@@ -44,7 +44,7 @@
                                 </div>
                             </div>
                             <div class="fl">
-                                <div class="layui-input-inline">
+                                <div class="layui-input-inline ">
                                     <span class="Ft-S14 selectbtn ac pointer" @click="search">查询</span>
                                 </div>
                             </div>
@@ -62,7 +62,7 @@
                                 <td>操作</td>
                             </tr>
                         </thead>
-                        <tbody v-show="tableList">
+                        <tbody v-show="tableList.length">
                             <tr v-for="(val,index) in tableList">
                                 <td>{{index+1}}</td>
                                 <td><i class="icon_star" v-show="val.down_hid==hid"></i>{{val.dname}}</td>
@@ -80,13 +80,13 @@
                                 </td>
                             </tr>
                         </tbody>
-                        <tbody v-show="!tableList">
+                        <tbody v-show="!tableList.length">
                             <tr>
                                 <td colspan="6">暂无数据</td>
                             </tr>
                         </tbody>
                     </table>
-                    <div id="page" class="ac Mg-T30"></div>
+                    <div id="page" v-show="tableList.length" class="ac Mg-T30"></div>
                 </div>
             </div>
         </div>
@@ -107,7 +107,7 @@ export default {
                 page: 1,
                 limit: 10
             },
-            tableList: '',
+            tableList: [],
             headernum: '',
             hid: this.localstorage.get('logindata').hid,
             htype:''
@@ -122,7 +122,7 @@ export default {
             this.initdata(num, 1)
         },
         initdata(type, num) {
-            let _this = this;
+            var _this = this;
             layui.use(["laypage", "layer", "laydate", "element"], function () {
                 var element = layui.element;
                 var laypage = layui.laypage;
@@ -165,7 +165,7 @@ export default {
             });
         },
         page(total) {
-            let _this = this;
+            var _this = this;
             layui.use(["laypage", "layer", "element"], function () {
                 var element = layui.element;
                 var laypage = layui.laypage;

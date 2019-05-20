@@ -112,13 +112,13 @@ export default {
     methods: {
         cancelTest() {  // 关闭审核通过提示
             this.tests = !this.tests
-            let self = this;
+            var self = this;
             self.$http.post('/shv2/recipe/recipe_if', {}, function (res) {
                 console.log(res)
             }, function (err) { })
         },
         initdata() {   // 数据
-            let _this = this;
+            var _this = this;
             layui.use("layer", function () {
                 var layer = layui.layer;
                 _this.$http.post('/shv2/Recipe/recipe_doc',{}, function (res) {//
@@ -135,7 +135,7 @@ export default {
             this.go('/server/Yaodoctorprescription/prescriptionApply')
         },
         pageFun(total) {    // 分页
-            let _this = this;
+            var _this = this;
             layui.use(["laypage", "layer", "element"], function () {
                 var element = layui.element;
                 var laypage = layui.laypage;

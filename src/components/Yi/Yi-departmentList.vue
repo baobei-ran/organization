@@ -56,7 +56,7 @@
                             </tr>
                         </tbody>
                     </table>
-                    <div id="page" class="ac Mg-T30"></div>
+                    <div id="page" v-show="tableList.length" class="ac Mg-T30"></div>
                 </div>
             </div>
         </div>
@@ -71,7 +71,7 @@ export default {
             name: '',   // 搜索框内容
             page: 1,
             limit: 10,
-            tableList: ''   // 数据列表
+            tableList: []   // 数据列表
         }
     },
     mounted() {
@@ -79,11 +79,12 @@ export default {
     },
     methods: {
         initdata(num) {
-            let _this = this;
+            var _this = this;
             layui.use(["laypage", "layer", "laydate", "element"], function () {
                 var element = layui.element;
                 _this.page = num;
                 _this.$http.post('/shv2/data/dep_list', { name: _this.name, page: _this.page, limit: _this.limit }, function (res) {//
+                console.log(res.data)
                     if (res.code == 1) {
                         _this.tableList = res.data;
                         if (num == 1) {
@@ -98,7 +99,7 @@ export default {
             });
         },
         pageFun(total) {    // 下一页和上一页
-            let _this = this;
+            var _this = this;
             layui.use(["laypage", "layer", "element"], function () {
                 var element = layui.element;
                 var laypage = layui.laypage;
@@ -118,7 +119,7 @@ export default {
             });
         },
         setdep_op(id, val) {   // 推荐按钮组
-            let _this = this;
+            var _this = this;
             val ? val = 1 : val = 0
             layui.use(["layer"], function () {
                 _this.$http.post('/shv2/data/dep_op', { id: id, val: val }, function (res) {//
@@ -137,7 +138,7 @@ export default {
             this.go('/data/departmentList/departmentEdit?id=' + id)
         },
         deldata(id) {   // 单条删除
-            let _this = this;
+            var _this = this;
             layui.use(["layer"], function () {
                 layui.layer.confirm('您确定要删除吗', {
                     btn: ['确定', '取消'] //按钮
