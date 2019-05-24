@@ -47,9 +47,8 @@ export default {
                 var exgphone = /^1(3|4|5|7|8|9)\d{9}$/;//手机号验证
                 var isNumber = /^\d{4}$/; //验证数字
                 var ispass = /^\d{6,12}$/; //验证密码
-
+                var userphone = $('#phone').val();
                 var checkpress = function () {
-                    console.log($('#phone').val())
                     if (!exgphone.test($('#phone').val())) {
                         layer.msg('请输入正确的手机号',{ icon: 2});
                         return false
@@ -66,8 +65,8 @@ export default {
                     return true
                 }
                 if (checkpress()) {
-                    _this.flag = true
-                    _this.$http.post('/shv2/login/login', { phone: $('#phone').val(), code: $('#code').val(), pwd: $('#pass').val() }, function (res) {// 登录
+                    _this.flag = true;
+                    _this.$http.post('/shv2/login/login', { phone: userphone, code: $('#code').val(), pwd: $('#pass').val() }, function (res) {// 登录
                         console.log(res)
                         _this.flag = false
                         if (res.code == 1) {

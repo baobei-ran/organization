@@ -397,8 +397,15 @@ export default {
         }
     },
     created() {
-        this.user_authentication()
-        
+        this.user_authentication();
+        var user = this.localstorage.get('logindata');
+        if (user && user.type != null ) {
+            var type = Number(user.type)                // 根据type来区分医院 药店菜单
+            switch(type) {
+                case 1:  this.sliderMenu = true; break;   // 医院 
+                case 8:  this.sliderMenu = false; break;  // 药店菜单
+            }
+        }
     },
     mounted() {
         this.hospitalName = this.localstorage.get('logindata') ? this.localstorage.get('logindata') : '';
@@ -426,7 +433,7 @@ export default {
         '$route': ['tabListActive', 'isLogon'],
     },
     updated () {    // URL 变化，样式跟随变化
-        this.listStyle()
+        this.listStyle();
     },
     methods: {
         isLogon () {    // 检测是否登录
@@ -437,6 +444,7 @@ export default {
                     this.$router.replace('/login')
                 }
             }
+           
         },
         user_authentication () {
             var user = this.localstorage.get('logindata');
@@ -508,13 +516,6 @@ export default {
             this.$router.replace('/login')
         }
         
-        if (user && user.type != null ) {
-            var type = Number(user.type)                // 根据type来区分医院 药店菜单
-            switch(type) {
-                case 1:  this.sliderMenu = true; break;   // 医院 
-                case 8:  this.sliderMenu = false; break;  // 药店菜单
-            }
-        }
         },
         listStyle () { // URL 变化，样式跟随变化
             var li = $('.floor_container>li');

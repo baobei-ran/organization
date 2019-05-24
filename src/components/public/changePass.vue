@@ -106,10 +106,11 @@ export default {
                     $('.getcode').text("(" + time1 + "s)重获");
                 }, 1000);
                 _this.$http.post('/shv2/Alidayu/sendSMS', { telphone: _this.phone }, function (res) {//
+                console.log(res)
                     if (res.code == 1) {
-                        layer.msg(res.code);
+                        layer.msg('验证码已发送');
                     } else {
-                        layer.msg(res.code);
+                        layer.msg(res.msg);
                     }
                 }, function (err) { console.log(err) });
             })

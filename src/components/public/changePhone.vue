@@ -81,7 +81,7 @@ export default {
                 
                 _this.$http.post('/shv2/Alidayu/sendSMS', { telphone: _this.phone }, function (res) {//
                     if (res.code == 1) {
-                        layer.msg(res.msg)
+                        layer.msg('验证码已发送')
                     } else {
                         layer.msg(res.msg)
                     }

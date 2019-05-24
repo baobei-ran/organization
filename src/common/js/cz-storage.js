@@ -1,6 +1,7 @@
 /**
  * 使用 html5 提供的 localStorage来缓存数据
  **/
+/*
 var SPLIT_STR = '@'
 var localStorage = window.localStorage
 
@@ -28,7 +29,7 @@ function getProcess(type) {
 }
 
 export default {
-  get(key) {
+  get:function (key) {
     var stringData = localStorage.getItem(key)
     if (stringData) {
       var dataArray = stringData.split('@')
@@ -45,7 +46,7 @@ export default {
     }
     return null
   },
-  put(key, value, expired) { // expired 过期时间 单位天 默认是100 上线测试没问题替换旧的设值
+  put: function (key, value, expired) { // expired 过期时间 单位天 默认是100 上线测试没问题替换旧的设值
     var type = typeof value
     var process = getProcess(type)
     if (!expired) { // 默认不传 不过期
@@ -56,10 +57,46 @@ export default {
     }
     localStorage.setItem(key, value)
   },
-  clear() {
+  clear: function () {
     localStorage.clear()
   },
-  remove(key) {
+  remove: function (key) {
     localStorage.removeItem(key)
   }
 }
+   */
+
+
+
+
+/**
+ * 使用 html5 提供的 localStorage来缓存数据
+ * 
+ * function isIE() { //检测是否ie?
+      if (!!window.ActiveXObject || "ActiveXObject" in window) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+ **/
+var localStorage = window.localStorage;
+export default {
+  get:function (key) {
+    var stringData = localStorage.getItem(key)
+    var val = JSON.parse(decodeURIComponent(stringData))
+    return val
+  },
+  put: function (key, value, expired) {
+    console.log(expired)
+    var val = JSON.stringify(value)
+    localStorage.setItem(key, encodeURIComponent(val))
+  },
+  clear: function () {
+    localStorage.clear()
+  },
+  remove: function (key) {
+    localStorage.removeItem(key)
+  }
+}
+

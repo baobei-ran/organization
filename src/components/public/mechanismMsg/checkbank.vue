@@ -310,7 +310,7 @@ export default {
                                     console.log('通过')
                                     return 
                                 }
-                                var isF = _this.localstorage.put('flag', '1', 1);
+                                var isF = _this.localstorage.put('flag', '1');
                                 function refresh(){
                                     window.location.reload();
                                     console.log('test')
@@ -324,7 +324,7 @@ export default {
                                     console.log('通过')
                                     return 
                                 }
-                                var isF = _this.localstorage.put('flag2', '2', 1);
+                                var isF = _this.localstorage.put('flag2', '2');
                                     function refresh(){
                                         window.location.reload();
                                         console.log('test')

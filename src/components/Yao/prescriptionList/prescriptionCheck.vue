@@ -275,6 +275,7 @@ export default {
                 // useCORS: true // 【重要】开启跨域配置
             };
             html2canvas(shareContent,opts).then(function(canvas) {
+               
                 var url = canvas.toDataURL();
                 var triggerDownload = $("<a>").attr("href", url).attr("download", "处方单.png").appendTo("body");
                 triggerDownload[0].click();

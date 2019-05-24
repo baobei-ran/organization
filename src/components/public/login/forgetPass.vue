@@ -108,6 +108,8 @@ export default {
                     _self.$http.post('/shv2/Alidayu/sendSMS', { telphone: $('#phone').val() }, function (res) {//
                         if (res.code == 1) {
                             
+                        } else {
+                            
                         }
                     }, function (err) { console.log(err) });
                 });

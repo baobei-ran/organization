@@ -195,8 +195,8 @@ export default {
             auditingmsg: '',
             ishospital: this.$route.query.hospital,
             isStatus: '',
-            isfalg: this.localstorage.get('flag'),
-            isfalg2: this.localstorage.get('flag2')
+            isfalg: this.localstorage.get('flagYao'),
+            isfalg2: this.localstorage.get('flagYao2')
         }
     },
     created() {
@@ -237,7 +237,7 @@ export default {
                                     console.log('通过')
                                     return 
                                 }
-                                var isF = _this.localstorage.put('flag', '1', 1);
+                                var isF = _this.localstorage.put('flagYao', '1');
                                 function refresh(){
                                     window.location.reload();
                                     console.log('test')
@@ -250,7 +250,7 @@ export default {
                                 console.log('test')
                                 return 
                             }
-                            var isF = _this.localstorage.put('flag2', '2', 1);
+                            var isF = _this.localstorage.put('flagYao2', '2');
                             function refresh(){
                                 window.location.reload();
                                 console.log('test')
