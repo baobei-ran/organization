@@ -93,10 +93,8 @@
                     <td width="160px" class="Ft-S14 Color_black" align="right">
                         <span class="Color_red">*</span> 获取经纬度：
                     </td>
-                    <td class="Pd-L40 Ft-S16 Color_gray6">
-                        X<input type="text" id="" v-model="lat" placeholder="经度" style="width: 100px;" class="Mg-L10 Mg-R10" />-&nbsp;Y<input type="text" id="" v-model="lng" placeholder="纬度" class="Mg-L10" style="width: 100px;" />
-                        <span class="getmap pointer"><i class="selectMap_icon"></i>点击获取经纬度</span>
-                        <div class=""></div>
+                    <td class="Pd-L40 Ft-S16 Color_gray6" >
+                        <Maps></Maps>
                     </td>
                 </tr>
                 <tr>
@@ -138,8 +136,12 @@
     </div>
 </template>
 <script>
+import Maps from '../map'
 export default {
     name: 'mechanismMsg',
+    components: {
+        Maps: Maps
+    },
     data() {
         return {
             centerDialogVisible: false,
@@ -161,7 +163,8 @@ export default {
             },
             gradeList: '',  // 医院等级
             typeList: '',    // 医院类型
-            disabled: false     // 按钮
+            disabled: false,     // 按钮
+           
         }
     },
     mounted() {
@@ -182,14 +185,7 @@ export default {
                     $('#showimg3').text('')
                 })
             })
-            var map = new AMap.Map("container", {   // 地图
-                resizeEnable: true,
-                zoom: 13
-            });
-            map.on('click', function (e) {
-                _this.lng=e.lnglat.getLng();
-                _this.lat=e.lnglat.getLat();
-            });
+            
            
             _this.$http.post('/shv2/Setting/hos_set',{}, function (res) {
                 console.log(res)
@@ -376,7 +372,7 @@ export default {
 #mechanismMsg {
     #container {
         width: 800px;
-        height: 200px;
+        height: 400px;
     }
     .mechanismMsg_tit {
         border-bottom: 1px solid #f1f2f9;
@@ -514,28 +510,7 @@ export default {
                 margin-top: 168px;
             }
         }
-        td {
-            .getmap {
-                color: #3196ff;
-                font-size: 12px;
-                .selectMap_icon {
-                    display: inline-block;
-                    width: 13px;
-                    height: 13px;
-                    position: relative;
-                    top: 2px;
-                    margin-left: 10px;
-                    margin-right: 3px;
-                    background: url(../../../common/image/icon/icon_zuobiao.png)
-                        no-repeat;
-                }
-            }
-            .next_textarea {
-                resize: none;
-                width: 120%;
-                height: 160px;
-            }
-        }
+       
         .onsubmit {
             width: 110px;
             height: 40px;
@@ -548,6 +523,8 @@ export default {
             border: none;
             margin-bottom: 46px;
         }
+
+        
     }
 }
 </style>

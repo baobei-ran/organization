@@ -35,7 +35,7 @@
                         <input type="text" id="" v-model="tabledata.mobile" maxlength="11" placeholder="请输入联系电话" style="width: 500px;" />
                     </td>
                 </tr>
-                <tr class="" height="60px">
+                <!-- <tr class="" height="60px">
                     <td width="160px" class="Ft-S14 Color_black" align="right">
                         <span class="Color_red">*</span> 是否为合作机构：
                     </td>
@@ -45,7 +45,7 @@
                             <input type="radio" v-model="tabledata.ablock" name="tuij" value="2" id="close" title="否"><label for="close" class="pointer"><span style="position:relative;top:2px">否</span></label>
                         </div>
                     </td>
-                </tr>
+                </tr> -->
                 <tr class="" height="60px">
                     <td width="160px" class="Ft-S14 Color_black" align="right">
                         <span class="Color_red">*</span> 机构经营所在地：
@@ -99,16 +99,23 @@
                     <td width="160px" class="Ft-S14 Color_black" align="right">
                         <span class="Color_red">*</span> 获取经纬度：
                     </td>
-                    <td class="Pd-L40 Ft-S16 Color_gray6">
-                        X<input type="text" id="" v-model="lat" placeholder="经度" style="width: 100px;" class="Mg-L10 Mg-R10" />-&nbsp;Y<input type="text" id="" v-model="lng" placeholder="纬度" class="Mg-L10" style="width: 100px;" />
-                        <span class="getmap pointer"><i class="selectMap_icon"></i>点击获取经纬度</span>
-                        <div class=""></div>
+                    <td class="Pd-L40 Ft-S16 Color_gray6" id='map_box'>
+                        <div id='jingwei'>
+                            X<input type="text" id="" v-model="lat" placeholder="经度" style="width: 100px;" class="Mg-L10 Mg-R10" />-&nbsp;Y<input type="text" id="" v-model="lng" placeholder="纬度" class="Mg-L10" style="width: 100px;" />
+                            <span class="getmap pointer"><i class="selectMap_icon"></i>点击获取经纬度</span>
+                        </div>
+                        <div id="tips">
+                            <b>请输入关键字：</b>
+                            <input type="text" id="keyword" name="keyword" v-model='inputVal' autocomplete="off" v-on:keydown='selectAddress($event)' style="width: 95%;"/>
+                            <div id="result1" name="result1" ></div>
+                        </div>
                     </td>
                 </tr>
                 <tr>
                     <td></td>
-                    <td class="Pd-L40 Pd-B24">
+                    <td class="Pd-L40 Pd-B24" >
                         <div id="container"></div>
+                        
                     </td>
                 </tr>
                 <tr class="" height="60px">
@@ -155,7 +162,10 @@ export default {
             provinceList: '',
             cityList: '',
             countyList: '',
-            disabled: false             // 按钮
+            disabled: false,             // 按钮
+            Map_gd: '',                  // 地图
+            placeSearch: '',             // 搜索的容器
+            inputVal: '',                // 搜索的值
         }
     },
     mounted() {
@@ -169,17 +179,54 @@ export default {
                 var form = layui.form;
                 form.render()
             })
-            var map = new AMap.Map("container", {
+            this.Map_gd = new AMap.Map("container", {
                 resizeEnable: true,
                 zoom: 13
             });
-            map.on('click', function (e) {
+            this.Map_gd.on('click', function (e) {
                 _this.lng = e.lnglat.getLng();
                 _this.lat = e.lnglat.getLat();
             });
+             
+            AMap.service(["AMap.PlaceSearch"], function () {
+            //构造地点查询类
+                _this.placeSearch = new AMap.PlaceSearch({
+                    pageSize: 5, // 单页显示结果条数
+                    pageIndex: 1, // 页码
+                    citylimit: false,  //是否强制限制在设置的城市内搜索
+                    map: _this.Map_gd, // 展现结果的地图实例
+                    panel: "result1", // 结果列表将在此容器中进行展示。
+                    autoFitView: true, // 是否自动调整地图视野使绘制的 Marker点都处于视口的可见范围
+                    renderStyle: 'default'
+                });
+    
+            });
+            // 添加列表点选监听事件
+            AMap.event.addListener(_this.placeSearch, "selectChanged", _this.selectAddress);
+
         },
+        selectAddress (e) {  // 地图搜索
+                if (this.inputVal.length > 0) {
+                    this.placeSearch.search(this.inputVal);
+                    document.getElementById("result1").style.display = "block";
+                    
+                } else {
+                    document.getElementById("result1").style.display = "none";
+                }
+                if (e.selected) {
+                    var location = e.selected.data.location;
+                    console.log('lng',location.lng);
+                    console.log('lat',location.lat)
+                    this.lng = location.lng;
+                    this.lat = location.lat;
+                }
+                
+            
+            
+            
+        },  
         selectprovince() {//初始化下拉框 省份
-            var _this = this
+            var _this = this;
             this.$http.post('/shv2/Setting/area', { fid: 1 }, function (res) {
                 if (res.code == 1) {
                     _this.provinceList = res.data;
@@ -189,7 +236,8 @@ export default {
             })
         },
         selectcity(num) {//市
-            var _this = this
+            var _this = this;
+            _this.countyList = ''
             this.$http.post('/shv2/Setting/area', { fid: num }, function (res) {
                 if (res.code == 1) {
                     _this.cityList = res.data;
@@ -266,7 +314,7 @@ export default {
                 var fromdata = new FormData()
                 fromdata.append('name', _this.tabledata.name);
                 fromdata.append('mobile', _this.tabledata.mobile);
-                fromdata.append('ablock', _this.tabledata.ablock);
+                // fromdata.append('ablock', _this.tabledata.ablock);
                 fromdata.append('province', _this.tabledata.province);
                 fromdata.append('city', _this.tabledata.city);
                 fromdata.append('county', _this.tabledata.county);
@@ -291,8 +339,12 @@ export default {
                 })
             });
         },
+        
+        
     }
 }
+
+    
 </script>
 <style>
 .amap-sug-result {
@@ -389,10 +441,13 @@ input[type="radio"] {
 </style>
 
 <style scoped lang="less">
+select {
+    background-color: #fff;
+}
 #mechanismMsg {
     #container {
         width: 800px;
-        height: 200px;
+        height: 400px;
     }
     .mechanismMsg_tit {
         border-bottom: 1px solid #f1f2f9;
@@ -563,6 +618,48 @@ input[type="radio"] {
             font-size: 16px;
             border: none;
             margin-bottom: 46px;
+        }
+
+        #map_box {
+            height: 65px;
+            #jingwei {
+                float: left;
+                line-height: 65px;
+            }
+            #tips {
+                background-color:#fff;
+                border:1px solid #eee;
+                padding-left:10px;
+                padding-right:2px;
+                float: right;
+                min-height:65px;
+                font-size:12px;
+                border-radius:3px;
+                line-height:20px;
+                width:400px;
+                position: relative;
+                z-index: 3000;
+                #result1 {
+                    width: 400px;
+                    max-height: 200px;
+                    overflow: auto;
+                    position: absolute;
+                    top: 65px;
+                    left: 0;
+                    z-index: 3000;
+                    background-color: #FFF;
+                    padding: 5px 10px;
+                    display: none;
+                }
+            }
+
+            #tips > input[type="text"]{
+                height:25px;
+                border:1px solid #ccc;
+                padding-left:5px;
+                border-radius:3px;
+                outline:none;
+            }
         }
     }
 }

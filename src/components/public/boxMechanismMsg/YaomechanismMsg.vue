@@ -134,14 +134,15 @@
                         </div>
                         <div class="fl uploadimg Mg-R24">
                             <span class="Ft-S14" id="showimg6">点击上传</span> <input type="file" accept=".png,.jpg,.jpeg" id="otherpho" placeholder="" />
-                            <p class="Ft-S14 Color_gray6">其他相关证明*</p>
+                            <p class="Ft-S14 Color_gray6">其他相关证明</p>
                         </div>
                     </td>
                 </tr>
                 <tr class="">
                     <td width="160px" class="Ft-S14 Color_black" align="right">
                         <p style="position:relative;top:-39px">
-                            <span class="Color_red">*</span> 证件缺失申请：
+                            <!-- <span class="Color_red">*</span>  -->
+                            证件缺失申请：
                         </p>
                     </td>
                     <td class="Pd-L40 Ft-S16 Color_gray6">
@@ -390,7 +391,7 @@ export default {
                 $.each($('#otherpho').files, function (i, file) {
                     fromdata.append('rests[]', file);
                 });
-                $.each($('#uploadfile')[0].files, function (i, file) {//证件
+                $.each($('#uploadfile')[0].files, function (i, file) {  // 证件
                     fromdata.append('zjqs', file);
                 });
                 

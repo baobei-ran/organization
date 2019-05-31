@@ -141,7 +141,7 @@ Vue.use(Router);
       component: otherform
     },
     
-
+    // 医院机构信息
     {
       path: "/setting/boxMechanismMsg/mechanismNext",
       name: "机构信息第二步",

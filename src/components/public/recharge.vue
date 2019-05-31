@@ -152,6 +152,7 @@ export default {
                      var regex=/^[0]+/;
                      _this.price = _this.price.replace(regex,"");
                      _this.price =  _this.price.replace(/^\./g, '0.');
+                     _this.price =  _this.price.replace(/^\d$/g, '$1');
                 });
                 $("#money").on("input propertychange",function(event) {     // 输入的时候进行验证
                     this.value = this.value.replace(/^([1-9]\d*(\.[\d]{0,2})?|0(\.[\d]{0,2})?)[\d.]*/g, '$1');
