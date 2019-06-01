@@ -254,7 +254,9 @@ export default {
             })
         },
         selectcity(num) {//市
-            var _this = this
+            var _this = this;
+            this.formdata.city = '';
+            this.formdata.county = '';
             this.$http.post('/shv2/Setting/area', { fid: num }, function (res) {
                 if (res.code == 1) {
                     _this.cityList = res.data;
@@ -264,7 +266,8 @@ export default {
             })
         },
         selectcounty(num) { //区县
-            var _this = this
+            var _this = this;
+            this.formdata.county = '';
             this.$http.post('/shv2/Setting/area', { fid: num }, function (res) {
                 if (res.code == 1) {
                     _this.countyList = res.data;
