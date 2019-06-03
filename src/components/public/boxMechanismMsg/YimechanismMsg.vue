@@ -356,7 +356,7 @@ export default {
                 fromdata.append('county', _this.formdata.county);
                 fromdata.append('address', _this.formdata.address);
                 fromdata.append('ktime', $('#date').val());
-                fromdata.append('jtime', $('#date').val());
+                fromdata.append('jtime', $('#date1').val());
                 fromdata.append('method_name', _this.formdata.method_name);
                 fromdata.append('method_prove', _this.formdata.method_prove);
                 $.each($('#yyzz')[0].files, function (i, file) {

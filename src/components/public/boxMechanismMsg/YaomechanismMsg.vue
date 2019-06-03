@@ -121,13 +121,14 @@
                     <td class="Pd-L40 Ft-S16 Color_gray6 Pd-B30">
                         <p class="Color_red Pd-B12 Ft-S12">请上传小于5MB的jpg/jpeg/png格式的图片，图片细节必须清晰可见</p>
                         <div class="fl uploadimg Mg-R24">
+                            <span class="Ft-S14" id="showimg4">点击上传</span> <input type="file" accept=".png,.jpg,.jpeg" id="durgpho" placeholder="" />
+                            <p class="Ft-S14 Color_gray6">药品经营许可证<b class="Color_red">(必填)</b></p>
+                        </div>
+                        <div class="fl uploadimg Mg-R24">
                             <span class="Ft-S14" id="showimg3">点击上传</span> <input type="file" accept=".png,.jpg,.jpeg" id="gpspho" placeholder="" />
                             <p class="Ft-S14 Color_gray6">GSP认证证书*</p>
                         </div>
-                        <div class="fl uploadimg Mg-R24">
-                            <span class="Ft-S14" id="showimg4">点击上传</span> <input type="file" accept=".png,.jpg,.jpeg" id="durgpho" placeholder="" />
-                            <p class="Ft-S14 Color_gray6">药品经营许可证*</p>
-                        </div>
+                        
                         <div class="fl uploadimg Mg-R24">
                             <span class="Ft-S14" id="showimg5">点击上传</span> <input type="file" accept=".png,.jpg,.jpeg" id="docpho" placeholder="" />
                             <p class="Ft-S14 Color_gray6">药师资格证*</p>
@@ -359,6 +360,10 @@ export default {
                     layer.msg('请上传身份证反面', { icon: 2});
                     return false
                 }
+                if (!$('#durgpho').val()) {
+                    layer.msg('请上传药品经营许可证', { icon: 2});
+                    return false
+                }
 
                 var fromdata = new FormData()
                 fromdata.append('name', _this.formdata.name);
@@ -369,7 +374,7 @@ export default {
                 fromdata.append('county', _this.formdata.county);
                 fromdata.append('address', _this.formdata.address);
                 fromdata.append('ktime', $('#date').val());
-                fromdata.append('jtime', $('#date').val());
+                fromdata.append('jtime', $('#date1').val());
                 fromdata.append('method_name', _this.formdata.method_name);
                 fromdata.append('method_prove', _this.formdata.method_prove);
                 fromdata.append('area', _this.formdata.area);
@@ -380,24 +385,25 @@ export default {
                     fromdata.append('zcard', file);
                 });
                 $.each($('#idcardf')[0].files, function (i, file) {
+                    
                     fromdata.append('fcard', file);
                 });
-                $.each($('#gpspho').files, function (i, file) {
-                    fromdata.append('gsp[]', file);
+                $.each($('#gpspho')[0].files, function (i, file) {
+                   
+                    fromdata.append('gsp', file);
                 });
-                $.each($('#durgpho').files, function (i, file) {
-                    fromdata.append('yqjy[]', file);
+                $.each($('#durgpho')[0].files, function (i, file) {
+                    fromdata.append('yqjy', file);
                 });
-                $.each($('#docpho').files, function (i, file) {
-                    fromdata.append('yszkz[]', file);
+                $.each($('#docpho')[0].files, function (i, file) {
+                    fromdata.append('yszkz', file);
                 });
-                $.each($('#otherpho').files, function (i, file) {
-                    fromdata.append('rests[]', file);
+                $.each($('#otherpho')[0].files, function (i, file) {
+                    fromdata.append('rests', file);
                 });
                 $.each($('#uploadfile')[0].files, function (i, file) {  // 证件
                     fromdata.append('zjqs', file);
                 });
-                
                 _this.$http.upload('/shv2/Setting/add_drug', fromdata, function (res) {
                     console.log(res)
                     if (res.code == 1) {

@@ -38,12 +38,17 @@ export default {
             resizeEnable: true,
             zoom: 13
         });
-        this.map.on('click', function (e) {
-            _this.lng=e.lnglat.getLng();
-            _this.lat=e.lnglat.getLat();
-        });
+            this.map.on('click', function (e) {
+                _this.lng=e.lnglat.getLng();
+                _this.lat=e.lnglat.getLat();
+                _this.jingweidu()
+            });
+      
     },
     methods: {
+        jingweidu () {
+            this.$emit('jingzhun', { lng: this.lng ,lat: this.lat, } )
+        },
         selectAddres: function (e) {
             var keywords = this.inputVal;
             var auto, _this = this;
@@ -120,6 +125,7 @@ export default {
                                 // console.log(lng_str, lat_str)
                                 self.lng = lng_str;
                                 self.lat = lat_str;
+                                self.jingweidu()
                             };
                             AMap.event.addListener(mar, "mouseover", aa);
                         }

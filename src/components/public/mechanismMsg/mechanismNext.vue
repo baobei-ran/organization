@@ -94,7 +94,7 @@
                         <span class="Color_red">*</span> 获取经纬度：
                     </td>
                     <td class="Pd-L40 Ft-S16 Color_gray6" >
-                        <Maps></Maps>
+                         <Maps @jingzhun='jingzhun'></Maps>
                     </td>
                 </tr>
                 <tr>
@@ -174,6 +174,11 @@ export default {
         }
     },
     methods: {
+        jingzhun (data) {
+            console.log(data)
+            this.lng = data.lng;
+            this.lat = data.lat
+        },
         initdata() {
             var _this=this;
             layui.use(["layer", "form"], function () {

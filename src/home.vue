@@ -63,9 +63,9 @@
                 </div>
             </div>
         </div>
-        <div style="position:absolute; z-index:6666;width:100%">
+        <!-- <div style="position:absolute; z-index:6666;width:100%">
             <router-view name="login" />
-        </div>
+        </div> -->
 
     </div>
 </template>
@@ -347,7 +347,15 @@ export default {
                         {
                             title:'处方单列表',
                             url: '/server/YaoprescriptionList'
-                        }
+                        },
+                        // {
+                        //     title:'合作医生',
+                        //     url: '/server/Yaodoctorprescription'
+                        // },
+                        // {
+                        //     title:'电子处方',
+                        //     url: '/server/YaoprescriptionList'
+                        // }
                     ]
                 },
                 {
@@ -414,7 +422,7 @@ export default {
         layui.use('element', function () {
             var element = layui.element;
         })
-        $('#viewheight').css('height', window.innerHeight - 84);
+        $('#viewheight').css('height', window.innerHeight - 54);
         window.onresize = () => {
             if (document.body.clientWidth < 1200) {//页面width发生变化
                 if (this.$route.path == '/') {

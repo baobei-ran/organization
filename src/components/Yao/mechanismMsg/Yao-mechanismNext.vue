@@ -100,7 +100,8 @@
                         <span class="Color_red">*</span> 获取经纬度：
                     </td>
                     <td class="Pd-L40 Ft-S16 Color_gray6" id='map_box'>
-                        <div id='jingwei'>
+                            <Maps @jingzhun='jingzhun'></Maps>
+                        <!-- <div id='jingwei'>
                             X<input type="text" id="" v-model="lat" placeholder="经度" style="width: 100px;" class="Mg-L10 Mg-R10" />-&nbsp;Y<input type="text" id="" v-model="lng" placeholder="纬度" class="Mg-L10" style="width: 100px;" />
                             <span class="getmap pointer"><i class="selectMap_icon"></i>点击获取经纬度</span>
                         </div>
@@ -108,7 +109,7 @@
                             <b>请输入关键字：</b>
                             <input type="text" id="keyword" name="keyword" v-model='inputVal' autocomplete="off" v-on:keydown='selectAddress($event)' style="width: 95%;"/>
                             <div id="result1" name="result1" ></div>
-                        </div>
+                        </div> -->
                     </td>
                 </tr>
                 <tr>
@@ -139,8 +140,12 @@
     </div>
 </template>
 <script>
+import Maps from "../../public/map"
 export default {
     name: 'mechanismMsg',
+    components: {
+        Maps: Maps
+    },
     data() {
         return {
             lng: '',
@@ -170,9 +175,14 @@ export default {
     },
     mounted() {
         this.selectprovince();
-        this.initdata();
+        // this.initdata();
     },
     methods: {
+        jingzhun (data) {
+            console.log(data)
+            this.lng = data.lng;
+            this.lat = data.lat
+        },
         initdata() {
             var _this = this;
             layui.use(["layer", "form"], function () {
