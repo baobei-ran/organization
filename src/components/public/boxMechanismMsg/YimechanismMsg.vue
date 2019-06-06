@@ -29,7 +29,7 @@
                     </td>
                     <td class="Pd-L40 Ft-S16 Color_gray6">
                         <div class="layui-input-inline">
-                            <input type="text" v-model="formdata.number" maxlength="20" placeholder="请输入营业执照号" style="width: 500px;" />
+                            <input type="text" v-model="formdata.number" placeholder="请输入营业执照号" style="width: 500px;" />
                         </div>
                     </td>
                 </tr>

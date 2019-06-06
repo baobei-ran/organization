@@ -29,7 +29,7 @@ import Yaoequipmenjl from "@/components/Yao/equipmenApply/equipmenjl"; //记录
 
 
 // 药店路由
-const Yaoprescription = () => import('@/components/Yao/Yao-prescription' /* webpackChunkName: "prescription" */ );       // 处方医生列表资料上传
+const Yaoprescription = () => import('@/components/Yao/Yao-prescription' /* webpackChunkName: "prescription" */);       // 处方医生列表资料上传
 const PrescriptionList = () => import('@/components/Yao/prescription/prescriptionList' /* webpackChunkName: "prescription" */);  // 处方单申请页
 const PrescriptionApply = () => import('@/components/Yao/prescription/prescriptionApply' /* webpackChunkName: "prescription" */); // 处方单申请列表页
 const PrescriptionRecords = () => import('@/components/Yao/prescription/prescriptionRecords' /* webpackChunkName: "prescription" */); // 处方单记录

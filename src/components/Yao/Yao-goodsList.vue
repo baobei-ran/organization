@@ -10,7 +10,7 @@
                     <li @click="tab(3)">已售罄（{{ goodCount.count3 }}）</li>
                     <li @click="tab(4)">待审核（{{ goodCount.count4 }}）</li>
                     <li @click="tab(5)">审核未通过（{{ goodCount.count5 }}）</li>
-                    <p class="fr Ft-S14 Color_blue"><span class="Mg-R24 pointer"><i class="upfile_icon"></i>批量上传</span><span class="pointer" @click="go('/jgmall/goodsList/addGoods')"><i class="add_icon"></i>新增商品</span></p>
+                    <p class="fr Ft-S14 Color_blue"><span class="Mg-R24 pointer" @click='data_uploading'><i class="upfile_icon"></i>批量上传</span><span class="pointer" @click="go('/jgmall/goodsList/addGoods')"><i class="add_icon"></i>新增商品</span></p>
                 </ul>
 
 
@@ -309,6 +309,78 @@
                 </tbody>
             </table>
         </div>
+
+        <!-- 批量上传 -->
+        <div id="uploading" class="hide">
+            <div class="uploading_title">
+                <h2>批量上传</h2>
+                <span>下载表格</span>
+            </div>
+            <div class="uploading_msg">
+                <p>批量上传注意事项：</p>
+                <div>
+                    <p>上传表格推荐*.csv格式；<br/>
+                    上传表格字段包括：类别、名称、批准文号、零售价、库存、是否处方药；<br/>
+                    请保证字段名称一致(如下图)，否则上传失败，或直接下载表格</p>
+                    <table width="100%">
+                        <tr>
+                            <td class="Color_black Ft-S16" width="90px"><span class="Color_red">*</span>配送公司</td>
+                            <td><input type="text" ></td>
+                        </tr>
+                        <tr>
+                            <td class="Color_black Ft-S16"><span class="Color_red">*</span>物流单号</td>
+                            <td><input type="text" ></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <p class="clear">
+                <span ><input type="file" id="up_file" class="hide"><label for='up_file' class="cancel pointer" >选择文件</label></span>
+                <span ><button :class="{'send pointer': flag}" >确认上传</button></span>
+            </p>
+        </div>
+        <!-- 上传中 loding -->
+        <div id="uploading_loding" class="hide">
+            <el-progress :text-inside="true" :stroke-width="26" :percentage="lodings"></el-progress>
+            <p>上传中42%，请勿关闭窗口</p>
+        </div>
+        <!-- 上传失败 loding -->
+        <div id="uploading_defeated" class="hide">
+            <el-progress :text-inside="true" :stroke-width="26" :percentage="lodings" :color="customColor"></el-progress>
+            <p><i>!</i>上传失败，请重新上传</p>
+            <span ><button class="pointer" @click='close_shade'>我知道了</button></span>
+        </div>
+        <!-- 上传结果 -->
+        <div id="uploading_success" class="hide">
+            <p class="uploading_success_title">药品库未匹配到药品图片19条，请手动添加</p>
+            <div class="uploading_success_file">
+                <div class="file_box">
+                    <ul v-for='val in 10'>
+                        <li><span>土霉素片</span></li>
+                        <li>国药准字H20190102</li>
+                        <li><img src="../../common/image/icon/pic_xsp.png" alt=""></li>
+                        <li><span class="pointer">手动添加</span></li>
+                    </ul>
+                </div>
+            </div>
+            <p class="uploading_success_title">药品库未匹配到药品23条，请稍后在商品列表添加</p>
+            <p class="uploading_success_msg">上传成功1900条商品信息！</p>
+            <span ><button class="pointer" >下一步</button></span>
+        </div>
+        <!-- 上传分类 -->
+        <div id='uploading_classify'>
+            <ul>
+                <li>抗菌用药</li>
+                <li>家庭设备</li>
+                <li>情趣用品</li>
+                <li>情趣用品</li>
+                <li>青霉素</li>
+                <li>抗菌用药</li>
+                <li>家庭设备</li>
+                <li>情趣用品</li>
+            </ul>
+            <span><button class="pointer" >完成导入</button></span>
+        </div>
     </div>
 </template>
 <script>
@@ -335,7 +407,10 @@ export default {
             number: '',     // 商品编号
             record: [],      // 记录列表
             tabShen: true,   // 审核
-            multipleSelection: []   // 选中的值进行保存
+            multipleSelection: [],   // 选中的值进行保存
+            flag: false,             // 确认上传按钮
+            lodings: 0,
+            customColor: '#F09F88'
         }
     },
     mounted() {
@@ -564,7 +639,119 @@ export default {
                 }, function (err) { console.log(err)})
             
             });  
+        },
+
+        data_uploading () {  // 批量上传
+            var _this = this;
+            // layui.use(["layer"], function () {
+            //     var layer = layui.layer;
+            //     var $ = layui.jquery;
+            //     layer.open({
+            //         type: 1,
+            //         shade: 0.2,
+            //         shadeClose: true,
+            //         closeBtn: 1,
+            //         title: "",
+            //         content: $("#uploading"),
+            //         area: ["60%", "440px"],
+            //         cancel: function () { 
+            //             _this.data_loding()
+            //         }
+            //     });
+            //     $(".layui-layer-title").css({
+            //         height: "50px",
+            //         background: "#ECF2FB",
+            //         "line-height": "50px",
+            //         fontSize: '18px'
+            //     });
+            //     $(".layui-layer-setwin").css("top", "19px");
+            // });
+
+            //  layui.use(["layer"], function () {    // 上传结果
+            //     var layer = layui.layer;
+            //     var $ = layui.jquery;
+            //     layer.open({
+            //         type: 1,
+            //         shade: 0.2,
+            //         shadeClose: true,
+            //         closeBtn: 1,
+            //         title: '上传结果',
+            //         content: $("#uploading_success"),
+            //         area: ["47%", "460px"],
+            //     });
+            //     $(".layui-layer-title").css({
+            //         height: "50px",
+            //         background: "#E7F3FF",
+            //         "line-height": "50px",
+            //         fontSize: '18px',
+            //         padding: '0 80px 0 40px'
+            //     });
+            //     $(".layui-layer-setwin").css("top", "19px");
+            // });
+        
+            layui.use(["layer"], function () {    // 上传分类
+                var layer = layui.layer;
+                var $ = layui.jquery;
+                layer.open({
+                    type: 1,
+                    shade: 0.2,
+                    shadeClose: false,
+                    closeBtn: 1,
+                    title: '上传分类确认',
+                    content: $("#uploading_classify"),
+                    area: ["47%", "276px"],
+                });
+                $(".layui-layer-title").css({
+                    height: "50px",
+                    background: "#E7F3FF",
+                    "line-height": "50px",
+                    fontSize: '18px',
+                    padding: '0 80px 0 40px'
+                });
+                $(".layui-layer-setwin").css("top", "19px");
+            });
+        },
+
+        data_loding () {
+            // layui.use(["layer"], function () {
+            //     var layer = layui.layer;
+            //     var $ = layui.jquery;
+            //     layer.open({             // 上传进度弹框
+            //         type: 1,
+            //         shade: 0.2,
+            //         shadeClose: false,
+            //         closeBtn: 0,
+            //         title: '',
+            //         content: $("#uploading_loding"),
+            //         area: ["40%", "160px"],
+            //     });
+            // });
+            layui.use(["layer"], function () {    // 失败弹框
+                var layer = layui.layer;
+                var $ = layui.jquery;
+                layer.open({
+                    type: 1,
+                    shade: 0.2,
+                    shadeClose: false,
+                    closeBtn: 0,
+                    title: '',
+                    content: $("#uploading_defeated"),
+                    area: ["40%", "230px"],
+                });
+            });
+
+           
+            this.lodings = 10
+        },
+        close_shade () {  // 关闭弹框
+            layui.use(["layer"], function () {
+                var layer = layui.layer;
+                layer.closeAll();
+            })
         }
+
+
+
     }
 }
 </script>
@@ -831,55 +1018,256 @@ export default {
             }
         }
     }
-}
-#sendgoods {
-    padding-left: 53px;
-    padding-right: 53px;
 
-    table {
-        tr {
-            height: 54px;
-            td {
-                input {
+    #uploading_loding {
+        background-color: #FFF;
+        display: none;
+        padding: 46px 60px;
+        p {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 16px;
+            color: #3196FF;
+        }
+    }
+
+    #uploading_defeated {
+        background-color: #FFF;
+        display: none;
+        padding: 46px 60px 0;
+        p {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 16px;
+            color: #FF2828;
+            > i {
+                font-style: normal;
+                display: inline-block;
+                width: 17px;
+                height: 17px;
+                border-radius: 100%;
+                border: 1px solid #FF2828;
+                color: #FF2828;
+                line-height: 16px;
+                font-size: 12px;
+                margin-right: 5px;
+            }
+        }
+        span {
+            display: block;
+            text-align: center;
+            margin-top: 40px;
+            button {
+                width: 140px;
+                height: 44px;
+                background-color: #3196FF;
+                color: #FFF;
+                border:0;
+                -webkit-border-radius: 4px;
+                -ms-border-radius: 4px;
+                border-radius: 4px;
+            }
+        }
+    }
+
+    #uploading_success {   // 上传结果
+        width: 100%;
+        padding: 0 40px;
+        display: none;
+        .uploading_success_title {
+            color: #FF2929;
+            font-size: 14px;
+            padding: 20px 0px 14px;
+        }
+        .uploading_success_file {
+            height: 200px;
+            overflow: auto;
+            .file_box {
+                width: 100%;
+                border: 1px solid #E6E6E6;
+                padding: 10px 0;
+                > ul {
                     width: 100%;
-                    height: 40px;
-                    padding-left: 10px;
-                    border-radius: 3px;
+                    overflow: hidden;
+                    li {
+                        float: left;
+                        height: 46px;
+                        line-height: 46px;
+                        font-size: 14px;
+                        color: #666;
+                        margin: 0 7px;
+                        > img {
+                            width: 32px;
+                            height: 34px;
+                        }
+                    }
+                    li:last-child {
+                        color: #3196FF;
+                    }
                 }
-                input,
-                input:hover,
-                input:focus {
-                    border: 1px solid #c2c3c3;
-                }
-                .tan_icon {
-                    background: url(../../common/image/icon/icon_hxcw.png)
-                        no-repeat;
-                    width: 13px;
-                    height: 13px;
-                    display: inline-block;
-                    position: relative;
-                    z-index: 66;
-                    top: 2px;
-                    margin-right: 4px;
+            }
+        }
+        .uploading_success_msg {
+            padding: 0px 0px 20px;
+            color: #333;
+            font-size: 14px;
+        }
+        >span {
+            display: block;
+            text-align: right;
+            button {
+                width: 130px;
+                height: 40px;
+                border:0;
+                background-color: #3196FF;
+                color: #FFF;
+                -webkit-border-radius: 4px;
+                -o-border-radius: 4px;
+                -ms-border-radius: 4px;
+                -moz-border-radius: 4px;
+                border-radius: 4px
+            }
+        }
+    }
+
+    // 上传分类
+    #uploading_classify {
+        padding: 0 40px;
+        display: none;
+        > ul {
+            width: 100%;
+            overflow: hidden;
+            li {
+                float: left;
+                width: 100px;
+                height: 32px;
+                text-align: center;
+                line-height: 32px;
+                background-color: #EEEEEE;
+                color: #333;
+                font-size: 14px;
+                margin: 12px 6px 0;
+                -webkit-border-radius: 4px;
+                border-radius: 4px;
+            }
+        }
+        >span {
+            display: block;
+            text-align: right;
+            margin-top: 30px;
+            button {
+                width: 120px;
+                height: 40px;
+                border:0;
+                background-color: #3196FF;
+                color: #FFF;
+                -webkit-border-radius:4px;
+                border-radius:4px;
+            }
+        }
+    }
+}
+#uploading {
+    width:100%;
+    .uploading_title {
+        width: 100%;
+        overflow: hidden;
+        padding: 20px 40px;
+        background-color: #E7F3FF;
+        h2 {
+            font-size: 18px;
+            color: #333;
+            float: left;
+        }
+        span {
+            float: left;
+            color: #3196FF;
+            display: block;
+            line-height: 24px;
+            margin-left:20px;
+            padding-left: 25px;
+            cursor: pointer;
+            background: url('../../common/image/icon/icon_xzbg.png') no-repeat left center;
+        }
+    }
+    .uploading_msg {
+        width: 100%;
+        padding: 24px 40px;
+        overflow: hidden;
+       > p {
+            float: left;
+            color: #666;
+            font-size: 14px;
+        }
+        >div {
+            float: left;
+            >p {
+                color: #333;
+                font-size: 14px;
+                line-height: 22px;
+            }
+            table {
+                tr {
+                    height: 54px;
+                    td {
+                        input {
+                        
+                            height: 40px;
+                            padding-left: 10px;
+                            border-radius: 3px;
+                        }
+                        input,
+                        input:hover,
+                        input:focus {
+                            border: 1px solid #c2c3c3;
+                        }
+                        .tan_icon {
+                            background: url(../../common/image/icon/icon_hxcw.png)
+                                no-repeat;
+                            width: 13px;
+                            height: 13px;
+                            display: inline-block;
+                            position: relative;
+                            z-index: 66;
+                            top: 2px;
+                            margin-right: 4px;
+                        }
+                    }
                 }
             }
         }
     }
+    .clear {
+        width: 100%;
+        text-align: right;
+        padding: 32px 42px;
+    }
     button {
-        width: 160px;
-        height: 46px;
+        width: 140px;
+        height: 44px;
+        -webkit-border-radius: 4px;
         border-radius: 4px;
         border: none;
-        font-size: 18px;
+        font-size: 16px;
         margin-top: 46px;
+        margin-left: 24px;
+        color: #fff;
+        background-color: #CCCCCC;
     }
     .cancel {
         border: 1px solid #128dff;
-        color: #128dff;
-        background: #fff;
+        color: #FFF;
+        width: 140px;
+        height: 44px;
+        -webkit-border-radius: 4px;
+        border-radius: 4px;
+        text-align: center;
+        font-size: 16px;
+        line-height: 44px;
+        background: #3196FF;
+        display: inline-block;
     }
     .send {
-        color: #fff;
         background: #128dff;
     }
 }

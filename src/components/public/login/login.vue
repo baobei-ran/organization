@@ -44,7 +44,7 @@ export default {
             var _this = this;
             layui.use(["layer"], function () {
                 var layer = layui.layer;
-                var exgphone = /^1(3|4|5|7|8|9)\d{9}$/;//手机号验证
+                var exgphone = /^1(3|4|5|6|7|8|9)\d{9}$/;//手机号验证
                 var isNumber = /^\d{4}$/; //验证数字
                 var ispass = /^\d{6,12}$/; //验证密码
                 var userphone = $('#phone').val();

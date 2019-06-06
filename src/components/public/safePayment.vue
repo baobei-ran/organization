@@ -149,7 +149,7 @@ export default {
 
                 var noneclick = false;
                 $("#getcode").on("click", function () {
-                    var isphone = /^1[34578]\d{9}$/;
+                    var isphone = /^1[3456789]\d{9}$/;
                     if (!isphone.test($('#layerphone').val())) {
                         layer.msg("请输入确的手机号");
                         return;
@@ -175,7 +175,7 @@ export default {
                 });
 
                 $(".onsubmit").on("click", function () {
-                    var isphone = /^1[34578]\d{9}$/;
+                    var isphone = /^1[3456789]\d{9}$/;
                     var pattern = /^([1-9]{1})(\d{14}|\d{18})$/;
 
                     if ($("#khbank").val() == "请选择开户行") {

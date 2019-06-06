@@ -1,14 +1,14 @@
 import axios from "axios";
-var baseURL="https://www.yunyikang.cn"//正式
-// var baseURL = "http://test99.yunyikang.cn"; // 测试
+// var baseURL= "https://www.yunyikang.cn" // 正式
+var baseURL = "http://test99.yunyikang.cn"; // 测试
 // var baseURL="http://192.168.8.107"//
 
 
 axios.defaults.retry = 3;           //  发起请求次数
 axios.defaults.retryDelay = 2000;   //  每次请求时间
 
-import { Loading } from 'element-ui';
-var loadingInstance;
+// import { Loading } from 'element-ui';
+// var loadingInstance;
 axios.defaults.withCredentials = true;
 var http = axios.create({
   baseURL: baseURL,
@@ -17,15 +17,19 @@ var http = axios.create({
   },
   transformRequest: [
     function(data) {    // 处理，转换成字符串
-      var newData = "";
-      for (var k in data) {
-        if (data.hasOwnProperty(k) === true) {
-          newData += encodeURIComponent(k) + "=" + encodeURIComponent(data[k]) + "&";
+      if (typeof data === 'object') {
+        var newData = "";
+        for (var k in data) {
+          if (data.hasOwnProperty(k) === true) {
+            newData += encodeURIComponent(k) + "=" + encodeURIComponent(data[k]) + "&";
+          }
         }
+        newData = newData.substr(0, newData.length - 1)
+        console.log('obj:'+newData)
+        return newData;
       }
-      newData = newData.substr(0, newData.length - 1)
-      // console.log(newData)
-      return newData;
+      console.log('obj2:'+data)
+      return data;
     }
   ]
 });

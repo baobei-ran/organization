@@ -59,7 +59,7 @@ export default {
             var _this=this
             //获取验证码
             layui.use(["layer"], function () {
-                var isphone = /^1[34578]\d{9}$/;
+                var isphone = /^1[3456789]\d{9}$/;
                 if (!isphone.test($("#phone").val())) {
                     layer.msg("请输入正确的手机号");
                     return;

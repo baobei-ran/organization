@@ -303,7 +303,7 @@ export default {
                 });
 
                 var checkpress = function () {//验证
-                    var isphone = /^1[345789]\d{9}$/;
+                    var isphone = /^1[3456789]\d{9}$/;
                     // var codeNum = /^\d{6}$/;
                     var passNum = /^\d{6}$/;
                     var num = ""; //密码
@@ -402,7 +402,7 @@ export default {
 
                 $("#getcode").on("click", function () {
                     //获取验证码
-                    var isphone = /^1[345789]\d{9}$/;
+                    var isphone = /^1[3456789]\d{9}$/;
                     if (!isphone.test($("#phone").val())) {
                         layer.msg("请输入正确的手机号");
                         return;

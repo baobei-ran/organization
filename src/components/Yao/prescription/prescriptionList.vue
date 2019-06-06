@@ -1,10 +1,67 @@
 <template>
     <div id="orderList">
-        <div class="pass_test" v-if='tests'>
-            <span>您好，您的资料已审核通过！</span>
-            <button class="layui-btn layui-btn-sm layui-btn-normal" @click='cancelTest'>我知道了</button>
+        <div class="orderList_msg">
+            <div class="pass_test" >
+                <span>服务说明</span>
+                <p>云医康合作医生服务上线了，药店可选择云医康平台医生并申请合作，医生可为合作药店开具线上处方，增加药店的药品经营范围；合作医生在问诊过程中，若患者需要相应的药品治疗，医生可向患者推荐药店的药品。</p>
+                <p>药店可为店铺商品，设定佣金比例，医生向患者推荐药品，患者支付后，将按此比例向医生支付佣金，医生也将根据佣金比例范围及处方需求数量，选择是否与药店进行合作。</p>
+                <button class="pointer" @click='cancelTest'></button>
+            </div>
         </div>
-        <div  class="bg_f"  style="height:100%">
+
+         <div class="tab_content Pd-L24 Pd-R24">
+            <div class="layui-tab Pd-T24">
+                <ul class="layui-tab-title">
+                    <li class="layui-this" @click="tab(0)">合作中医生</li>
+                    <li @click="tab(1)">申请记录</li>
+                    <li @click="tab(2)">合作终止记录</li>
+                </ul>
+                <div class="layui-tab-content">
+                   
+                    <table class="layui-table" lay-skin="">
+                        <thead>
+                            <tr class="Color_black table_headtr ac">
+                                <td class="firstheadtd">序号</td>
+                                <td>医生姓名</td>
+                                <td>职称</td>
+                                <td>科室</td>
+                                <td>执业医院</td>
+                                <td>合作时间</td>
+                                <td>开具处方数量</td>
+                                <td>操作</td>
+                            </tr>
+                        </thead>
+                        <tbody v-if='tableList.length'>
+                            <tr class="table_con Color_black ac" v-for='(val,i) in 4' :key='i'>
+                                <td>{{ i+1 }}</td>
+                                <td>李大大
+                                    <img style="width:40px;height:14px;" src="../../../common/image/icon/icon_tzz.png" alt="">
+                                </td>
+                                <td>主任医师</td>
+                                <td>心内科</td>
+                                <td>北京同仁医院</td>
+                                <td>2019-02-02</td>
+                                <td>3</td>
+                                <td>
+                                    <span class="pointer Ft-S14 Color_blue al" style="width:80px;margin:0 auto" @click="doc_detail(val.id)">查看</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tbody v-else>
+                            <tr class="table_con Color_black ac" >
+                                <td colspan='7'>暂无数据</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div id="page" v-show='tableList.length' class="ac Mg-T30"></div>
+                </div>
+            </div>
+        </div>
+
+
+
+        
+        <!-- <div  class="bg_f"  style="height:100%">
         <p class="orderList_tit Color_black Ft-S16 Pd-T24 Pd-B24 Pd-L24">
             <span>处方单医生列表</span>
             <span class="btn_r">
@@ -68,7 +125,7 @@
             </p>
         </div>
        
-    </div>
+    </div> -->
 
     </div>
 </template>
@@ -110,6 +167,15 @@ export default {
        
     },
     methods: {
+        tab:function (n) {  // nav切换
+            console.log(n)
+        },
+        doc_detail:function (id) {  // 查看
+
+        },
+
+
+        // 一下为以前的数据 //////////////////////////////////////////////////////////////////////
         cancelTest() {  // 关闭审核通过提示
             this.tests = !this.tests
             var self = this;
@@ -217,13 +283,44 @@ export default {
 <style scoped lang="less">
 #orderList {
     height: 100%;
-    .pass_test {
-        color: #3196FF;
-        padding: 18px 24px;
-        background: rgb(234,244,255);
-        border: 1px solid #3196FF;
+    .orderList_msg {
+        padding: 24px;
+      .pass_test {
+        
+        padding: 24px 26px;
+        background: #FFF;
+        border: 1px dashed #DDDDDD;
+        -webkit-border-radius:4px;
+        border-radius:4px;
         margin-bottom: 20px;
+        position: relative;
+        span{
+            color:#333;
+            font-size: 18px;
+            padding-left: 24px;
+            background: url('../../../common/image/icon/icon_fwsm.png') no-repeat left center;
+            background-size: 20%;
+            
+        }
+        p {
+            margin-top: 20px;
+            color: #666666;
+            line-height: 24px;
+        }
+        >button {
+            position: absolute;
+            right:0;
+            bottom: 0;
+            width: 40px;
+            height: 40px;
+            background: url('../../../common/image/icon/icon_sq.png') no-repeat;
+            background-size: 100% 100%;
+            border:0;
+            font-size: 12px;
+        }
     }
+    }
+    
     .orderList_tit {
         border-bottom: 1px solid #e6e6e6;
         
@@ -270,8 +367,6 @@ export default {
                     }
                 }
                 tbody {
-                    .table_con {
-                        background: #fff;
                         tr:nth-child(even) {
                             background: #E5F0FF;
                         }
@@ -292,8 +387,6 @@ export default {
                                 }
                             }
                         }
-                        
-                    }
                 }
             }
         }

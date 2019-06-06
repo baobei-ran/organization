@@ -340,22 +340,22 @@ export default {
                             title: '设备申请',
                             url: '/server/YaoequipmenApply',
                         },
-                        {
-                            title: '处方单医生列表',
-                            url: '/server/Yaodoctorprescription',
-                        },
-                        {
-                            title:'处方单列表',
-                            url: '/server/YaoprescriptionList'
-                        },
                         // {
-                        //     title:'合作医生',
-                        //     url: '/server/Yaodoctorprescription'
+                        //     title: '处方单医生列表',
+                        //     url: '/server/Yaodoctorprescription',
                         // },
                         // {
-                        //     title:'电子处方',
+                        //     title:'处方单列表',
                         //     url: '/server/YaoprescriptionList'
-                        // }
+                        // },
+                        {
+                            title:'合作医生',
+                            url: '/server/Yaodoctorprescription'
+                        },
+                        {
+                            title:'电子处方',
+                            url: '/server/YaoprescriptionList'
+                        }
                     ]
                 },
                 {
@@ -586,9 +586,11 @@ export default {
         },
         initdata() {
             this.ShowMenu = false;
+            console.log(this.$route.query)
             if (this.$route.query.login) {
-                this.$router.go(0)
+                // this.$router.go(0)
                 this.go('/')
+                window.location.reload()
             }
             var rzstatus = this.localstorage.get('logindata');
             if (rzstatus) {     // 判断是否审核通过
@@ -703,6 +705,10 @@ export default {
 @font16: 16px; //16px文字大小
 @font18: 18px; //18px文字大小
 @font14: 14px; //14px文字大小
+
+.hide {
+  display: none !important;
+}
 //左浮动
 .float(left) {
     float: left;
