@@ -43,7 +43,6 @@
     </div>
 </template>
 <script>
-import { fail } from 'assert';
 export default {
         data () {
             return {

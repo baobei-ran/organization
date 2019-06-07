@@ -142,7 +142,7 @@ export default {
 
                 // 提交按钮
                 $("#addbackpublic").on("click", function () {   
-                    var isphone = /^1[345789]\d{9}$/;
+                    var isphone = /^1[3456789]\d{9}$/;
                     var pattern = /^([1-9]{1})(\d{14}|\d{18})$/;
                     var isIDCard = /^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/;
                     // if (!$("#name").val()) {

@@ -1,4 +1,5 @@
 import axios from "axios";
+
 var baseURL = "https://www.yunyikang.cn" // 正式
 // var baseURL = "http://test99.yunyikang.cn"; // 测试
 // var baseURL="http://192.168.8.107"//
@@ -24,7 +25,7 @@ var http = axios.create({
         }
       }
       newData = newData.substr(0, newData.length - 1)
-      // console.log(newData)
+      console.log('obj:'+newData)
       return newData;
     }
     return data;

@@ -87,7 +87,7 @@ export default {
             var _this = this
             //获取验证码
             layui.use(["layer"], function () {
-                var isphone = /^1[34578]\d{9}$/;
+                var isphone = /^1[3456789]\d{9}$/;
                 if (this.noneclick) {
                     return;
                 }

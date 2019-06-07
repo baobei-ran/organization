@@ -82,7 +82,7 @@ export default {
                 var layer = layui.layer;
                 var noneclick = false;
                 $("#sendCode").on("click", function () {
-                    var isphone = /^1[345789]\d{9}$/;
+                    var isphone = /^1[3456789]\d{9}$/;
                     if (!isphone.test($('#phone').val())) {
                         layer.msg("请输入确的手机号",{icon:2});
                         return;
