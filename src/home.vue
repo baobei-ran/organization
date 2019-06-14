@@ -72,7 +72,7 @@
 
 <script>
 export default {
-    name: "App",
+    name: "home",
     data() {
         return {
             SidebarList: [
@@ -340,21 +340,13 @@ export default {
                             title: '设备申请',
                             url: '/server/YaoequipmenApply',
                         },
-                        // {
-                        //     title: '处方单医生列表',
-                        //     url: '/server/Yaodoctorprescription',
-                        // },
-                        // {
-                        //     title:'处方单列表',
-                        //     url: '/server/YaoprescriptionList'
-                        // },
                         {
                             title:'合作医生',
                             url: '/server/Yaodoctorprescription'
                         },
                         {
                             title:'电子处方',
-                            url: '/server/YaoprescriptionList'
+                            url: '/server/YaoprescriptionListPic'
                         }
                     ]
                 },
@@ -706,8 +698,8 @@ export default {
 @font18: 18px; //18px文字大小
 @font14: 14px; //14px文字大小
 
-.hide {
-  display: none !important;
+.Color_blue {
+    color: #3196FF;
 }
 //左浮动
 .float(left) {

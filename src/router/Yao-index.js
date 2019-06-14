@@ -28,14 +28,24 @@ import Yaoequipmenjl from "@/components/Yao/equipmenApply/equipmenjl"; //记录
 
 
 
+
 // 药店路由
-const Yaoprescription = () => import('@/components/Yao/Yao-prescription' /* webpackChunkName: "prescription" */);       // 处方医生列表资料上传
-const PrescriptionList = () => import('@/components/Yao/prescription/prescriptionList' /* webpackChunkName: "prescription" */);  // 处方单申请页
-const PrescriptionApply = () => import('@/components/Yao/prescription/prescriptionApply' /* webpackChunkName: "prescription" */); // 处方单申请列表页
-const PrescriptionRecords = () => import('@/components/Yao/prescription/prescriptionRecords' /* webpackChunkName: "prescription" */); // 处方单记录
+const Termination = () => import('../components/Yao/prescription/termination.vue' /* webpackChunkName: "prescription" */);              // 合作医生-- 处方单终止医生信息
+const Yaoprescription = () => import('@/components/Yao/Yao-prescription' /* webpackChunkName: "prescription" */);                       // 
+const PrescriptionApply = () => import('@/components/Yao/prescription/prescriptionApply' /* webpackChunkName: "prescription" */);       // 处方单申请列表页
+const PrescriptionRecords = () => import('@/components/Yao/prescription/prescriptionRecords' /* webpackChunkName: "prescription" */);   // 处方单记录
+
 const AddApply = () => import('@/components/Yao/prescription/addApply' /* webpackChunkName: "prescription" */);  // 创建处方单
+
+const PrescriptionListPic = () => import('@/components/Yao/Yao-prescriptionPic' /* webpackChunkName: "prescription" */);  // 处方单申请页
 const YaoprescriptionList = () => import('@/components/Yao/Yao-prescriptionList' /* webpackChunkName: "prescription" */);  // 处方单列表
-const PrescriptionCheck = () => import('@/components/Yao/prescriptionList/prescriptionCheck' /* webpackChunkName: "prescription" */);   //  处方单审核
+const PrescriptionCheck = () => import('@/components/Yao/prescriptionList/prescriptionCheck' /* webpackChunkName: "prescription" */);        //  处方单审核
+const PrescriptionPicShen = () => import('@/components/Yao/prescriptionList/prescriptionPicShen' /* webpackChunkName: "prescription" */);    // 处方医生列表资料上传审核
+const PrescriptionSetting = () => import('@/components/Yao/prescriptionList/prescriptionSetting' /* webpackChunkName: "prescription" */);    // 处方设置
+const PrescriptionSet = () => import('@/components/Yao/prescriptionList/commons/prescription_set' /* webpackChunkName: "prescription" */);    // 处方设置修改
+
+// const ListOfPrescription = () => import('@/components/Yao/prescriptionList/listOfprescription' /* webpackChunkName: "prescription" */);   //  处方列表
+
 
 export default [
     {
@@ -161,16 +171,17 @@ export default [
 
 
 
-    // 处方
+    // 合作医生
+    {
+        path: '/server/Yaodoctorprescription/termination:id?',
+        name: '处方单终止医生信息',
+        component: Termination
+    },
+    
     {
         path: '/server/Yaodoctorprescription',
-        name: '处方单医生资料上传',
-        component: Yaoprescription
-    },
-    {
-        path: '/server/Yaodoctorprescription/prescriptionList',
         name: '处方单医生列表',
-        component: PrescriptionList
+        component: Yaoprescription
     },
     {
         path: '/server/Yaodoctorprescription/prescriptionApply',
@@ -178,23 +189,47 @@ export default [
         component: PrescriptionApply
     },
     {
-        path: '/server/Yaodoctorprescription/prescriptionRecords',
+        path: '/server/Yaodoctorprescription/prescriptionRecords:id?',
         name: '处方单申记录',
         component: PrescriptionRecords
     },
+    
+
+    // 电子处方
+
     {
-        path: '/server/Yaodoctorprescription/addApply',
-        name: '创建处方单',
-        component: AddApply
+        path: '/server/YaoprescriptionListPic',
+        name: '处方单医生资料上传',
+        component: PrescriptionListPic
     },
     {
-        path: '/server/YaoprescriptionList',
+        path: '/server/YaoprescriptionListPic/prescriptionPicShen',
+        name: '处方单医生资料上传审核',
+        component: PrescriptionPicShen
+    },
+    {
+        path: '/server/YaoprescriptionListPic/YaoprescriptionList',
         name: '处方单列表',
         component: YaoprescriptionList
     },
     {
-        path: '/server/YaoprescriptionList/prescriptionCheck',
+        path: '/server/YaoprescriptionListPic/prescriptionCheck:id?',
         name: '处方单详情',
         component: PrescriptionCheck
+    },
+    {
+        path: '/server/YaoprescriptionListPic/addApply',
+        name: '创建处方单',
+        component: AddApply 
+    },
+    {
+        path: '/server/YaoprescriptionListPic/prescriptionSetting',
+        name: '处方设置',
+        component: PrescriptionSetting
+    },
+    {
+        path: '/server/YaoprescriptionListPic/prescriptionset',
+        name: '处方设置修改',
+        component: PrescriptionSet
     },
 ]

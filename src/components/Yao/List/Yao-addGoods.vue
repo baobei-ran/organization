@@ -1,12 +1,22 @@
 <template>
     <div id="addGoods" style="height:100%">
-        <p class="Color_black Ft-S16 Pd-T24 Pd-B24 Pd-L24 Pd-R24 Mg-B24 clear bg_f"><span class="fl">创建商品/增加商品</span><span class="fr onbtn pointer">
-                <el-button type="primary" :loading="disabled" :disabled='disabled' style='vertical-align: top;'  class="layui-btn site-demo-layedit rightBtn btn_preserve" data-type='content'>保存</el-button>
-            </span><span class="fr cancelbtn Mg-R24 pointer" @click='back'>取消</span></p>
+        <p class="Color_black Ft-S16 Pd-T24 Pd-B24 Pd-L24 Pd-R24 clear bg_f"><span class="fl">创建商品/增加商品</span>
+        <span class="fr onbtn pointer">
+            <el-button type="primary" :loading="disabled" :disabled='disabled' style='vertical-align: top;'  class="layui-btn site-demo-layedit rightBtn btn_preserve" data-type='content'>保存</el-button>
+        </span><span class="fr cancelbtn Mg-R24 pointer" @click='back'>取消</span></p>
+        <div class="Pd-L24" style="width: 300px;height:40px;">
+            <el-input placeholder="请输入批准文号搜索" @blur="searchdata" v-model="searchVal" class="input-with-select">
+                <el-button slot="append" @click='searchdata' icon="el-icon-search"></el-button>
+            </el-input>
+        </div>
         <div class="layui-row layui-col-space22 head_msg">
             <div class="layui-col-md8">
                 <div class="bg_f Mg-B24">
-                    <p class="orderList_tit Color_black Ft-S16 Pd-T24 Pd-B24 Pd-L24">商品信息</p>
+                        <p class="orderList_tit Color_black Ft-S16 Pd-T24 Pd-B24 Pd-L24" >
+                        商品信息
+                        </p>
+                        
+
                     <div class="layui-row order_datail  Pd-L24 Pd-R24">
                         <div class="layui-col-md12 layui-col-sm12">
                             <form class="layui-form" action="">
@@ -14,7 +24,17 @@
                                     <tr>
                                         <td width="10%">商品分类</td>
                                         <td>
-                                            <div class="layui-input-inline" style="width:23%">
+                                            <div class="layui-input-inline" style="width:200px">
+                                                <el-select v-model='classId' placeholder="暂无分类" >
+                                                    <el-option
+                                                    v-for="item in className"
+                                                    :key="item.id"
+                                                    :label="item.name"
+                                                    :value="item.id">
+                                                    </el-option>
+                                                </el-select>
+                                            </div>
+                                            <!-- <div class="layui-input-inline" style="width:23%">
                                                 <el-select v-model='classId' placeholder="请选择一级分类" @change='merchandise'>
                                                     <el-option
                                                     v-for="item in className"
@@ -53,10 +73,10 @@
                                                     :value="item.id">
                                                     </el-option>
                                                 </el-select>
-                                            </div>
+                                            </div> -->
                                         </td>
                                     </tr>
-                                    <tr>
+                                    <!-- <tr>
                                         <td>商品品牌</td>
                                         <td>
                                             <div class="layui-input-inline" style="width:28%">
@@ -70,16 +90,16 @@
                                                 </el-select>
                                             </div>
                                         </td>
-                                    </tr>
+                                    </tr> -->
                                     <tr>
                                         <td>商品名称</td>
                                         <td>
-                                            <div style="max-width:500px">
+                                            <div style="max-width:200px">
                                                 <input type="text" name="title" v-model='name' required lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
                                             </div>
                                         </td>
                                     </tr>
-                                    <tr>
+                                    <!-- <tr>
                                         <td>商品副标题</td>
                                         <td>
                                             <div style="max-width:500px">
@@ -95,13 +115,13 @@
                                             </div>
                                             <p style="color:rgba(102,102,102,1);line-height:24px;margin-bottom: 10px;font-size:12px">每个标签请使用英文“,"分隔，用户可通过搜索标签查找是商品</p>
                                         </td>
-                                    </tr>
-                                    <tr style="height:182px">
-                                        <td style="display:inline-block;vertical-align: top; width:100%">
+                                    </tr> -->
+                                    <tr style="height:182px;">
+                                        <td style="display:inline-block;vertical-align: middle;margin-top: 15px; width:100%">
                                             <p>商品图片</p>
                                         </td>
-                                        <td>
-                                            <div class="layui-input-inline" id='fileList'>
+                                        <td >
+                                            <div style='margin-top: 15px;' class="layui-input-inline" id='fileList'>
                                                 <!-- 主图片上传 -->
                                                 <div class="layui-input-inline uploadimg Mg-R10" id='files1'>
                                                     <div><span class="Ft-S14">点击上传</span> <input id='zhuFile' type="file" class="pointer" placeholder="" /></div>
@@ -110,7 +130,7 @@
                                                 </div>
                                                 <!--    剩余五张图片 -->
                                                 
-                                                <div class="layui-input-inline uploadimg Mg-R10 hide" >
+                                                <!-- <div class="layui-input-inline uploadimg Mg-R10 hide" >
                                                     <div><span class="Ft-S14">点击上传</span> <input id='zhuFile2' type="file" class="pointer" placeholder="" /></div>
                                                     <img style='width: 145px;height: 147px;border-radius: 4px;' id='zhuImg2' src="" alt="">
                                                     <label class="zhuFileLabel" for="zhuFile2">重新上传</label>
@@ -134,11 +154,11 @@
                                                     <div><span class="Ft-S14">点击上传</span> <input id='zhuFile6' type="file" class="pointer" placeholder="" /></div>
                                                     <img style='width: 145px;height: 147px;border-radius: 4px;' id='zhuImg6' src="" alt="">
                                                     <label class="zhuFileLabel" for="zhuFile6">重新上传</label>
-                                                </div>
+                                                </div> -->
 
 
                                             </div>
-                                            <p class="layui-input-inline Ft-S12 Color_gray6 Mg-T24" style="vertical-align: bottom;">最多上传6张图片（第一张为商品主图） 建议尺寸:750*750</p>
+                                            <p class="layui-input-inline Ft-S12 Color_gray6 Mg-T24" style="vertical-align: bottom;">（商品主图） 建议尺寸:750*750</p>
                                         </td>
                                     </tr>
                                 </table>
@@ -180,19 +200,16 @@
                 </div>
             </div>
         </div>
-                        <div class="bg_f Mg-B24 Pd-L24 Pd-B12 Pd-T12">
+                <!-- <div class="bg_f Mg-B24 Pd-L24 Pd-B12 Pd-T12">
                     <form class="layui-form" action="">
                         <table>
                             <tr>
                                 <td width="40%">
                                     <span class="Mg-R30">运费设置</span>
-                                    <!-- <input type="checkbox" name="price" title="全国包邮" lay-skin="primary" checked> -->
                                     <input type="radio" name="price" value="3" title="全国包邮" checked>
                                 </td>
                                 <td width="40%" class="">
-                                    <!-- <input type="checkbox" name="price" title="默认运费" lay-skin="primary"> -->
                                     <input type="radio" name="price" value="1" v-model='yunfei' title="默认运费" >
-                                    <!-- <span>默认运费：</span> -->
                                     <input style="width:100px;border:1px solid rgba(194,194,195,1);height:36px;padding-left:10px" :disabled='!yunfei'
                                         onkeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))"
                                      v-model='setPrice' type="number" placeholder="¥">
@@ -200,7 +217,7 @@
                             </tr>
                         </table>
                     </form>
-                </div>
+                </div> -->
                 <div class="bg_f Mg-B24">
                     <p class="orderList_tit Color_black Ft-S16 Pd-T24 Pd-B24 Pd-L24">商品属性</p>
                     <div class="layui-row order_datail  Pd-L24 Pd-R24">
@@ -215,24 +232,33 @@
                                             <input type="radio" name="recipe" value="0" title="非处方" >
                                         </td>
                                     </tr>
-                                    <tr>
+                                    <!-- <tr>
                                         <td>包装</td>
                                         <td>
                                             <input type="radio" name="pack" value="2" title="盒装" checked>
                                             <input type="radio" name="pack" value="1" title="袋装">
                                         </td>
-                                    </tr>
-                                    <tr>
+                                    </tr> -->
+                                    <tr >
                                         <td>剂型</td>
                                         <td>
-                                            <input type="radio" name="type" value="丸剂" title="丸剂" checked>
+                                            <!-- <input type="radio" name="type" value="丸剂" title="丸剂" checked>
                                             <input type="radio" name="type" value="颗粒剂" title="颗粒剂" >
                                             <input type="radio" name="type" value="片剂" title="片剂">
                                             <input type="radio" name="type" value="胶囊" title="胶囊" >
-                                            <input type="radio" name="type" value="口服液体制剂" title="口服液体制剂" >
+                                            <input type="radio" name="type" value="口服液体制剂" title="口服液体制剂" > -->
+                                            <div class="layui-input-inline" style="width:200px">
+                                                <el-select v-model='brandId' placeholder="请选择商品品牌" >
+                                                    <el-option
+                                                    v-for="item in brand"
+                                                    :key="item.id"
+                                                    :label="item.name"
+                                                    :value="item.id">
+                                                    </el-option>
+                                                </el-select>
+                                            </div>
                                         </td>
                                     </tr>
-                                    
                                     <tr class="trTxt">
                                         <td>通用名称</td>
                                         <td>
@@ -286,16 +312,7 @@
                                              <input type="text" name="title" v-model='cautions' required lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
                                         </td>
                                     </tr>
-                                    <tr class="trTxt">
-                                        <td>批准文号</td>
-                                        <td>
-                                            <input type="text" name="title" v-model='code' required lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
-                                        </td>
-                                        <td>生产厂商</td>
-                                        <td>
-                                            <input type="text" name="title" v-model='enterprise' required lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
-                                        </td>
-                                    </tr>
+                                    
                                     <tr class="trTxt">
                                         <td>相互作用</td>
                                         <td>
@@ -304,6 +321,16 @@
                                         <td>有效期</td>
                                         <td>
                                              <input type="text" name="title" v-model='uselife' required lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+                                        </td>
+                                    </tr>
+                                    <tr class="trTxt">
+                                        <td>生产厂商</td>
+                                        <td>
+                                            <input type="text" name="title" v-model='enterprise' required lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+                                        </td>
+                                        <td></td>
+                                        <td>
+                                            <!-- <input type="text" name="title" v-model='code' required lay-verify="required" placeholder="" autocomplete="off" class="layui-input"> -->
                                         </td>
                                     </tr>
                                 </table>
@@ -320,20 +347,20 @@
                                     <tr>
                                         <td width="80px">商品售价</td>
                                         <td>
-                                            <div style="width:35%">
+                                            <div style="width:25%">
                                                 <input type="number" name="title" v-model='money' required lay-verify="required" placeholder="￥" autocomplete="off" class="layui-input">
                                             </div>
                                         </td>
                                     </tr>
 
-                                    <tr>
+                                    <!-- <tr>
                                         <td>市场价</td>
                                         <td>
                                             <div style="width:35%">
                                                 <input type="number" name="title" v-model='marketvalue' required lay-verify="required" placeholder="￥" autocomplete="off" class="layui-input">
                                             </div>
                                         </td>
-                                    </tr>
+                                    </tr> -->
                                     <tr>
                                         <td>设置库存</td>
                                         <td>
@@ -351,7 +378,7 @@
                                     <tr>
                                         <td>商品货号</td>
                                         <td>
-                                            <div style="width:35%">
+                                            <div style="width:25%">
                                                 <input type="text" name="title" required lay-verify="required" placeholder="保存后系统自动生成" disabled autocomplete="off" class="layui-input">
                                             </div>
                                         </td>
@@ -447,6 +474,7 @@ export default {
             fPic4: '',           // 附图4
             fPic5: '',           // 附图5
             disabled: false,     // 按钮控制
+            searchVal: '',       // 搜索值
         }
     },
     created() {
@@ -461,12 +489,18 @@ export default {
             var _this = this;
             layui.use('form', function(){
                 var form = layui.form;
-                _this.$http.post('/shv2/goods/add_goodsInfo', {}, function (res) {
+                _this.$http.post('/shv2/goods/goods_type', {}, function (res) {  // 商品分类
+                console.log(res)
                 if (res.code == 1) {
-                    _this.brand = res.brand;
-                    _this.className = res.class;
-                    // console.log(_this.className)
+                    _this.className = res.data;
+                    console.log(_this.className)
                 }
+                // _this.$http.post('/shv2/goods/add_goodsInfo', {}, function (res) { // 旧的商品分类——1
+                // if (res.code == 1) {
+                //     _this.brand = res.brand;
+                //     _this.className = res.class;
+                //     // console.log(_this.className)
+                // }
                 // console.log(res)
             }, function (err) { console.log(err)})
             form.on('checkbox(check)', function(data){
@@ -495,7 +529,7 @@ export default {
                 $('#zhuImg').attr('src', window.URL.createObjectURL(this.files[0]))
                 $('#zhuImg').prev().hide()
                 $('#zhuImg').next().show()
-                $('#files1').next().show()
+                // $('#files1').next().show()
                  $.each($('#zhuFile')[0].files, function (i, file) {
                     _this.zPic = file
                 })
@@ -657,13 +691,15 @@ export default {
             } else if(!_this.name) {
                 layer.msg('请输入商品名称')
                 return false
-            } else if (!_this.ftitle) {
-                layer.msg('请输入商品副标题')
-                return
-            } else if (!_this.labelText) {
-                layer.msg('请输入商品标签')
-                return
-            } else if (!_this.zPic) {
+            } 
+            // else if (!_this.ftitle) {
+            //     layer.msg('请输入商品副标题')
+            //     return
+            // } else if (!_this.labelText) {
+            //     layer.msg('请输入商品标签')
+            //     return
+            // } 
+            else if (!_this.zPic) {
                 layer.msg('请上传商品图片')
                 return
             } else if (_this.freight == 1 && !_this.setPrice) {
@@ -681,10 +717,12 @@ export default {
             } else if (!_this.untoward_effect) {
                 layer.msg('请输入不良反应')
                 return
-            } else if (!_this.package) {
-                layer.msg('请输入包装规格')
-                return
-            } else if (!_this.storage) {
+            }
+            //  else if (!_this.package) {
+            //     layer.msg('请输入包装规格')
+            //     return
+            // } 
+            else if (!_this.storage) {
                  layer.msg('请输入储藏条件')
                 return
             } else if (!_this.ingredient) {
@@ -715,10 +753,10 @@ export default {
                 layer.msg('请输入商品价格')
                 return
             } 
-            if (!_this.marketvalue ||  _this.marketvalue < 1 ) {
-                layer.msg('请输入市场价格')
-                return
-            } 
+            // if (!_this.marketvalue ||  _this.marketvalue < 1 ) {
+            //     layer.msg('请输入市场价格')
+            //     return
+            // } 
             if (!_this.repertory ||  _this.repertory < 1) {
                 layer.msg('请输入库存')
                 return
@@ -743,9 +781,9 @@ export default {
                 
                 formdata.append("id", _this.id);
                 formdata.append("one", _this.classId);
-                formdata.append('two', _this.classId2);
-                formdata.append('class', _this.classId3);
-                formdata.append('four', _this.classId4);
+                // formdata.append('two', _this.classId2);
+                // formdata.append('class', _this.classId3);
+                // formdata.append('four', _this.classId4);
                 formdata.append('brand', _this.brandId);
                 formdata.append('name', _this.name);
                 formdata.append('vicename', _this.ftitle);
@@ -800,6 +838,9 @@ export default {
                             resolve(res)
                 }, function (err) { reject(err) })
             })
+        },
+        searchdata () { // 搜索
+            console.log('souso')
         }
     }
 }

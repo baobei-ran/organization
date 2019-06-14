@@ -1,6 +1,7 @@
 <template>
     <div id="orderList" style="height:100%">
         <div class="bg_f">
+            <p class="orderList_tit Color_black Ft-S16 Pd-T24 Pd-B24 Pd-L24">处方申请</p>
             <ul class="Pd-T14 Pd-B14 header dis_f">
                 <li class="layui-input-block">
                     <label class="layui-form-label">请选择医生</label>
@@ -15,10 +16,17 @@
             </ul>
         </div>
         <div class="tab_content Mg-T20 bg_f">
-            <p class="orderList_tit Color_black Ft-S16 Pd-T24 Pd-B24 Pd-L24">患者数据录入</p>
+            <p class="orderList_tit Color_black Ft-S16 Pd-T24 Pd-B24 Pd-L24">患者信息</p>
             <div class="layui-tab Pd-L24 Pd-R30">
                 <div class="layui-tab-content ">
                     <ul class="screen_type Pd-T20 Pd-B24 dis_f">
+                         <li class="layui-inline Pd-L10">
+                            <span class="Color_red">*</span>
+                            <label>患者手机</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="" v-model='phone' autocomplete="off" class="layui-input">
+                            </div>
+                        </li>
                         <li class="layui-inline">
                             <span class="Color_red">*</span>
                             <label>患者姓名</label>
@@ -47,13 +55,7 @@
                             </div>
                         </li>
                         
-                        <li class="layui-inline Pd-L10">
-                            <span class="Color_red">*</span>
-                            <label>联系电话</label>
-                            <div class="layui-input-inline">
-                                <input type="text" name="" v-model='phone' autocomplete="off" class="layui-input">
-                            </div>
-                        </li>
+                       
 
                         
                     </ul>
@@ -82,7 +84,7 @@
                             </li>
                             <li>
                                 <label><span class="Color_red">*</span>症状</label>
-                                <textarea name="desc" required class="layui-textarea"  v-model='disease' placeholder="（必填）" ></textarea>
+                                <textarea name="desc" required class="layui-textarea"  v-model='disease' placeholder="（必填）请详细描述患者的疾病信息，医生将以此为依据判断能否开具处方" ></textarea>
                             </li>
                         </ul>
                     </div>
@@ -91,7 +93,7 @@
         </div>
         
         <div class="tab_content Mg-T20 bg_f ">
-            <p class="orderList_tit Color_black Ft-S16 Pd-T24 Pd-B24 Pd-L24"><span class="Color_red">*</span>处方药品</p>
+            <p class="orderList_tit Color_black Ft-S16 Pd-T24 Pd-B24 Pd-L24">处方药品 <span style='color: #808080;font-size: 12px;'>（可选择商城中的药品，也可以手动添加药品）</span></p>
             <div class="table_con">
                 <table class="layui-table" lay-skin="">
                     <thead>
@@ -99,6 +101,8 @@
                             <td class="firstheadtd">药品名称</td>
                             <td>药品数量</td>
                             <td>用法及用量</td>
+                            <td>厂家名称</td>
+                            <td></td>
                         </tr>
                     </thead>
                     <tbody >
@@ -112,6 +116,10 @@
                             <td>
                                 <input type="text" name="title" v-model="val.usage" lay-verify="required" placeholder="【用法及用量】" autocomplete="off" class="layui-input">
                             </td>
+                            <td>
+                                <input type="text" name="title" v-model="val.usage" lay-verify="required" placeholder="【厂家名称】" autocomplete="off" class="layui-input">
+                            </td>
+                            <td></td>
                         </tr>
                     </tbody>
                 </table>
@@ -120,14 +128,15 @@
                 </div>
             </div>
         </div>
-        <div class="tab_content Mg-T20 bg_f">
+        <p style='height: 24px;background-color: #F1F2F9;'></p>
+        <div class="tab_content ">
             <div class="dis_f msgs">
                 <label>药店留言</label>
                 <textarea name="desc" required class="layui-textarea" v-model='shop_word'  placeholder="（选填）" ></textarea>
             </div>
         </div>
-        <div class="returns Mg-T24">
-                <button class="layui-btn" @click='go("/server/Yaodoctorprescription/prescriptionList")'>取消</button>
+        <div class="returns">
+                <button class="layui-btn" @click='go("/server/YaoprescriptionListPic/YaoprescriptionList")'>取消</button>
                 <button class="layui-btn layui-btn-normal" :disabled='disabled' @click='submitdata'>立即提交</button>
         </div>
     </div>
@@ -157,7 +166,6 @@ export default {
             size: 3,                    // 处方药品的列表数量
             disabled: true,             // 按钮
             tablelist: [                // 获取处方药品的数据
-                {name: '', num: '', usage: ''},
                 {name: '', num: '', usage: ''},
                 {name: '', num: '', usage: ''},
             ]
@@ -295,6 +303,8 @@ export default {
 <style scoped lang="less">
  .returns {
     width:100%;
+    padding: 24px 0;
+    background-color: #F1F2F9;
     text-align: center;
     button:first-child {
         background: #fff;
@@ -306,6 +316,7 @@ export default {
     }
 }
 #orderList {
+    background-color: #F1F2F9;
     .header {
         >li {
             margin: 0;
@@ -420,6 +431,7 @@ export default {
         }
     }
     .tab_content {
+        margin-top: 24px;
         .layui-tab {
             .layui-tab-title {
                 font-size: 16px;

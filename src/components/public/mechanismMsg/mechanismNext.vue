@@ -126,9 +126,10 @@
                 <tr>
                     <td></td>
                     <td class="Pd-L44 Pd-T40">
-                        <button class="Ft-S16 onsubmit pointer" :disabled='disabled' @click="sunmithos">
+                        <!-- <button class="Ft-S16 onsubmit pointer" :disabled='disabled' @click="sunmithos">
                             提交信息
-                        </button>
+                        </button> -->
+                        <el-button type="primary" class="Ft-S16 onsubmit pointer" :disabled='disabled' @click="sunmithos" :loading="disabled">提交信息</el-button>
                     </td>
                 </tr>
             </table>
@@ -217,11 +218,6 @@ export default {
         },
         sunmithos() {//医院提交
             var _this = this;
-            this.disabled = true
-            var time = setTimeout(() => {
-                this.disabled = false
-                clearTimeout(time)
-            }, 3000);
             var regmail = /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/;
             var Regphone = /^((0\d{2,3}-\d{7,8})|(1[3456789]\d{9}))$/;
             var isguhua = /^([0-9]{3,4}-)?[0-9]{7,8}$/;
@@ -270,6 +266,7 @@ export default {
                     layer.msg('请添加照片',{icon:2});
                     return false
                 }
+                _this.disabled = true
                 var fromdata = new FormData()
                 fromdata.append('name', _this.tabledata.name);
                 fromdata.append('mobile', _this.tabledata.mobile);
@@ -294,6 +291,10 @@ export default {
                         
                     } else {
                         layer.msg('提交失败',{icon:2});
+                        var time = setTimeout(() => {
+                            _this.disabled = false
+                            clearTimeout(time)
+                        }, 1000);
                     }
                 })
             });
@@ -519,8 +520,6 @@ export default {
         .onsubmit {
             width: 110px;
             height: 40px;
-            line-height: 40px;
-            text-align: center;
             background: rgba(49, 150, 255, 1);
             border-radius: 4px;
             color: #fff;

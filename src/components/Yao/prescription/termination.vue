@@ -1,12 +1,8 @@
 <template>
+<!-- 终止合作的医生信息 -->
     <div id="orderList" style="height:100%">
         <div class="bg_f">
-            <p class="orderList_tit Color_black Ft-S16 Pd-T24 Pd-B24 Pd-L24">医生信息 
-                <span v-if='true'>
-                    <img style="width:40px;height:14px;" src="../../../common/image/icon/icon_tzz.png" alt="">
-                    <img class="icon_hover" src="../../../common/image/icon/icon_xqsm.png" alt="">
-                </span>
-            </p>
+            <p class="orderList_tit Color_black Ft-S16 Pd-T24 Pd-B24 Pd-L24">医生信息</p>
             <div class="orderList_msg dis_f">
                 <ul class="Pd-B24">
                     <li>
@@ -25,27 +21,24 @@
                         <span>所在科室</span>
                         <span>心内科</span>
                     </li>
-                    <li>
-                        <span>合作状态</span>
-                        <span>合作中</span>
-                    </li>
+                   
                 </ul>
                 <ul class="Pd-B24">
-                    <li>
-                        <span>开具处方数量</span>
-                        <span>4</span>
+                     <li>
+                        <span>合作状态</span>
+                        <span>合作终止</span>
                     </li>
                     <li>
-                        <span>合作申请方</span>
+                        <span>合作终止方</span>
                         <span>医生</span>
                     </li>
                     <li>
-                        <span>合作时间</span>
+                        <span>终止时间</span>
                         <span>2019-02-19</span>
                     </li>
                     <li>
-                        <span>处方服务时间</span>
-                        <span>星期一、星期二、星期四、星期五 8:00-20:00</span>
+                        <span>终止原因</span>
+                        <span>不想合作了，不喜欢这个药店！</span>
                     </li>
                 </ul>
             </div>
@@ -60,9 +53,6 @@
                                 <li class="layui-this" @click="tab(0)">处方记录</li>
                                 <li @click="tab(1)">药品推荐记录</li>
                             </ul>
-                            <p class="layui_right">
-                                <input type="search" placeholder="输入患者姓名搜索"/>
-                            </p>
                         </div>
                         <div class="layui-tab-content">
                             <!-- 1 -->
@@ -164,7 +154,6 @@
         </div>
         <div class="returns Mg-T24">
             <button class="layui-btn layui-btn-normal" @click='go("/server/Yaodoctorprescription")'>返回</button>
-            <button class="btn_termination" @click='order_termination'>申请终止合作</button>
         </div>
 
         <!-- 预览 -->
@@ -221,18 +210,7 @@
                 </ul>
             </div>
         </div>
-        <!-- 终止合作 -->
-        <div id="termination">
-            <h2>申请终止合作</h2>
-            <div class="termination_txt">
-                <p>请填写终止合作原因，待平台审核通过后，即可终止合作</p>
-                <textarea v-model="terminationText" placeholder="请填写终止合作原因，如医生开具处方时间较长等"></textarea>
-            </div>
-            <div class="termination_btn">
-                <button class="btn_cancel" @click='cancelClick'>取消</button>
-                <button style="padding: 0 26px;" class="layui-btn layui-btn-normal" @click='successClick'>提交</button>
-            </div>
-        </div>
+        
     </div>
 </template>
 <script>
@@ -252,7 +230,6 @@ export default {
                 {id: 2, name: '不通过'}
             ],
             doctormsg: '',
-            terminationText: '',        // 取消合作原因
         }
     },
     mounted() {
@@ -283,16 +260,7 @@ export default {
                     }
                 }, function (err) { console.log(err) });
                 
-                var txt = '<div style="color: #000;"><h2 style="text-align: center;font-size: 14px;">医生停诊中</h2><ul><li style="color:#808080;">停诊时间</li><li>2018-09-01 12:00—2018-10-01 12:00</li></ul><ul><li style="color:#808080;">停诊说明</li><li>有事啊</li></ul></div>'
-
-                $(".icon_hover").hover(function () {
-                    layer.tips(txt, '.icon_hover', {
-                        tips: [3, '#FFF'],
-                        time: 0
-                    });
-                }, function () {
-                    layer.closeAll()
-                });
+                
             });
         },
         pageFun(total) {    // 分页
@@ -315,42 +283,9 @@ export default {
                 });
             });
         },
-        search() {  // 搜索
-            this.initdata(1)
-        },
-        order_termination () {  // 终止合作
-            layui.use(["layer"], function () {
-                var layer = layui.layer;
-                var $ = layui.jquery;
-                layer.open({
-                    type: 1,
-                    shade: 0.2,
-                    shadeClose: true,
-                    closeBtn: 0,
-                    title: "",
-                    content: $("#termination"),
-                    area: ["500px", "360px"],
-                });
-            });
-        },
-        cancelClick () {    // 取消终止,关闭弹框
-            layui.use(["layer"], function () {
-                var layer = layui.layer;
-                layer.closeAll()
-            })
-        },
-        successClick () {   // 提交终止
-        var _this = this;
-        layui.use('layer', function(){
-            var layer = layui.layer;
-            if (_this.terminationText == '') {
-                layer.msg('请填写取消合作原因', {icon: 0});
-                return false;
-            }
-            
-        }); 
-            
-        },
+       
+
+        
         godetail(id) {    // 预览
             console.log(id)
             layui.use(["layer"], function () {
@@ -412,22 +347,13 @@ export default {
     }
 
     .returns {
-        width:100%;
+        width: 100%;
         text-align: center;
-        padding-bottom: 12px;
-        .layui-btn {
-            padding: 0 28px;
-        }
-        .btn_termination {
-            padding: 8px;
-            vertical-align: middle;
-            border: #3196FF 1px solid;
-            border-radius: 4px;
-            background-color: #fff;
-            color: #3196FF;
-            margin-left: 24px;
+        button {
+            padding: 0 30px;
         }
     }
+   
     input:hover,
     input:focus {
         border: 1px solid #c2c3c3;
@@ -648,46 +574,7 @@ export default {
     
 }
 
-#termination {
-    padding: 20px;
-    width: 100%;
-    display: none;
-    > h2 {
-        font-size: 17px;
-        color: #333;
-        text-align: center;
-        font-weight: 500;
-    }
-    .termination_txt {
-        width: 100%;
-        margin-top: 20px;
-        > p {
-            color: #333;
-        }
-        > textarea {
-            width: 100%;
-            margin-top: 12px;
-            height: 120px;
-            resize: none;
-            padding: 12px;
-            background-color: #F5F5F5;
-            border: 1px solid #F5F5F5;
-        }
-    }
-    .termination_btn {
-        margin-top: 20px;
-        text-align: center;
-        .btn_cancel {
-            padding: 8px 26px; 
-            vertical-align: middle;
-            border: 1px solid #3196FF;
-            background-color: #FFF;
-            color:#3196FF;
-            border-radius: 4px;
-            margin-right: 24px;
-        }
-    }
-}
+
 
 .icon_black {
     border: 1px solid #3196FF;

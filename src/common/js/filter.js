@@ -23,3 +23,25 @@ vue.filter('moment', function (value, formatString) {
     formatString = formatString || 'YYYY-MM-DD HH:mm:ss';
     return moment.unix(value).format(formatString); // 这是时间戳转时间
 });
+
+vue.directive('enterNumber2', {
+    inserted: function (el) {
+      el.addEventListener("keypress",function(e){
+        e = e || window.event;
+        let charcode = typeof e.charCode == 'number' ? e.charCode : e.keyCode;
+        let re = /\d/;
+        if(charcode == 46){
+          if(el.value.includes('.')){
+            e.preventDefault();
+          }
+          return;
+        }else if(!re.test(String.fromCharCode(charcode)) && charcode > 9 && !e.ctrlKey){
+          if(e.preventDefault){
+            e.preventDefault();
+          }else{
+              e.returnValue = false;
+          }
+        }
+      });
+    }
+  });

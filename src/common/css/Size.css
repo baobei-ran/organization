@@ -545,6 +545,9 @@
 
 /*间距 padding-left padding-right padding-top padding-bottom*/
 /*padding-left*/
+.Pd-L15 {
+  padding-left: 15px !important;
+}
 .Pd-L10 {
   padding-left: 10px !important;
 }

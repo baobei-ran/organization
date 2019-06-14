@@ -10,12 +10,13 @@
                     <li @click="tab(3)">已售罄（{{ goodCount.count3 }}）</li>
                     <li @click="tab(4)">待审核（{{ goodCount.count4 }}）</li>
                     <li @click="tab(5)">审核未通过（{{ goodCount.count5 }}）</li>
+                    <li @click="tab(10)">批量上传失败（{{ goodCount.count5 }}）</li>
                     <p class="fr Ft-S14 Color_blue"><span class="Mg-R24 pointer" @click='data_uploading'><i class="upfile_icon"></i>批量上传</span><span class="pointer" @click="go('/jgmall/goodsList/addGoods')"><i class="add_icon"></i>新增商品</span></p>
                 </ul>
 
 
                 <div class="layui-tab-content">
-                    <div class="screen_type Pd-B24 Mg-T14 Mg-B24">
+                    <div class="screen_type Pd-B24 Mg-T14 Mg-B24" v-if='tdlast !== 10'>
                         <div class="layui-form-item layui-row">
                             <div class="layui-col-md4">
                                 <div class="layui-inline lay_width">
@@ -50,7 +51,7 @@
                     <div class="layui-tab-item"></div> -->
                     <!--  -->
 
-            <div class="table_box" v-if='tdlast == 4 ? false : tdlast == 5 ? false : true'>
+            <div class="table_box" v-if='tdlast == 0 ? true : tdlast == 1 ? true : tdlast == 2 ? true: tdlast == 3 ? true:false'>
                 <!-- <div class='table_head' v-show='multipleSelection.length' v-if='tdlast == 0? false : tdlast == 3? false : true'>
                     <span style='color: #3196FF;'>批量操作，当前选择{{ multipleSelection.length }}条信息</span>
                     <div v-show='tdlast == 2 ? true:false'><el-button type="primary" size='mini' >上架</el-button></div>
@@ -59,7 +60,6 @@
                    <el-table
                     :data="goodList"
                     :row-style='styleColor'
-                    border
                     @selection-change="handleSelectionChange"
                     style="width: 100%;height: 515px;overflow: auto;" :header-cell-style='styleObj' >
                         <el-table-column
@@ -176,12 +176,13 @@
                     </el-table>
                 </div>
                     
-                <div v-else-if="tdlast == 4 ? true : tdlast == 5 ? true : false " >   <!-- 审核页面-->
+
+                <!-- 审核页面-->
+                <div v-else-if="tdlast == 4 ? true : tdlast == 5 ? true : false " >   
                     
                     <el-table
                     :data="goodList"
                     :row-style='styleColor'
-                    border
                     style="width: 100%;height: 515px;overflow: auto;" :header-cell-style='styleObj' >
                         <el-table-column
                         type="selection"
@@ -196,7 +197,7 @@
                            align ='center' style='width:300px!mportant;'>
                            <template slot-scope="scope">
                                 <div  style='-webkit-display:flex;display:flex;align-items: center;'>
-                                    <!-- <img :src="$http.baseURL+scope.row.pic" alt="" style='width: 60px; height:60px;display:block;' > -->
+                                    <img :src="$http.baseURL+scope.row.pic" alt="" style='width: 60px; height:60px;display:block;' >
                                 <p style='margin-left:20px;text-align:left;color: #333;'>{{ scope.row.name }}</p>
                                 </div>
                             </template>
@@ -283,6 +284,108 @@
                     </el-table>
                 </div> 
 
+                <!-- 批量上传失败搜索 -->
+                 <div class="screen_type Pd-B24 Mg-T14 Mg-B24" v-if='tdlast == 10'>
+                        <div class="layui-form-item layui-row">
+                            <div class="layui-col-md4">
+                                <div class="layui-inline lay_width">
+                                    <label class="layui-form-label">批准文号</label>
+                                    <div class="layui-input-inline">
+                                        <input type="text" name="" v-model='wenNumber' autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md4">
+                                <div class="layui-inline lay_width">
+                                    <label class="layui-form-label">商品名称</label>
+                                    <div class="layui-input-inline">
+                                        <input type="text" v-model='shopName' autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md4">
+                                <div class="layui-inline lay_width">
+                                    <div class="layui-input-inline" style="width:100%">
+                                        <span class="Ft-S14 selectbtn ac pointer" @click='search_fail'>筛选订单</span><span class="Color_blue pointer Ft-S14 Mg-L24" @click='empty'>清空筛选条件</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                <!-- 批量上传失败 -->
+                <div v-if="tdlast == 10 ? true : false" >   
+                    <el-table
+                    :data="goodList2"
+                    :row-style='styleColor'
+                    style="width: 100%;height: 515px;overflow: auto;" :header-cell-style='styleObj' >
+                        <el-table-column
+                        type="selection"
+                        label="全选"
+                        width="80" align='center'>
+                        </el-table-column>
+                        <el-table-column
+                            min-width="70%"
+                            nin-height='70px'
+                            prop="goodList"
+                            label="商品名称"
+                           align ='center' style='width:300px!mportant;'>
+                           <template slot-scope="scope">
+                                
+                                <div class='Pd-L24'  style='display:-webkit-flex;display:flex;align-items: center;' >
+                                    <p style="width:60px;height:60px;min-width:60px;background-color:#EEE;">
+                                        <!-- <img :src="$http.baseURL+scope.row.pic" alt="" style='width: 60px; height:60px;display:inline-block;' > -->
+                                    </p>
+                                    <p style='margin-left:20px;text-align:left;color: #333;'>{{ scope.row.name }}</p>
+                                </div>
+                            </template>
+
+                        </el-table-column>
+                         
+                        <el-table-column
+                            prop="pzwh"
+                            label="批准文号" align ='center' style='width: 200px;'>
+                        </el-table-column>
+                        
+                        <el-table-column
+                            prop="stock"
+                            sortable
+                            min-width="50%"
+                            label="库存" align ='center'>
+                        </el-table-column>
+
+                        <el-table-column
+                            prop="money"
+                            min-width="50%"
+                            label="商品售价" align ='center'>
+                            <template slot-scope="scope">
+                                <div>
+                                    <span>￥</span><span>{{ scope.row.money }}</span>
+                                </div>
+                            </template>
+                        </el-table-column>
+                        <el-table-column
+                            min-width="50%"
+                            prop="examine"
+                            label="操作" align ='center'>
+
+                            <template slot-scope="scope">
+                                <div>
+                                    <button class='btn' @click="edits(scope.row)">完善信息</button>
+                                    <button class='btn Mg-L14' @click="del(scope.row)">删除</button>
+                                </div>
+                                
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </div> 
+
+
+
+
+
+
                     <div style='background:#fff;' v-show='goodList.length' id='page'></div>
                            
                 </div>
@@ -311,38 +414,34 @@
         </div>
 
         <!-- 批量上传 -->
-        <div id="uploading" class="hide">
+        <div id="uploading">
             <div class="uploading_title">
                 <h2>批量上传</h2>
-                <span>下载表格</span>
+                <span><a href="../../../static/文件夹.csv" download="">下载表格</a></span>
             </div>
             <div class="uploading_msg">
                 <p>批量上传注意事项：</p>
-                <div>
+                <div class="msg_right">
                     <p>上传表格推荐*.csv格式；<br/>
                     上传表格字段包括：类别、名称、批准文号、零售价、库存、是否处方药；<br/>
                     请保证字段名称一致(如下图)，否则上传失败，或直接下载表格</p>
-                    <table width="100%">
-                        <tr>
-                            <td class="Color_black Ft-S16" width="90px"><span class="Color_red">*</span>配送公司</td>
-                            <td><input type="text" ></td>
-                        </tr>
-                        <tr>
-                            <td class="Color_black Ft-S16"><span class="Color_red">*</span>物流单号</td>
-                            <td><input type="text" ></td>
-                        </tr>
-                    </table>
+                    <div class="table_box">
+                        <img src="../../common/image/icon/pic_sl@2x.png" alt="">
+                    </div>
                 </div>
             </div>
             <p class="clear">
-                <span ><input type="file" id="up_file" class="hide"><label for='up_file' class="cancel pointer" >选择文件</label></span>
-                <span ><button :class="{'send pointer': flag}" >确认上传</button></span>
+                <span ><input type="file" @change="up_files($event)" id='up_file'  accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" class="hide"><label for='up_file' class="cancel pointer" >选择文件</label></span>
+                <span >
+                    <!-- <button :class="{'send pointer': flag}" @click='beforeUploadFile'>确认上传</button> -->
+                    <el-button type="primary" :class="{'send pointer': flag}" @click='beforeUploadFile' :disabled="disabled" :loading="disabled">确认上传</el-button>
+                </span>
             </p>
         </div>
         <!-- 上传中 loding -->
         <div id="uploading_loding" class="hide">
             <el-progress :text-inside="true" :stroke-width="26" :percentage="lodings"></el-progress>
-            <p>上传中42%，请勿关闭窗口</p>
+            <p>上传中{{ lodings }}%，请勿关闭窗口</p>
         </div>
         <!-- 上传失败 loding -->
         <div id="uploading_defeated" class="hide">
@@ -350,40 +449,44 @@
             <p><i>!</i>上传失败，请重新上传</p>
             <span ><button class="pointer" @click='close_shade'>我知道了</button></span>
         </div>
-        <!-- 上传结果 -->
+        <!-- 上传结果, 缺图 -->
         <div id="uploading_success" class="hide">
-            <p class="uploading_success_title">药品库未匹配到药品图片19条，请手动添加</p>
+            <p class="uploading_success_title">药品库未匹配到药品图片{{ noimg.length }}条，请手动添加</p>
             <div class="uploading_success_file">
                 <div class="file_box">
-                    <ul v-for='val in 10'>
+                    <ul v-for='(val,i) in 10' :key="i+'_33'" >
                         <li><span>土霉素片</span></li>
                         <li>国药准字H20190102</li>
-                        <li><img src="../../common/image/icon/pic_xsp.png" alt=""></li>
-                        <li><span class="pointer">手动添加</span></li>
+                        <li><img src="" alt=""></li>
+                        <li><input style='display:none;' type="file" :id="'files'+i" /><label class="pointer" :for="'files'+i" >手动添加</label></li>
                     </ul>
                 </div>
             </div>
-            <p class="uploading_success_title">药品库未匹配到药品23条，请稍后在商品列表添加</p>
-            <p class="uploading_success_msg">上传成功1900条商品信息！</p>
-            <span ><button class="pointer" >下一步</button></span>
+            <p class="uploading_success_title">药品库未匹配到药品{{ uploadNum.length }}条，请稍后在商品列表添加</p>
+            <p class="uploading_success_msg">上传成功{{ succNum.length }}条商品信息！</p>
+            <span>
+                <!-- <button class="pointer" @click='uploadPic'>下一步</button> -->
+                <el-button type="primary" class="pointer" @click='uploadPic' :disabled="disabledPic"  :loading="disabledPic">下一步</el-button>
+            </span>
         </div>
         <!-- 上传分类 -->
         <div id='uploading_classify'>
             <ul>
-                <li>抗菌用药</li>
-                <li>家庭设备</li>
+                <li v-for='(val,i) in stypeNav' :key='i+"_99"' >{{ val }}</li>
+                <!-- <li>家庭设备</li>
                 <li>情趣用品</li>
                 <li>情趣用品</li>
                 <li>青霉素</li>
                 <li>抗菌用药</li>
                 <li>家庭设备</li>
-                <li>情趣用品</li>
+                <li>情趣用品</li> -->
             </ul>
             <span><button class="pointer" >完成导入</button></span>
         </div>
     </div>
 </template>
 <script>
+
 export default {
     name: 'goodsList',
     data() {
@@ -410,13 +513,24 @@ export default {
             multipleSelection: [],   // 选中的值进行保存
             flag: false,             // 确认上传按钮
             lodings: 0,
-            customColor: '#F09F88'
+            customColor: '#F09F88',
+            excelfile: '',          // 批量上传的数据流
+            goodList2: [],          // 批量失败列表
+            wenNumber: '',  // 批量失败搜索- 批准文号
+            shopName: '',   // 批量失败搜索 - 商品名称
+            disabled: false,    // 批量上传按钮控制
+            timer: '',          // 上传动画定时器
+            uploadNum: [],       // 图片未匹配数量,需要上传的数量
+            succNum: [],         // 上传成功数量
+            noimg: [],          // 缺少图片数据
+            stypeNav: [],        // 上传后的分类
+            disabledPic: false   // 图片上传的按钮
         }
     },
     mounted() {
         // this.initdata()
         this.goodLists(1) 
-        this.initdata(5) // test
+        // this.initdata(5) // test
     },
     methods: {
         //点击排序
@@ -474,15 +588,22 @@ export default {
 
 
         tab(num) {  // 选项卡
+            console.log(num)
             this.tdlast = num
+            if (num == 10) {
+                this.upload_result() // test
+                // this.uploadFile_fail()
+                return false;
+            }
             this.goodLists(1)
             if (num == 1) {
                 this.multipleSelection = []
             } else {
                 this.multipleSelection = []
             }
+            
         },
-        goodLists(num) {    // 数据 和 搜索
+        goodLists(n) {    // 数据 和 搜索
             var _this = this;
             _this.goodList = []
             layui.use(['layer', 'form'], function(){
@@ -493,8 +614,8 @@ export default {
                     if(res.code == 1) {
                         _this.goodCount = res;
                         _this.goodList = res.data;
-                        if (num == 1) {
-                            // _this.initdata(res.num) // 传递总数
+                        if (n == 1) {
+                             _this.initdata(res.num) // 传递总数
                         }
                     } else {
                         _this.initdata(0) 
@@ -503,6 +624,7 @@ export default {
             });
         },
         initdata(total) {  // 分页
+            console.log(total)
             var _this = this;
             layui.use(['layer','laypage'], function () {
                 var layer = layui.layer;
@@ -514,8 +636,9 @@ export default {
                     ,layout: [ 'prev', 'page', 'next', 'skip']
                     ,jump: function(obj, first){
                         if(!first){
-                            _this.goodLists(obj.curr) // /得到当前页，以便向服务端请求对应页的数据
                             _this.page = obj.curr
+                            _this.goodLists(obj.curr) // /得到当前页，以便向服务端请求对应页的数据
+                            
                         }
                     }
                 });
@@ -621,6 +744,8 @@ export default {
         empty() {   // 清空
             this.name = '';
             this.number = '';
+            this.wenNumber = '';
+            this.shopName = '';
         },
 
         putaway (data) {    // 上架
@@ -643,55 +768,58 @@ export default {
 
         data_uploading () {  // 批量上传
             var _this = this;
-            // layui.use(["layer"], function () {
-            //     var layer = layui.layer;
-            //     var $ = layui.jquery;
-            //     layer.open({
-            //         type: 1,
-            //         shade: 0.2,
-            //         shadeClose: true,
-            //         closeBtn: 1,
-            //         title: "",
-            //         content: $("#uploading"),
-            //         area: ["60%", "440px"],
-            //         cancel: function () { 
-            //             _this.data_loding()
-            //         }
-            //     });
-            //     $(".layui-layer-title").css({
-            //         height: "50px",
-            //         background: "#ECF2FB",
-            //         "line-height": "50px",
-            //         fontSize: '18px'
-            //     });
-            //     $(".layui-layer-setwin").css("top", "19px");
-            // });
-
-            //  layui.use(["layer"], function () {    // 上传结果
-            //     var layer = layui.layer;
-            //     var $ = layui.jquery;
-            //     layer.open({
-            //         type: 1,
-            //         shade: 0.2,
-            //         shadeClose: true,
-            //         closeBtn: 1,
-            //         title: '上传结果',
-            //         content: $("#uploading_success"),
-            //         area: ["47%", "460px"],
-            //     });
-            //     $(".layui-layer-title").css({
-            //         height: "50px",
-            //         background: "#E7F3FF",
-            //         "line-height": "50px",
-            //         fontSize: '18px',
-            //         padding: '0 80px 0 40px'
-            //     });
-            //     $(".layui-layer-setwin").css("top", "19px");
-            // });
-        
-            layui.use(["layer"], function () {    // 上传分类
+            layui.use(["layer"], function () {
                 var layer = layui.layer;
                 var $ = layui.jquery;
+                layer.open({
+                    type: 1,
+                    shade: 0.2,
+                    shadeClose: true,
+                    closeBtn: 1,
+                    title: "",
+                    content: $("#uploading"),
+                    area: ["800px", "440px"],
+                    cancel: function () { 
+                    }
+                });
+                $(".layui-layer-title").css({
+                    height: "50px",
+                    background: "#ECF2FB",
+                    "line-height": "50px",
+                    fontSize: '18px'
+                });
+                $(".layui-layer-setwin").css("top", "19px");
+            });
+        },
+         upload_result () {  // 上传结果，缺图
+                layui.use(["layer"], function () {    
+                var layer = layui.layer;
+                var $ = layui.jquery;
+                layer.closeAll('page')
+                layer.open({
+                    type: 1,
+                    shade: 0.2,
+                    shadeClose: true,
+                    closeBtn: 1,
+                    title: '上传结果',
+                    content: $("#uploading_success"),
+                    area: ["47%", "460px"], 
+                });
+                $(".layui-layer-title").css({
+                    height: "50px",
+                    background: "#E7F3FF",
+                    "line-height": "50px",
+                    fontSize: '18px',
+                    padding: '0 80px 0 40px'
+                });
+                $(".layui-layer-setwin").css("top", "19px");
+            });
+        },
+        upload_classify () {  // 上传后的分类
+            layui.use(["layer"], function () {
+                var layer = layui.layer;
+                var $ = layui.jquery;
+                layer.closeAll('page')
                 layer.open({
                     type: 1,
                     shade: 0.2,
@@ -711,22 +839,33 @@ export default {
                 $(".layui-layer-setwin").css("top", "19px");
             });
         },
-
-        data_loding () {
-            // layui.use(["layer"], function () {
-            //     var layer = layui.layer;
-            //     var $ = layui.jquery;
-            //     layer.open({             // 上传进度弹框
-            //         type: 1,
-            //         shade: 0.2,
-            //         shadeClose: false,
-            //         closeBtn: 0,
-            //         title: '',
-            //         content: $("#uploading_loding"),
-            //         area: ["40%", "160px"],
-            //     });
-            // });
-            layui.use(["layer"], function () {    // 失败弹框
+        data_loding () { // 上传进度弹框
+            var _this = this;
+            layui.use(["layer"], function () {
+                var layer = layui.layer;
+                layer.closeAll('page')
+                var $ = layui.jquery;
+                layer.open({             
+                    type: 1,
+                    shade: 0.2,
+                    shadeClose: false,
+                    closeBtn: 0,
+                    title: '',
+                    content: $("#uploading_loding"),
+                    area: ["500px", "160px"],
+                    end: function () {
+                        clearInterval(_this.timer)
+                    }
+                });
+            });
+           this.submitUploadding();
+           this.timer = setInterval(() => {
+               this.submitUploadding();
+           }, 1000)
+            
+        },
+        upload_err () { // 上传失败弹框
+            layui.use(["layer"], function () {    
                 var layer = layui.layer;
                 var $ = layui.jquery;
                 layer.open({
@@ -736,22 +875,144 @@ export default {
                     closeBtn: 0,
                     title: '',
                     content: $("#uploading_defeated"),
-                    area: ["40%", "230px"],
+                    area: ["500px", "230px"],
                 });
             });
-
-           
-            this.lodings = 10
         },
         close_shade () {  // 关闭弹框
             layui.use(["layer"], function () {
                 var layer = layui.layer;
                 layer.closeAll();
             })
+        },
+
+        up_files (e) {   // 获取文件
+        var _this = this;  
+        var file = e.currentTarget.files[0];
+        this.excelfile = file
+            console.log(file)
+            if(_this.excelfile) {
+                _this.flag = true
+            }
+        },
+        beforeUploadFile () {   // 批量提交
+            var _this = this;
+            this.disabled = true;
+            layui.use('layer', function(){
+                var layer = layui.layer;
+                if (_this.excelfile !== '') {
+                    var formdata = new FormData();
+                    formdata.append("file", _this.excelfile);
+                    var onUploadProgress = function (e) {
+                        console.log("进度：");
+                        console.log(e);
+                        //属性lengthComputable主要表明总共需要完成的工作量和已经完成的工作是否可以被测量
+                        //如果lengthComputable为false，就获取不到e.total和e.loaded
+                        if (e.lengthComputable) {
+                            _this.data_loding()
+                            var rate = e.loaded / e.total; //已上传的比例
+                            console.log(rate)
+                            if (rate < 1) {
+                                console.log(rate)
+                                _this.data_loding()
+                            //这里的进度只能表明文件已经上传到后台，但是后台有没有处理完还不知道
+                            //因此不能直接显示为100%，不然用户会误以为已经上传完毕，关掉浏览器的话就可能导致上传失败
+                            //等响应回来时，再将进度设为100%
+                            // vm.uploadRate = rate;
+                            // vm.uploadStyle.width = (rate *100).toFixed(2)+ '%';
+                            }
+                        }
+                    }
+                    _this.$http.uploadFile('/shv2/goods/toup', formdata, onUploadProgress, function (res) {
+                        console.log(res)
+                        if (res.code == 1) { // 上传成功
+                            var tr = setTimeout(() => {
+                                if (_this.lodings == 100) {
+                                    clearInterval(_this.timer)
+                                    layer.closeAll('page')
+                                }
+                                clearInterval(tr)
+                                if (res.data.noimg && res.data.noimg.length >= 1) {
+                                    _this.stypeNav = res.data.stype
+                                    _this.succNum = res.data.succ
+                                    _this.uploadNum = res.data.upload
+                                    _this.noimg = res.data.noimg
+                                    _this.upload_result()
+                                }
+                            }, 2000)
+                        } else if (res.code == 2) { // 上传失败
+                            if (_this.timer) {
+                               clearInterval(_this.timer)
+                            }
+                            layer.closeAll('page')
+                            _this.upload_err()
+                        } else {
+                            layer.msg(res.msg,{icon: 0});
+                            _this.disabled = false
+                        }
+                    }, function (err) {})
+                }
+                
+            }); 
+            
+        },
+
+        submitUploadding () { // 上传进度
+            var _this = this;
+            this.$http.post('/shv2/goods/getnum', {}, function (res) {
+                console.log(res)
+                if (res.code == 1) {
+                    if (_this.lodings == 100) {
+                        clearInterval(_this.timer)
+                        return;
+                    }
+                    _this.lodings = Number(((res.num/res.total)*100).toFixed(0))
+                }
+            }, function (err) {})
+        },
+
+        uploadFile_fail () {   // 批量上传失败列表
+            var _this = this;
+            
+        },
+
+        search_fail () { // 批量上传失败的搜索
+            var _this = this;
+            var obj = { pzwh: this.wenNumber, name: this.shopName }
+            this.$http.post('/shv2/goods/upload_fail', obj, function (res) {
+                console.log(res)
+                if (res.code == 1) {
+                    _this.goodList2 = res.data
+                } else {
+                    _this.goodList2 = []
+                }
+            }, function (err) { console.log(err)})
+        },
+        uploadPic () {  // 批量上传图片
+            var _this = this;
+            var fromdata = new FormData();
+            this.disabledPic = true
+            layui.use('layer', function(){
+                var layer = layui.layer;
+                _this.$http.upload('/shv2/goods/uploadImg', fromdata, function (res) {
+                    console.log(res)
+                    if (res.code == 1) {
+                        _this.upload_classify()
+                    } else {
+                        _this.disabledPic = false
+                        layer.msg(res.msg, {icon: 2})
+                    }
+                }, function (err) {})
+            })
         }
 
 
 
+    },
+    destroyed () {
+        if (this.timer) {
+            clearInterval(this.timer)
+        }
     }
 }
 </script>
@@ -963,6 +1224,9 @@ export default {
                 tbody {
                     outline: 1px solid rgba(221, 221, 221, 1);
                     tr {
+                        td {
+                            border:0;
+                        }
                         td:last-child {
                             p {
                                 display: inline-block;
@@ -1073,7 +1337,6 @@ export default {
     #uploading_success {   // 上传结果
         width: 100%;
         padding: 0 40px;
-        display: none;
         .uploading_success_title {
             color: #FF2929;
             font-size: 14px;
@@ -1099,7 +1362,14 @@ export default {
                         > img {
                             width: 32px;
                             height: 34px;
+                            display: block;
                         }
+                    }
+                    li:nth-child(3) {
+                        width: 32px;
+                        height: 34px;
+                        background:url('../../common/image/icon/icon_pic@2x.png') no-repeat;
+                        background-size: contain;
                     }
                     li:last-child {
                         color: #3196FF;
@@ -1166,9 +1436,11 @@ export default {
             }
         }
     }
-}
-#uploading {
+
+    // 上传
+    #uploading {
     width:100%;
+    display: none;
     .uploading_title {
         width: 100%;
         overflow: hidden;
@@ -1188,68 +1460,48 @@ export default {
             padding-left: 25px;
             cursor: pointer;
             background: url('../../common/image/icon/icon_xzbg.png') no-repeat left center;
+            a {
+                color: #3196FF;
+            }
         }
     }
     .uploading_msg {
         width: 100%;
-        padding: 24px 40px;
+        padding: 14px 40px;
         overflow: hidden;
        > p {
             float: left;
             color: #666;
             font-size: 14px;
         }
-        >div {
+        .msg_right {
             float: left;
             >p {
                 color: #333;
                 font-size: 14px;
                 line-height: 22px;
             }
-            table {
-                tr {
-                    height: 54px;
-                    td {
-                        input {
-                        
-                            height: 40px;
-                            padding-left: 10px;
-                            border-radius: 3px;
-                        }
-                        input,
-                        input:hover,
-                        input:focus {
-                            border: 1px solid #c2c3c3;
-                        }
-                        .tan_icon {
-                            background: url(../../common/image/icon/icon_hxcw.png)
-                                no-repeat;
-                            width: 13px;
-                            height: 13px;
-                            display: inline-block;
-                            position: relative;
-                            z-index: 66;
-                            top: 2px;
-                            margin-right: 4px;
-                        }
-                    }
+            .table_box {
+                margin-top: 10px;
+                img {
+                    max-width: 100%;
                 }
             }
+            
         }
     }
     .clear {
         width: 100%;
         text-align: right;
-        padding: 32px 42px;
+        padding: 0 42px;
     }
     button {
-        width: 140px;
-        height: 44px;
+        width: 120px;
+        height: 40px;
         -webkit-border-radius: 4px;
         border-radius: 4px;
         border: none;
-        font-size: 16px;
-        margin-top: 46px;
+        font-size: 15px;
         margin-left: 24px;
         color: #fff;
         background-color: #CCCCCC;
@@ -1257,13 +1509,13 @@ export default {
     .cancel {
         border: 1px solid #128dff;
         color: #FFF;
-        width: 140px;
-        height: 44px;
+        width: 120px;
+        height: 40px;
         -webkit-border-radius: 4px;
         border-radius: 4px;
         text-align: center;
-        font-size: 16px;
-        line-height: 44px;
+        font-size: 15px;
+        line-height: 40px;
         background: #3196FF;
         display: inline-block;
     }
@@ -1271,6 +1523,10 @@ export default {
         background: #128dff;
     }
 }
+
+
+}
+
 
 .imgList {
     width: 70px;

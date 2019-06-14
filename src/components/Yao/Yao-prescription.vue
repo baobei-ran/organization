@@ -1,271 +1,567 @@
 <template>
-    <!-- 处方单医生列表 -->
-    <div class="perscription bg_f Pd-B40">
-        <p class="perscription_tit Color_black Ft-S16 Pd-T24 Pd-B24 Pd-L24">资料上传</p>
-        <div class="content Pd-L24 Pd-R24 Mg-T20">
-            <div class="msg" v-show='status'>
-                您好，您的资料正在审核中，请耐心等待！
+    <div id="orderList">
+        <div class="orderList_msg">
+            <div class="pass_test" >
+                <span>服务说明</span>
+                <div :class="{'show_msg':tests}">
+                    <p>云医康合作医生服务上线了，药店可选择云医康平台医生并申请合作，医生可为合作药店开具线上处方，增加药店的药品经营范围；合作医生在问诊过程中，若患者需要相应的药品治疗，医生可向患者推荐药店的药品。</p>
+                    <p>药店可为店铺商品，设定佣金比例，医生向患者推荐药品，患者支付后，将按此比例向医生支付佣金，医生也将根据佣金比例范围及处方需求数量，选择是否与药店进行合作。</p>
+                    <button class="pointer" @click='cancelTest'></button>
+                </div>
             </div>
-            <div class="msg" v-show='status2'>
-                您好，您的资料审核未通过，请重新上传！
-                <p>未通过原因：{{ failed }}！</p>
-            </div>
-            <div class="Ft-S15">
-                <span class="Color_red">*</span> 资料上传：
-                <span class="Color_red Pd-L20 Ft-S14" >请上传小于5MB的jpg/jpeg/png格式的图片，图片细节必须清晰可见</span>
-            </div>
-            <div class="files Mg-T20">
-                <dl>
-                    <dt>
-                        <img :src="img1" alt="">
-                        <div v-show='fileStatus'>
-                            <label for="file1">{{ labelTxt }}</label>
-                            <input id='file1' @change='addfiles1'  multiple="multiple" accept=".png, .jpg, .jpeg" type="file">
-                        </div>
-                    </dt>
-                    <dd>药师资格证</dd>
-                </dl>
-                <dl>
-                    <dt>
-                        <img :src="img2" alt="">
-                        <div  v-show='fileStatus2'>
-                            <label for="file2">{{ labelTxt2 }}</label>
-                            <input id='file2' @change='addfiles2'  multiple="multiple" accept=".png, .jpg, .jpeg" type="file">
-                        </div>
-                    </dt>
-                    <dd>药师签名</dd>
-                </dl>
-            </div>
-            <p class="txt Ft-S14 Pd-T24 Pd-B24 Pd-L24">注：持有药师资格证的药师人员必须为当前药房工作人员药师签名由药师在白色背景纸张上书写清晰可辨的药师真实签名后拍照</p>
+        </div>
 
-            <span v-show='disBtn' class="btn"><button class="layui-btn layui-btn-normal" @click="submitFile" :disabled='btnss' :class='{ "layui-btn-disabled": btnss }'>立即提交</button></span>
+         <div class="tab_content Pd-L24 Pd-R24">
+            <div class="layui-tab">
+                <ul class="layui-tab-title">
+                    <li class="layui-this" @click="tab(0)">合作中医生</li>
+                    <li @click="tab(1)">申请记录</li>
+                    <li @click="tab(2)">合作终止记录</li>
+                </ul>
+                <div class="layui-tab-content">
+                    <!-- 1 -->
+                    <div class="layui-tab-item layui-show">
+                        <table class="layui-table" lay-skin="">
+                            <thead>
+                                <tr class="Color_black table_headtr ac">
+                                    <td class="firstheadtd">序号</td>
+                                    <td>医生姓名</td>
+                                    <td>职称</td>
+                                    <td>科室</td>
+                                    <td>执业医院</td>
+                                    <td>合作时间</td>
+                                    <td>开具处方数量</td>
+                                    <td>操作</td>
+                                </tr>
+                            </thead>
+                            <tbody v-if='tableList.length'>
+                                <tr class="table_con Color_black ac" v-for='(val,i) in 4' :key='i'>
+                                    <td>{{ i+1 }}</td>
+                                    <td>李大大
+                                        <img style="width:40px;height:14px;" src="../../common/image/icon/icon_tzz.png" alt="">
+                                    </td>
+                                    <td>主任医师</td>
+                                    <td>心内科</td>
+                                    <td>北京同仁医院</td>
+                                    <td>2019-02-02</td>
+                                    <td>3</td>
+                                    <td>
+                                        <span class="pointer Ft-S14 Color_blue al" style="width:80px;margin:0 auto" @click="doc_detail(12)">查看</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tbody v-else>
+                                <tr class="table_con Color_black ac" >
+                                    <td colspan='7'>暂无数据</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- 2 -->
+                    <div class="layui-tab-item">
+                        <table class="layui-table" lay-skin="">
+                            <thead>
+                                <tr class="Color_black table_headtr ac">
+                                    <td class="firstheadtd">序号</td>
+                                    <td>医生姓名</td>
+                                    <td>职称</td>
+                                    <td>科室</td>
+                                    <td>执业医院</td>
+                                    <td>申请方</td>
+                                    <td>申请时间</td>
+                                    <td>操作</td>
+                                </tr>
+                            </thead>
+                            <tbody v-if='tableList.length'>
+                                <tr class="table_con Color_black ac" v-for='(val,i) in 4' :key='i'>
+                                    <td>{{ i+1 }}</td>
+                                    <td>李大大
+                                        <img style="width:40px;height:14px;" src="../../common/image/icon/icon_tzz.png" alt="">
+                                    </td>
+                                    <td>主任医师</td>
+                                    <td>心内科</td>
+                                    <td>北京同仁医院</td>
+                                    <td>药店</td>
+                                    <td>2019-02-02 12:00</td>
+                                    <td>
+                                        <span class="pointer Ft-S14 Color_blue al" style="width:80px;margin:0 auto" @click="success_cooperation(12)">同意合作</span>
+                                        <span class="pointer Ft-S14 al" :id="'hover_tips'+i" style="width:80px;margin:0 auto;color:#666;" 
+                                            @mouseover="shows('hover_tips'+i+'')" @mouseout='hide_tips'>等待医生同意</span>
+                                        <span class="Ft-S14 al" style="width:80px;margin:0 auto;color:#666;" >已合作</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tbody v-else>
+                                <tr class="table_con Color_black ac" >
+                                    <td colspan='7'>暂无数据</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- 3 -->
+                    <div class="layui-tab-item">
+                        <table class="layui-table" lay-skin="">
+                            <thead>
+                                <tr class="Color_black table_headtr ac">
+                                    <td class="firstheadtd">序号</td>
+                                    <td>医生姓名</td>
+                                    <td>职称</td>
+                                    <td>科室</td>
+                                    <td>执业医院</td>
+                                    <td>合作终止方</td>
+                                    <td>合作终止时间</td>
+                                    <td>操作</td>
+                                </tr>
+                            </thead>
+                            <tbody v-if='tableList.length'>
+                                <tr class="table_con Color_black ac" v-for='(val,i) in 4' :key='i'>
+                                    <td>{{ i+1 }}</td>
+                                    <td>李大大
+                                        <img style="width:40px;height:14px;" src="../../common/image/icon/icon_tzz.png" alt="">
+                                    </td>
+                                    <td>主任医师</td>
+                                    <td>心内科</td>
+                                    <td>北京同仁医院</td>
+                                    <td>药店</td>
+                                    <td>2019-02-02</td>
+                                    <td>
+                                        <span class="pointer Ft-S14 Color_blue al" style="width:80px;margin:0 auto" @click="doc_detail_zhi(12)">查看</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tbody v-else>
+                                <tr class="table_con Color_black ac" >
+                                    <td colspan='7'>暂无数据</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                   
+
+
+
+                    <div id="page" v-show='tableList.length' class="ac Mg-T30"></div>
+                </div>
+            </div>
+        </div>
+
+
+
+        
+        <!-- <div  class="bg_f"  style="height:100%">
+        <p class="orderList_tit Color_black Ft-S16 Pd-T24 Pd-B24 Pd-L24">
+            <span>处方单医生列表</span>
+            <span class="btn_r">
+                <button class="layui-btn layui-btn-normal" @click='go("/server/Yaodoctorprescription/addApply")'>处方单申请</button> 
+                <button class="layui-btn layui-btn-normal" :disabled='doctorNum' :class="{'layui-btn-disabled':doctorNum}" @click='outApply'>选择处方单医生</button>
+            </span>
+        </p>
+        <div class="tab_content Pd-L24 Pd-R24">
+            <div class="layui-tab Pd-T10">
+               
+                <div class="layui-tab-content">
+                   
+                    <table class="layui-table" lay-skin="">
+                        <thead>
+                            <tr class="Color_black table_headtr ac">
+                                <td class="firstheadtd">序号</td>
+                                <td>医生姓名</td>
+                                <td>医生职称</td>
+                                <td>医生执业医院</td>
+                                <td>服务时间段</td>
+                                <td>操作</td>
+                            </tr>
+                        </thead>
+                        <tbody v-if='tableList.length'>
+                            <tr class="table_con Color_black ac" v-for="(val,index) in tableList">
+                                <td v-text="index+1"></td>
+                                <td v-text="val.true_name"></td>
+                                <td v-text='val.gname'></td>
+                                <td v-text="val.hospital_name"></td>
+                                <td>{{ val.busktime }} - {{ val.busjtime }}</td>
+                                <td>
+                                    <div class="dis_f dis_js">
+                                        <p class="pointer Ft-S14 Color_blue al"  @click="delcode(val)">处方记录</p>
+                                        <p class="pointer Ft-S14 Color_blue al"  v-if='val.type == 2' @click="sendgoods(val)">申诉解除关联</p>
+                                        <p class="pointer Ft-S14 al"  v-if='val.type == 1'>解除关联申诉中</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tbody v-else>
+                            <tr class="table_con Color_black ac" >
+                                <td colspan='6'>暂无相关数据！<span @click='outApply' class="btns">选择处方单医生</span>后可进行处方单申请</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div id="page" v-show='tableList.length > 10' class="ac Mg-T30"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="sendgoods" class='hide'>
+            <div class="txt">
+                <p>申请解除关联后，云医康客户会</p>
+                <p>24小时内与您联系！</p>
+            </div>
+            <p class="clear">
+               <button class="layui-btn layui-btn-normal" @click='cancel'>确定</button>
+            </p>
+        </div>
+       
+    </div> -->
+
+
+    <!-- 同意合作已达上限提示 -->
+        <div id="sendgoods_shade" class="hide">
+            <h2>服务提示</h2>
+            <div class="txt">
+                <p>当前合作医生数量已达上限</p>
+                <p>不可同意合作</p>
+            </div>
+            <p class="clear">
+               <button class="layui-btn layui-btn-normal" @click='cancel'>好的</button>
+            </p>
         </div>
     </div>
 </template>
 <script>
 export default {
-        data () {
-            return {
-                img1: '',           //  显示预览
-                img2: '',           // 显示预览图
-                btnss: true,        // 按钮类名绑定
-                labelTxt: '点击上传',
-                labelTxt2: '点击上传',
-                files1: '',         //   上传图
-                files2: '',         //  上传签名图
-                status: false,      // 审核中
-                status2: false,     // 审核失败
-                fileStatus: true,   //  控制文件上传按钮1 
-                fileStatus2: true,  //  控制文件上传按钮2
-                failed: '',         // 审核失败留言
-                disBtn: true,       // 提交按钮
-                times: '',          // 实时监测
+    name: 'orderList',
+    data() {
+        return {
+            tests: false,        // 审核通过提示
+            tableList: [],              // 数据列表
+            headernum: '',
+            doctorNum: true,          // 添加的医生数量
+        }
+    },
+    mounted() {
+       this.initdata()
+       var self = this;
+       function doctorLength() {   // 添加了几位医生
+          return self.$http.$post('/shv2/Recipe/recipe_doccount')
+       }
+      function know () {    // 通过审核，我知道了
+          return self.$http.$post('/shv2/Recipe/recipe_check')
+      }
+      self.$http.all([doctorLength(), know()], function (res, res2) {
+          console.log(res, res2)
+           if(res.code == 1) {
+                if (res.data.type == 1) {
+                    self.doctorNum = true
+                } else {
+                    self.doctorNum = false
+                }
             }
-        },
-        mounted () {
-            var _this = this;
-            _this.$http.post('/shv2/Recipe/recipe_check', {}, function (res) {
-                if (res.code == 1) {
-                    if (res.code == 2) {    // 如果已经审核通过的直接跳转
-                       _this.$router.replace({ path: '/server/Yaodoctorprescription/prescriptionList'})
-                    } else {
-                         _this.Userdata();
-                        _this.times = setInterval(() => {
-                            _this.Userdata();    // 查看是否已提交了资料
-                        }, 3000)
-                    }
-                }
-            }, function (err) { console.log(err)})
-        },
-        methods: {
-            addfiles1 (event) {
-                var files = event.target.files[0];  
-                if (files) {   // 是否有文件
-                    if(files.size > 1024 * 1024 * 5) {    
-                        alert('图片大小不能超过 5MB!');
-                        return false;
-                    }
-                    var URL = window.URL || window.webkitURL; 
-                    var url = URL.createObjectURL(files)        
-                    this.img1 = url
-                    this.files1 = files
-                    this.labelTxt = '重新上传'
-                    if (this.img1 && this.img2) {
-                        this.btnss = false
-                    }
-                }
-            },
-            addfiles2 (event) {
-                var files = event.target.files[0];
-                if (files) {
-                    if(files.size > 1024 * 1024 * 5) {
-                        alert('图片大小不能超过 5MB!');
-                        return false;
-                    }
-                    var URL = window.URL || window.webkitURL; 
-                    var a = URL.createObjectURL(files)
-                    this.img2 = a
-                    this.files2 = files
-                    this.labelTxt2 = '重新上传'
-                    if (this.img1 && this.img2) {
-                        this.btnss = false
-                    }
-                }
-            },
 
-            submitFile () {                 // 上传资料
-                var _this = this;
-                layui.use('layer', function() {
+            if (res2.code == 1) {
+               self.tests = res2.data.if == 0 ? true : false
+           }
+      })
+      
+    
+    },
+    methods: {
+        shows (id) { // 鼠标划入显示提示
+            layui.use("layer", function () {
                 var layer = layui.layer;
-                var formdata = new FormData();
-                formdata.append('teacher_pic', _this.files1)
-                formdata.append('yname_pic', _this.files2)
-                _this.$http.upload('/shv2/Recipe/recipe_pic', formdata, function (res) {
+                layer.tips('<div class='+id+' style="color:#000;">已申请该医生,待医生同意后即可达成合作</div>', '#'+id, {
+                    tips: [3, '#FFF'],
+                    time: 0
+                });
+            });
+        },
+        hide_tips () {  // 鼠标移出关闭提示
+            layui.use("layer", function () {
+                var layer = layui.layer;
+                layer.closeAll()
+            });
+        },
+        tab:function (n) {  // nav切换
+            console.log(n)
+           
+        },
+        doc_detail:function (id) {  // 合作中查看
+            console.log(id)
+            this.$router.push({ path: '/server/Yaodoctorprescription/prescriptionRecords', query: { id: id } })
+        },
+        doc_detail_zhi:function (id) {  // 合作终止查看
+            console.log(id)
+            this.$router.push({ path: '/server/Yaodoctorprescription/termination', query: { id: id } })
+        },
+        
+
+        // 一下为以前的数据 //////////////////////////////////////////////////////////////////////
+        cancelTest() {  // 关闭审核通过提示
+            this.tests = !this.tests
+            var self = this;
+            // self.$http.post('/shv2/recipe/recipe_if', {}, function (res) {
+            //     console.log(res)
+            // }, function (err) { })
+        },
+        initdata() {   // 数据
+            var _this = this;
+            layui.use("layer", function () {
+                var layer = layui.layer;
+                _this.$http.post('/shv2/Recipe/recipe_doc',{}, function (res) {//
                     console.log(res)
                     if (res.code == 1) {
-                        layer.msg('上传成功', { icon: 1, time: 1500});
-                        var img = []
-                            img.push( _this.img1, _this.img2)
-                        _this.localstorage.put('Prescription', img)    // 上传的资料
-                        _this.Userdata()
+                       _this.tableList = res.data
                     } else {
-                        layer.msg('上传失败', { icon: 2, time: 1500});
                     }
-                }, function (err) { })
-                
-                });  
-            },
+                }, function (err) { console.log(err) });
 
-            // 查询是否审核中
-            Userdata () {
-                var _this = this;
-                _this.$http.post('/shv2/Recipe/recipe_check', {}, function (res) {
-                    if (res.code == 1) {
-                         var type = res.data.teacher_type.toString()
-                        switch(type) {
-                            case '0': 
-                                var data = _this.localstorage.get('Prescription');  // 产看是否提交过申请
-                                if (data) {
-                                    _this.status = true; 
-                                    _this.fileStatus = false; 
-                                    _this.fileStatus2 = false; 
-                                    _this.disBtn = false
-                                    _this.img1 = data[0];
-                                    _this.img2 = data[1];
-                                    _this.status2 = false
-                                }
-                                ; break;      // 未发起审核
-                            case '1': 
-                                var data = _this.localstorage.get('Prescription');
-                                if (data) {
-                                    _this.localstorage.remove('Prescription');
-                                }
-                                _this.status = true; _this.fileStatus = false; _this.fileStatus2 = false; _this.disBtn = false; _this.status2 = false
-                                _this.img1 = _this.$http.baseURL + res.data.teacher_pic;
-                                _this.img2 = _this.$http.baseURL + res.data.yname_pic;
-                            ; break;     // 审核中
-                            case '2': 
-                                clearInterval(_this.times)
-                                _this.$router.replace({ path: '/server/Yaodoctorprescription/prescriptionList'})
-                            ; break;          // 审核成功
-                            case '3': _this.status2 = true; _this.failed = res.data.teacher_text 
-                                _this.status = false;
-                                _this.img1 = _this.$http.baseURL + res.data.teacher_pic;
-                                _this.img2 = _this.$http.baseURL + res.data.yname_pic;
-                                _this.labelTxt = '重新上传'
-                                _this.labelTxt2 = '重新上传'
-                            ; break;  // 审核失败
+            });
+        },
+        outApply () {   // 进入处方单医生页
+            this.go('/server/Yaodoctorprescription/prescriptionApply')
+        },
+        pageFun(total) {    // 分页
+            var _this = this;
+            layui.use(["laypage", "layer", "element"], function () {
+                var element = layui.element;
+                var laypage = layui.laypage;
+                laypage.render({
+                    elem: "page", //注意，这里的 test1 是 ID，不用加 # 号
+                    count: total, //数据总数，从服务端得到
+                    limit: 10, //每页条数
+                    layout: ["prev", "page", "next", "skip"],
+                    groups: 4,
+                    jump: function (obj, first) {
+                        if (!first) {
+                            
                         }
                     }
-                   
-                }, function (err) {console.log(err)})
-            },
-
+                });
+            });
         },
-        beforeDestroy () {
-            var data = this.times;
-            clearInterval(data)
-        }
+        delcode(val) { // 处方记录
+           var obj = { id: val.did, busjtime: val.busjtime, busktime: val.busktime, gname: val.gname, hospital_name: val.hospital_name, true_name: val.true_name, type: val.type }
+           this.$router.push({ path: '/server/Yaodoctorprescription/prescriptionRecords', query: obj })
+        },
+        // sendgoods(val) {    // 申诉解除机构
+        //     var _this = this;
+        //     console.log(val)
+
+        //     layui.use('layer', function(){
+        //         var layer = layui.layer;
+        //         var $ = layui.jquery;
+        //         layer.confirm('确定要解除关联吗？', {
+        //         btn: ['确定', '取消'],  },
+        //         function(index, layero) {
+        //             layer.closeAll('dialog');
+        //             jiechu()
+        //         }, function(index){
+                   
+        //         });
+                
+        //         function jiechu () {
+        //             _this.$http.post('/shv2/Recipe/recipe_docuncoil', { id: val.did}, function (res) {
+        //                 console.log(res)
+        //                 if (res.code == 1) {
+        //                     Open()
+        //                     _this.initdata()
+        //                 } else {
+        //                     layer.msg('申请失败', { icon: 5});
+        //                 }
+        //             }, function (err) { console.log(err)})
+        //         }
+                
+        //         function Open () {
+        //             layer.open({
+        //                 type: 1,
+        //                 shade: 0.2,
+        //                 shadeClose: true,
+        //                 closeBtn: 1,
+        //                 title: '',
+        //                 content: $("#sendgoods"),
+        //                 area: ["400px", "300px"],
+        //                 cancel: function () { }
+        //             });
+                    
+        //         }
+            
+            
+        //     })
+        // },
+         
+        cancel () {     // 取消关闭弹框
+            layui.use('layer', function(){
+            var layer = layui.layer;
+                layer.closeAll();
+            }); 
+        },
+      
+        success_cooperation () { // 同意合作,合作已达上限提示
+            // layui.use('layer', function(){
+            //     var layer = layui.layer;
+            //         layer.open({
+            //         type: 1,
+            //         shade: 0.2,
+            //         shadeClose: true,
+            //         closeBtn: 0,
+            //         title: '',
+            //         content: $("#sendgoods_shade"),
+            //         area: ["400px", "300px"],
+            //         end:function(){
+            //             $("#sendgoods_shade").hide();
+            //         },
+            //     });
+            // }); 
+            this.go('/server/Yaodoctorprescription/prescriptionApply')
+        }   
+    }
 }
 </script>
-<style lang='less' scoped>
-.perscription {
+
+<style scoped lang="less">
+#orderList {
     height: 100%;
-    .perscription_tit {
-        color: #333;
-        border-bottom: 1px solid #F1F2F9;
-    }
-    .content {
-        .msg {
-            border:1px solid #3196FF;
-            background: #EAF4FF;
-            color: #3196FF;
-            padding: 18px 24px;
-            margin-bottom: 20px;
-            // display: none;
+    .orderList_msg {
+        padding: 24px;
+      .pass_test {
+        
+        padding: 24px 26px;
+        background: #FFF;
+        border: 1px dashed #DDDDDD;
+        -webkit-border-radius:4px;
+        border-radius:4px;
+        margin-bottom: 20px;
+        position: relative;
+        span{
+            color:#333;
+            font-size: 18px;
+            padding-left: 24px;
+            background: url('../../common/image/icon/icon_fwsm.png') no-repeat left center;
+            background-size: 20%;
+            
+        }
+       >div {
             p {
-                color: #666666;
                 margin-top: 20px;
+                color: #666666;
+                line-height: 24px;
+            }
+            >button {
+                position: absolute;
+                right:0;
+                bottom: 0;
+                width: 40px;
+                height: 40px;
+                background: url('../../common/image/icon/icon_sq.png') no-repeat;
+                background-size: 100% 100%;
+                border:0;
+                font-size: 12px;
             }
         }
-        .files {
-            padding-left: 10%;
-            display:box;
-            display:-webkit-box;
-            display:-webkit-flex; 
-            display:-moz-box; 
-            display:-ms-flexbox; 
-            display:flex;
-            dl {
-                
-                dt {
-                    width: 159px;
-                    height: 159px;
-                    border: 1px dashed #c2c2c2;
-                    margin-right: 20px;
-                    border-radius: 4px;
-                    position: relative;
-                    input[type=file] {
-                        display: none;
-                    }
-                    label {
-                        position: absolute;
-                        left:0;
-                        bottom:0;
-                        padding: 6px 0;
-                        width: 100%;
-                        display: block;
-                        text-align: center;
-                        background: rgba(0,0,0,.3);
-                        color: #fff;
-                        border-radius: 0 0 4px 4px;
-                        cursor: pointer;
-                    }
-                    img {
-                        width: 100%;
-                    }
-                }
-                dd {
-                    text-align: center;
-                    color: #666;
-                    margin-top: 10px;
-                    margin-left: -10px;
-                }
-            }
+        .show_msg {
+            // position: absolute;
+            transition: topTranform 1s;
+            display: none;
         }
-        .txt {
-            width: 50%;
-            margin-left: 10%;
-            line-height: 29px;
-        }
-        .btn {
-            margin-left: 10%;
-        }
-        .layui-btn-disabled {
-            background: #DDDDDD;
-            color: #666;
         }
     }
+    
+    .orderList_tit {
+        border-bottom: 1px solid #e6e6e6;
+        
+        .btn_r {
+            float: right;
+            margin-right: 30px;
+            button {
+                height: 33px;
+                line-height: 33px;
+            }
+        }
+    }
+   
+    
+    .tab_content {
+        .layui-tab {
+            .layui-tab-title {
+                font-size: 16px;
+                color: #666666;
+                .layui-this {
+                    color: #128dff;
+                    background: #fff;
+                }
+                .layui-this:after {
+                    color: #128dff;
+                    border-top: 2px solid #128dff;
+                }
+            }
+        }
+        .layui-tab-content {
+            padding-left: 1px;
+            padding-right: 1px;
+            .layui-table {
+                border: 1px solid #DDDDDD;
+                .table_headtr {
+                    height: 50px;
+                    background: #dae9ff;
+                    td {
+                        font-size: 16px;
+                        border:0;
+                    }
+                    .firstheadtd {
+                        position: relative;
+                    }
+                }
+                tbody {
+                        tr:nth-child(even) {
+                            background: #E5F0FF;
+                        }
+                        td {
+                            padding: 20px 0px;
+                            font-size: 14px;
+                            border:0;
+                            .btns {
+                                color: #3196FF;
+                                cursor: pointer;
+                            }
+                            .shopdetail {
+                                padding: 52px 0px;
+                                padding-right: 60px;
+                                span:last-child {
+                                    position: absolute;
+                                    right: 20px;
+                                }
+                            }
+                        }
+                }
+            }
+        }
+    }
+
+#sendgoods_shade {
+    padding-left: 53px;
+    padding-right: 53px;
+    display: none;
+    > h2 {
+        text-align: center;
+        padding-top: 30px;
+        font-size: 18px;
+    }
+    .txt {
+        padding: 40px 0;
+        font-size: 15px;
+    }
+    p {
+        text-align: center;
+    }
+    button {
+        width: 120px;
+        height: 40px;
+        border-radius: 4px;
+        border: none;
+        font-size: 16px;
+    }
+    
+}
+}
+@keyframes topTranform {
+    50% { transform: translate3d(0, -50%, 0); }
+    100% { transform: translate3d(0, -100%, 0); }
 }
 </style>
-

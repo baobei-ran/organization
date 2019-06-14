@@ -1,5 +1,5 @@
 <template>
-<!-- 申请合作 -->
+<!-- 处方列表 -->
     <div id="orderList" class="bg_f" style="height:100%">
         <p class="orderList_tit Color_black Ft-S16 Pd-T24 Pd-B24 Pd-L24">申请合作医生</p>
         <div class="tab_content Pd-L24 Pd-R24">

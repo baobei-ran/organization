@@ -146,9 +146,10 @@
                 <tr>
                     <td></td>
                     <td class="Pd-L44 Pd-T40">
-                        <button class="Ft-S16 onsubmit" :disabled='disabled' @click="submitFun">
+                        <!-- <button class="Ft-S16 onsubmit" :disabled='disabled' @click="submitFun">
                             下一步
-                        </button>
+                        </button> -->
+                        <el-button class="Ft-S16 onsubmit" :disabled='disabled' @click="submitFun" type="primary" :loading="disabled">下一步</el-button>
                     </td>
                 </tr>
             </table>
@@ -280,11 +281,7 @@ export default {
             var _this = this;
             var regyyzz = /(^(?:(?![IOZSV])[\dA-Z]){2}\d{6}(?:(?![IOZSV])[\dA-Z]){10}$)|(^\d{15}$)/;
             var cardid = /^[1-9][0-9]{5}(19|20)[0-9]{2}((01|03|05|07|08|10|12)(0[1-9]|[1-2][0-9]|31)|(04|06|09|11)(0[1-9]|[1-2][0-9]|30)|02(0[1-9]|[1-2][0-9]))[0-9]{3}([0-9]|x|X)$/;
-            this.disabled = true
-            var time = setTimeout(() => {
-                this.disabled = false
-                clearTimeout(time)
-            }, 3000)
+            
             layui.use(["layer"], function () {
                 var layer=layui.layer;
                 
@@ -346,7 +343,7 @@ export default {
                     layer.msg('请上传身份证反面',{ icon:2});
                     return false
                 }
-
+                _this.disabled = true
                 var fromdata = new FormData()
                 fromdata.append('name', _this.formdata.name);
                 fromdata.append('type', _this.formdata.type);
@@ -384,6 +381,10 @@ export default {
                         
                     } else {
                         layer.msg('上传失败', { icon: 5})
+                        var time = setTimeout(() => {
+                            _this.disabled = false
+                            clearTimeout(time)
+                        }, 1000)
                     }
                 })
             });

@@ -1,105 +1,165 @@
 <template>
     <div id="orderList" class="bg_f" style="height:100%">
         <p class="orderList_tit Color_black Ft-S16 Pd-T24 Pd-B24 Pd-L24">订单列表</p>
-        <div class="tab_content Pd-L24 Pd-R24">
-            <div class="layui-tab Pd-T24">
-                <ul class="layui-tab-title">
-                    <li class="layui-this" @click="tab(0)">全部</li>
-                    <li @click="tab(1)">未接单</li>
-                    <li @click="tab(2)">等待中</li>
-                    <li @click="tab(3)">已开具</li>
-                    <li @click="tab(4)">已拒绝</li>
-                </ul>
-                <div class="layui-tab-content">
-                    <div class="screen_type Pd-B24 Mg-T14 Mg-B24  dis_f">
-                        <div class="layui-form-item selecttime dis_f">
-                            <div class="layui-inline">
-                                <label class="layui-form-label">处方申请时间</label>
-                                <div class="layui-input-inline" style="width:180px">
-                                    <input type="text" name="price_min" placeholder="" v-model="list.ktime" id="date" autocomplete="off" class="layui-input date_icon">
-                                </div>
-                                <div class="layui-form-mid">-</div>
-                                <div class="layui-input-inline" style="width:180px">
-                                    <input type="text" name="price_max" placeholder="" v-model="list.jtime" id="date1" autocomplete="off" class="layui-input date_icon">
-                                </div>
-                            </div>
-                            <div class="layui-inline lay_width">
-                                <label class="layui-form-label">处方单编号</label>
-                                <div class="layui-input-inline">
-                                    <input type="text" name="" v-model="list.order_code" autocomplete="off" class="layui-input">
-                                </div>
-                            </div>
-                            <p class=" Pd-L50">
-                                <span class="Ft-S14 selectbtn ac pointer" @click="search">筛选订单</span>
-                                <span class="Color_blue pointer Ft-S14 Mg-L24" @click='empty'>清空筛选条件</span>
-                            </p>
 
-                        </div>
-                       
+        <div class="screen_type Pd-B14 Mg-T14  dis_f">
+            <div class="layui-form-item selecttime dis_f">
+                <div class="layui-inline">
+                    <label class="layui-form-label">处方申请时间</label>
+                    <div class="layui-input-inline" style="width:160px">
+                        <input type="text" name="price_min" placeholder="" v-model="list.ktime" id="date" autocomplete="off" class="layui-input date_icon">
                     </div>
-                    <table class="layui-table" lay-skin="">
-                        <thead>
-                            <tr class="Color_black table_headtr ac">
-                                <td class="firstheadtd">序号</td>
-                                <td>处方订单号</td>
-                                <td>处方单申请时间</td>
-                                <td>处方单状态</td>
-                                <td>发送医生</td>
-                                <td>处方单编号</td>
-                                <td>操作</td>
-                            </tr>
-                        </thead>
-                        <tbody v-if='tableList.length'>
-                            <tr class="table_con Color_black ac" v-for='(val,i) in tableList' :key='i'>
-                                <td>{{ i+1 }}</td>
-                                <td>{{ val.number }}</td>
-                                <td>{{ val.creatime | moment }}</td>
-                                <td>
-                                    <span v-if='val.status == 1'>未接单</span>
-                                    <span v-if='val.status == 2'>等待中</span>
-                                    <span v-if='val.status == 3'>已开具</span>
-                                    <span v-if='val.status == 4'>已拒绝</span>
-                                </td>
-                                <td>
-                                    <div class="doctor dis_f dis_js">
-                                        <ul>
-                                            <li v-for='(user,index) in val.name' :key='index'>{{ user }}</li>
-                                        </ul>
-                                        <ul>
-                                            <li v-for='(state) in val.state' >
-                                                <span v-if='state == 1'>未接单</span>
-                                                <span v-if='state == 2'>已接单</span>
-                                                <span v-if='state == 3'>已拒绝</span>
-                                                <span v-if='state == 4'>已超时</span>
-                                                <span v-if='state == 5'>已开具</span>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </td>
-                                <td>
-                                    <span v-text='val.order_code != null ? val.order_code : "---" '></span>
-                                </td>
-                                <td>
-                                    <p class="pointer Ft-S14 Color_blue al" style="width:80px;margin:0 auto" @click="godetail(val.id)">查看详情</p>
-                                    <p class="pointer Ft-S14 Color_blue al" style="width:80px;margin:0 auto" @click="del(val.id)">删除</p>
-                                    <p class="pointer Ft-S14 Color_blue al" style="width:80px;margin:0 auto" v-if='val.status == 4' @click="delcode(val.id)">再次提交</p>
-                                    <p class="Ft-S14 al" style="width:80px;margin:0 auto" v-else>再次提交</p>
-                                </td>
-                            </tr>
-                        </tbody>
-                        <tbody v-else>
-                            <tr class="table_con Color_black ac" >
-                                <td colspan='7'>暂无数据</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <div id="page" v-show='tableList.length' class="ac Mg-T30"></div>
+                    <div class="layui-form-mid">-</div>
+                    <div class="layui-input-inline" style="width:160px">
+                        <input type="text" name="price_max" placeholder="" v-model="list.jtime" id="date1" autocomplete="off" class="layui-input date_icon">
+                    </div>
                 </div>
+                <div class="layui-inline lay_width">
+                    <label class="layui-form-label">处方需求单号</label>
+                    <div class="layui-input-inline" style="width:160px">
+                        <input type="text" name="" v-model="list.order_code" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline Mg-L10 lay_width">
+                    <label class="layui-form-label">申请医生</label>
+                    <div class="layui-input-inline" style="width:160px">
+                        <input type="text" name="" v-model="list.doc_user" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <p class="Pd-L15">
+                    <span class="Ft-S14 selectbtn ac pointer" @click="search">筛选</span>
+                    <span class="Color_blue pointer Ft-S14 Mg-L24" @click='empty'>清空筛选条件</span>
+                </p>
+
             </div>
         </div>
 
+        <div class="tab_content Pd-L24 Pd-R24">
+            <div class="layui-tab">
+                <div class="layui_navs">
+                    <ul class="layui-tab-title">
+                        <li class="layui-this" @click="tab(0)">等待中</li>
+                        <li @click="tab(1)">待审核</li>
+                        <li @click="tab(2)">已开具</li>
+                        <li @click="tab(3)">开具失败</li>
+                    </ul>
+                    <span class="btn_r">
+                        <button class="layui-btn background_white layui-btn-normal"  @click='go("/server/YaoprescriptionListPic/prescriptionSetting")'>处方设置</button>
+                        <button class="layui-btn layui-btn-normal" @click='go("/server/YaoprescriptionListPic/addApply")'>处方单申请</button> 
+                    </span>
+                </div>
+                <div class="layui-tab-content">
+                    <!--  -->
+                    <div v-show='status == 0? true: status == 3? true: false'>
+                        <table class="layui-table" lay-skin="">
+                            <thead>
+                                <tr class="Color_black table_headtr ac">
+                                    <td class="firstheadtd">序号</td>
+                                    <td>处方订单号</td>
+                                    <td>处方单申请时间</td>
+                                    <td>患者姓名</td>
+                                    <td>申请医生</td>
+                                    <td>操作</td>
+                                </tr>
+                            </thead>
+                            <tbody v-if='tableList.length'>
+                                <tr class="table_con Color_black ac" v-for='(val,i) in tableList' :key='i'>
+                                    <td>{{ i+1 }}</td>
+                                    <td>{{ val.number }}</td>
+                                    <td>{{ val.creatime | moment }}</td>
+                                    <td>周建国</td>
+                                    <td>
+                                        <div class="doctor dis_f dis_js">
+                                            <ul>
+                                                <li v-for='(user,index) in val.name' :key='index'>{{ user }}</li>
+                                            </ul>
+                                            <ul>
+                                                <li v-for='(state) in val.state' >
+                                                    <span v-if='state == 1'>未接单</span>
+                                                    <span v-if='state == 2'>已接单</span>
+                                                    <span v-if='state == 3'>已拒绝</span>
+                                                    <span v-if='state == 4'>已超时</span>
+                                                    <span v-if='state == 5'>已开具</span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                    
+                                    <td>
+                                        <p class="pointer Ft-S14 Color_blue al" style="width:80px;margin:0 auto" @click="godetail(val.id)">查看详情</p>
+                                        <!-- <p class="pointer Ft-S14 Color_blue al" style="width:80px;margin:0 auto" @click="del(val.id)">删除</p>
+                                        <p class="pointer Ft-S14 Color_blue al" style="width:80px;margin:0 auto" v-if='val.status == 4' @click="delcode(val.id)">再次提交</p>
+                                        <p class="Ft-S14 al" style="width:80px;margin:0 auto" v-else>再次提交</p> -->
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tbody v-else>
+                                <tr class="table_con Color_black ac" >
+                                    <td colspan='6'>暂无数据</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!--  -->
+                    <div v-show='status == 1? true: status == 2? true: false'>
+                        <table class="layui-table" lay-skin="">
+                            <thead>
+                                <tr class="Color_black table_headtr ac">
+                                    <td class="firstheadtd">序号</td>
+                                    <td>处方需求单号</td>
+                                    <td>处方申请时间</td>
+                                    <td>患者姓名</td>
+                                    <td>开具医生</td>
+                                    <td>处方编号</td>
+                                    <td>处方状态</td>
+                                    <td>操作</td>
+                                </tr>
+                            </thead>
+                            <tbody v-if='tableList.length'>
+                                <tr class="table_con Color_black ac" v-for='(val,i) in tableList' :key='i'>
+                                    <td>{{ i+1 }}</td>
+                                    <td>{{ val.number }}</td>
+                                    <td>{{ val.creatime | moment }}</td>
+                                    <td>周建国</td>
+                                    <td>周洲</td>
+                                    <td>122354656555</td>
+                                    <td>处方已开具，等待药师审核</td>
+                                    <td>
+                                        <span class="pointer Ft-S14 Color_blue al"  @click="godetail(val.id)">查看详情</span>
+                                        <span class="pointer Ft-S14 Color_blue al Mg-L10" v-if='status == 1'  @click="yao_set(val.id)">药师审核</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tbody v-else>
+                                <tr class="table_con Color_black ac" >
+                                    <td colspan='8'>暂无数据</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    
+                    <div id="page" v-show='tableList.length' class="ac Mg-T30"></div>
+                </div>
+            </div>
+
+
+            <div class="yalui_btn"><button class="layui-btn layui-btn-normal">返回</button></div>
+        </div>
+
+
+
+         <div id="sendgoods_price" class="hide">
+            <h2>服务提示</h2>
+            <p>鲁医通账户余额不足，请充值后再试</p>
+            <div>
+                <button class="layui-btn layui-btn-normal" @click='cancel'>好的</button> 
+            </div>
+        </div> 
+        
        
-        <div id="sendgoods" class="hide delcode">
+        <!-- <div id="sendgoods" class="hide delcode">
             <ul class="Pd-T14 Pd-B14 kuang">
                 <li class="title">
                     <label>请选择医生</label>
@@ -117,7 +177,28 @@
                 <span class="fl"><button class="cancel pointer" @click='cancel'>取消</button></span>
                 <span class="fr"><button class="send pointer" @click='outdoctor'>确认提交</button></span>
             </p>
-        </div>
+        </div> -->
+
+        <!-- 审核 -->
+        <div id="sendgoods_shen" class="hide">
+            <h2>药师审核</h2>
+            <p>药师审核后不可修改，并添加药师电子签名</p>
+            <ul>
+                <li>
+                    <span>审核结果</span>
+                    <el-radio v-model="radioVal" label="1">审核通过</el-radio>
+                    <el-radio v-model="radioVal" label="2">审核拒绝</el-radio>
+                </li>
+                <li>
+                   <span> 审核说明</span>
+                   <textarea v-model='txt' placeholder="请填写审核说明"></textarea>
+                </li>
+            </ul>
+            <p class="clear">
+                <span><button class="layui-btn cancel" @click='cancels(2)'>取消</button></span>
+                <span><button class="layui-btn layui-btn-normal" @click="cancels(1)">保存</button></span>
+            </p>
+        </div> 
 
     </div>
 </template>
@@ -133,13 +214,16 @@ export default {
             list: {
                 status: 0,
                 order_code: '',
+                doc_user: '',
                 ktime: '',
                 jtime: '',
                 page: 1,
                 limit: 10
             },
             tableList: [],
-            status: 0           // tab 列表
+            status: 0,           // tab 列表
+            radioVal: '1',       // 审核
+            txt: '',             // 审核说明
         }
     },
     mounted() {
@@ -228,7 +312,21 @@ export default {
            
         },
         godetail(val) {    // 查看详情
-            this.go('/server/YaoprescriptionList/prescriptionCheck?id='+ val)
+            // layui.use(["layer"], function () {    // 余额不足提示
+            //     var layer = layui.layer;
+            //     var $ = layui.jquery;
+            //     layer.open({
+            //         type: 1,
+            //         shade: 0.2,
+            //         shadeClose: true,
+            //         closeBtn: 0,
+            //         title: "",
+            //         content: $("#sendgoods_price"),
+            //         area: ["400px", "260px"],
+            //     });
+                
+            // });
+            this.go('/server/YaoprescriptionListPic/prescriptionCheck?id='+ val)
         },
         delcode(id) { // 再次提交弹框
             this.doctorId = id
@@ -308,6 +406,7 @@ export default {
         empty() {   // 清空
            this.list = {
                 order_code: '',
+                doc_user: '',
                 ktime: '',
                 jtime: '',
             }
@@ -331,6 +430,34 @@ export default {
                     this.checkAll = false;
                 }
             }
+        },
+        
+        cancels (n) {     // 审核的 取消关闭弹框 和 确认
+            if(n == 1) {
+                console.log('yes')
+                return false;   
+            }
+            layui.use('layer', function(){
+            var layer = layui.layer;
+                layer.closeAll();
+            }); 
+        },
+        yao_set (id) {  // 药师审核
+            var self = this;
+            layui.use(["layer"], function () {
+                var layer = layui.layer;
+                var $ = layui.jquery;
+                layer.open({
+                    type: 1,
+                    shade: 0.4,
+                    shadeClose: true,
+                    closeBtn: 0,
+                    title: "",
+                    content: $("#sendgoods_shen"),
+                    area: ["500px", "380px"],
+                    cancel: function () { }
+                });
+            });
         }
     }
 }
@@ -347,7 +474,7 @@ export default {
         border: 1px solid #c2c3c3;
     }
     .screen_type {
-        border-bottom: 1px solid #e6e6e6;
+        padding: 0 24px;
         .layui-form-item {
             .lay_width {
                 margin: 0;
@@ -369,8 +496,11 @@ export default {
                   margin: 0 3px;
               }
                 .layui-form-label {
-                  width: 100px;
-                    padding: 7px 10px 7px 0px;
+                    padding:0;
+                    width: auto;
+                    height: 34px;
+                    padding-right: 7px;
+                    line-height: 34px;
                 }
                 .layui-input-inline {
                   margin: 0;
@@ -379,7 +509,7 @@ export default {
                     }
                     .date_icon {
                         background: url(../../common/image/pages/account/icon_sj.png)
-                            no-repeat 150px;
+                            no-repeat right center;
                     }
                 }
             }
@@ -388,7 +518,7 @@ export default {
             display: inline-block;
             color: #fff;
             background: #3196ff;
-            width: 100px;
+            width: 60px;
             height: 34px;
             line-height: 34px;
             border: none;
@@ -400,18 +530,43 @@ export default {
         background-color: #fff;
         
         .layui-tab {
-            .layui-tab-title {
-                font-size: 16px;
-                color: #666666;
-                .layui-this {
-                    color: #128dff;
-                    background: #fff;
-                }
-                .layui-this:after {
-                    color: #128dff;
-                    border-top: 2px solid #128dff;
+            width: 100%;
+            .layui_navs {
+                width: 100%;
+                position: relative;
+                .btn_r {
+                    position: absolute;
+                    right: 0;
+                    top: 0;
+                    margin-right: 5px;
+                    button {
+                        height: 33px;
+                        line-height: 33px;
+                    }
+                    .background_white {
+                        background-color: #FFF;
+                        color: #3196FF;
+                        -webkit-border: 1px solid #3196FF;
+                        border: 1px solid #3196FF;
+                        -webkit-border-radius: 4px;
+                        border-radius: 4px;
+                    }
                 }
             }
+            
+                .layui-tab-title {
+                    font-size: 16px;
+                    color: #666666;
+                    .layui-this {
+                        color: #128dff;
+                        background: #fff;
+                    }
+                    .layui-this:after {
+                        color: #128dff;
+                        border-top: 2px solid #128dff;
+                    }
+                }
+            
         }
         .layui-tab-content {
             padding-left: 1px;
@@ -460,7 +615,75 @@ export default {
             }
         }
     }
+    .yalui_btn {
+        padding-bottom: 24px;
+        width: 100%;
+        text-align: center;
+    }
 }
+
+#sendgoods_price {
+    padding-left: 53px;
+    padding-right: 53px;
+    text-align: center;
+    h2 {
+        padding: 40px 0;
+        font-size: 18px;
+        color: #333;
+    }
+    > div {
+        margin-top: 50px;
+        text-align: center;
+        button {
+            width: 100px;
+        }
+    }
+}
+
+ #sendgoods_shen {
+     h2 {
+         text-align: center;
+         padding-top: 30px;
+         font-size: 18px;
+     }
+    
+    p {
+        text-align: center;
+        padding: 10px 0;
+        line-height: 30px;
+    }
+    ul {
+        padding: 0 24px;
+        li {
+            padding: 12px 0;
+            span {
+                color: #666;
+                margin-right: 24px;
+                vertical-align: top;
+            }
+
+            textarea {
+                resize: none;
+                width: 350px;
+                height: 110px;
+                padding: 12px;
+                background-color: #F5F5F5;
+                border:0;
+            }
+        }
+    }
+        .clear {
+            text-align: center;
+            width:100%;
+            .cancel {
+                background: #fff;
+                color:#128DFF;
+                border:1px solid #128DFF;
+                margin-right: 20px;
+            }
+        }
+    }
+
 #sendgoods {
     padding-left: 53px;
     padding-right: 53px;

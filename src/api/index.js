@@ -1,7 +1,7 @@
 import axios from "axios";
 
-var baseURL = "https://www.yunyikang.cn" // 正式
-// var baseURL = "http://test99.yunyikang.cn"; // 测试
+// var baseURL = "https://www.yunyikang.cn" // 正式
+var baseURL = "http://test99.yunyikang.cn"; // 测试
 // var baseURL="http://192.168.8.107"//
 
 
@@ -28,6 +28,7 @@ var http = axios.create({
       console.log('obj:'+newData)
       return newData;
     }
+    console.log('obj2:'+data)
     return data;
   }
   ]
@@ -53,7 +54,9 @@ http.interceptors.response.use(function(res) {
   return res;
 }, function (error) {
   var config = error.config;
-  if(!config || !config.retry) return Promise.reject(error);
+  if(!config || !config.retry) {
+    return Promise.reject(error);
+  }
   config.__retryCount = config.__retryCount || 0;
     if(config.__retryCount >= config.retry) {
         return Promise.reject(error);
@@ -67,51 +70,53 @@ http.interceptors.response.use(function(res) {
     return backoff.then(function() {
       return http(config);
     })
-    /*
-  if (error && error.response) {
-    switch (error.response.status) {
-      case 400:
-        console.log('错误请求')
-        break;
-      case 401:
-        console.log('未授权，请重新登录')
-        break;
-      case 403:
-        console.log( '拒绝访问')
-        break;
-      case 404:
-        console.log('请求错误,未找到该资源')
-        break;
-      case 405:
-        console.log('请求方法未允许')
-        break;
-      case 408:
-        console.log('请求超时')
-        break;
-      case 500:
-        console.log('服务器端出错')
-        break;
-      case 501:
-        console.log('网络未实现')
-        break;
-      case 502:
-        console.log('网络错误')
-        break;
-      case 503:
-        console.log('服务不可用')
-        break;
-      case 504:
-        console.log('网络超时')
-        break;
-      case 505:
-        console.log('http版本不支持该请求')
-        break;
-      default:
-        console.log(`连接错误${error.response.status}`)
-    }
-  }
-  return Promise.reject(error);  */
+    
 });
+
+  // function rejectErr(error) {
+  //   if (error && error.response) {
+  //     switch (error.response.status) {
+  //       case 400:
+  //         console.log('错误请求')
+  //         break;
+  //       case 401:
+  //         console.log('未授权，请重新登录')
+  //         break;
+  //       case 403:
+  //         console.log( '拒绝访问')
+  //         break;
+  //       case 404:
+  //         console.log('请求错误,未找到该资源')
+  //         break;
+  //       case 405:
+  //         console.log('请求方法未允许')
+  //         break;
+  //       case 408:
+  //         console.log('请求超时')
+  //         break;
+  //       case 500:
+  //         console.log('服务器端出错')
+  //         break;
+  //       case 501:
+  //         console.log('网络未实现')
+  //         break;
+  //       case 502:
+  //         console.log('网络错误')
+  //         break;
+  //       case 503:
+  //         console.log('服务不可用')
+  //         break;
+  //       case 504:
+  //         console.log('网络超时')
+  //         break;
+  //       case 505:
+  //         console.log('http版本不支持该请求')
+  //         break;
+  //       default:
+  //         console.log(`连接错误${error.response.status}`)
+  //     }
+  //   }
+  // }
 
 function apiAxios(method, url, params, response, error) {
   http({
@@ -204,6 +209,25 @@ function Axios(method, url, params) {
 }
 
 
+
+function uploadFile (Url, data, upload, handle) {
+  console.log(upload)
+  var files = axios.create({
+    baseURL: baseURL,
+    headers: {
+      "Content-Type": "multipart/form-data"
+    },
+    onUploadProgress: upload
+  });
+  files.post(Url, data).then(res => {
+      handle(res.data);
+    }).catch(error => {
+      return Promise.reject(error);
+    });
+}
+
+
+
 export default {
   get: function(url, params, response, err) {
     return apiAxios("GET", url, params, response, err);
@@ -230,5 +254,6 @@ export default {
   $post: async function (url, data) {           // 用 then 接收
     return await Axios('POST', url, data)
   },
+  uploadFile: uploadFile,
   baseURL: baseURL  // 导出前缀路径
 };

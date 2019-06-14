@@ -82,7 +82,6 @@ export default {
                         _this.$router.replace('/setting/boxMechanismMsg/mesuccess')          // 医院
                     }
                 }     
-            
             })
         }
         
