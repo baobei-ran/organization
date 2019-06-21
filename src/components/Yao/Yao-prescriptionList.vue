@@ -19,6 +19,7 @@
                         <el-date-picker style="width:160px;"
                             v-model="list.jtime"
                             type="date"
+                            value-format="yyyy-MM-dd"
                             placeholder="选择结束日期">
                         </el-date-picker>
                     </div>
@@ -32,7 +33,7 @@
                 <div class="layui-inline Mg-L10 lay_width">
                     <label class="layui-form-label">申请医生</label>
                     <div class="layui-input-inline" style="width:160px">
-                        <input type="text" v-model="list.doc_user" autocomplete="off" class="layui-input">
+                        <input type="text" v-model="list.name" autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <p class="Pd-L15">
@@ -47,10 +48,10 @@
             <div class="layui-tab">
                 <div class="layui_navs">
                     <ul class="layui-tab-title">
-                        <li class="layui-this" @click="tab(0)">等待中</li>
-                        <li @click="tab(1)">待审核</li>
-                        <li @click="tab(2)">已开具</li>
-                        <li @click="tab(3)">开具失败</li>
+                        <li class="layui-this" @click="tab(1)">等待中</li>
+                        <li @click="tab(2)">待审核</li>
+                        <li @click="tab(3)">已开具</li>
+                        <li @click="tab(4)">开具失败</li>
                     </ul>
                     <span class="btn_r">
                         <button class="layui-btn background_white layui-btn-normal"  @click='go("/server/YaoprescriptionListPic/prescriptionSetting")'>处方设置</button>
@@ -58,8 +59,8 @@
                     </span>
                 </div>
                 <div class="layui-tab-content">
-                    <!--  -->
-                    <div v-show='status == 0? true: status == 3? true: false'>
+                    <!-- 等待 和 开具失败 -->
+                    <div v-show='tabStatus == 1? true: tabStatus == 4? true: false'>
                         <table class="layui-table" lay-skin="">
                             <thead>
                                 <tr class="Color_black table_headtr ac">
@@ -76,20 +77,15 @@
                                     <td>{{ i+1 }}</td>
                                     <td>{{ val.number }}</td>
                                     <td>{{ val.creatime | moment }}</td>
-                                    <td>周建国</td>
-                                    <td>
-                                        <div class="doctor dis_f dis_js">
-                                            <ul>
-                                                <li v-for='(user,index) in val.name' :key='index'>{{ user }}</li>
-                                            </ul>
-                                            <ul>
-                                                <li v-for='(state) in val.state' >
-                                                    <span v-if='state == 1'>未接单</span>
-                                                    <span v-if='state == 2'>已接单</span>
-                                                    <span v-if='state == 3'>已拒绝</span>
-                                                    <span v-if='state == 4'>已超时</span>
-                                                    <span v-if='state == 5'>已开具</span>
-                                                </li>
+                                    <td>{{ val.user }}</td>
+                                    <td class="Pd-L24" style='width:300px;'>
+                                        <div class="doctor">
+                                            <ul v-for='(st, index) in val.state' :key='index+"_1"'>
+                                                <li v-if='st.status == 1'><span>{{ st.true_name }}</span> <span>未接单</span></li>
+                                                <li v-if='st.status == 2'><span>{{ st.true_name }}</span> <span>已接单</span></li>
+                                                <li v-if='st.status == 3'><span>{{ st.true_name }}</span> <span>已拒绝</span><span class="docMsg">（{{ st.remark }}</span><b>）</b></li>
+                                                <li v-if='st.status == 4'><span>{{ st.true_name }}</span> <span>处方开具超时</span></li>
+                                                <li v-if='st.status == 5'><span>{{ st.true_name }}</span> <span>已开具</span></li>
                                             </ul>
                                         </div>
                                     </td>
@@ -110,8 +106,8 @@
                         </table>
                     </div>
 
-                    <!--  -->
-                    <div v-show='status == 1? true: status == 2? true: false'>
+                    <!-- 待审核和已开具 -->
+                    <div v-show='tabStatus == 2? true: tabStatus == 3? true: false'>
                         <table class="layui-table" lay-skin="">
                             <thead>
                                 <tr class="Color_black table_headtr ac">
@@ -126,17 +122,24 @@
                                 </tr>
                             </thead>
                             <tbody v-if='tableList.length'>
-                                <tr class="table_con Color_black ac" v-for='(val,i) in tableList' :key='i'>
+                                <tr class="table_con Color_black ac" v-for='(val,i) in tableList' :key='i+"_2"'>
                                     <td>{{ i+1 }}</td>
                                     <td>{{ val.number }}</td>
                                     <td>{{ val.creatime | moment }}</td>
-                                    <td>周建国</td>
-                                    <td>周洲</td>
-                                    <td>122354656555</td>
-                                    <td>处方已开具，等待药师审核</td>
+                                    <td>{{ val.user }}</td>
+                                    <td>{{ val.doc_name }}</td>
+                                    <td>{{ val.order_code }}</td>
+                                    <td>
+                                        <ul>
+                                            <li v-show='val.status == 3 && val.flag == 0'>处方已开具，等待药师审核</li>
+                                            <li v-show='val.status == 3 && val.flag == 1'>药师已审核</li>
+                                            <li v-show='val.status == 5'>处方已过期</li>
+                                            <li v-show='val.status == 3 && val.flag == 2'>药师审核未通过</li>
+                                        </ul>
+                                    </td>
                                     <td>
                                         <span class="pointer Ft-S14 Color_blue al"  @click="godetail(val.id)">查看详情</span>
-                                        <span class="pointer Ft-S14 Color_blue al Mg-L10" v-if='status == 1'  @click="yao_set(val.id)">药师审核</span>
+                                        <span class="pointer Ft-S14 Color_blue al Mg-L10" v-if='tabStatus == 1'  @click="yao_set(val.id)">药师审核</span>
                                     </td>
                                 </tr>
                             </tbody>
@@ -221,30 +224,32 @@ export default {
             checkedCities: [],          // 选择医生的数据liebaio
             doctorId: '',               // 再次提价发起，获取医生id
             list: {
-                status: 0,
+                status: 1,
                 order_code: '',
-                doc_user: '',
+                name: '',
                 ktime: '',
                 jtime: '',
-                page: 1,
-                limit: 10
+                limit: 10,
+                page: 1
             },
             tableList: [],
-            status: 0,           // tab 列表
+            tabStatus: 1,           // tab 列表
             radioVal: '1',       // 审核
             txt: '',             // 审核说明
         }
     },
-    mounted() {
-        
-    },
     activated () {
-        this.tab(this.status)
+        this.tab(this.tabStatus)
     },
     methods: {
         tab(type) {
-            this.empty()
-            this.status = type;
+            this.list = {
+                order_code: '',
+                name: '',
+                ktime: '',
+                jtime: '',
+            }
+            this.tabStatus = type;
             this.initdata(type, 1)
         },
         initdata(type, num) {   // 数据
@@ -253,8 +258,8 @@ export default {
                 var element = layui.element;
                 _this.list.page = num;
                 _this.list.status = type;
-                console.log(_this.list)
-                _this.$http.post('/shv2/recipe/recipe_index', _this.list, function (res) {//
+                _this.list.limit = 10;
+                _this.$http.post('/shv2/recipetwo/recipe_index', _this.list, function (res) {//
                     console.log(res)
                     if (res.code == 1) {
                         _this.tableList = res.data;
@@ -380,7 +385,7 @@ export default {
                   console.log(res)
                   if (res.code == 1) {
                       layer.msg('删除成功', { icon:1});
-                      self.tab(self.status)
+                      self.tab(self.tabStatus)
                   } else {
                       layer.msg('删除失败', { icon: 2});
                   }
@@ -402,11 +407,11 @@ export default {
         empty() {   // 清空
            this.list = {
                 order_code: '',
-                doc_user: '',
+                name: '',
                 ktime: '',
                 jtime: '',
             }
-            this.initdata(this.status, 1)
+            this.initdata(this.tabStatus, 1)
         },
         //  handleCheckAllChange(val) {     // 全选
         //     if(val) {
@@ -590,8 +595,25 @@ export default {
                           }
                           .doctor {
                               ul {
+                                  
                                   li {
-                                      line-height: 30px;
+                                      text-align: left;
+                                    line-height: 30px;
+                                    span:first-child {
+                                        display: inline-block;
+                                        min-width: 50px;
+                                    }
+                                    .docMsg {
+                                        display: inline-block;
+                                        width: 100px;
+                                        overflow: hidden;
+                                        text-overflow:ellipsis;
+                                        white-space: nowrap;
+                                        vertical-align: middle;
+                                    }
+                                    b {
+                                        font-weight: normal;
+                                    }
                                   }
                               }
                           }

@@ -1,38 +1,39 @@
 <template>
+<!-- 处方详情页 -->
     <div id="prescriptionCheck">
         <div class="tab_content">
-                <div class="prescriptionCheck_head dis_f Pd-L24 Pd-R24">
+                <div class="prescriptionCheck_head dis_f Pd-L24 Pd-R24" v-show="prescriptiondata.status == 1">
                     <h1>处方申请详情</h1>
-                    <img src="../../../common/image/icon/icon_ddsh@2x.png" alt="">
-                    <span>等待开具中 <b>01:26</b></span>
+                    <img src="../../../common/image/icon/icon_ddsh@2x.png" alt="" />
+                    <span>等待开具中 <b>{{ downTime }}</b></span>
                 </div>
-                <div class="prescriptionCheck_head dis_f Pd-L24 Pd-R24">
+                <div class="prescriptionCheck_head dis_f Pd-L24 Pd-R24" v-show="prescriptiondata.status == 3 && prescriptiondata.flag == 0">
                     <h1>处方申请详情</h1>
-                    <img src="../../../common/image/icon/icon_ddsh@2x.png" alt="">
+                    <img src="../../../common/image/icon/icon_ddsh@2x.png" alt="" />
                     <span>处方已开具，等待药师审核</span>
                 </div>
-                <div class="prescriptionCheck_head dis_f Pd-L24 Pd-R24">
+                <div class="prescriptionCheck_head dis_f Pd-L24 Pd-R24" v-show="prescriptiondata.status == 3 && prescriptiondata.flag == 1">
                     <h1>处方申请详情</h1>
-                    <img src="../../../common/image/icon/icon_cfykj@2x.png" alt="">
+                    <img src="../../../common/image/icon/icon_cfykj@2x.png" alt="" />
                     <span>处方已开具，药师已审核</span>
                 </div>
                 <!-- 处方过期 -->
-                 <div class="prescriptionCheck_header dis_f Pd-L24 Pd-R24">
+                 <div class="prescriptionCheck_header dis_f Pd-L24 Pd-R24" v-show="prescriptiondata.status == 5 && prescriptiondata.flag == 1">
                     <h1>处方申请详情</h1>
-                    <img src="../../../common/image/icon/icon_cfygq@2x.png" alt="">
+                    <img src="../../../common/image/icon/icon_cfygq@2x.png" alt="" />
                     <span>处方已开具，处方已过期</span>
                 </div>
 
                  <!-- 处方审核未通过 -->
-                 <div class="prescriptionCheck_header dis_f Pd-L24 Pd-R24">
+                 <div class="prescriptionCheck_header dis_f Pd-L24 Pd-R24" v-show="prescriptiondata.status == 3 && prescriptiondata.flag == 2">
                     <h1>处方申请详情</h1>
-                    <img src="../../../common/image/icon/icon_cfygq@2x.png" alt="">
+                    <img src="../../../common/image/icon/icon_cfygq@2x.png" alt="" />
                     <span>处方已开具，药师审核未通过</span>
                 </div>
                 <!-- 取消处方 -->
-                 <div class="prescriptionCheck_header dis_f Pd-L24 Pd-R24">
+                 <div class="prescriptionCheck_header dis_f Pd-L24 Pd-R24" v-show="prescriptiondata.status == 4">
                     <h1>处方申请详情</h1>
-                    <img src="../../../common/image/icon/icon_cfygq@2x.png" alt="">
+                    <img src="../../../common/image/icon/icon_cfygq@2x.png" alt="" />
                     <span>已取消申请，处方开具失败</span>
                 </div>
 
@@ -40,11 +41,10 @@
                     <div class="prescription_msg bg_f">
                         <p class="orderList_tit Color_black Pd-T20 Pd-B20 Pd-L24 Pd-R24 Ft-S16 ">需求单信息</p>
                         <ul>
-                            <li><span>处方需求单号</span><span>23132748937492379</span></li>
-                            <li><span>处方申请时间</span><span>2018-09-09 12：00</span></li>
-                            <li><span>药店留言</span><span>患者信息真实，请尽快开具，患者信息真实，请尽快开具患者信息真实，请尽快开具</span></li>
+                            <li><span>处方需求单号</span><span>{{ prescriptiondata.number }}</span></li>
+                            <li><span>处方申请时间</span><span>{{ prescriptiondata.creatime,'YYYY-MM-DD HH:mm' | moment }}</span></li>
+                            <li><span>药店留言</span><span>{{ prescriptiondata.shop_word }}</span></li>
                         </ul>
-                       
                     </div>
                     
                 <div class="prescription_box Mg-T24  bg_f" ref='prescription_box' id='html'>
@@ -84,88 +84,85 @@
                             </ul>
                             <ul>
                                 <li>
-                                    临床诊断<span>{{ prescriptiondata.result }}</span>
+                                    <label>临床诊断</label><span>{{ prescriptiondata.result }}</span>
                                 </li>
                             </ul>
                         </div>
-                        <p style="height:24px; background-color: #f1f2f9;"></p>
-                        <div class="drug">
+                    </div>
+                    </div>
+
+                     <!-- 药品信息  -->
+                    <div class="drug Mg-T24 bg_f" v-if='eat.length'>
                             <p class="orderList_tit Color_black Pd-T20 Pd-B20 Pd-L24 Pd-R24 Ft-S16 ">药品信息</p>
                             <ol class="dis_f" >
-                                <li v-for='(val,i) in prescriptiondata.recipe_eat' :key='i'>
+                                <li v-for='(val,i) in eat' :key='i'>
                                     {{ val.name }} <span>x{{ val.num }}</span>
                                     <span class="yao_yong">用法：<b>{{ val.usage }}</b></span>
                                 </li>
                             </ol>
                         </div>
-                        
-                        
-                    </div>
-                       
-                    </div>
-
-
-
-                </div>
+                </div>                  
+                
 
             <!-- 处方开具信息 -->
-                <div class="issue_msg bg_f Mg-T24">
+                <div class="issue_msg bg_f Mg-T24" v-show="prescriptiondata.status == 3">
                     <p class="orderList_tit Color_black Pd-L24 Pd-B20 Ft-S16 ">处方开具信息 <span class='pointer'>查看原始处方</span></p>
                     <ul>
                         <li>
-                            处方编号<span>62783682639797</span>
+                            处方编号<span>{{ prescriptiondata.order_code }}</span>
                         </li>
                         <li>
-                            开具医生<span>李楠楠</span>
+                            开具医生<span>{{ prescriptiondata.doc_name }}</span>
                         </li>
                         <li>
-                            开具时间<span>2018-09-09 09:00</span>
+                            开具时间<span>{{ prescriptiondata.start_time | moment }}</span>
                         </li>
                         <li>
-                            处方失效时间<span>2019-01-01 12:00</span>
+                            处方失效时间<span>{{ prescriptiondata.undue_time | moment }}</span>
                         </li>
                     </ul>
                     <div>
                         <span>临床诊断</span>
-                        <p>就收到货是的是的红色经典红色经典圣诞节斯柯达祭祀的精髓倒计时肯定就是市地税局的三季度刷卡金多斯拉克京东数科倒计时肯定就是倒计时了倒计时了肯德基是来得及深刻的紧身裤的紧身裤</p>
+                        <p>{{ prescriptiondata.result }}</p>
                     </div>
-                    <ul v-if='true'>
+                    <ul v-if='prescriptiondata.flag == 1'>
                         <li>
-                            审核药师<span>李潇潇</span>
+                            审核药师<span>{{ prescriptiondata.flag_name }}</span>
                         </li>
                         <li>
-                            审核时间<span>2019-01-01 12:00</span>
+                            审核时间<span>{{ prescriptiondata.flag_time | moment }}</span>
                         </li>
-                        <p>
+                        <p style="margin-left:5px;">
                             <span>审核说明</span>
-                            <span>药品使用方法有误，应为外用，不可口服。药品使用方法有误，应为外用</span>
+                            <span v-text='prescriptiondata.flag_text == null?"无信息":prescriptiondata.flag_text'></span>
                         </p>
                     </ul>
                 </div>
 
                 <!-- 申请医生信息 -->
-                <div class="doc_msg">
+                <div class="doc_msg" v-if="rob.length">
                     <p class="Pd-B24 Pd-T20 Pd-L24 Color_black Ft-S16">申请医生信息</p>
                     <ul>
-                        <li><span>就是：</span><span>刷机大师</span></li>
-                        <li><span>搜索：</span><span>受持读诵的导出</span></li>
-                        <li><span>无时无刻：</span><span>菜市场</span></li>
-                        <li><span>大厦：</span><span>的从事</span></li>
+                        <li v-for='itm in rob' :key='itm.id'>
+                            <span>{{ itm.true_name }}：</span>
+                            <span>
+                                <span v-text='itm.status == 1?"未接单":itm.status == 2?"已接单":itm.status == 3?"拒绝接单":itm.status == 4?"处方开具超时":"已开具"'></span>
+                                <span v-if='itm.status == 3'>(原因：{{ itm.remark }})</span>
+                                <span v-if='itm.status == 2'> 处方开具中{{ itm.creatime | downMoment }}</span>
+                            </span>
+                        </li>
                     </ul>
                 </div>
 
                 <!-- 审核未通过原因 -->
-                <div class="defeated bg_f Mg-T20" >
+                <div class="defeated bg_f Mg-T20" v-if='prescriptiondata.flag == 2' >
                     <p class="orderList_tit Color_black Ft-S16 Pd-T20 Pd-B20 Pd-L24">审核未通过原因</p>
-                    <div class="Pd-L24 Pd-T24 ">无信息</div>
-                    <ul >
-                        <li v-for="(val,i) in prescriptiondata.doc_remark" :key='i'>{{val.name}}:<span>{{ val.remark }}</span></li>
-                    </ul>
+                    <div class="Pd-L24 Pd-T24 " v-text='prescriptiondata.flag_text == null ? "无信息":prescriptiondata.flag_text'></div>
                 </div>
                 <div class="prescription_btn">
                     <button class="layui-btn layui-btn-normal" style='width: 100px;'  @click='go("/server/YaoprescriptionListPic/YaoprescriptionList")'>返回</button>
-                    <button class="layui-btn Return_btn" @click='initdata'>取消申请</button>
-                    <button class="layui-btn Return_btn" @click='initdata'>药师审核</button>
+                    <button v-show="prescriptiondata.status == 1" class="layui-btn Return_btn" @click='initdata'>取消申请</button>
+                    <button v-show="prescriptiondata.status == 3 && prescriptiondata.flag == 0" class="layui-btn Return_btn" @click='yaoAudit'>药师审核</button>
                 </div>
         </div>
         <!-- 取消审核 -->
@@ -199,11 +196,15 @@ export default {
     name: 'prescriptionCheck',
     data() {
         return {
-            prescriptiondata: {},   // 数据
+            prescriptiondata: {},   // 处方数据
             num: '',                // 
             doctorId: '',           // 获取id
             server_msg: '系统已为您再次提醒医生',         // 取消提示语
             server_msg2:'处方申请15分钟后，才可取消申请',         // 取消提示语2
+            eat: {},                // 药品信息
+            rob: {},                // 申请医生信息
+            downTime: '',           // 计时时间
+            times: '',              // 定时器
         }
     },
     mounted() {
@@ -215,10 +216,16 @@ export default {
     methods: {
         datadetail () {
             var self = this;
-            self.$http.post('/shv2/recipe/recipe_look', this.$route.query, function (res) {
+            self.$http.post('/shv2/recipetwo/recipe_look', this.$route.query, function (res) {
                 console.log(res)
                 if (res.code == 1) {
-                    self.prescriptiondata = res.data
+                    self.prescriptiondata = res.data.data
+                    self.eat = res.data.eat
+                    self.rob = res.data.rob
+                    if (res.data.data.status == 1) {
+                        // self.countDown(res.data.data.creatime)
+                        self.countDown(1561110380)
+                    }
                 }
             }, function (err) { console.log(err)})
         },
@@ -239,7 +246,25 @@ export default {
         //         });
         //     });
         },
-        
+        countDown (time) {  // 倒计时
+            var _this = this;
+            var startTime = time
+           _this.times = setInterval(() => {
+                function oddo (mm) {
+                    if (mm < 10) {
+                        mm = '0' + mm
+                    }
+                    return mm
+                }
+                var endTime = Math.round((Date.now())/1000);
+                var moments = endTime - startTime;
+                var m = parseInt(moments % 60);
+                var f = parseInt(moments / 60%60)
+                var h = parseInt(moments / 3600%24)
+                _this.downTime = oddo(h)+':'+oddo(f)+':'+oddo(m)
+            }, 1000)
+             
+        },
         cancel (num) { //  取消审核或者确认取消
             if (num == 2) {
                 layui.use(["layer"], function () {
@@ -285,8 +310,15 @@ export default {
                 });
             });
         },
-         
+        yaoAudit () {  // 药师审核
+
+        }
       
+    },
+    beforeDestroy () {
+        if (this.times) {
+            clearInterval(this.times)
+        }
     }
 }
 </script>
@@ -453,29 +485,32 @@ export default {
                         padding: 0;
                     }
                 }
-                .drug {
-                    >ol {
-                        padding: 0 24px;
-                        >li {
-                            color: #666;
-                            font-size: 14px;
-                            line-height: 50px;
-                            margin-right: 30px;
-                            font-weight: 540;
-                            font-size: 15px;
-                            >span {
-                               margin-left: 100px;
-                            }
-                            
-                            .yao_yong {
-                                >b {
-                                    font-weight: 500;
-                                }
-                            }   
-                        }
-                    }
-                }
+                
                
+            }
+        }
+
+
+        .drug {
+            >ol {
+                padding: 0 24px;
+                >li {
+                    color: #666;
+                    font-size: 14px;
+                    line-height: 50px;
+                    margin-right: 30px;
+                    font-weight: 540;
+                    font-size: 15px;
+                    >span {
+                        margin-left: 100px;
+                    }
+                    
+                    .yao_yong {
+                        >b {
+                            font-weight: 500;
+                        }
+                    }   
+                }
             }
         }
 
@@ -516,6 +551,7 @@ export default {
                 padding: 0 24px;
                 margin-top: 12px;
                 display: flex;
+                margin-left: 5px;
                 color: #666;
                 span {
                     display: inline-block;
@@ -546,7 +582,7 @@ export default {
                     line-height: 40px;
                     color: #666;
                     span:last-child {
-                        margin-left: 20px;
+                        margin-left: 1px;
                         color: #333;
                     }
                 }
@@ -560,20 +596,8 @@ export default {
             >p {
                 border-bottom: 1px solid #F1F2F9;
             }
-            >ul {
-                padding: 20px 24px;
-                li {
-                    line-height: 35px;
-                    padding-left: 20px;
-                    color: #333;
-                    font-size: 13px;
-                    span {
-                        color: #666;
-                    }
-                }
-                li:nth-child(odd) {
-                    background-color: #EEEEEE;
-                }
+            > div {
+                padding: 0 24px 24px;
             }
         }
         .prescription_btn {

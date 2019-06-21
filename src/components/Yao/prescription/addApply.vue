@@ -306,9 +306,9 @@ export default {
         this.searchDrug()
     },
     methods: {
-        dels (i) {  // 删除药品
+        dels (id) {  // 删除药品
             this.drugPreserveList = this.drugPreserveList.filter(val => {
-                return val.id !== i
+                return val.id !== id
             })
         },
         handleSelectionChange(val) {  // 选择药品添加
@@ -325,13 +325,17 @@ export default {
         searchDrug () {  // 获取药品信息
             var _this = this;
             var obj = {yname: this.drugName, cname: this.drugManufacturer }
-            this.$http.post('/shv2/recipetwo/hos_store', obj, function (res){
-                console.log(res)
-                if (res.code == 1) {
-                    _this.drugData = res.data
-                } else {
-                    _this.drugData = []
-                }
+            layui.use('layer', function(){
+                var layer = layui.layer;
+                _this.$http.post('/shv2/recipetwo/hos_store', obj, function (res){
+                    console.log(res)
+                    if (res.code == 1) {
+                        _this.drugData = res.data
+                    } else {
+                        layer.msg('未查询到商品',{icon:0})
+                        _this.drugData = []
+                    }
+                }, function (err) {})
             })
         },
         drugPreserve () {  // 药品保存
@@ -342,7 +346,12 @@ export default {
                     layer.msg('请选择药品',{icon:0});
                     return false;
                 }
-                _this.drugPreserveList.concat(_this.multipleDrug)
+                console.log(_this.drugPreserveList)
+                if (_this.drugPreserveList.length > 0) {
+                    _this.drugPreserveList.concat(_this.multipleDrug)
+                } else {
+                    _this.drugPreserveList = _this.multipleDrug
+                }
                 _this.multipleDrug = []
                 _this.drugCancel()
                 _this.searchDrug()
@@ -487,6 +496,9 @@ export default {
         },
         drugList () {  // 添加药品列表
             var self = this;
+            if (this.drugData.length <= 0) {
+                this.searchDrug()
+            }
             layui.use(["layer"], function () {
                 var layer = layui.layer;
                 var $ = layui.jquery;

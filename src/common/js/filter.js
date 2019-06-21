@@ -20,11 +20,14 @@ vue.filter('money', function(val) { // 千分位金钱转换加逗号
 })
 
 vue.filter('moment', function (value, formatString) {
+    if (!value) {
+      return ''
+    }
     formatString = formatString || 'YYYY-MM-DD HH:mm:ss';
     return moment.unix(value).format(formatString); // 这是时间戳转时间
 });
 
-vue.directive('enterNumber2', {
+vue.directive('enterNumber2', { // 输入金额的限制
     inserted: function (el) {
       el.addEventListener("keypress",function(e){
         e = e || window.event;
@@ -45,3 +48,10 @@ vue.directive('enterNumber2', {
       });
     }
   });
+
+
+  vue.filter('downMoment', function (value) { 
+      if (!value) {
+        return '';
+      }
+  })

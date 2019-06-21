@@ -60,6 +60,7 @@
                         <keep-alive include="goodsList,yaoPrescription,yaoPrescriptionList">
                             <router-view></router-view>
                         </keep-alive>
+                        
                 </div>
             </div>
         </div>

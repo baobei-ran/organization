@@ -5,11 +5,9 @@ var baseURL = "http://test99.yunyikang.cn"; // 测试
 // var baseURL="http://192.168.8.107"//
 
 
-axios.defaults.retry = 3;           //  发起请求次数
+axios.defaults.retry = 2;           //  发起请求次数
 axios.defaults.retryDelay = 2000;   //  每次请求时间
 
-// import { Loading } from 'element-ui';
-// var loadingInstance;
 axios.defaults.withCredentials = true;
 var http = axios.create({
   baseURL: baseURL,
@@ -35,8 +33,6 @@ var http = axios.create({
 });
 
 http.interceptors.request.use(function (config) {
-  // loadingInstance = Loading.service({ fullscreen: true });
-  // console.log(config)
   return config;
 }, function (error) {
   return Promise.reject(error);
@@ -44,9 +40,7 @@ http.interceptors.request.use(function (config) {
 
 
 http.interceptors.response.use(function(res) {
-  //全局拦截处理未登录
-  // console.log(res)
-    // loadingInstance.close();
+  // 全局拦截处理未登录
   if (res.data.code == 406) {
     localStorage.clear();
     window.location.href = "/shanghu/#/login";
@@ -55,10 +49,12 @@ http.interceptors.response.use(function(res) {
 }, function (error) {
   var config = error.config;
   if(!config || !config.retry) {
+    rejectErr(error)
     return Promise.reject(error);
   }
   config.__retryCount = config.__retryCount || 0;
     if(config.__retryCount >= config.retry) {
+        rejectErr(error)
         return Promise.reject(error);
     }
     config.__retryCount += 1;
@@ -73,50 +69,50 @@ http.interceptors.response.use(function(res) {
     
 });
 
-  // function rejectErr(error) {
-  //   if (error && error.response) {
-  //     switch (error.response.status) {
-  //       case 400:
-  //         console.log('错误请求')
-  //         break;
-  //       case 401:
-  //         console.log('未授权，请重新登录')
-  //         break;
-  //       case 403:
-  //         console.log( '拒绝访问')
-  //         break;
-  //       case 404:
-  //         console.log('请求错误,未找到该资源')
-  //         break;
-  //       case 405:
-  //         console.log('请求方法未允许')
-  //         break;
-  //       case 408:
-  //         console.log('请求超时')
-  //         break;
-  //       case 500:
-  //         console.log('服务器端出错')
-  //         break;
-  //       case 501:
-  //         console.log('网络未实现')
-  //         break;
-  //       case 502:
-  //         console.log('网络错误')
-  //         break;
-  //       case 503:
-  //         console.log('服务不可用')
-  //         break;
-  //       case 504:
-  //         console.log('网络超时')
-  //         break;
-  //       case 505:
-  //         console.log('http版本不支持该请求')
-  //         break;
-  //       default:
-  //         console.log(`连接错误${error.response.status}`)
-  //     }
-  //   }
-  // }
+  function rejectErr(error) {
+    if (error && error.response) {
+      switch (error.response.status) {
+        case 400:
+          console.log('错误请求')
+          break;
+        case 401:
+          console.log('未授权，请重新登录')
+          break;
+        case 403:
+          console.log( '拒绝访问')
+          break;
+        case 404:
+          console.log('请求错误,未找到该资源')
+          break;
+        case 405:
+          console.log('请求方法未允许')
+          break;
+        case 408:
+          console.log('请求超时')
+          break;
+        case 500:
+          console.log('服务器端出错')
+          break;
+        case 501:
+          console.log('网络未实现')
+          break;
+        case 502:
+          console.log('网络错误')
+          break;
+        case 503:
+          console.log('服务不可用')
+          break;
+        case 504:
+          console.log('网络超时')
+          break;
+        case 505:
+          console.log('http版本不支持该请求')
+          break;
+        default:
+          console.log(`连接错误${error.response.status}`)
+      }
+    }
+  }
 
 function apiAxios(method, url, params, response, error) {
   http({
@@ -209,7 +205,7 @@ function Axios(method, url, params) {
 }
 
 
-
+// 批量上传接口
 function uploadFile (Url, data, upload, handle) {
   var files = axios.create({
     baseURL: baseURL,
@@ -250,7 +246,7 @@ export default {
   upload: function(url, params, response) {
     return $upload(url, params, response);
   },
-  $post: async function (url, data) {           // 用 then 接收
+  $post: async function (url, data) { // 用 then 接收
     return await Axios('POST', url, data)
   },
   uploadFile: uploadFile,
