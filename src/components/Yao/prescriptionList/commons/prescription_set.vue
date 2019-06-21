@@ -177,95 +177,56 @@ export default {
                 //         $("#price_shows").hide()
                 //     }
                 // });
-                layer.open({    // 确认提交
-                    type: 1,
-                    shade: 0.2,
-                    shadeClose: true,
-                    closeBtn: 0,
-                    title: "",
-                    content: $("#btns_shows"),
-                    area: ["400px", "280px"],
-                    cancel: function () {},
-                    end: function () {
-                        $("#btns_shows").hide()
-                    }
-                });
-                return;
+                // layer.open({    // 确认提交
+                //     type: 1,
+                //     shade: 0.2,
+                //     shadeClose: true,
+                //     closeBtn: 0,
+                //     title: "",
+                //     content: $("#btns_shows"),
+                //     area: ["400px", "280px"],
+                //     cancel: function () {},
+                //     end: function () {
+                //         $("#btns_shows").hide()
+                //     }
+                // });
+                if (!_this.set_money) {
+                    layer.msg('请填写处方费用',{icon:0});
+                    return false;
+                }
                 if (!_this.yao_user) {
-                    layer.msg('请填写药师姓名');
+                    layer.msg('请填写药师姓名',{icon:0});
                     return false;
                 }
                 if (_this.files1 == '') {
-                    layer.msg('请上传药师资格证');
+                    layer.msg('请上传药师资格证',{icon:0});
                     return false;
                 }
                 if (!_this.files2) {
-                    layer.msg('请上传药师签名图片');
+                    layer.msg('请上传药师签名图片',{icon:0});
                     return false;
                 }
                 var formdata = new FormData();
+                formdata.append('teacher_pic', _this.set_money)
+                formdata.append('yname_pic', _this.yao_user)
                 formdata.append('teacher_pic', _this.files1)
                 formdata.append('yname_pic', _this.files2)
                 _this.$http.upload('/shv2/Recipe/recipe_pic', formdata, function (res) {
                     console.log(res)
                     if (res.code == 1) {
-                        layer.msg('上传成功', { icon: 1, time: 1500});
-                        var img = []
-                            img.push( _this.img1, _this.img2)
-                        _this.localstorage.put('Prescription', img)    // 上传的资料
-                        _this.Userdata()
+                        layer.msg('修改成功', { icon: 1, time: 1500});
+                        var tm = setTimeout(() => {
+                            _this.$router.back()
+                            clearTimeout(tm)
+                        }, 1000)
                     } else {
-                        layer.msg('上传失败', { icon: 2, time: 1500});
+                        layer.msg('修改失败', { icon: 2, time: 1500});
                     }
                 }, function (err) { })
                 
                 });  
             },
 
-            // 查询是否审核中
-            Userdata () {
-                var _this = this;
-                _this.$http.post('/shv2/Recipe/recipe_check', {}, function (res) {
-                    if (res.code == 1) {
-                         var type = res.data.teacher_type.toString()
-                        switch(type) {
-                            case '0': 
-                                var data = _this.localstorage.get('Prescription');  // 产看是否提交过申请
-                                if (data) {
-                                    _this.status = true; 
-                                    _this.fileStatus = false; 
-                                    _this.fileStatus2 = false; 
-                                    _this.disBtn = false
-                                    _this.img1 = data[0];
-                                    _this.img2 = data[1];
-                                    _this.status2 = false
-                                }
-                                ; break;      // 未发起审核
-                            case '1': 
-                                var data = _this.localstorage.get('Prescription');
-                                if (data) {
-                                    _this.localstorage.remove('Prescription');
-                                }
-                                _this.status = true; _this.fileStatus = false; _this.fileStatus2 = false; _this.disBtn = false; _this.status2 = false
-                                _this.img1 = _this.$http.baseURL + res.data.teacher_pic;
-                                _this.img2 = _this.$http.baseURL + res.data.yname_pic;
-                            ; break;     // 审核中
-                            case '2': 
-                                clearInterval(_this.times)
-                                _this.$router.replace({ path: '/server/YaoprescriptionListPic/YaoprescriptionList'})
-                            ; break;          // 审核成功
-                            case '3': _this.status2 = true; _this.failed = res.data.teacher_text 
-                                _this.status = false;
-                                _this.img1 = _this.$http.baseURL + res.data.teacher_pic;
-                                _this.img2 = _this.$http.baseURL + res.data.yname_pic;
-                                _this.labelTxt = '重新上传'
-                                _this.labelTxt2 = '重新上传'
-                            ; break;  // 审核失败
-                        }
-                    }
-                   
-                }, function (err) {console.log(err)})
-            },
             go_account () {  // 去充值
                 console.log(this.set_money)
             },

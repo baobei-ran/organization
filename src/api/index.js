@@ -211,7 +211,6 @@ function Axios(method, url, params) {
 
 
 function uploadFile (Url, data, upload, handle) {
-  console.log(upload)
   var files = axios.create({
     baseURL: baseURL,
     headers: {

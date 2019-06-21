@@ -1,5 +1,5 @@
 <template>
-    <div id="orderList">
+    <div id="yaoPrescription">
         <div class="orderList_msg">
             <div class="pass_test" >
                 <span>服务说明</span>
@@ -14,9 +14,9 @@
          <div class="tab_content Pd-L24 Pd-R24">
             <div class="layui-tab">
                 <ul class="layui-tab-title">
-                    <li class="layui-this" @click="tab(0)">合作中医生</li>
-                    <li @click="tab(1)">申请记录</li>
-                    <li @click="tab(2)">合作终止记录</li>
+                    <li class="layui-this" @click="tab(1)">合作中医生</li>
+                    <li @click="tab(2)">申请记录</li>
+                    <li @click="tab(3)">合作终止记录</li>
                 </ul>
                 <div class="layui-tab-content">
                     <!-- 1 -->
@@ -35,18 +35,18 @@
                                 </tr>
                             </thead>
                             <tbody v-if='tableList.length'>
-                                <tr class="table_con Color_black ac" v-for='(val,i) in 4' :key='i'>
+                                <tr class="table_con Color_black ac" v-for='(val,i) in tableList' :key='i'>
                                     <td>{{ i+1 }}</td>
-                                    <td>李大大
-                                        <img style="width:40px;height:14px;" src="../../common/image/icon/icon_tzz.png" alt="">
+                                    <td>{{ val.true_name }}
+                                        <img v-if='val.type == 1' style="width:40px;height:14px;" src="../../common/image/icon/icon_tzz.png" alt="">
                                     </td>
-                                    <td>主任医师</td>
-                                    <td>心内科</td>
-                                    <td>北京同仁医院</td>
-                                    <td>2019-02-02</td>
-                                    <td>3</td>
+                                    <td>{{ val.gname }}</td>
+                                    <td>{{ val.department_name }}</td>
+                                    <td>{{ val.hospital_name }}</td>
+                                    <td>{{ val.agree_time | moment }}</td>
+                                    <td>{{ val.count }}</td>
                                     <td>
-                                        <span class="pointer Ft-S14 Color_blue al" style="width:80px;margin:0 auto" @click="doc_detail(12)">查看</span>
+                                        <span class="pointer Ft-S14 Color_blue al" style="width:80px;margin:0 auto" @click="doc_detail(val.id,val.did)">查看</span>
                                     </td>
                                 </tr>
                             </tbody>
@@ -73,21 +73,21 @@
                                 </tr>
                             </thead>
                             <tbody v-if='tableList.length'>
-                                <tr class="table_con Color_black ac" v-for='(val,i) in 4' :key='i'>
+                                <tr class="table_con Color_black ac" v-for='(val,i) in tableList' :key='i'>
                                     <td>{{ i+1 }}</td>
-                                    <td>李大大
-                                        <img style="width:40px;height:14px;" src="../../common/image/icon/icon_tzz.png" alt="">
+                                    <td>{{ val.true_name }}
+                                        <!-- <img v-if='val.type == 1' style="width:40px;height:14px;" src="../../common/image/icon/icon_tzz.png" alt=""> -->
                                     </td>
-                                    <td>主任医师</td>
-                                    <td>心内科</td>
-                                    <td>北京同仁医院</td>
-                                    <td>药店</td>
-                                    <td>2019-02-02 12:00</td>
+                                    <td>{{ val.gname }}</td>
+                                    <td>{{ val.department_name }}</td>
+                                    <td>{{ val.hospital_name }}</td>
+                                    <td><span v-text='val.initiative == 1?"医生":"药店"'></span></td>
+                                    <td>{{ val.addtime | moment }}</td>
                                     <td>
-                                        <span class="pointer Ft-S14 Color_blue al" style="width:80px;margin:0 auto" @click="success_cooperation(12)">同意合作</span>
-                                        <span class="pointer Ft-S14 al" :id="'hover_tips'+i" style="width:80px;margin:0 auto;color:#666;" 
+                                        <span v-if='val.status_s == 1' class="pointer Ft-S14 Color_blue al" style="width:80px;margin:0 auto" @click="success_cooperation(12)">同意合作</span>
+                                        <span v-if='val.status_s == 0' class="pointer Ft-S14 al" :id="'hover_tips'+i" style="width:80px;margin:0 auto;color:#666;" 
                                             @mouseover="shows('hover_tips'+i+'')" @mouseout='hide_tips'>等待医生同意</span>
-                                        <span class="Ft-S14 al" style="width:80px;margin:0 auto;color:#666;" >已合作</span>
+                                        <!-- <span class="Ft-S14 al" style="width:80px;margin:0 auto;color:#666;" >已合作</span> -->
                                     </td>
                                 </tr>
                             </tbody>
@@ -114,18 +114,18 @@
                                 </tr>
                             </thead>
                             <tbody v-if='tableList.length'>
-                                <tr class="table_con Color_black ac" v-for='(val,i) in 4' :key='i'>
+                                <tr class="table_con Color_black ac" v-for='(val,i) in tableList' :key='i'>
                                     <td>{{ i+1 }}</td>
-                                    <td>李大大
-                                        <img style="width:40px;height:14px;" src="../../common/image/icon/icon_tzz.png" alt="">
+                                    <td>{{ val.true_name }}
+                                        <!-- <img style="width:40px;height:14px;" src="../../common/image/icon/icon_tzz.png" alt=""> -->
                                     </td>
-                                    <td>主任医师</td>
-                                    <td>心内科</td>
-                                    <td>北京同仁医院</td>
-                                    <td>药店</td>
-                                    <td>2019-02-02</td>
+                                    <td>{{ val.gname }}</td>
+                                    <td>{{ val.department_name }}</td>
+                                    <td>{{ val.hospital_name }}</td>
+                                    <td><span v-text='val.revoke_state == 1?"医生":"药店"'></span></td>
+                                    <td>{{ val.revoke_time | moment }}</td>
                                     <td>
-                                        <span class="pointer Ft-S14 Color_blue al" style="width:80px;margin:0 auto" @click="doc_detail_zhi(12)">查看</span>
+                                        <span class="pointer Ft-S14 Color_blue al" style="width:80px;margin:0 auto" @click="doc_detail_zhi(val.id, val.did)">查看</span>
                                     </td>
                                 </tr>
                             </tbody>
@@ -227,95 +227,67 @@
 </template>
 <script>
 export default {
-    name: 'orderList',
+    name: 'yaoPrescription',
     data() {
         return {
             tests: false,        // 审核通过提示
             tableList: [],              // 数据列表
             headernum: '',
             doctorNum: true,          // 添加的医生数量
+            page: 1,
+            limit: 10,
+            type: 1,
+            name: ''
         }
     },
     mounted() {
-       this.initdata()
+       this.initdata(1)
        var self = this;
-       function doctorLength() {   // 添加了几位医生
-          return self.$http.$post('/shv2/Recipe/recipe_doccount')
-       }
-      function know () {    // 通过审核，我知道了
-          return self.$http.$post('/shv2/Recipe/recipe_check')
-      }
-      self.$http.all([doctorLength(), know()], function (res, res2) {
-          console.log(res, res2)
-           if(res.code == 1) {
-                if (res.data.type == 1) {
-                    self.doctorNum = true
-                } else {
-                    self.doctorNum = false
-                }
-            }
+    //    function doctorLength() {   // 添加了几位医生
+    //       return self.$http.$post('/shv2/Recipe/recipe_doccount')
+    //    }
+    //   function know () {    // 通过审核，我知道了
+    //       return self.$http.$post('/shv2/Recipe/recipe_check')
+    //   }
+    //   self.$http.all([doctorLength(), know()], function (res, res2) {
+    //       console.log(res, res2)
+    //        if(res.code == 1) {
+    //             if (res.data.type == 1) {
+    //                 self.doctorNum = true
+    //             } else {
+    //                 self.doctorNum = false
+    //             }
+    //         }
 
-            if (res2.code == 1) {
-               self.tests = res2.data.if == 0 ? true : false
-           }
-      })
-      
-    
+    //         if (res2.code == 1) {
+    //            self.tests = res2.data.if == 0 ? true : false
+    //        }
+    //   })
     },
     methods: {
-        shows (id) { // 鼠标划入显示提示
-            layui.use("layer", function () {
-                var layer = layui.layer;
-                layer.tips('<div class='+id+' style="color:#000;">已申请该医生,待医生同意后即可达成合作</div>', '#'+id, {
-                    tips: [3, '#FFF'],
-                    time: 0
-                });
-            });
-        },
-        hide_tips () {  // 鼠标移出关闭提示
-            layui.use("layer", function () {
-                var layer = layui.layer;
-                layer.closeAll()
-            });
-        },
         tab:function (n) {  // nav切换
-            console.log(n)
-           
+            this.type = n
+            this.initdata(1)
         },
-        doc_detail:function (id) {  // 合作中查看
-            console.log(id)
-            this.$router.push({ path: '/server/Yaodoctorprescription/prescriptionRecords', query: { id: id } })
-        },
-        doc_detail_zhi:function (id) {  // 合作终止查看
-            console.log(id)
-            this.$router.push({ path: '/server/Yaodoctorprescription/termination', query: { id: id } })
-        },
-        
-
-        // 一下为以前的数据 //////////////////////////////////////////////////////////////////////
-        cancelTest() {  // 关闭审核通过提示
-            this.tests = !this.tests
-            var self = this;
-            // self.$http.post('/shv2/recipe/recipe_if', {}, function (res) {
-            //     console.log(res)
-            // }, function (err) { })
-        },
-        initdata() {   // 数据
+        initdata(n) {   // 数据
             var _this = this;
             layui.use("layer", function () {
                 var layer = layui.layer;
-                _this.$http.post('/shv2/Recipe/recipe_doc',{}, function (res) {//
+                var obj = { page: _this.page, limit: _this.limit, type:_this.type, name: _this.name }
+                _this.$http.post('/shv2/Commonshop/com_doc',obj, function (res) {//
                     console.log(res)
                     if (res.code == 1) {
                        _this.tableList = res.data
+                       if (n == 1) {
+                           _this.pageFun(res.count)
+                       }
                     } else {
+                        _this.tableList = []
+                        _this.pageFun(0)
                     }
                 }, function (err) { console.log(err) });
 
             });
-        },
-        outApply () {   // 进入处方单医生页
-            this.go('/server/Yaodoctorprescription/prescriptionApply')
         },
         pageFun(total) {    // 分页
             var _this = this;
@@ -336,6 +308,45 @@ export default {
                 });
             });
         },
+        shows (id) { // 鼠标划入显示提示
+            layui.use("layer", function () {
+                var layer = layui.layer;
+                layer.tips('<div class='+id+' style="color:#000;">已申请该医生,待医生同意后即可达成合作</div>', '#'+id, {
+                    tips: [3, '#FFF'],
+                    time: 0
+                });
+            });
+        },
+        hide_tips () {  // 鼠标移出关闭提示
+            layui.use("layer", function () {
+                var layer = layui.layer;
+                layer.closeAll()
+            });
+        },
+       
+        doc_detail:function (id, did) {  // 合作中查看
+            console.log(id, did)
+            this.$router.push({ path: '/server/Yaodoctorprescription/prescriptionRecords', query: { id: id, did: did } })
+        },
+        doc_detail_zhi:function (id, did) {  // 合作终止查看
+            console.log(id, did)
+            this.$router.push({ path: '/server/Yaodoctorprescription/termination', query: { id: id, did: did } })
+        },
+        
+
+        // 一下为以前的数据 //////////////////////////////////////////////////////////////////////
+        cancelTest() {  // 关闭审核通过提示
+            this.tests = !this.tests
+            var self = this;
+            // self.$http.post('/shv2/recipe/recipe_if', {}, function (res) {
+            //     console.log(res)
+            // }, function (err) { })
+        },
+        
+        outApply () {   // 进入处方单医生页
+            this.go('/server/Yaodoctorprescription/prescriptionApply')
+        },
+        
         delcode(val) { // 处方记录
            var obj = { id: val.did, busjtime: val.busjtime, busktime: val.busktime, gname: val.gname, hospital_name: val.hospital_name, true_name: val.true_name, type: val.type }
            this.$router.push({ path: '/server/Yaodoctorprescription/prescriptionRecords', query: obj })
@@ -416,7 +427,7 @@ export default {
 </script>
 
 <style scoped lang="less">
-#orderList {
+#yaoPrescription {
     height: 100%;
     .orderList_msg {
         padding: 24px;

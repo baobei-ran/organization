@@ -17,7 +17,7 @@
                             <div class="layui-inline layui-col-md3 lay_width">
                                 <label class="layui-form-label">医生科室</label>
                                 <div class="layui-input-inline" >
-                                    <input type="text" name="" v-model="list.true_name" autocomplete="off" class="layui-input">
+                                    <input type="text" name="" v-model="list.dep_name" autocomplete="off" class="layui-input">
                                 </div>
                             </div>
                             <div class="layui-inline layui-col-md3 lay_width">
@@ -43,8 +43,8 @@
                         <div class="layui-form-item selecttime layui-row dis_f">
                             <div class="kai_server layui-col-md4">
                                 <label>开通服务</label>
-                                <el-radio v-model="radioVal" label="1">电子处方</el-radio>
-                                <el-radio v-model="radioVal" label="2">线下门诊</el-radio>
+                                <el-radio v-model="list.business" label="6">电子处方</el-radio>
+                                <el-radio v-model="list.business" label="1">线下门诊</el-radio>
                             </div>
                             <div class="layui-inline layui-col-md4">
                                 <label class="layui-form-label">服务时间段</label>
@@ -77,7 +77,7 @@
                         <thead>
                             <tr class="Color_black table_headtr ac">
                                 <td class="firstheadtd">序号</td>
-                                <td>医生信息</td>
+                                <td style="width:220px;">医生信息</td>
                                 <td>执业地点距离</td>
                                 <td>开通服务</td>
                                 <td>处方服务时间段</td>
@@ -89,52 +89,43 @@
                             <tr class="table_con Color_black ac" v-for="(val,index) in tableList" :key='index'>
                                 <td>{{ index+1 }}</td>
                                 <td>
-                                    <ul>
-                                        <li><span>医生姓名：</span><span>李一一</span></li>
-                                        <li><span>医生职称：</span><span>医师</span></li>
-                                        <li><span>医生科室：</span><span>心内科</span></li>
-                                        <li><span>执业医院：</span><span>山东省立医院</span></li>
+                                    <ul class="docMsg">
+                                        <li><span>医生姓名：</span><span>{{ val.true_name }}</span></li>
+                                        <li><span>医生职称：</span><span>{{ val.gname }}</span></li>
+                                        <li><span>医生科室：</span><span>{{ val.department_name }}</span></li>
+                                        <li><span>执业医院：</span><span>{{ val.hospital_name }}</span></li>
                                     </ul>
                                 </td>
-                                <td>距离<300m </td>
+                                <td>距离<{{val.distince}}km</td>
                                 <td>
                                     <ul>
-                                        <li>合作药店</li>
-                                        <li>电子处方</li>
-                                        <li>线下门诊</li>
+                                        <li v-for='(item, i) in val.business' :key='i+"_1"'>{{ item }}</li>
                                     </ul>
                                 </td>
                                 <td>
-                                    <ul>
+                                    <span>{{ val.busktime }}</span>
+                                    <span>--</span>
+                                    <span>{{ val.busjtime }}</span>
+                                    <!-- <ul>
                                         <li>星期一、星期二、星期三</li>
                                         <li>星期四、星期五、星期六</li>
                                         <li>星期日、08:00-20:00</li>
-                                    </ul>
+                                    </ul> -->
                                 </td>
                                 <td>
                                     <ul>
-                                        <li><span>患者数量：</span><span>123</span></li>
-                                        <li><span>处方数量：</span><span>123</span></li>
-                                        <li><span>合作药店：</span><span>223</span></li>
+                                        <li><span>患者数量：</span><span>{{ val.count_u }}</span></li>
+                                        <li><span>处方数量：</span><span>{{val.count_t}}</span></li>
+                                        <li><span>合作药店：</span><span>{{val.num}}</span></li>
                                     </ul>
                                 </td>
                                 <td>
                                     <div class='dis_f flex_fc flex-vc'>
-                                        <p class="pointer Ft-S14 Color_blue " v-show='val.state == 1' @click="delcode(val.did, 1)">申请合作</p>
-                                        <!-- <p class="pointer Ft-S14 Color_blue " v-show='val.state == 4' @click="delcode(val.did, 2)">开启合作</p> -->
-                                        <p class="pointer Ft-S14 Color_blue " v-show='val.state == 4' @click="yes_delcode(val.did, 2)">同意合作</p>
-                                        <p class="Ft-S14 al" v-show='val.state == 2'>申请中</p>
-                                        <p class="Ft-S14 al" v-show='val.state == 3'>已合作</p>
-                                        <p class="Ft-S14 al" v-show='val.state == 5' >终止合作</p>
+                                        <p class="Ft-S14 al" v-show='val.type == 1'>医生已停诊</p>
+                                        <p class="pointer Ft-S14 Color_blue " v-show='val.type == 2' @click="delcode(val.did, 1)">申请合作</p>
+                                        <p class="Ft-S14 al" v-show='val.state == 3'>申请合作中</p>
+                                        <p class="pointer Ft-S14 Color_blue " v-show='val.type == 4' @click="yes_delcode(val.did, 2)">同意合作</p>
                                     </div>
-                                        
-                                   
-                                    <!-- <div>
-                                        <p class="pointer Ft-S14 Color_blue al" v-show='val.type == 2' @click="">申诉解除关联</p>
-                                        <p class="Ft-S14 al" v-show='val.type == 3' >解除关联申诉中</p>
-                                        <p class="Ft-S14 al" v-show='val.type == 1'>申诉解除关联</p>
-                                        <p class="Ft-S14 al" v-show='val.type == 4'>终止合作</p>
-                                    </div> -->
                                 </td>
                             </tr>
                         </tbody>
@@ -196,10 +187,10 @@ export default {
             list: {                 // 传入的数据
                name: '',
                true_name: '',
-               grade: '',
+               dep_name: '',
                ktime: '',
                jtime: '',
-               dis: '',
+               business: '',
                page: 1,
                limit: 10
             },
@@ -216,35 +207,46 @@ export default {
                 {id:3, time:' 12:00:00 - 18:00:00'},
                 {id:4, time:' 18:00:00 - 00:00:00'},
             ],
-            radioVal: '1',           // 选择服务
             doc_id: '',              // 申请合作的医生 id
             doc_type: '',            // 申请合作的医生 type
             doc_id2: '',             // 同意合作的医生 id
             doc_type2: '',           // 同意合作的医生 type
+            businessList:            // 开通服务列表
+                [{id:1, val: '线下门诊'},
+                {id:2, val: '私人医生'},
+                {id:3, val: '图文问诊'},
+                {id:4,val:'音频问诊'},
+                {id:6, val:'电子处方'},
+                {id:7, val: '在线转诊'},
+                {id:8,val:'名医问答'},
+                {id:9, val:'健康资讯'},
+                {id:10, val:'健康讲堂'},
+                {id:11, val: '诊后随访'},
+                {id:12,val:'视频问诊'},
+                {id:13, val:'合作药店'},]
         }
     },
     mounted() {
         this.initdata(1)
-        this.docType();
         var _this = this;
-        _this.$http.post('/shv2/Recipe/recipe_doccount', {}, function (res) {
-            console.log(res)
-            if (res.code) {
-                _this.teamwork = res.data.type
-            }
-        }, function (err) { console.log(err)})
+        // _this.$http.post('/shv2/Recipe/recipe_doccount', {}, function (res) {
+        //     console.log(res)
+        //     if (res.code) {
+        //         _this.teamwork = res.data.type // 获取数量
+        //     }
+        // }, function (err) { console.log(err)})
 
     },
     methods: {
-        docType () {    // 获取医生职称
-            var _this = this;
-            _this.$http.post('/shv2/data/doc_type', {}, function (res) {
-                console.log(res)
-                if (res.code == 1) {
-                    _this.doctorType = res.data.grade
-                }
-            }, function (err) { console.log(err)})
-        },
+        // docType () {    // 获取医生职称
+        //     var _this = this;
+        //     _this.$http.post('/shv2/data/doc_type', {}, function (res) {
+        //         console.log(res)
+        //         if (res.code == 1) {
+        //             _this.doctorType = res.data.grade
+        //         }
+        //     }, function (err) { console.log(err)})
+        // },
         initdata(num) {   // 数据
             var _this = this;
             var a = '00:00', b = '06:00', c = '12:00', d = '18:00'
@@ -267,12 +269,26 @@ export default {
             layui.use(["laypage", "layer", "laydate", "element"], function () {
                 var element = layui.element;
                 var laydate = layui.laydate;
-                
-                _this.$http.post('/shv2/Recipe/recipe_list', _this.list, function (res) {//
+                console.log(_this.list)
+                _this.$http.post('/shv2/Commonshop/recipe_list', _this.list, function (res) {//
                     console.log(res)
                     if (res.code == 1) {
                         _this.headernum = res;
                         _this.tableList = res.data;
+                        _this.tableList.forEach(val => { // 处理开通的服务
+                            var arr = val.business.split(','), arrList = []
+                            arr = arr.filter(v => {
+                                return v !== ''
+                            })
+                            for(var c=0;c<_this.businessList.length;c++) {
+                                for (var j=0; j<arr.length;j++) {
+                                    if (arr[j] == _this.businessList[c].id) {
+                                        arrList.push(_this.businessList[c].val)
+                                    }
+                                }
+                            }
+                            val.business = arrList
+                        })
                         if (num == 1) {
                             _this.pageFun(res.count)
                         }
@@ -316,17 +332,17 @@ export default {
             }); 
         },
        
-        delcode(id, type) { // 申请合作
+        delcode(id, type) { // 申请合作 提示
             var _this = this;
             _this.doc_id = id
             _this.doc_type = type
             layui.use(["layer"], function () {
                 var layer = layui.layer;
                 var $ = layui.jquery;
-                if (_this.teamwork > 0) {
-                    layer.msg('机构已经添加了5名医生,已达上限', { icon: 7 })
-                    return false;
-                }
+                // if (_this.teamwork > 0) {
+                //     layer.msg('机构已经添加了5名医生,已达上限', { icon: 7 })
+                //     return false;
+                // }
                 layer.open({
                     type: 1,
                     shade: 0.2,
@@ -342,10 +358,11 @@ export default {
        success_btn () { // 确认合作
             var _this = this;
             var obj = { id: this.doc_id, type: this.doc_type }
+            console.log(obj)
           layui.use(["layer"], function () {
               var layer = layui.layer;
                 layer.closeAll();
-                _this.$http.post('/shv2/Recipe/recipe_alter', obj, function (res) {
+                _this.$http.post('/shv2/Commonshop/hos_set', obj, function (res) {
                     console.log(res)
                     if (res.code == 1) {
                         layer.open({
@@ -359,6 +376,8 @@ export default {
                             cancel: function () {}
                         });
                         _this.initdata(_this.list.page)
+                    } else if (res.code == 4) {
+                        layer.msg(res.msg, { icon: 0})
                     } else {
                         layer.msg('申请失败, 请联系客服', { icon: 5})
                     }
@@ -374,10 +393,11 @@ export default {
         empty() {   // 清空
             this.list.true_name = '';
             this.list.name = '';
-            this.list.grade = '';
+            this.list.dep_name = '';
             this.tdlast = '';
             this.list.jtime = '';
             this.list.ktime = '';
+            this.list.business = '';
             this.initdata(1)
         },
         yes_delcode (id, type) {  // 同意合作提示
@@ -394,7 +414,10 @@ export default {
                     title: "",
                     content: $("#sendgoods_yes"),
                     area: ["400px", "280px"],
-                    cancel: function () {}
+                    cancel: function () {},
+                    end: function () {
+                        $("#sendgoods_yes").hide()
+                    }
                 });
             })
         },
@@ -404,7 +427,7 @@ export default {
           layui.use(["layer"], function () {
               var layer = layui.layer;
                 layer.closeAll();
-                _this.$http.post('/shv2/Recipe/recipe_alter', obj, function (res) {
+                _this.$http.post('/shv2/Commonshop/hos_set', obj, function (res) {
                     console.log(res)
                     if (res.code == 1) {
                         layer.open({
@@ -452,7 +475,7 @@ export default {
                     width: 50%;
                     input {
                         width: 180px;
-                        height: 40px;
+                        height: 36px;
                     }
                 }
             }
@@ -560,11 +583,18 @@ export default {
                                     right: 20px;
                                 }
                             }
+                            
                             ul {
-                                text-align: left;
+                                text-align: center;
+                                padding-left: 20px;
                                 li {
                                     height: 30px;
                                 }
+                            }
+                            .docMsg {
+                                width: 200px;
+                                margin: 0 auto;
+                                text-align: left;
                             }
                         }
                         

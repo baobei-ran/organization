@@ -55,11 +55,11 @@
             </transition>
         </div>
         <div id="index_content" class="fl" :style="{'position':'absolute','left':pdleft, 'right':'0px'}">
-            <div class="Pd-L24 Pd-R24 Mg-T24">
+            <div class="Pd-L24 Pd-R24 Mg-T24" >
                 <div id="viewheight">
-                    
-                        <router-view /> 
-                    
+                        <keep-alive include="goodsList,yaoPrescription,yaoPrescriptionList">
+                            <router-view></router-view>
+                        </keep-alive>
                 </div>
             </div>
         </div>
@@ -394,6 +394,7 @@ export default {
             hospitalName: '',
             attestation: false,     // 判断是否认证
             bedefeated: false,      // 审核失败
+            bodyHeight: window.screen.height
         }
     },
     created() {
@@ -408,6 +409,7 @@ export default {
         }
     },
     mounted() {
+        console.log(this.bodyHeight)
         this.hospitalName = this.localstorage.get('logindata') ? this.localstorage.get('logindata') : '';
         this.tabListActive();
         this.initdata()
@@ -427,7 +429,7 @@ export default {
             }
         }
 
-         
+        this.winHeight() 
     },
     watch: {
         '$route': ['tabListActive', 'isLogon'],
@@ -436,6 +438,9 @@ export default {
         this.listStyle();
     },
     methods: {
+        winHeight () {
+            $('#viewheight').css('height', window.innerHeight - 54);
+        },
         isLogon () {    // 检测是否登录
             var logindata = this.localstorage.get('logindata'); //无登录缓存 跳转登录页面
             if (logindata == "" || logindata == null) {
@@ -580,8 +585,8 @@ export default {
             this.ShowMenu = false;
             console.log(this.$route.query)
             if (this.$route.query.login) {
-                // this.$router.go(0)
                 this.go('/')
+                // this.$router.go(0)
                 window.location.reload()
             }
             var rzstatus = this.localstorage.get('logindata');
@@ -1081,7 +1086,6 @@ export default {
 
 #viewheight {
     overflow-y: auto;
-    // height: 100%;
     overflow-x: hidden;
     background-color: #fff;
 }

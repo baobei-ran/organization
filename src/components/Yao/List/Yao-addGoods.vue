@@ -4,9 +4,9 @@
         <span class="fr onbtn pointer">
             <el-button type="primary" :loading="disabled" :disabled='disabled' style='vertical-align: top;'  class="layui-btn site-demo-layedit rightBtn btn_preserve" data-type='content'>保存</el-button>
         </span><span class="fr cancelbtn Mg-R24 pointer" @click='back'>取消</span></p>
-        <div class="Pd-L24" style="width: 300px;height:40px;">
-            <el-input placeholder="请输入批准文号搜索" @blur="searchdata" v-model="searchVal" class="input-with-select">
-                <el-button slot="append" @click='searchdata' icon="el-icon-search"></el-button>
+        <div class="Pd-L24" style="width: 350px;height:40px;">
+            <el-input placeholder="请输入批准文号搜索" v-model="searchVal" class="input-with-select">
+                <el-button slot="append" @click='searchdata' icon="el-icon-search">搜索</el-button>
             </el-input>
         </div>
         <div class="layui-row layui-col-space22 head_msg">
@@ -22,67 +22,12 @@
                             <form class="layui-form" action="">
                                 <table>
                                     <tr>
-                                        <td width="10%">商品分类</td>
+                                        <td style="width: 80px;">商品分类</td>
                                         <td>
                                             <div class="layui-input-inline" style="width:200px">
-                                                <el-select v-model='classId' placeholder="暂无分类" >
+                                                <el-select v-model='classId' placeholder="请选择分类" >
                                                     <el-option
                                                     v-for="item in className"
-                                                    :key="item.id"
-                                                    :label="item.name"
-                                                    :value="item.id">
-                                                    </el-option>
-                                                </el-select>
-                                            </div>
-                                            <!-- <div class="layui-input-inline" style="width:23%">
-                                                <el-select v-model='classId' placeholder="请选择一级分类" @change='merchandise'>
-                                                    <el-option
-                                                    v-for="item in className"
-                                                    :key="item.id"
-                                                    :label="item.name"
-                                                    :value="item.id">
-                                                    </el-option>
-                                                </el-select>
-                                            </div>
-                                            <div class="layui-input-inline" style="width:23%">
-                                                <el-select v-model='classId2' placeholder="请选择二级分类" @change="merchandise2">
-                                                    <el-option
-                                                    v-for="item in className2"
-                                                    :key="item.id"
-                                                    :label="item.name"
-                                                    :value="item.id">
-                                                    </el-option>
-                                                </el-select>
-                                            </div>
-                                            <div class="layui-input-inline" style="width:23%">
-                                                <el-select v-model="classId3" placeholder="请选择三级分类" @change="merchandise3">
-                                                    <el-option
-                                                    v-for="item in className3"
-                                                    :key="item.id"
-                                                    :label="item.name"
-                                                    :value="item.id">
-                                                    </el-option>
-                                                </el-select>
-                                            </div>
-                                            <div class="layui-input-inline" style="width:23%">
-                                                <el-select  placeholder="请选择四级分类" v-model='classId4'>
-                                                    <el-option
-                                                    v-for="item in className4"
-                                                    :key="item.id"
-                                                    :label="item.name"
-                                                    :value="item.id">
-                                                    </el-option>
-                                                </el-select>
-                                            </div> -->
-                                        </td>
-                                    </tr>
-                                    <!-- <tr>
-                                        <td>商品品牌</td>
-                                        <td>
-                                            <div class="layui-input-inline" style="width:28%">
-                                                <el-select v-model='brandId' placeholder="请选择商品品牌" >
-                                                    <el-option
-                                                    v-for="item in brand"
                                                     :key="item.id"
                                                     :label="item.name"
                                                     :value="item.id">
@@ -90,9 +35,10 @@
                                                 </el-select>
                                             </div>
                                         </td>
-                                    </tr> -->
+                                    </tr>
+                                    
                                     <tr>
-                                        <td>商品名称</td>
+                                        <td style="width:90px;"><span class="Color_red">*</span>商品名称</td>
                                         <td>
                                             <div style="max-width:200px">
                                                 <input type="text" name="title" v-model='name' required lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
@@ -118,44 +64,16 @@
                                     </tr> -->
                                     <tr style="height:182px;">
                                         <td style="display:inline-block;vertical-align: middle;margin-top: 15px; width:100%">
-                                            <p>商品图片</p>
+                                            <p><span class="Color_red">*</span>商品图片</p>
                                         </td>
                                         <td >
                                             <div style='margin-top: 15px;' class="layui-input-inline" id='fileList'>
                                                 <!-- 主图片上传 -->
                                                 <div class="layui-input-inline uploadimg Mg-R10" id='files1'>
-                                                    <div><span class="Ft-S14">点击上传</span> <input id='zhuFile' type="file" class="pointer" placeholder="" /></div>
-                                                    <img style='width: 145px;height: 147px;border-radius: 4px;' id='zhuImg' src="" alt="">
+                                                    <div><span class="Ft-S14">点击上传</span> <input id='zhuFile' type="file" accept="image/gif,image/jpeg,image/jpg,image/png,image/svg" class="pointer" /></div>
+                                                    <img style='width: 145px;height: 147px;border-radius: 4px;' ref='zhuImg' id='zhuImg' src="" alt="">
                                                     <label class="zhuFileLabel" for="zhuFile">重新上传</label>
                                                 </div>
-                                                <!--    剩余五张图片 -->
-                                                
-                                                <!-- <div class="layui-input-inline uploadimg Mg-R10 hide" >
-                                                    <div><span class="Ft-S14">点击上传</span> <input id='zhuFile2' type="file" class="pointer" placeholder="" /></div>
-                                                    <img style='width: 145px;height: 147px;border-radius: 4px;' id='zhuImg2' src="" alt="">
-                                                    <label class="zhuFileLabel" for="zhuFile2">重新上传</label>
-                                                </div>
-                                                 <div class="layui-input-inline uploadimg Mg-R10 hide" >
-                                                    <div><span class="Ft-S14">点击上传</span> <input id='zhuFile3' type="file" class="pointer" placeholder="" /></div>
-                                                    <img style='width: 145px;height: 147px;border-radius: 4px;' id='zhuImg3' src="" alt="">
-                                                    <label class="zhuFileLabel" for="zhuFile3">重新上传</label>
-                                                </div>  
-                                                <div class="layui-input-inline uploadimg Mg-R10 hide" >
-                                                    <div><span class="Ft-S14">点击上传</span> <input id='zhuFile4' type="file" class="pointer" placeholder="" /></div>
-                                                    <img style='width: 145px;height: 147px;border-radius: 4px;' id='zhuImg4' src="" alt="">
-                                                    <label class="zhuFileLabel" for="zhuFile4">重新上传</label>
-                                                </div>
-                                                <div class="layui-input-inline uploadimg Mg-R10 hide" >
-                                                    <div><span class="Ft-S14">点击上传</span> <input id='zhuFile5' type="file" class="pointer" placeholder="" /></div>
-                                                    <img style='width: 145px;height: 147px;border-radius: 4px;' id='zhuImg5' src="" alt="">
-                                                    <label class="zhuFileLabel" for="zhuFile5">重新上传</label>
-                                                </div>
-                                                <div class="layui-input-inline uploadimg Mg-R10 hide" >
-                                                    <div><span class="Ft-S14">点击上传</span> <input id='zhuFile6' type="file" class="pointer" placeholder="" /></div>
-                                                    <img style='width: 145px;height: 147px;border-radius: 4px;' id='zhuImg6' src="" alt="">
-                                                    <label class="zhuFileLabel" for="zhuFile6">重新上传</label>
-                                                </div> -->
-
 
                                             </div>
                                             <p class="layui-input-inline Ft-S12 Color_gray6 Mg-T24" style="vertical-align: bottom;">（商品主图） 建议尺寸:750*750</p>
@@ -222,51 +140,37 @@
                     <p class="orderList_tit Color_black Ft-S16 Pd-T24 Pd-B24 Pd-L24">商品属性</p>
                     <div class="layui-row order_datail  Pd-L24 Pd-R24">
                         <div class="layui-col-md12 layui-col-sm12">
-                            <form class="layui-form" action="">
+                            <form class="" action="">
                                 <table width="100%">
                                    
                                     <tr>
-                                        <td>处方/非处方</td>
+                                        <td><span class="Color_red">*</span>处方/非处方</td>
                                         <td>
-                                            <input type="radio" name="recipe" value="1" title="处方" checked>
-                                            <input type="radio" name="recipe" value="0" title="非处方" >
+                                            <el-radio v-model="recipe" label="1" >处方</el-radio>
+                                            <el-radio v-model="recipe" label="2">非处方</el-radio>
                                         </td>
                                     </tr>
-                                    <!-- <tr>
-                                        <td>包装</td>
-                                        <td>
-                                            <input type="radio" name="pack" value="2" title="盒装" checked>
-                                            <input type="radio" name="pack" value="1" title="袋装">
-                                        </td>
-                                    </tr> -->
-                                    <tr >
+                                    <tr>
                                         <td>剂型</td>
                                         <td>
-                                            <!-- <input type="radio" name="type" value="丸剂" title="丸剂" checked>
-                                            <input type="radio" name="type" value="颗粒剂" title="颗粒剂" >
-                                            <input type="radio" name="type" value="片剂" title="片剂">
-                                            <input type="radio" name="type" value="胶囊" title="胶囊" >
-                                            <input type="radio" name="type" value="口服液体制剂" title="口服液体制剂" > -->
-                                            <div class="layui-input-inline" style="width:200px">
-                                                <el-select v-model='brandId' placeholder="请选择商品品牌" >
-                                                    <el-option
-                                                    v-for="item in brand"
-                                                    :key="item.id"
-                                                    :label="item.name"
-                                                    :value="item.id">
-                                                    </el-option>
-                                                </el-select>
+                                            <div class="searchbrand" style="width: 250px;height:40px;">
+                                                <el-input placeholder="请输入剂型搜索" @input='search_Val' v-model="brandVal" class="input-with-select">
+                                                    <el-button slot="append" @click='search_brand' icon="el-icon-search"></el-button>
+                                                </el-input>
+                                                <ul id='minSelect' v-show='brand.length'>
+                                                    <li v-for="(val, i) in brand" :key='i+"_11"' @click='getVal(val)'>{{ val }}</li>
+                                                </ul>
                                             </div>
                                         </td>
                                     </tr>
                                     <tr class="trTxt">
-                                        <td>通用名称</td>
+                                        <td><span class="Color_red">*</span>通用名称</td>
                                         <td>
                                            
                                             <input type="text" name="title" v-model='dname' required lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
                                           
                                         </td>
-                                        <td>用法用量</td>
+                                        <td><span class="Color_red">*</span>用法用量</td>
                                         <td>
                                              <input type="text" name="title" v-model='dose' required lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
                                             
@@ -283,7 +187,7 @@
                                         </td>
                                     </tr>
                                     <tr class="trTxt">
-                                        <td>包装规格</td>
+                                        <td><span class="Color_red">*</span>包装规格</td>
                                         <td class="Pd-B12">
                                              <input type="text" name="title" v-model='package' required lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
                                         </td>
@@ -303,7 +207,7 @@
                                         </td>
                                     </tr>
                                     <tr class="trTxt">
-                                        <td>功能主治</td>
+                                        <td>药理作用</td>
                                         <td>
                                              <input type="text" name="title" v-model='attending_functions' required lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
                                         </td>
@@ -318,19 +222,29 @@
                                         <td>
                                              <input type="text" name="title" v-model='interaction' required lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
                                         </td>
-                                        <td>有效期</td>
+                                        <td><span class="Color_red">*</span>有效期</td>
                                         <td>
                                              <input type="text" name="title" v-model='uselife' required lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
                                         </td>
                                     </tr>
                                     <tr class="trTxt">
-                                        <td>生产厂商</td>
+                                        <td><span class="Color_red">*</span>生产厂商</td>
                                         <td>
                                             <input type="text" name="title" v-model='enterprise' required lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
                                         </td>
+                                        <td><span class="Color_red">*</span>适应症</td>
+                                        <td>
+                                            <input type="text" name="title" v-model='adapt' required lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+                                        </td>
+                                    </tr>
+                                    <tr class="trTxt">
+                                        <td><span class="Color_red">*</span>批准文号</td>
+                                        <td>
+                                            <input type="text" name="title" v-model='code' required lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+                                        </td>
                                         <td></td>
                                         <td>
-                                            <!-- <input type="text" name="title" v-model='code' required lay-verify="required" placeholder="" autocomplete="off" class="layui-input"> -->
+                                            <!-- <input type="text" name="title" v-model='adapt' required lay-verify="required" placeholder="" autocomplete="off" class="layui-input"> -->
                                         </td>
                                     </tr>
                                 </table>
@@ -345,9 +259,9 @@
                             <form class="layui-form" action="">
                                 <table width="100%">
                                     <tr>
-                                        <td width="80px">商品售价</td>
+                                        <td width="90px"><span class="Color_red">*</span>商品售价</td>
                                         <td>
-                                            <div style="width:25%">
+                                            <div style="width:250px;">
                                                 <input type="number" name="title" v-model='money' required lay-verify="required" placeholder="￥" autocomplete="off" class="layui-input">
                                             </div>
                                         </td>
@@ -362,9 +276,9 @@
                                         </td>
                                     </tr> -->
                                     <tr>
-                                        <td>设置库存</td>
+                                        <td><span class="Color_red">*</span>设置库存</td>
                                         <td>
-                                            <div style="width:25%" class="fl">
+                                            <div style="width:250px;" class="fl">
                                                 <!-- <el-input
                                                     placeholder=""
                                                     v-model="repertory"
@@ -378,7 +292,7 @@
                                     <tr>
                                         <td>商品货号</td>
                                         <td>
-                                            <div style="width:25%">
+                                            <div style="width:250px;">
                                                 <input type="text" name="title" required lay-verify="required" placeholder="保存后系统自动生成" disabled autocomplete="off" class="layui-input">
                                             </div>
                                         </td>
@@ -391,8 +305,8 @@
                 <div class="bg_f Mg-B24 Pd-T20 Pd-B20 Pd-L24">
                     <div class="layui-form">
                         <span class="Mg-R24">开启推荐</span>
-                        <input type="radio" name="tuijian" style='font-size: 20px;' value="1" title="开启推荐" checked>
-                        <input type="radio" name="tuijian" value="2" title="关闭推荐">
+                        <input type="radio" name="tuijian" style='font-size: 20px;' value="1" title="开启推荐" >
+                        <input type="radio" name="tuijian" value="2" title="关闭推荐" checked>
                     </div>
                 </div>
                 <div class="bg_f Mg-B24">
@@ -423,29 +337,14 @@ export default {
             hand: false, // 不限库存的按钮
             id: '', // 商品id
             name: '',   // 商品名称	
-            ftitle: '', // 商品副标题	
-            fileListImg: [], // 图片
-            brand: [],       // 品牌
-            brandId: '',       // 品牌ID
-            className: [],      // 商品分类 1
-            className2: [],      // 商品分类 2
-            className3: [],      // 商品分类 3
-            className4: [],      // 商品分类 4
-            classId: '',
-            classId2: '',
-            classId3: '',
-            classId4: '',
+            className: [],      // 商品分类列表
+            classId: '',        // 选择商品分类id
+            zPic: '',            //  商品主图片
         
-            valueId: '',         // 属性类型Id
-            setPrice: '',        // 默认运费
-            labelText: '',        // 商品标签
-                        // start 已下为单选按钮群
-            freight: '3',       // 运费设置
+                // start 已下为单选按钮群
             gtype: 1,           //  选择上架还是下架参数
-            recipe: 1,         //  是否处方
-            pack: 2,           //  包装
-            type: '丸剂',       //  剂型	
-            dname: '中药',       //  是否中/西药
+            recipe: '1',         //  是否处方
+            
             // end
             dname: '',          // 通用名称
             dose: '',           // 用法用量
@@ -455,53 +354,80 @@ export default {
             storage: '',       // 储藏条件
             ingredient: '',      //  药品成分
             contraindication: '', // 用药禁忌
-            attending_functions: '', // 功能主治
+            attending_functions: '', // 药理作用
             cautions: '',           // 注意事项
             code: '',               // 批准文号
             enterprise: '',         // 生产企业
             interaction: '',        // 相互作用
             uselife: '',            // 有效期
-
-            money: '',       //  商品售价
-            marketvalue: '',    //  市场价格
-            repertory: '',      // 设置库存
-            details: '',         //  详情内容
-            recommend: '1',      // 推荐商品 
-            zPic: '',            //  主图片
-            fPic1: '',           // 附图1
-            fPic2: '',           // 附图2
-            fPic3: '',           // 附图3
-            fPic4: '',           // 附图4
-            fPic5: '',           // 附图5
+            adapt: '',              // 适应症
+            money: '',              //  商品售价
+            repertory: '',          // 设置库存
+            details: '',            //  详情内容
+            recommend: '2',         // 推荐商品 
+           
+            
             disabled: false,     // 按钮控制
-            searchVal: '',       // 搜索值
+            searchVal: '',       // 批准文号搜索值
+            brandVal: '',        // 剂型搜索值
+            brand: [],           // 剂型数组
+            timer: '',           // 搜索剂型时间
+            
         }
     },
-    created() {
-        
-    },
+    
     mounted() {
         this.initdata() // 富文本编辑器
         this.addList();
+        $(document).bind("click",function(){
+            $("#minSelect").css("display","none");
+        })
     },
-    methods: {  
+    methods: {
+        search_Val () {
+            if (this.brandVal == '') {
+                return;
+            }
+            clearTimeout(this.timer)
+            this.timer = setTimeout(() => {
+                this.search_brand()
+            }, 800)
+        },
+        search_brand () { // 剂型搜索
+            var _this = this;
+            _this.brand = []
+            layui.use('layer', function(){
+                var layer = layui.layer;
+                if (!_this.brandVal) {
+                    layer.msg('请输入内容搜索', {icon:0})
+                    return;
+                }
+                _this.$http.post('/shv2/goods/goods_ypzt', { ypzt: _this.brandVal }, function (res) {
+                    console.log(res)
+                    if (res.code == 1) {
+                        _this.brand = res.data
+                    } else {
+                        layer.msg(res.msg);
+                    }
+                }, function (err) {})
+                
+            });
+        },
+        getVal(val) {
+            this.brandVal = val
+            this.brand = []
+        },
+        
         addList() { // 获取商品添加信息
             var _this = this;
             layui.use('form', function(){
                 var form = layui.form;
                 _this.$http.post('/shv2/goods/goods_type', {}, function (res) {  // 商品分类
-                console.log(res)
+                // console.log(res)
                 if (res.code == 1) {
                     _this.className = res.data;
-                    console.log(_this.className)
                 }
-                // _this.$http.post('/shv2/goods/add_goodsInfo', {}, function (res) { // 旧的商品分类——1
-                // if (res.code == 1) {
-                //     _this.brand = res.brand;
-                //     _this.className = res.class;
-                //     // console.log(_this.className)
-                // }
-                // console.log(res)
+                
             }, function (err) { console.log(err)})
             form.on('checkbox(check)', function(data){
                 _this.hand = data.elem.checked; //是否被选中，true或者false
@@ -529,106 +455,17 @@ export default {
                 $('#zhuImg').attr('src', window.URL.createObjectURL(this.files[0]))
                 $('#zhuImg').prev().hide()
                 $('#zhuImg').next().show()
-                // $('#files1').next().show()
                  $.each($('#zhuFile')[0].files, function (i, file) {
                     _this.zPic = file
                 })
             })
-
-            // 一下五张是 附图
-            $('#zhuFile2').on('change', function () {
-                $('#zhuImg2').attr('src', window.URL.createObjectURL(this.files[0]))
-                $('#zhuImg2').prev().hide()
-                $('#zhuImg2').next().show()
-                $('#files1').next().next().show()
-                $.each($('#zhuFile')[0].files, function (i, file) {
-                    _this.fPic1 = file
-                })
-            })
-
-            $('#zhuFile3').on('change', function () {
-                $('#zhuImg3').attr('src', window.URL.createObjectURL(this.files[0]))
-                $('#zhuImg3').prev().hide()
-                $('#zhuImg3').next().show()
-                $('#files1').next().next().next().show()
-                $.each($('#zhuFile')[0].files, function (i, file) {
-                    _this.fPic2 = file
-                })
-            })
-
-            $('#zhuFile4').on('change', function () {
-                $('#zhuImg4').attr('src', window.URL.createObjectURL(this.files[0]))
-                $('#zhuImg4').prev().hide()
-                $('#zhuImg4').next().show()
-                $('#files1').next().next().next().next().show()
-                $.each($('#zhuFile')[0].files, function (i, file) {
-                    _this.fPic3 = file
-                })
-            })
-
-            $('#zhuFile5').on('change', function () {
-                $('#zhuImg5').attr('src', window.URL.createObjectURL(this.files[0]))
-                $('#zhuImg5').prev().hide()
-                $('#zhuImg5').next().show()
-                $('#files1').next().next().next().next().next().show()
-                $.each($('#zhuFile')[0].files, function (i, file) {
-                    _this.fPic4 = file
-                })
-            })
-
-            $('#zhuFile6').on('change', function () {
-                $('#zhuImg6').attr('src', window.URL.createObjectURL(this.files[0]))
-                $('#zhuImg6').prev().hide()
-                $('#zhuImg6').next().show()
-                $.each($('#zhuFile')[0].files, function (i, file) {
-                    _this.fPic5 = file
-                })
-            })
-           
            
         });
 
            
             
         },
-        merchandise(id) {   // 商品分类	第一个 id
-           var _this = this;
-           _this.classId2 = '';
-           _this.classId3 = '';
-           _this.classId4 = '';
-           _this.className2 = '';
-           _this.className3 = '';
-           _this.className4 = '';
-           this.$http.post('/shv2/goods/goods_class', { pid: id }, function (res) {
-            //    console.log(res)
-               if (res.code == 1) {
-                   _this.className2 = res.data
-               }
-           }, function (err) { console.log(err)})
-        },
-        merchandise2(id) {   // 商品分类	第二个 id
-           var _this = this;
-           _this.classId3 = '';
-           _this.classId4 = '';
-           _this.className3 = '';
-           _this.className4 = '';
-           this.$http.post('/shv2/goods/goods_class', { pid: id }, function (res) {
-            //    console.log(res)
-               if (res.code == 1) {
-                   _this.className3 = res.data
-               }
-           }, function (err) { console.log(err)})
-        },
-        merchandise3(id) {   // 商品分类	第三个 id
-           var _this = this;
-           this.classId4 = '';
-           _this.className4 = '';
-           this.$http.post('/shv2/goods/goods_class', { pid: id }, function (res) {
-               if (res.code == 1) {
-                   _this.className4 = res.data
-               }
-           }, function (err) { console.log(err)})
-        },
+       
         initdata() {    // 建立富文本编辑器
             var _this = this;
             layui.use(["layer", "element", "form", "layedit", 'jquery'], function () {
@@ -681,29 +518,16 @@ export default {
             var layer = layui.layer;
             var form = layui.from;
             
-            if (!_this.classId) {
-                layer.msg('请选择商品分类')
-                return
-            }
-            if (!_this.brandId) {
-                layer.msg('请选择商品品牌')
-                return false
-            } else if(!_this.name) {
+            // if (!_this.classId) {
+            //     layer.msg('请选择商品分类')
+            //     return
+            // }
+            if(!_this.name) {
                 layer.msg('请输入商品名称')
                 return false
             } 
-            // else if (!_this.ftitle) {
-            //     layer.msg('请输入商品副标题')
-            //     return
-            // } else if (!_this.labelText) {
-            //     layer.msg('请输入商品标签')
-            //     return
-            // } 
             else if (!_this.zPic) {
                 layer.msg('请上传商品图片')
-                return
-            } else if (_this.freight == 1 && !_this.setPrice) {
-                 layer.msg('请输入运费信息')
                 return
             } else if (!_this.dname) {
                 layer.msg('请输入通用名称')
@@ -711,111 +535,104 @@ export default {
             } else if (!_this.dose) {
                 layer.msg('请输入用法用量')
                 return
-            } else if (!_this.properties) {
-                layer.msg('请输入药品性状')
+            } 
+            // else if (!_this.properties) {
+            //     layer.msg('请输入药品性状')
+            //     return
+            // } else if (!_this.untoward_effect) {
+            //     layer.msg('请输入不良反应')
+            //     return
+            // }
+             else if (!_this.package) {
+                layer.msg('请输入包装规格')
                 return
-            } else if (!_this.untoward_effect) {
-                layer.msg('请输入不良反应')
-                return
-            }
-            //  else if (!_this.package) {
-            //     layer.msg('请输入包装规格')
+            } 
+            // else if (!_this.storage) {
+            //      layer.msg('请输入储藏条件')
+            //     return
+            // } else if (!_this.ingredient) {
+            //     layer.msg('请输入药品成分')
+            //     return
+            // } else if (!_this.contraindication) {
+            //     layer.msg('请输入用药禁忌')
+            //     return
+            // } else if (!_this.attending_functions) {
+            //     layer.msg('请输入药理作用')
+            //     return
+            // } else if (!_this.cautions) {
+            //     layer.msg('请输入注意事项')
             //     return
             // } 
-            else if (!_this.storage) {
-                 layer.msg('请输入储藏条件')
-                return
-            } else if (!_this.ingredient) {
-                layer.msg('请输入药品成分')
-                return
-            } else if (!_this.contraindication) {
-                layer.msg('请输入用药禁忌')
-                return
-            } else if (!_this.attending_functions) {
-                layer.msg('请输入功能主治')
-                return
-            } else if (!_this.cautions) {
-                layer.msg('请输入注意事项')
-                return
-            } else if (!_this.code) {
+            // else if (!_this.interaction) {
+            //     layer.msg('请输入相互作用')
+            //     return
+            // } 
+            else if (!_this.code) {
                 layer.msg('请输入批准文号')
                 return
-            } else if (!_this.enterprise) {
-                layer.msg('请输入生产企业')
-                return
-            } else if (!_this.interaction) {
-                layer.msg('请输入相互作用')
+            } 
+            else if (!_this.enterprise) {
+                layer.msg('请输入生产厂商')
                 return
             } else if (!_this.uselife) {
                 layer.msg('请输入有效期')
                 return
-            } else if (!_this.money || _this.money < 1) {
+            } else if (!_this.adapt) {
+                layer.msg('请输入适应症')
+                return
+            } else if (!_this.money || _this.money < 0.01) {
                 layer.msg('请输入商品价格')
                 return
             } 
-            // if (!_this.marketvalue ||  _this.marketvalue < 1 ) {
-            //     layer.msg('请输入市场价格')
-            //     return
-            // } 
+            
             if (!_this.repertory ||  _this.repertory < 1) {
                 layer.msg('请输入库存')
                 return
             } 
-            else if (!_this.details) {
-                layer.msg('请输入详情内容')
-                return
-            }
+            // else if (!_this.details) {
+            //     layer.msg('请输入详情内容')
+            //     return
+            // }
                 _this.disabled = true;
                 var time = setTimeout(function () {
                     _this.disabled = false
                 }, 3000)
-                var arr = [];
-                arr.push(_this.fPic1, _this.fPic2, _this.fPic3, _this.fPic4, _this.fPic5)
-                arr = arr.filter((val, i) => {  // 过滤一下
-                    return val !==''
-                })
-                arr.forEach(val => {
-                    formdata.append('picarr[]', val)
-                })
-                       //  商品图片  附图
                 
-                formdata.append("id", _this.id);
-                formdata.append("one", _this.classId);
-                // formdata.append('two', _this.classId2);
-                // formdata.append('class', _this.classId3);
-                // formdata.append('four', _this.classId4);
-                formdata.append('brand', _this.brandId);
-                formdata.append('name', _this.name);
-                formdata.append('vicename', _this.ftitle);
-                formdata.append('pic', _this.zPic);           // 主图
-                formdata.append("freight_status", _this.freight);
-                formdata.append("freight_money", _this.setPrice);
-                formdata.append('gtype', _this.gtype);
-                formdata.append('label', _this.labelText);
-                formdata.append('recipe', _this.recipe);
-                formdata.append('pack', _this.pack);
-                formdata.append('type', _this.type);
-                formdata.append('dname', _this.dname);
-                formdata.append('dose', _this.dose);
-                formdata.append('properties', _this.properties);
-                formdata.append('untoward_effect', _this.untoward_effect);
-                formdata.append('package', _this.package);
-                formdata.append('storage', _this.storage);
-                formdata.append('ingredient', _this.ingredient);
-                formdata.append('contraindication', _this.contraindication);
-                formdata.append('attending_functions', _this.attending_functions);
-                formdata.append('cautions', _this.cautions)
-                formdata.append('code', _this.code)
-                formdata.append('enterprise', _this.enterprise)
-                formdata.append('interaction', _this.interaction)
-                formdata.append('uselife', _this.uselife)
+                
+                // formdata.append("id", _this.id);
+                formdata.append("tid", _this.classId);   // 商品分类
+                formdata.append('name', _this.name);  // 商品名称
+                formdata.append('pic', _this.zPic);  // 商品图片
+                if (_this.recipe == 1) {   // 处方状态
+                    formdata.append('cfy', '处方'); 
+                } else {
+                    formdata.append('cfy', '非处方'); 
+                }
+                formdata.append("ypzt", _this.brandVal); // 剂型
+                formdata.append('pzwh', _this.code)  // 批准文号
+                formdata.append('mc', _this.dname); // 通用名称
+                formdata.append('yfyl', _this.dose); // 用法用量
+                formdata.append('xz', _this.properties); //  药品性状
+                formdata.append('blfy', _this.untoward_effect); // 不良反应	
+                formdata.append('gg', _this.package);  //  包装规格
+                formdata.append('zc', _this.storage); // 储藏条件
+                formdata.append('cf', _this.ingredient); //  药品成分
+                formdata.append('jj', _this.contraindication); // 用药禁忌
+                formdata.append('ylzy', _this.attending_functions); // 药理作用
+                formdata.append('zysx', _this.cautions)      // 注意事项
+                formdata.append('gc', _this.enterprise) // 生产企业
+                formdata.append('xhzy', _this.interaction) // 相互作用
+                formdata.append('yxq', _this.uselife)  // 有效期
                 formdata.append('money', _this.money) // 商品价格
-                formdata.append('marketvalue', _this.marketvalue)  // 市场价
+                formdata.append('syz', _this.adapt)  // 适应症
                 formdata.append('stock', _this.repertory)  // 库存
                 formdata.append('recommend', _this.recommend)  //  推荐商品
-                formdata.append('describe', _this.details)     // 内容
+                formdata.append('details', _this.details)     // 内容
+                formdata.append('type', _this.gtype)     // 1.立即上架 2.暂不上架
+               
                 
-                _this.$http.upload('/shv2/goods/save_goods?XDEBUG_SESSION_START=17401', formdata, function (res) {
+                
+                _this.$http.upload('/shv2/goods/ins_goods', formdata, function (res) {
                     console.log(res)
                     if (res.code == 1) {
                         layer.msg(res.msg, { icon:1, time: 1500})
@@ -831,20 +648,193 @@ export default {
             
         },
 
-        // 进入编辑后调用的方法
-        editClaaId(id) {
-            return new Promise ((resolve, reject) => {
-                this.$http.post('/shv2/goods/goods_class', { pid: id }, function (res) {
-                            resolve(res)
-                }, function (err) { reject(err) })
-            })
+        searchdata () { // 批准文号搜索
+           var _this = this;
+            layui.use('layer', function(){
+                var layer = layui.layer;
+                if(!_this.searchVal) {
+                    // layer.msg('请输入批准文号搜索', {icon:0});
+                    return;
+                }
+                _this.$http.post('/shv2/goods/goods_attr', {pzwh: _this.searchVal }, function (res) {
+                    console.log(res)
+                    if (res.code == 1) {
+                        _this.searchDataVal(res.data)
+                    } else {
+                        layer.msg('未匹配到数据', {icon:0});
+                    }
+                }, function (err) { console.log(err)})
+                
+            });  
         },
-        searchdata () { // 搜索
-            console.log('souso')
-        }
+        searchDataVal (data) {
+            var _this = this;
+                _this.name = data.mc    // 商品名称
+                _this.zPic = data.img    // 商品图片
+                if (_this.zPic) {
+                    _this.$refs.zhuImg.src = _this.$http.baseURL+_this.zPic
+                }
+                if (data.cfy == '处方药') {  // 处方状态
+                    _this.recipe = '1'
+                } else {
+                    _this.recipe = '2'
+                }
+                console.log( _this.recipe)
+                
+                _this.brandId = data.ypzt // 剂型
+                _this.code = data.pzwh   // 批准文号
+                _this.dname = data.mc  // 通用名称
+                _this.dose = data.yfyl  // 用法用量
+                _this.properties= data.xz //  药品性状
+                _this.untoward_effect = data.blfy // 不良反应	
+                _this.package = data.gg   //  包装规格
+                _this.storage = data.zc   // 储藏条件
+                _this.ingredient = data.cf  //  药品成分
+                _this.contraindication = data.jj    // 用药禁忌
+                _this.attending_functions = data.ylzy  // 药理作用
+                _this.cautions = data.zysx          // 注意事项
+                _this.enterprise = data.gc          // 生产企业
+                _this.interaction = data.xhzy       // 相互作用
+                _this.uselife = data.yxq            // 有效期
+                _this.adapt = data.syz              // 适应症
+                _this.money = data.money            // 商品价格
+                _this.repertory = data.stock        // 库存
+                _this.recommend = data.recommend    //  推荐商品
+                _this.details = data.details        // 内容
+        },
+        
+
+        // 编辑页
+
+        editGoodsInfo (id) {  // 编辑 根据 id 获取商品详情
+            var _this = this;
+            _this.$http.post('/shv2/goods/goods_info', {id: id}, function (res) {
+                console.log(res)
+                if (res.code == 1) {
+                    _this.editData(res.data)
+                } else {
+
+                }
+            }, function (err) {})
+        },
+        editData (data) { // 把数据渲染页面上
+            var _this = this;
+                _this.name = data.mc    // 商品名称
+                _this.zPic = data.pic    // 商品图片
+                if (_this.zPic) {
+                    _this.$refs.zhuImg.src = _this.$http.baseURL+_this.zPic
+                }
+                if (data.cfy == '处方药') {  // 处方状态
+                    _this.recipe = '1'
+                } else {
+                    _this.recipe = '2'
+                }
+                console.log( _this.recipe)
+                
+                _this.brandId = data.ypzt // 剂型
+                _this.code = data.pzwh   // 批准文号
+                _this.dname = data.mc   // 通用名称
+                _this.dose = data.yfyl  // 用法用量
+                _this.properties= data.xz //  药品性状
+                _this.untoward_effect = data.blfy // 不良反应	
+                _this.package = data.gg   //  包装规格
+                _this.storage = data.zc   // 储藏条件
+                _this.ingredient = data.cf  //  药品成分
+                _this.contraindication = data.jj    // 用药禁忌
+                _this.attending_functions = data.ylzy  // 药理作用
+                _this.cautions = data.zysx          // 注意事项
+                _this.enterprise = data.gc          // 生产企业
+                _this.interaction = data.xhzy       // 相互作用
+                _this.uselife = data.yxq            // 有效期
+                _this.adapt = data.syz              // 适应症
+                _this.money = data.money            // 商品价格
+                _this.repertory = data.stock        // 库存
+                _this.recommend = data.recommend    //  推荐商品
+                _this.details = data.details        // 内容
+                _this.layeditdata()
+        },
+        layeditdata() {    // 建立富文本编辑器
+            var _this = this;
+            for (var i=0; i<$('input[name=tuijian]').length; i++) {
+                if ($('input[name=tuijian]')[i].value == _this.recommend) { // 是否推荐
+                    $('input[name=tuijian]')[i].checked = true
+                } else {
+                    $('input[name=tuijian]')[i].checked = false
+                }
+                if($('input[name=gtype]')[i].value == _this.gtype) {    // 上架状态
+                    $('input[name=gtype]')[i].checked = true
+                } else {
+                    $('input[name=gtype]')[i].checked = false
+                }
+            }
+            layui.use(["layer", "element", "form", "layedit", 'jquery'], function () {
+                var element = layui.element;
+                var form = layui.form;
+                
+                var layedit = layui.layedit,
+                    $ = layui.jquery;
+                var index = layedit.build('demos',{
+                    height:'160px',
+                    tool: [
+                        'strong' //加粗
+                        ,'italic' //斜体
+                        ,'underline' //下划线
+                        ,'del' //删除线
+                        ,'|' //分割线
+                        ,'left' //左对齐
+                        ,'center' //居中对齐
+                        ,'right' //右对齐
+                        ,'link' //超链接
+                        ,'unlink' //清除链接
+                        ,'face' //表情
+                    ]
+                }); //建立编辑器
+                form.verify({
+                    content: function(value) { 
+                        return layedit.sync(index);
+                    }
+                })
+                $('.btn_preserve').on('click', function(){
+                    var type = $(this).data('type');
+                    active[type] ? active[type].call(this) : '';
+                    _this.obsubmit()
+                });
+                //编辑器外部操作
+                var active = {
+                    content: function(){
+                        _this.details = layedit.getContent(index); //获取编辑器内容
+                    },
+                    text: function(){
+                        console.log(layedit.getText(index)); //获取编辑器纯文本内容
+                    }
+                    ,selection: function(){
+                        console.log(layedit.getSelection(index));
+                    }
+                };
+
+               var ti = setTimeout(() => {
+                    if (_this.details) {    // 赋值失败
+                        layedit.setContent(index, _this.details);
+                    }
+                    clearTimeout(ti)
+               }, 1000)
+                   
+                form.render()//防止渲染失败
+            });
+        },
     }
 }
 </script>
+<style>
+.el-radio__inner {
+    width: 18px;
+    height: 18px;
+    border: 1px solid #ccc;
+}
+input {
+    outline: none;
+}
+</style>
 
 <style scoped lang="less">
 #addGoods {
@@ -1027,6 +1017,50 @@ export default {
     flex-wrap: wrap;
 }
 
+.searchbrand {
+    position: relative;
+    > ul {
+        position: absolute;
+        left: 0;
+        top: 44px;
+        width: 200px;
+        background: #fffefe;
+        border: 1px solid #e4e7ed;
+        border-radius: 4px;
+        padding: 10px 0;
+        transition: -webkit-transform 1s ease-in-out;
+        transition: transform 1s ease-in-out;
+        &::before {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            left: 35px;
+            top: -8px;
+            border-bottom: 8px solid #e4e7ed;
+        }
+        &::after {
+            position: absolute;
+            content: " ";
+            left: 35px;
+            top: -6px;
+            width:0;
+            height:0;
+            border-width:0 6px 6px;
+            border-style:solid;
+            border-color:transparent transparent #fffefe;
+        }
+        li {
+            padding: 10px 0px 10px 20px;
+            cursor: pointer;
+            &:hover {
+                background-color: #f5f7fa;
+            }
+        }
+    }
+}
 
 
 

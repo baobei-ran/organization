@@ -8,23 +8,23 @@
             <div class="content Pd-L24 Pd-R24 Pd-T24">
                 <div class="Ft-S15 Color_gary Mg-B20">
                     <span class="labels">处方费用设定</span> 
-                    <span>1元</span>
+                    <span>{{ money }}元</span>
                 </div>
                 <div class="Ft-S15 Color_gary Mg-B20">
                     <span class="labels">药师姓名</span> 
-                    <span>周芷诺</span>
+                    <span>{{ docUser }}</span>
                 </div>
                 
                 <div class="files Mg-T20">
                     <dl>
                         <dt>
-                            <img src="../../../../common/image/icon/pic_yp.png" alt="">
+                            <img :src="img1" alt="">
                         </dt>
                         <dd>药师资格证</dd>
                     </dl>
                     <dl>
                         <dt>
-                            <img src="../../../../common/image/icon/pic_yp.png" alt="">
+                            <img :src="img2" alt="">
                         </dt>
                         <dd>药师签名</dd>
                     </dl>
@@ -51,13 +51,33 @@
 export default {
         data () {
             return {
-                
+                docUser: '',
+                money: '',  
+                img1: '',
+                img2: ''
             }
         },
         mounted () {
             var _this = this;
+            this.initdata()
         },
         methods: {
+            initdata () {
+                var _this = this;
+               _this.$http.post('/shv2/Recipetwo/recipe_check', {}, function (res) {
+                   console.log(res)
+                    if (res.code == 1) {
+                         var type = res.data.teacher_type
+                         if (type == 2) {
+                             _this.docUser = res.data.yname
+                             _this.money = res.data.recipe_money
+                            _this.img1 = _this.$http.baseURL + res.data.teacher_pic;
+                            _this.img2 = _this.$http.baseURL + res.data.yname_pic;
+                         }
+                    }
+                   
+                }, function (err) {console.log(err)})
+            },
             show_pic () {   // 上传图片展示
                  layui.use(["layer"], function () {
                     var layer = layui.layer;
@@ -136,6 +156,8 @@ export default {
                     }
                     img {
                         max-width: 100%;
+                        width: 100%;
+                        height: 100%;
                         max-height: 100%;
                     }
                 }

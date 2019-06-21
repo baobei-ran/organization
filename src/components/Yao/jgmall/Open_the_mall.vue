@@ -2,7 +2,7 @@
 
     <!-- 确认开通商城 -->
     <div id="yaomall" class="bg_f" style="height:100%">
-        <p class="mall_tit Color_black Ft-S16 Pd-T24 Pd-B24 Pd-L24">确认开通商城</p>
+        <p class="mall_tit Color_black Ft-S16 Pd-T24 Pd-B24 Pd-L24">开通商城</p>
         <div class="layui-form Mg-T20" >
             
             <div class="layui-form-item Mg-B24">
@@ -28,18 +28,20 @@
                     </div> -->
                 </div>
             </div>
-            <div class="layui-form-item Mg-B10">
+            <!-- <div class="layui-form-item Mg-B10">
                 <label class="layui-form-label"><span class="Color_red">*</span>店铺类型：</label>
                 <div class="layui-input-block Pd-L24">
                     <input type="radio" name="ls" value="连锁店" title="连锁店">
                 </div>
-            </div>
+            </div> -->
             <div class="layui-form-item Mg-B40">
                 <label class="layui-form-label"><span class="Color_red">*</span>店铺展示服务：</label>
                 <div class="layui-input-block Pd-L24">
-                    <input type="radio" name="type1" value="线上物流" title="线上物流">
+                    <input type="checkbox" name="radio" value="1" title="线上物流" lay-skin="primary" >
+                    <input type="checkbox" name="radio" value="2" title="门店自提" lay-skin="primary"> 
+                    <!-- <input type="radio" name="type1" value="线上物流" title="线上物流">
                     <input type="radio" name="type1" value="门店自提" title="门店自提" checked>
-                    <input type="radio" name="type1" value="提供发票" title="提供发票">
+                    <input type="radio" name="type1" value="提供发票" title="提供发票"> -->
                 </div>
             </div>
             <div class="layui-form-item">
@@ -62,7 +64,7 @@ export default {
             size: '',         //  图片预览路径
             title: '点击上传', //  点击上传图片的按钮
             type: '',         //  类型
-            server: 2,       //  服务
+            server: '',       //  服务
         }
     },
     mounted() {
@@ -87,19 +89,28 @@ export default {
                     // $(this).parent().hide()
                 })
 
-                 form.on('radio', function(data){               // 监听单选按钮
+                form.on('checkbox', function(data){ // 监听复选按钮
+                    var arr = new Array();
+                    $("input:checkbox[name='radio']:checked").each(function(i){
+                        arr[i] = $(this).val();
+                    });
+                    
+                    _this.server = arr.join(',')
+                    console.log(_this.server)
+                })
+                //  form.on('radio', function(data){               // 监听单选按钮
 			    // console.log(data.elem); //得到radio原始DOM对象
 			    // console.log(data.value); //被点击的radio的value值
-                    if(data.value== '连锁店'){
-                        _this.type = 1
-                    }else if (data.value=='线上物流') {
-                    _this.server = 1
-                    } else if (data.value=='门店自提') {
-                        _this.server = 2
-                    } else if (data.value=='提供发票') {
-                        _this.server = 3
-                    }
-                 })
+                //     if(data.value== '连锁店'){
+                //         _this.type = 1
+                //     }else if (data.value=='线上物流') {
+                //     _this.server = 1
+                //     } else if (data.value=='门店自提') {
+                //         _this.server = 2
+                //     } else if (data.value=='提供发票') {
+                //         _this.server = 3
+                //     }
+                //  })
 
 
 
@@ -109,6 +120,7 @@ export default {
 
         addData () {    // 保存
             var _this = this;
+            console.log(_this.server)
             layui.use('layer', function(){
             var layer = layui.layer;
              if (!_this.name) {
@@ -120,14 +132,18 @@ export default {
                         return false;
                     }
 
-                    if(!_this.type) {
-                        layer.msg('请选择店铺类型');
+                    // if(!_this.type) {
+                    //     layer.msg('请选择店铺类型');
+                    //     return false;
+                    // }
+                    if(!_this.server) {
+                        layer.msg('请选择店铺服务');
                         return false;
                     }
                                     // 药店开启接口
                     var formdata = new FormData();
                     formdata.append('name', _this.name);
-                    formdata.append('label', _this.type);
+                    // formdata.append('label', _this.type);
                     formdata.append('business', _this.server)
                     formdata.append('pic', _this.imgFile)
                     _this.$http.upload('/shv2/store/open_store', formdata, function (res) {

@@ -7,23 +7,32 @@
                 <div class="layui-inline">
                     <label class="layui-form-label">处方申请时间</label>
                     <div class="layui-input-inline" style="width:160px">
-                        <input type="text" name="price_min" placeholder="" v-model="list.ktime" id="date" autocomplete="off" class="layui-input date_icon">
+                        <el-date-picker style="width:160px;"
+                            v-model="list.ktime"
+                            type="date"
+                            value-format="yyyy-MM-dd"
+                            placeholder="选择开始日期">
+                        </el-date-picker>
                     </div>
                     <div class="layui-form-mid">-</div>
                     <div class="layui-input-inline" style="width:160px">
-                        <input type="text" name="price_max" placeholder="" v-model="list.jtime" id="date1" autocomplete="off" class="layui-input date_icon">
+                        <el-date-picker style="width:160px;"
+                            v-model="list.jtime"
+                            type="date"
+                            placeholder="选择结束日期">
+                        </el-date-picker>
                     </div>
                 </div>
                 <div class="layui-inline lay_width">
                     <label class="layui-form-label">处方需求单号</label>
                     <div class="layui-input-inline" style="width:160px">
-                        <input type="text" name="" v-model="list.order_code" autocomplete="off" class="layui-input">
+                        <input type="text" v-model="list.order_code" autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-inline Mg-L10 lay_width">
                     <label class="layui-form-label">申请医生</label>
                     <div class="layui-input-inline" style="width:160px">
-                        <input type="text" name="" v-model="list.doc_user" autocomplete="off" class="layui-input">
+                        <input type="text" v-model="list.doc_user" autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <p class="Pd-L15">
@@ -145,7 +154,7 @@
             </div>
 
 
-            <div class="yalui_btn"><button class="layui-btn layui-btn-normal">返回</button></div>
+            <!-- <div class="yalui_btn"><button class="layui-btn layui-btn-normal">返回</button></div> -->
         </div>
 
 
@@ -204,7 +213,7 @@
 </template>
 <script>
 export default {
-    name: 'orderList',
+    name: 'yaoPrescriptionList',
     data() {
         return {
             doctorList: [],             // 医生列表
@@ -227,41 +236,24 @@ export default {
         }
     },
     mounted() {
-        this.tab(0)
-        var self = this;
-        self.$http.post('/shv2/Recipe/recipe_seldoc', {}, function (res) {
-            // console.log(res)
-            if (res.code == 1) {
-                self.doctorList = res.data
-            }
-        }, function (err) { console.log(err)})
+        
+    },
+    activated () {
+        this.tab(this.status)
     },
     methods: {
         tab(type) {
+            this.empty()
             this.status = type;
             this.initdata(type, 1)
         },
         initdata(type, num) {   // 数据
             var _this = this;
-            layui.use(["laypage", "layer", "laydate", "element"], function () {
+            layui.use(["laypage", "layer", "element"], function () {
                 var element = layui.element;
-                var laydate = layui.laydate;
-                laydate.render({
-                    elem: "#date",
-                });
-                laydate.render({
-                    elem: "#date1",
-                });
-                var oDate1 = new Date($('#date').val());
-                var oDate2 = new Date($('#date1').val());
-                if (oDate1.getTime() > oDate2.getTime()) {
-                    layer.msg('开始时间不能大于结束时间', { icon: 5});
-                    return
-                }
                 _this.list.page = num;
                 _this.list.status = type;
-                _this.list.ktime = $('#date').val();
-                _this.list.jtime = $('#date1').val();
+                console.log(_this.list)
                 _this.$http.post('/shv2/recipe/recipe_index', _this.list, function (res) {//
                     console.log(res)
                     if (res.code == 1) {
@@ -302,9 +294,13 @@ export default {
           var _this = this;
           layui.use('layer', function(){
             var layer = layui.layer;
-            if (!$('#date').val() && !$('#date1').val() && !_this.list.order_code) {
-                layer.msg('请输入内容', { icon: 5});
-                return false;
+            if (_this.list.ktime && _this.list.jtime) {
+                var date1 = new Date(_this.list.ktime).getTime();
+                var date2 = new Date(_this.list.jtime).getTime();
+                if (date1 > date2) {
+                    layer.msg('开始时间不能大于结束时间', { icon: 5});
+                    return false
+                }
             }
             _this.initdata(_this.list.status, 1)
             
@@ -410,27 +406,25 @@ export default {
                 ktime: '',
                 jtime: '',
             }
-            $('#date').val('');
-            $('#date1').val('');
             this.initdata(this.status, 1)
         },
-         handleCheckAllChange(val) {     // 全选
-            if(val) {
-                this.checkedCities = this.doctorList 
-            } else {
-                this.checkedCities = [] 
-            }
-        },
-        handleCheckedCitiesChange(value) {  // 单选
-            if (value.length > 0) {
-                var checkedCount = value.length;
-                if (checkedCount == this.doctorList.length) {
-                    this.checkAll = true;
-                } else {
-                    this.checkAll = false;
-                }
-            }
-        },
+        //  handleCheckAllChange(val) {     // 全选
+        //     if(val) {
+        //         this.checkedCities = this.doctorList 
+        //     } else {
+        //         this.checkedCities = [] 
+        //     }
+        // },
+        // handleCheckedCitiesChange(value) {  // 单选
+        //     if (value.length > 0) {
+        //         var checkedCount = value.length;
+        //         if (checkedCount == this.doctorList.length) {
+        //             this.checkAll = true;
+        //         } else {
+        //             this.checkAll = false;
+        //         }
+        //     }
+        // },
         
         cancels (n) {     // 审核的 取消关闭弹框 和 确认
             if(n == 1) {
@@ -498,14 +492,14 @@ export default {
                 .layui-form-label {
                     padding:0;
                     width: auto;
-                    height: 34px;
+                    height: 36px;
                     padding-right: 7px;
-                    line-height: 34px;
+                    line-height: 36px;
                 }
                 .layui-input-inline {
                   margin: 0;
                     input {
-                        height: 34px;
+                        height: 36px;
                     }
                     .date_icon {
                         background: url(../../common/image/pages/account/icon_sj.png)

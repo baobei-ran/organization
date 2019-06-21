@@ -88,6 +88,7 @@ export default {
         },
         //从输入提示框中选择关键字并查询
         selectResult: function(v) {
+            document.getElementById("result1").style.display = "none";
             var cityCode = v.adcode, self = this;
             this.inputVal = v.name
             //根据选择的输入提示关键字查询

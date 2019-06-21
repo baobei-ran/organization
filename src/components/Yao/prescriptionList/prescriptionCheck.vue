@@ -286,69 +286,6 @@ export default {
             });
         },
          
-        donwload () {
-            /*图片跨域及截图模糊处理*/
-            var shareContent = document.getElementById('html'),//需要截图的包裹的（原生的）DOM 对象
-                width = shareContent.clientWidth,//shareContent.offsetWidth; //获取dom 宽度
-                height = shareContent.clientHeight,//shareContent.offsetHeight; //获取dom 高度
-                canvas = document.createElement("canvas"), //创建一个canvas节点
-                scale = 4; //定义任意放大倍数 支持小数
-            canvas.width = width * scale; //定义canvas 宽度 * 缩放
-            canvas.height = height * scale; //定义canvas高度 *缩放
-            canvas.style.width = shareContent.clientWidth * scale + "px";
-            canvas.style.height = shareContent.clientHeight * scale + "px";
-            canvas.getContext("2d").scale(scale, scale); //获取context,设置scale
-            var opts = {
-                scale: scale, // 添加的scale 参数
-                canvas: canvas, //自定义 canvas
-                logging: false, //日志开关，便于查看html2canvas的内部执行流程
-                width: width, //dom 原始宽度
-                height: height,
-                dpi: window.devicePixelRatio
-                // useCORS: true // 【重要】开启跨域配置
-            };
-            html2canvas(shareContent,opts).then(function(canvas) {
-               
-                var url = canvas.toDataURL();
-                var triggerDownload = $("<a>").attr("href", url).attr("download", "处方单.png").appendTo("body");
-                triggerDownload[0].click();
-                triggerDownload.remove();
-            })
-        },
-
-        browse () { // 浏览
-            var _this = this;
-            var shareContent = document.getElementById('html'),//需要截图的包裹的（原生的）DOM 对象
-                width = shareContent.clientWidth,//shareContent.offsetWidth; //获取dom 宽度
-                height = shareContent.clientHeight,//shareContent.offsetHeight; //获取dom 高度
-                canvas = document.createElement("canvas"), //创建一个canvas节点
-                scale = 6; //定义任意放大倍数 支持小数
-            canvas.width = width * scale; //定义canvas 宽度 * 缩放
-            canvas.height = height * scale; //定义canvas高度 *缩放
-            canvas.style.width = shareContent.clientWidth * scale ;
-            canvas.style.height = shareContent.clientHeight * scale;
-            canvas.getContext("2d").scale(scale, scale); //获取context,设置scale
-            var opts = {
-                scale: scale, // 添加的scale 参数
-                canvas: canvas, //自定义 canvas
-                logging: true, //日志开关，便于查看html2canvas的内部执行流程
-                width: width, //dom 原始宽度
-                height: height,
-                dpi: window.devicePixelRatio
-            };
-            html2canvas(shareContent,opts).then(function(canvas) {
-                 var context = canvas.getContext('2d');
-                // 【重要】关闭抗锯齿
-                context.mozImageSmoothingEnabled = false;
-                context.webkitImageSmoothingEnabled = false;
-                context.msImageSmoothingEnabled = false;
-                context.imageSmoothingEnabled = false;
-                var url = canvas.toDataURL('image/png');
-                _this.$refs.imgs.src = url
-            })
-
-             
-        }
       
     }
 }

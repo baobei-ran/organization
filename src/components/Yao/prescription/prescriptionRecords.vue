@@ -1,8 +1,8 @@
 <template>
-    <div id="orderList" style="height:100%">
+    <div id="presciptionRecords" style="height:100%">
         <div class="bg_f">
             <p class="orderList_tit Color_black Ft-S16 Pd-T24 Pd-B24 Pd-L24">医生信息 
-                <span v-if='true'>
+                <span v-if='docData.type == 1'>
                     <img style="width:40px;height:14px;" src="../../../common/image/icon/icon_tzz.png" alt="">
                     <img class="icon_hover" src="../../../common/image/icon/icon_xqsm.png" alt="">
                 </span>
@@ -11,41 +11,43 @@
                 <ul class="Pd-B24">
                     <li>
                         <span>医生姓名</span>
-                        <span>张三</span>
+                        <span>{{ docData.true_name }}</span>
                     </li>
                     <li>
                         <span>医生职称</span>
-                        <span>医生</span>
+                        <span>{{ docData.gname }}</span>
                     </li>
                     <li>
                         <span>执业医院</span>
-                        <span>山东省立医院</span>
+                        <span>{{ docData.hospital_name }}</span>
                     </li>
                     <li>
                         <span>所在科室</span>
-                        <span>心内科</span>
+                        <span>{{ docData.department_name }}</span>
                     </li>
                     <li>
                         <span>合作状态</span>
-                        <span>合作中</span>
+                        <span v-text='docData.state == 1?"申请中":docData.state == 2?"合作中":docData.state == 3?"合作终止":""'></span>
                     </li>
                 </ul>
                 <ul class="Pd-B24">
                     <li>
                         <span>开具处方数量</span>
-                        <span>4</span>
+                        <span>{{ docData.count }}</span>
                     </li>
                     <li>
                         <span>合作申请方</span>
-                        <span>医生</span>
+                        <span v-text='docData.initiative == 1?"医院":"药店"'></span>
                     </li>
                     <li>
                         <span>合作时间</span>
-                        <span>2019-02-19</span>
+                        <span>{{ docData.agree_time | moment }}</span>
                     </li>
                     <li>
                         <span>处方服务时间</span>
-                        <span>星期一、星期二、星期四、星期五 8:00-20:00</span>
+                        <span>{{ docData.busdate }}</span>
+                        <span>{{ docData.busktime }} -- {{ docData.busjtime }}</span>
+                        
                     </li>
                 </ul>
             </div>
@@ -61,7 +63,7 @@
                                 <li @click="tab(1)">药品推荐记录</li>
                             </ul>
                             <p class="layui_right">
-                                <input type="search" placeholder="输入患者姓名搜索"/>
+                                <input type="search" v-model='userName' placeholder="输入患者姓名搜索"/>
                             </p>
                         </div>
                         <div class="layui-tab-content">
@@ -78,24 +80,24 @@
                                             <td>操作</td>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        <tr class="table_con Color_black ac" v-for="(val,index) in 4" :key='index'>
+                                    <tbody v-if='tableList.length'>
+                                        <tr class="table_con Color_black ac" v-for="(val,index) in tableList" :key='index'>
                                             <td>{{ index+1 }}</td>
-                                            <td>12343435465769879</td>
-                                            <td>2019-02-21 12:00</td>
+                                            <td>{{ val.number }}</td>
+                                            <td>{{ val.start_time | moment }}</td>
                                             <td>
-                                                <span >未审核</span>
-                                                <span >已审核</span>
-                                                <span >已过期</span>
+                                                <span v-show='val.type == 3'>未审核</span>
+                                                <span v-show='val.type == 2'>已审核</span>
+                                                <span v-show='val.type == 1'已过期</span>
                                             </td>
-                                            <td>摇啊摇</td>
+                                            <td>{{ val.name }}</td>
                                             <td class="dis_f dis_js">
-                                                <p class="pointer Ft-S14 Color_blue" @click="godetail">预览</p>
-                                                <p class="pointer Ft-S14 Color_blue" @click="f_download()">下载</p>
+                                                <p class="pointer Ft-S14 Color_blue" @click="godetail(val.id)">预览</p>
+                                                <p class="pointer Ft-S14 Color_blue" @click="f_download(val.id)">下载</p>
                                             </td>
                                         </tr>
                                     </tbody>
-                                    <tbody >
+                                    <tbody v-if='!tableList.length'>
                                         <tr class="table_con Color_black ac" >
                                             <td colspan='6'>
                                                 <img src="../../../common/image/icon/icon_zwxgjl@2x.png" alt="">
@@ -105,7 +107,7 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <!-- 2 -->
+                            <!-- 2 药品推荐记录-->
                             <div class="layui-tab-item">
                                 <table class="layui-table" lay-skin="">
                                     <thead>
@@ -236,13 +238,19 @@
     </div>
 </template>
 <script>
+var delay = (function() {
+ var timers = 0;
+ return function(callback, ms) {
+ clearTimeout(timers);
+ timers = setTimeout(callback, ms);
+ };
+})();
 export default {
-    name: 'orderList',
+    name: 'presciptionRecords',
     data() {
         return {
-            
-            number: '',                 // 处方编号
-            flag: '',                   // 药师审核状态
+            tabNum: 0,            // nav
+            userName: '',           // 搜索
             page: 1,
             limit: 10,
             tableList: [],              // 数据列表
@@ -251,48 +259,115 @@ export default {
                 {id: 1, name: '通过'},
                 {id: 2, name: '不通过'}
             ],
-            doctormsg: '',
             terminationText: '',        // 取消合作原因
+            docData: {},                // 医生信息
+            docTimer: [{id:1, val:'星期一'},
+                    {id:2, val:'星期二'},
+                    {id:3, val:'星期二'},
+                    {id:4, val:'星期四'},
+                    {id:5, val:'星期五'},
+                    {id:6, val:'星期六'},
+                    {id:0, val:'星期日'}],
+            searchTime: '',                // 搜索时间
         }
     },
     mounted() {
-        this.doctormsg = this.$route.query
-        this.initdata(1) 
+        this.docMsgs()
+        this.tab(0)
+    },
+    watch: {
+        //watch userName change
+        userName () {
+            delay(() => {
+               if (this.tabNum == 0) {
+                    this.initdata(1);
+               } else {
+                   console.log('111')
+               }
+            }, 500);
+        },
     },
     methods: {
         tab (n) {
-            console.log(n)
+            this.tabNum = n
+            this.userName = ''
+            if (n == 0) {
+                this.initdata(1) 
+            } else {
+                console.log('aaaa')
+            }
         },
-        initdata(num) {   // 数据
+        changeTime (time){ // 时间转换
+            function getBz(num){
+                if(parseInt(num) < 10){
+                    num = '0'+num;
+                }
+                return num;
+            }
+            if(time){
+                var oDate = new Date(time*1000),
+                    oYear = oDate.getFullYear(),
+                    oMonth = oDate.getMonth()+1,
+                    oDay = oDate.getDate(),
+                    oHour = oDate.getHours(),
+                    oMin = oDate.getMinutes(),
+                    // oSen = oDate.getSeconds(),
+                    oTime = oYear +'-'+ getBz(oMonth) +'-'+ getBz(oDay) +' '+ getBz(oHour) +':'+ getBz(oMin);//拼接时间
+                return oTime;
+            }else{
+                return "";
+            }
+        },
+        docMsgs () {
+            var _this = this;
+            this.$http.post('/shv2/Commonshop/com_doc_look', {id:_this.$route.query.id}, function (res) {
+                console.log(res)
+                if (res.code == 1) {
+                    _this.docData = res.data
+                    var arr = _this.docData.busdate.split(','),arrTime = [];
+                    for (var i =0;i<_this.docTimer.length; i++) {
+                        for (var j=0;j<arr.length;j++) {
+                            if (arr[j] == _this.docTimer[i].id) {
+                                arrTime.push(_this.docTimer[i].val)
+                            }
+                        }
+                    }
+                    _this.docData.busdate = arrTime.join('、');
+                    var startTime = _this.changeTime(_this.docData.start_time);
+                    var endTime = _this.changeTime(_this.docData.end_time);
+        var txt = '<div style="color: #000;"><h2 style="text-align: center;font-size: 14px;">医生停诊中</h2><ul><li style="color:#808080;">停诊时间</li><li>'+startTime+'--'+endTime+'</li></ul><ul><li style="color:#808080;">停诊说明</li><li>'+_this.docData.cause+'</li></ul></div>'
+                    $(".icon_hover").hover(function () {
+                        layer.tips(txt, '.icon_hover', {
+                            tips: [3, '#FFF'],
+                            time: 0
+                        });
+                    }, function () {
+                        layer.closeAll()
+                    });
+                }
+            }, function (err) {})
+        },
+       
+        initdata(num) {   // 处方记录数据
             var _this = this;
             layui.use(["laypage", "layer", "laydate", "element"], function () {
                 var element = layui.element;
                 var laydate = layui.laydate;
-                
-                _this.page = num;
                 var start = $('#date').val();
                 var end_time = $('#date1').val();
-                var id = _this.$route.query.id
-                var obj = { id: id, number: _this.number, ktime: start, jtime: end_time, flag: _this.flag }
-                _this.$http.post('/shv2/Recipe/recipe_record', obj, function (res) {//
+                var id = _this.$route.query.did; // 医生id 
+                var obj = { id: id, page: _this.page, limit: _this.limit, name:_this.userName }
+                _this.$http.post('/shv2/Commonshop/com_doc_look', obj, function (res) {
                     console.log(res)
                     if (res.code == 1) {
                        _this.tableList = res.data
+                       if (num == 1) {
+                           _this.pageFun(res.count)
+                       }
                     } else {
                         _this.tableList = []
                     }
                 }, function (err) { console.log(err) });
-                
-                var txt = '<div style="color: #000;"><h2 style="text-align: center;font-size: 14px;">医生停诊中</h2><ul><li style="color:#808080;">停诊时间</li><li>2018-09-01 12:00—2018-10-01 12:00</li></ul><ul><li style="color:#808080;">停诊说明</li><li>有事啊</li></ul></div>'
-
-                $(".icon_hover").hover(function () {
-                    layer.tips(txt, '.icon_hover', {
-                        tips: [3, '#FFF'],
-                        time: 0
-                    });
-                }, function () {
-                    layer.closeAll()
-                });
             });
         },
         pageFun(total) {    // 分页
@@ -351,6 +426,15 @@ export default {
         }); 
             
         },
+        userCFdetail (id) { // 处方信息
+            var _this = this;
+            _this.$http.post('/', {id:id}, function (res) {
+                console.log(res)
+                if (res.code == 1) {
+
+                }
+            }, function (err) {})
+        },
         godetail(id) {    // 预览
             console.log(id)
             layui.use(["layer"], function () {
@@ -370,13 +454,71 @@ export default {
         },
        f_download () { // 处方下载
             console.log('download')
-       }
+            /*图片跨域及截图模糊处理*/
+            var shareContent = document.getElementById('html'),//需要截图的包裹的（原生的）DOM 对象
+                width = shareContent.clientWidth,//shareContent.offsetWidth; //获取dom 宽度
+                height = shareContent.clientHeight,//shareContent.offsetHeight; //获取dom 高度
+                canvas = document.createElement("canvas"), //创建一个canvas节点
+                scale = 4; //定义任意放大倍数 支持小数
+            canvas.width = width * scale; //定义canvas 宽度 * 缩放
+            canvas.height = height * scale; //定义canvas高度 *缩放
+            canvas.style.width = shareContent.clientWidth * scale + "px";
+            canvas.style.height = shareContent.clientHeight * scale + "px";
+            canvas.getContext("2d").scale(scale, scale); //获取context,设置scale
+            var opts = {
+                scale: scale, // 添加的scale 参数
+                canvas: canvas, //自定义 canvas
+                logging: false, //日志开关，便于查看html2canvas的内部执行流程
+                width: width, //dom 原始宽度
+                height: height,
+                dpi: window.devicePixelRatio
+                // useCORS: true // 【重要】开启跨域配置
+            };
+            html2canvas(shareContent,opts).then(function(canvas) {
+               
+                var url = canvas.toDataURL();
+                var triggerDownload = $("<a>").attr("href", url).attr("download", "处方单.png").appendTo("body");
+                triggerDownload[0].click();
+                triggerDownload.remove();
+            })
+       },
+       browse () { // 浏览
+            var _this = this;
+            var shareContent = document.getElementById('html'),//需要截图的包裹的（原生的）DOM 对象
+                width = shareContent.clientWidth,//shareContent.offsetWidth; //获取dom 宽度
+                height = shareContent.clientHeight,//shareContent.offsetHeight; //获取dom 高度
+                canvas = document.createElement("canvas"), //创建一个canvas节点
+                scale = 6; //定义任意放大倍数 支持小数
+            canvas.width = width * scale; //定义canvas 宽度 * 缩放
+            canvas.height = height * scale; //定义canvas高度 *缩放
+            canvas.style.width = shareContent.clientWidth * scale ;
+            canvas.style.height = shareContent.clientHeight * scale;
+            canvas.getContext("2d").scale(scale, scale); //获取context,设置scale
+            var opts = {
+                scale: scale, // 添加的scale 参数
+                canvas: canvas, //自定义 canvas
+                logging: true, //日志开关，便于查看html2canvas的内部执行流程
+                width: width, //dom 原始宽度
+                height: height,
+                dpi: window.devicePixelRatio
+            };
+            html2canvas(shareContent,opts).then(function(canvas) {
+                 var context = canvas.getContext('2d');
+                // 【重要】关闭抗锯齿
+                context.mozImageSmoothingEnabled = false;
+                context.webkitImageSmoothingEnabled = false;
+                context.msImageSmoothingEnabled = false;
+                context.imageSmoothingEnabled = false;
+                var url = canvas.toDataURL('image/png');
+                _this.$refs.imgs.src = url
+            })
+        }
     }
 }
 </script>
 
 <style scoped lang="less">
-#orderList {
+#presciptionRecords {
     background-color: #F1F2F9;
     .orderList_tit {
         border-bottom: 1px solid #e6e6e6;
@@ -386,18 +528,19 @@ export default {
     .orderList_msg {
         padding: 0 24px;
         > ul {
-            width: 40%;
+            width: 30%;
             li {
                 font-size: 14px;
                 color: #333;
                 span:first-child {
                    color: #808080;
-                   margin-right: 20px;
+                   margin-right: 14px;
                 }
                 margin-top: 14px;
             }
         }
         ul:last-child {
+            width: 50%;
             li {
                 font-size: 14px;
                 color: #333;

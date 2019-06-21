@@ -6,11 +6,11 @@
                 <ul class="layui-tab-title">
                     <li class="layui-this" @click="tab(0)">全部（{{ goodCount.count }}）</li>
                     <li @click="tab(1)">已上架（{{ goodCount.count1 }}）</li>
-                    <li @click="tab(2)">已下架（{{ goodCount.count2 }}）</li>
-                    <li @click="tab(3)">已售罄（{{ goodCount.count3 }}）</li>
-                    <li @click="tab(4)">待审核（{{ goodCount.count4 }}）</li>
-                    <li @click="tab(5)">审核未通过（{{ goodCount.count5 }}）</li>
-                    <li @click="tab(10)">批量上传失败（{{ goodCount.count5 }}）</li>
+                    <li @click="tab(2)">已下架（{{ goodCount.count5 }}）</li>
+                    <li @click="tab(3)">已售罄（{{ goodCount.count2 }}）</li>
+                    <li @click="tab(4)">待审核（{{ goodCount.count3 }}）</li>
+                    <li @click="tab(5)">审核未通过（{{ goodCount.count4 }}）</li>
+                    <li @click="tab(10)">批量上传失败（{{ goodCount.count6 }}）</li>
                     <p class="fr Ft-S14 Color_blue"><span class="Mg-R24 pointer" @click='data_uploading'><i class="upfile_icon"></i>批量上传</span><span class="pointer" @click="go('/jgmall/goodsList/addGoods')"><i class="add_icon"></i>新增商品</span></p>
                 </ul>
 
@@ -37,21 +37,13 @@
                             <div class="layui-col-md4">
                                 <div class="layui-inline lay_width">
                                     <div class="layui-input-inline" style="width:100%">
-                                        <span class="Ft-S14 selectbtn ac pointer" @click='search'>筛选订单</span><span class="Color_blue pointer Ft-S14 Mg-L24" @click='empty'>清空筛选条件</span>
+                                        <span class="Ft-S14 selectbtn ac pointer" @click='search'>筛选商品</span><span class="Color_blue pointer Ft-S14 Mg-L24" @click='empty'>清空筛选条件</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- 加的选项卡风格只是装饰 -->
-                    <!-- <div class="layui-tab-item layui-show"></div>
-                    <div class="layui-tab-item"></div>
-                    <div class="layui-tab-item"></div>
-                    <div class="layui-tab-item"></div> -->
-                    <!--  -->
-
-            <div class="table_box" v-if='tdlast == 0 ? true : tdlast == 1 ? true : tdlast == 2 ? true: tdlast == 3 ? true:false'>
+            <div class="table_box" v-show='tdlast == 0 ? true : tdlast == 1 ? true : tdlast == 2 ? true: tdlast == 3 ? true:false'>
                 <!-- <div class='table_head' v-show='multipleSelection.length' v-if='tdlast == 0? false : tdlast == 3? false : true'>
                     <span style='color: #3196FF;'>批量操作，当前选择{{ multipleSelection.length }}条信息</span>
                     <div v-show='tdlast == 2 ? true:false'><el-button type="primary" size='mini' >上架</el-button></div>
@@ -60,6 +52,7 @@
                    <el-table
                     :data="goodList"
                     :row-style='styleColor'
+                    key='shop'
                     @selection-change="handleSelectionChange"
                     style="width: 100%;height: 515px;overflow: auto;" :header-cell-style='styleObj' >
                         <el-table-column
@@ -178,11 +171,12 @@
                     
 
                 <!-- 审核页面-->
-                <div v-else-if="tdlast == 4 ? true : tdlast == 5 ? true : false " >   
+                <div v-show="tdlast == 4 ? true : tdlast == 5 ? true : false " >   
                     
                     <el-table
                     :data="goodList"
                     :row-style='styleColor'
+                    key='shenhe'
                     style="width: 100%;height: 515px;overflow: auto;" :header-cell-style='styleObj' >
                         <el-table-column
                         type="selection"
@@ -285,7 +279,7 @@
                 </div> 
 
                 <!-- 批量上传失败搜索 -->
-                 <div class="screen_type Pd-B24 Mg-T14 Mg-B24" v-if='tdlast == 10'>
+                 <div class="screen_type Pd-B24 Mg-T14 Mg-B24" v-show='tdlast == 10'>
                         <div class="layui-form-item layui-row">
                             <div class="layui-col-md4">
                                 <div class="layui-inline lay_width">
@@ -306,7 +300,7 @@
                             <div class="layui-col-md4">
                                 <div class="layui-inline lay_width">
                                     <div class="layui-input-inline" style="width:100%">
-                                        <span class="Ft-S14 selectbtn ac pointer" @click='search_fail'>筛选订单</span><span class="Color_blue pointer Ft-S14 Mg-L24" @click='empty'>清空筛选条件</span>
+                                        <span class="Ft-S14 selectbtn ac pointer" @click='search_fail(1)'>筛选商品</span><span class="Color_blue pointer Ft-S14 Mg-L24" @click='empty'>清空筛选条件</span>
                                     </div>
                                 </div>
                             </div>
@@ -315,10 +309,11 @@
 
 
                 <!-- 批量上传失败 -->
-                <div v-if="tdlast == 10 ? true : false" >   
+                <div v-show="tdlast == 10 ? true : false" >   
                     <el-table
                     :data="goodList2"
                     :row-style='styleColor'
+                    key='fail'
                     style="width: 100%;height: 515px;overflow: auto;" :header-cell-style='styleObj' >
                         <el-table-column
                         type="selection"
@@ -335,7 +330,7 @@
                                 
                                 <div class='Pd-L24'  style='display:-webkit-flex;display:flex;align-items: center;' >
                                     <p style="width:60px;height:60px;min-width:60px;background-color:#EEE;">
-                                        <!-- <img :src="$http.baseURL+scope.row.pic" alt="" style='width: 60px; height:60px;display:inline-block;' > -->
+                                        <img :src="$http.baseURL+scope.row.pic" alt="" style='width: 60px; height:60px;display:inline-block;' >
                                     </p>
                                     <p style='margin-left:20px;text-align:left;color: #333;'>{{ scope.row.name }}</p>
                                 </div>
@@ -366,6 +361,16 @@
                             </template>
                         </el-table-column>
                         <el-table-column
+                            prop="fail_reason"
+                            min-width="50%"
+                            label="失败原因" align ='center'>
+                            <template slot-scope="scope">
+                                <div>
+                                    <span>{{ scope.row.fail_reason }}</span>
+                                </div>
+                            </template>
+                        </el-table-column>
+                        <el-table-column
                             min-width="50%"
                             prop="examine"
                             label="操作" align ='center'>
@@ -373,7 +378,7 @@
                             <template slot-scope="scope">
                                 <div>
                                     <button class='btn' @click="edits(scope.row)">完善信息</button>
-                                    <button class='btn Mg-L14' @click="del(scope.row)">删除</button>
+                                    <button class='btn Mg-L14' @click="del_fail(scope.row)">删除</button>
                                 </div>
                                 
                             </template>
@@ -381,16 +386,13 @@
                     </el-table>
                 </div> 
 
-
-
-
-
-
-                    <div style='background:#fff;' v-show='goodList.length' id='page'></div>
-                           
+                    <div style='background:#fff;' v-show='goodList.length && tdlast !== 10' id='page'></div>
+                    <div style='background:#fff;text-align:center;' v-show='goodList2.length && tdlast == 10' id='page2'></div>       
                 </div>
             </div>
         </div>
+
+
         <div id="sendgoods" class="hide Pd-L40 Pd-R40 ac" style="height:330px;overflow-y:auto">
             <table width="100%">
                 <tr style="border-bottom:1px solid #ddd">
@@ -417,7 +419,8 @@
         <div id="uploading">
             <div class="uploading_title">
                 <h2>批量上传</h2>
-                <span><a href="../../../static/文件夹.csv" download="">下载表格</a></span>
+                <span v-if='!uploadcsv'><a href="/file/drug.csv" download="云医康智慧药房药品批量导入模板.csv">下载表格</a></span>
+                <span v-if='uploadcsv'><a href="/file/云医康智慧药房药品批量导入模板.csv" download="云医康智慧药房药品批量导入模板.csv">下载表格</a></span>
             </div>
             <div class="uploading_msg">
                 <p>批量上传注意事项：</p>
@@ -430,8 +433,14 @@
                     </div>
                 </div>
             </div>
+            <div class="Pd-L40" style='height:20px;'>
+                <p v-show='flag'>
+                    <span>上传文件：</span>
+                    <span style='color:#3196FF;'>{{ excelfile.name }}</span>
+                </p>
+            </div>
             <p class="clear">
-                <span ><input type="file" @change="up_files($event)" id='up_file'  accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" class="hide"><label for='up_file' class="cancel pointer" >选择文件</label></span>
+                <span ><input type="file" @change="up_files($event)" id='up_file'  accept=".csv" class="hide"><label for='up_file' class="cancel pointer" >选择文件</label></span>
                 <span >
                     <!-- <button :class="{'send pointer': flag}" @click='beforeUploadFile'>确认上传</button> -->
                     <el-button type="primary" :class="{'send pointer': flag}" @click='beforeUploadFile' :disabled="disabled" :loading="disabled">确认上传</el-button>
@@ -451,42 +460,57 @@
         </div>
         <!-- 上传结果, 缺图 -->
         <div id="uploading_success" class="hide">
-            <p class="uploading_success_title">药品库未匹配到药品图片{{ noimg.length }}条，请手动添加</p>
-            <div class="uploading_success_file">
-                <div class="file_box">
-                    <ul v-for='(val,i) in 10' :key="i+'_33'" >
-                        <li><span>土霉素片</span></li>
-                        <li>国药准字H20190102</li>
-                        <li><img src="" alt=""></li>
-                        <li><input style='display:none;' type="file" :id="'files'+i" /><label class="pointer" :for="'files'+i" >手动添加</label></li>
-                    </ul>
+            <div v-if='noimg.length'>
+                <p class="uploading_success_title">药品库未匹配到药品图片{{ noimg.length }}条，请手动添加</p>
+                <div class="uploading_success_file">
+                    <div class="file_box">
+                        <ul v-for='(val,i) in noimg' :key="i+'_33'" >
+                            <li><span>{{ val[0] }}</span></li>
+                            <li>{{ val[2] }}</li>
+                            <li><img class="pic_img" src="" alt=""></li>
+                            <li><input class="img_file" @change="upFileImg($event, i)" style='display:none;' type="file" :id="'files'+i" /><label class="pointer" :for="'files'+i" >手动添加</label></li>
+                        </ul>
+                    </div>
                 </div>
+                <p v-if='existNum' class="Color_red Mg-T10">{{ existNum }}条药品信息已存在</p>
+                <p class="Color_red Mg-T5">药品库未匹配到药品<span v-text='(uploadNum+noparamsNum)'></span>条，请稍后在批量上传失败列表中完善药品信息</p>
+                <!-- <p class="Mg-T5 Color_red" >上传失败{{noparamsNum}}条商品信息！</p> -->
+                <p class="uploading_success_msg Mg-T5">上传成功<span v-text='succNum'></span>条商品信息！</p>
+                <span style="display:block;text-align:right;">
+                    <el-button type="primary" class="pointer" @click='uploadPic' :disabled="disabledPic"  :loading="disabledPic">下一步</el-button>
+                </span>
             </div>
-            <p class="uploading_success_title">药品库未匹配到药品{{ uploadNum.length }}条，请稍后在商品列表添加</p>
-            <p class="uploading_success_msg">上传成功{{ succNum.length }}条商品信息！</p>
-            <span>
-                <!-- <button class="pointer" @click='uploadPic'>下一步</button> -->
-                <el-button type="primary" class="pointer" @click='uploadPic' :disabled="disabledPic"  :loading="disabledPic">下一步</el-button>
-            </span>
+            <div v-if='!noimg.length'>
+                <div style='height:250px;'>
+                    <p v-if='existNum' class="Pd-T24 Color_red" >{{ existNum }}条药品信息已存在</p>
+                    <p v-if='uploadNum' class="Pd-T24 Color_red" >药品库未匹配到药品<span v-text='(uploadNum+noparamsNum)'></span>条，请稍后在批量上传失败列表中完善药品信息</p>
+                    <p v-if='succNum' class="Pd-T24 Color_red" >上传成功{{succNum}}条商品信息！</p>
+                    <!-- <p v-if='noparamsNum' class="Pd-T24 Color_red" >上传失败{{noparamsNum}}条商品信息！</p> -->
+                </div>
+                <span style="display:block;text-align:right;">
+                    <el-button type="primary" class="pointer" @click='uploadYes' :disabled="disabledPic"  :loading="disabledPic">下一步</el-button>
+                </span>
+            </div>
+            
         </div>
         <!-- 上传分类 -->
         <div id='uploading_classify'>
-            <ul>
-                <li v-for='(val,i) in stypeNav' :key='i+"_99"' >{{ val }}</li>
-                <!-- <li>家庭设备</li>
-                <li>情趣用品</li>
-                <li>情趣用品</li>
-                <li>青霉素</li>
-                <li>抗菌用药</li>
-                <li>家庭设备</li>
-                <li>情趣用品</li> -->
-            </ul>
-            <span><button class="pointer" >完成导入</button></span>
+            <div class="uploading_classify_box">
+                <ul v-if='stypeNav.length'>
+                    <li v-for='(val,i) in stypeNav' :key='i+"_99"' >{{ val }}</li>
+                </ul>
+                <ul v-if='!stypeNav.length'>
+                    <li>未上传分类</li>
+                </ul>
+            </div>
+            <span><button class="pointer" @click='close_shade'>完成导入</button></span>
         </div>
     </div>
 </template>
 <script>
-
+// import jschardet from "jschardet"
+// import iconv from "iconv-lite"
+// import encoding from "encoding"
 export default {
     name: 'goodsList',
     data() {
@@ -499,13 +523,14 @@ export default {
             num: false,     // 是否全选
             showA: true, // 
             numId: 0,   // id
-            tdlast: 0,  // 商品状态
+            tdlast: 0,  
+            type: '',       // 商品状态
             more1: false,
             goodList: [],    // 列表数据
             goodCount: '',   // 数量
             page: 1,    
             limit: 10,
-            examine: '',    // 审核状态
+            examine: '1',    // 审核状态
             name: '',       // 商品名称
             number: '',     // 商品编号
             record: [],      // 记录列表
@@ -520,17 +545,25 @@ export default {
             shopName: '',   // 批量失败搜索 - 商品名称
             disabled: false,    // 批量上传按钮控制
             timer: '',          // 上传动画定时器
-            uploadNum: [],       // 图片未匹配数量,需要上传的数量
-            succNum: [],         // 上传成功数量
+            uploadNum: 0,       // 图片未匹配数量,需要上传的数量
+            succNum: 0,         // 上传成功数量
             noimg: [],          // 缺少图片数据
             stypeNav: [],        // 上传后的分类
-            disabledPic: false   // 图片上传的按钮
+            disabledPic: false,   // 图片上传的按钮
+            existNum: 0,          // 已存在数量
+            noparamsNum: 0,       // 上传失败数量
+            uploadcsv: false,    
         }
     },
     mounted() {
-        // this.initdata()
-        this.goodLists(1) 
-        // this.initdata(5) // test
+        this.isIE()
+    },
+    
+    activated () {
+       this.goodLists(1)
+       if(this.tdlast == 10) {
+           this.search_fail(1)
+       }
     },
     methods: {
         //点击排序
@@ -540,12 +573,17 @@ export default {
             this.$set(this.showEdit,row,true)
             this.$set(this.showBtn,row,true)
         },
-
-    
-
         // 排序
         editSort (row, column, cell, event) {
             // console.log(row, column, cell, event)
+        },
+        isIE () { // 是否ie?
+            var _this = this;
+            if (!!window.ActiveXObject || "ActiveXObject" in window) {
+                _this.uploadcsv = true;
+            } else {
+                _this.uploadcsv = false;
+            }
         },
 
     styleColor ({row, rowIndex}) { // 隔行变色
@@ -585,16 +623,21 @@ export default {
 
         },
 
-
-
         tab(num) {  // 选项卡
-            console.log(num)
             this.tdlast = num
+            this.name = '';
+            this.number = '';
+            this.wenNumber = '';
+            this.shopName = '';
             if (num == 10) {
-                this.upload_result() // test
-                // this.uploadFile_fail()
+                this.goodList = []
+                this.search_fail(1)
                 return false;
             }
+            this.type = num == 0 ? '': num == 4 ? '': num == 5 ? '':num;
+            this.examine = num == 4 ? 0 : num == 5 ? 2 : 1;
+            this.goodList2 = []
+            this.page = 1
             this.goodLists(1)
             if (num == 1) {
                 this.multipleSelection = []
@@ -605,11 +648,12 @@ export default {
         },
         goodLists(n) {    // 数据 和 搜索
             var _this = this;
-            _this.goodList = []
             layui.use(['layer', 'form'], function(){
                 var layer = layui.layer;
                 var form = layer.form;
-                _this.$http.post('/shv2/goods/index', {type: _this.tdlast,examine: _this.examine,name: _this.name, number: _this.number, page: _this.page, limit: _this.limit}, function (res) {
+                var obj = {type: _this.type,examine: _this.examine,name: _this.name, number: _this.number, page: _this.page, limit: _this.limit}
+                console.log(obj)
+                _this.$http.post('/shv2/goods/index', obj, function (res) {
                     console.log(res)
                     if(res.code == 1) {
                         _this.goodCount = res;
@@ -618,6 +662,7 @@ export default {
                              _this.initdata(res.num) // 传递总数
                         }
                     } else {
+                        _this.goodList = []
                         _this.initdata(0) 
                     }
                 }, function (err) { console.log(err)})
@@ -638,15 +683,10 @@ export default {
                         if(!first){
                             _this.page = obj.curr
                             _this.goodLists(obj.curr) // /得到当前页，以便向服务端请求对应页的数据
-                            
                         }
                     }
                 });
-                
-                
-                
             })
-           
         },
         tuijian (id) {    // 推荐是否开启
             var _this = this;
@@ -746,6 +786,10 @@ export default {
             this.number = '';
             this.wenNumber = '';
             this.shopName = '';
+            this.goodLists(1)
+            if(this.tdlast == 10) {
+                this.search_fail(1)
+            }
         },
 
         putaway (data) {    // 上架
@@ -766,78 +810,181 @@ export default {
             });  
         },
 
+
+
+    //////////////////////////////////////////////////////////////////////////////
+
         data_uploading () {  // 批量上传
             var _this = this;
+            _this.lodings = 0
+            _this.uploadNum = 0
+            _this.stypeNav = []
+            _this.noparamsNum = 0
+            _this.succNum = 0
+            _this.noimg = []
             layui.use(["layer"], function () {
                 var layer = layui.layer;
                 var $ = layui.jquery;
-                layer.open({
-                    type: 1,
-                    shade: 0.2,
-                    shadeClose: true,
-                    closeBtn: 1,
-                    title: "",
-                    content: $("#uploading"),
-                    area: ["800px", "440px"],
-                    cancel: function () { 
+                _this.$http.get('/shv2/store/default_store', {}, function (res) {
+                    console.log(res)
+                    if (res.code == 1) {
+                        layer.open({
+                            type: 1,
+                            shade: 0.2,
+                            shadeClose: true,
+                            closeBtn: 1,
+                            title: "",
+                            content: $("#uploading"),
+                            area: ["800px", "440px"],
+                            cancel: function () { 
+                            },
+                        });
+                        $(".layui-layer-title").css({
+                            height: "50px",
+                            background: "#ECF2FB",
+                            "line-height": "50px",
+                            fontSize: '18px'
+                        });
+                        $(".layui-layer-setwin").css("top", "19px");
+                    } else {
+                        layer.msg('开启店铺失败，请联系平台人员',{icon:0})
                     }
-                });
-                $(".layui-layer-title").css({
-                    height: "50px",
-                    background: "#ECF2FB",
-                    "line-height": "50px",
-                    fontSize: '18px'
-                });
-                $(".layui-layer-setwin").css("top", "19px");
+                }, function (err) {})
+                
             });
         },
-         upload_result () {  // 上传结果，缺图
-                layui.use(["layer"], function () {    
+        beforeUploadFile () {   // 批量提交
+            var _this = this;
+            layui.use('layer', function(){
                 var layer = layui.layer;
-                var $ = layui.jquery;
-                layer.closeAll('page')
-                layer.open({
-                    type: 1,
-                    shade: 0.2,
-                    shadeClose: true,
-                    closeBtn: 1,
-                    title: '上传结果',
-                    content: $("#uploading_success"),
-                    area: ["47%", "460px"], 
-                });
-                $(".layui-layer-title").css({
-                    height: "50px",
-                    background: "#E7F3FF",
-                    "line-height": "50px",
-                    fontSize: '18px',
-                    padding: '0 80px 0 40px'
-                });
-                $(".layui-layer-setwin").css("top", "19px");
-            });
-        },
-        upload_classify () {  // 上传后的分类
-            layui.use(["layer"], function () {
-                var layer = layui.layer;
-                var $ = layui.jquery;
-                layer.closeAll('page')
-                layer.open({
-                    type: 1,
-                    shade: 0.2,
-                    shadeClose: false,
-                    closeBtn: 1,
-                    title: '上传分类确认',
-                    content: $("#uploading_classify"),
-                    area: ["47%", "276px"],
-                });
-                $(".layui-layer-title").css({
-                    height: "50px",
-                    background: "#E7F3FF",
-                    "line-height": "50px",
-                    fontSize: '18px',
-                    padding: '0 80px 0 40px'
-                });
-                $(".layui-layer-setwin").css("top", "19px");
-            });
+                if (!_this.excelfile) {
+                     layer.msg('请选择csv文件格式上传',{icon:0})
+                    return;
+                }
+                if (_this.excelfile.name.lastIndexOf('.csv') == -1) {
+                    layer.msg('请上传csv文件格式',{icon:0})
+                    return ;
+                }
+
+                // 解析 csv 文件内容
+                // var file = _this.excelfile;
+                // var Papa = require('../../../static/papaparse.min.js')
+                // if (file) {
+                //     var allResults=[];
+                //     var arr = []
+                //     var reader = new FileReader();
+                //     reader.readAsBinaryString(file);
+                //     reader.onload = event => {
+                //         var buf = event.target.result;
+                //         var encodeType = jschardet.detect(buf).encoding;
+                //         if (encodeType !== "UTF-8") {
+                //         buf = encoding.convert(buf, "utf8", encodeType);
+                //         }
+                //         iconv.skipDecodeWarning = true;
+                //         var text = iconv.decode(buf, "utf8");
+                //         Papa.parse(text, {
+                //             encoding: "UTF-8",
+                //             complete: results => {
+                //             for(var y=0;y<results.data.length;y++){
+                //                 // es6合并数组的语法
+                //                 allResults=[...allResults,results.data[y]]
+                //             }
+                //             //打印拿到的最终数据
+                //             arr = allResults[0]
+                //             console.log(arr)
+                //             var testArr = ["分类", "名称", "零售价", "库存", "批准文号", "是否处方药"]
+                //             if ( arr == undefined || arr.length !== 6 ) {
+                //                 layer.msg('文件上传格式不符合要求', {icon:0})
+                //                 return false;
+                //             } else {
+                //                 flag()
+                //             }
+                //             }
+                //         }
+                //         )
+                //     }
+                // }
+                
+                
+               if (_this.excelfile) {
+                    _this.disabled = true;
+                    var formdata = new FormData();
+                    formdata.append("file", _this.excelfile);
+                    _this.data_loding()
+                    var onUploadProgress = function (e) {
+                           //属性lengthComputable主要表明总共需要完成的工作量和已经完成的工作是否可以被测量
+                           //如果lengthComputable为false，就获取不到e.total和e.loaded
+                           if (e.lengthComputable) {
+                               var rate = e.loaded / e.total;  //已上传的比例
+                               rate = Number((rate *100).toFixed(0))
+                                console.log(rate)
+                               if (rate < 100) {
+                                   _this.lodings = rate
+                                //    _this.data_loding()
+                                   //这里的进度只能表明文件已经上传到后台，但是后台有没有处理完还不知道
+                                   //因此不能直接显示为100%，不然用户会误以为已经上传完毕，关掉浏览器的话就可能导致上传失败
+                                   //等响应回来时，再将进度设为100%
+                                //    vm.uploadRate = rate;
+                                //    vm.uploadStyle.width = (rate *100).toFixed(2)+ '%';
+                               }
+                        }
+                    }
+                    _this.$http.uploadFile('/shv2/goods/toup', formdata, onUploadProgress, function (res) {
+                        console.log(res)
+                        _this.disabled = false;
+                        if (res.code == 1) { // 上传成功
+                            var tr = setTimeout(() => {
+                                clearInterval(tr)
+                                if (res.data.stype) {
+                                    _this.stypeNav = res.data.stype
+                                } else {
+                                    _this.stypeNav = []
+                                }
+                                if (res.data.upload && res.data.upload.length >= 1) {
+                                    _this.uploadNum = res.data.upload.length
+                                } else {
+                                    _this.uploadNum = 0
+                                }
+                                if (res.data.noparams && res.data.noparams.length >= 1) {
+                                        _this.noparamsNum = res.data.noparams.length
+                                } else {
+                                    _this.noparamsNum = 0
+                                }
+                                if (res.data.succ && res.data.succ.length >= 1) {
+                                    _this.succNum = res.data.succ.length
+                                } else {
+                                    _this.succNum = 0
+                                }
+                                if (res.data.exist && res.data.exist.length >=1) {
+                                    _this.existNum = res.data.exist.length
+                                } else {
+                                    _this.existNum = 0
+                                }
+                                if (res.data.noimg && res.data.noimg.length >= 1) {
+                                    _this.noimg = res.data.noimg
+                                } else {
+                                    _this.noimg = []
+                                }
+                                
+                            }, 1000)
+                        } else if (res.code == 2) { // 上传失败
+                            if (_this.timer) {
+                               clearInterval(_this.timer)
+                            }
+                            layer.closeAll('page')
+                            layer.msg(res.msg,{icon: 0});
+                            _this.disabled = false
+                        } else {
+                            if (_this.timer) {
+                               clearInterval(_this.timer)
+                            }
+                            layer.closeAll('page')
+                            layer.msg(res.msg,{icon: 0});
+                            _this.disabled = false
+                        }
+                    }, function (err) {})
+                }
+            }); 
         },
         data_loding () { // 上传进度弹框
             var _this = this;
@@ -858,15 +1005,99 @@ export default {
                     }
                 });
             });
-           this.submitUploadding();
-           this.timer = setInterval(() => {
-               this.submitUploadding();
-           }, 1000)
+           _this.timer = setInterval(() => {
+                if(_this.lodings >= 100) {
+                    _this.uploadcsv = false;
+                    _this.upload_result()
+                    _this.goodLists(1)
+                    _this.search_fail(1)
+                    clearInterval(_this.timer)
+                } else {
+                    _this.submitUploadding();
+                }
+           }, 2000)
             
         },
+         upload_result () {  // 上传结果，缺图
+                layui.use(["layer"], function () {    
+                var layer = layui.layer;
+                var $ = layui.jquery;
+                layer.closeAll('page')
+                layer.open({
+                    type: 1,
+                    shade: 0.2,
+                    shadeClose: true,
+                    closeBtn: 1,
+                    title: '上传结果',
+                    content: $("#uploading_success"),
+                    area: ["700px", "460px"], 
+                });
+                $(".layui-layer-title").css({
+                    height: "50px",
+                    background: "#E7F3FF",
+                    "line-height": "50px",
+                    fontSize: '18px',
+                    padding: '0 80px 0 40px'
+                });
+                $(".layui-layer-setwin").css("top", "19px");
+            });
+        },
+        submitUploadding () { // 上传进度
+            var _this = this;
+            this.$http.post('/shv2/goods/getnum', {}, function (res) {
+                console.log(res)
+                if (res.code == 1) {
+                    _this.lodings = Number(((res.num/res.total)*100).toFixed(0))
+                } else {
+                    clearInterval(_this.timer)
+                    _this.upload_err()
+                }
+            }, function (err) {})
+        },
+        upFileImg (e, i) {  // 缺图图片预览
+            var pic = $('.pic_img');
+            $.each(pic, function (j, img) {
+                if (i == j) {
+                        //将图片文件转成Base64
+                    var f = e.target.files[0]
+                    var reader = new FileReader();
+                    reader.readAsDataURL(f)
+                    reader.onload = function(e) {
+                        img.src = this.result
+                        img.style='background: #fff;'
+                    }
+                }
+            });
+        },
+        upload_classify () {  // 上传后的分类
+            layui.use(["layer"], function () {
+                var layer = layui.layer;
+                var $ = layui.jquery;
+                layer.closeAll('page')
+                layer.open({
+                    type: 1,
+                    shade: 0.2,
+                    shadeClose: false,
+                    closeBtn: 1,
+                    title: '上传分类确认',
+                    content: $("#uploading_classify"),
+                    area: ["700px", "276px"],
+                });
+                $(".layui-layer-title").css({
+                    height: "50px",
+                    background: "#E7F3FF",
+                    "line-height": "50px",
+                    fontSize: '18px',
+                    padding: '0 80px 0 40px'
+                });
+                $(".layui-layer-setwin").css("top", "19px");
+            });
+        },
+        
         upload_err () { // 上传失败弹框
             layui.use(["layer"], function () {    
                 var layer = layui.layer;
+                layer.closeAll('page');
                 var $ = layui.jquery;
                 layer.open({
                     type: 1,
@@ -884,125 +1115,106 @@ export default {
                 var layer = layui.layer;
                 layer.closeAll();
             })
+            this.stypeNav = []
         },
 
         up_files (e) {   // 获取文件
         var _this = this;  
+        console.log(e.currentTarget.files[0])
         var file = e.currentTarget.files[0];
         this.excelfile = file
-            console.log(file)
             if(_this.excelfile) {
                 _this.flag = true
             }
         },
-        beforeUploadFile () {   // 批量提交
+        search_fail (n) { // 批量上传失败的搜索 和 列表数据
             var _this = this;
-            this.disabled = true;
-            layui.use('layer', function(){
-                var layer = layui.layer;
-                if (_this.excelfile !== '') {
-                    var formdata = new FormData();
-                    formdata.append("file", _this.excelfile);
-                    var onUploadProgress = function (e) {
-                        console.log("进度：");
-                        console.log(e);
-                        //属性lengthComputable主要表明总共需要完成的工作量和已经完成的工作是否可以被测量
-                        //如果lengthComputable为false，就获取不到e.total和e.loaded
-                        if (e.lengthComputable) {
-                            _this.data_loding()
-                            var rate = e.loaded / e.total; //已上传的比例
-                            console.log(rate)
-                            if (rate < 1) {
-                                console.log(rate)
-                                _this.data_loding()
-                            //这里的进度只能表明文件已经上传到后台，但是后台有没有处理完还不知道
-                            //因此不能直接显示为100%，不然用户会误以为已经上传完毕，关掉浏览器的话就可能导致上传失败
-                            //等响应回来时，再将进度设为100%
-                            // vm.uploadRate = rate;
-                            // vm.uploadStyle.width = (rate *100).toFixed(2)+ '%';
-                            }
-                        }
-                    }
-                    _this.$http.uploadFile('/shv2/goods/toup', formdata, onUploadProgress, function (res) {
-                        console.log(res)
-                        if (res.code == 1) { // 上传成功
-                            var tr = setTimeout(() => {
-                                if (_this.lodings == 100) {
-                                    clearInterval(_this.timer)
-                                    layer.closeAll('page')
-                                }
-                                clearInterval(tr)
-                                if (res.data.noimg && res.data.noimg.length >= 1) {
-                                    _this.stypeNav = res.data.stype
-                                    _this.succNum = res.data.succ
-                                    _this.uploadNum = res.data.upload
-                                    _this.noimg = res.data.noimg
-                                    _this.upload_result()
-                                }
-                            }, 2000)
-                        } else if (res.code == 2) { // 上传失败
-                            if (_this.timer) {
-                               clearInterval(_this.timer)
-                            }
-                            layer.closeAll('page')
-                            _this.upload_err()
-                        } else {
-                            layer.msg(res.msg,{icon: 0});
-                            _this.disabled = false
-                        }
-                    }, function (err) {})
-                }
-                
-            }); 
-            
-        },
-
-        submitUploadding () { // 上传进度
-            var _this = this;
-            this.$http.post('/shv2/goods/getnum', {}, function (res) {
-                console.log(res)
-                if (res.code == 1) {
-                    if (_this.lodings == 100) {
-                        clearInterval(_this.timer)
-                        return;
-                    }
-                    _this.lodings = Number(((res.num/res.total)*100).toFixed(0))
-                }
-            }, function (err) {})
-        },
-
-        uploadFile_fail () {   // 批量上传失败列表
-            var _this = this;
-            
-        },
-
-        search_fail () { // 批量上传失败的搜索
-            var _this = this;
-            var obj = { pzwh: this.wenNumber, name: this.shopName }
+            console.log(_this.page)
+            var obj = { pzwh: this.wenNumber, name: this.shopName, page: n, limit: _this.limit }
+            console.log(obj)
             this.$http.post('/shv2/goods/upload_fail', obj, function (res) {
                 console.log(res)
                 if (res.code == 1) {
-                    _this.goodList2 = res.data
+                    _this.goodList2 = res.data.data
+                    if (n == 1) {
+                        _this.initdata2(res.data.count)
+                    }
                 } else {
                     _this.goodList2 = []
                 }
             }, function (err) { console.log(err)})
         },
+        initdata2(total) {  // 批量上传失败列表分页
+            console.log(total)
+            var _this = this;
+            layui.use(['layer','laypage'], function () {
+                var layer = layui.layer;
+               var laypage = layui.laypage
+                //完整功能
+                laypage.render({
+                    elem: 'page2'
+                    ,count: total
+                    ,layout: [ 'prev', 'page', 'next', 'skip']
+                    ,jump: function(obj, first){
+                        if(!first){
+                            _this.page = obj.curr
+                            _this.search_fail(obj.curr)
+                        }
+                    }
+                });
+            })
+        },
+        uploadYes () {
+            this.upload_classify()
+        },
         uploadPic () {  // 批量上传图片
             var _this = this;
             var fromdata = new FormData();
+            var imgFiles = $('.img_file');
+            var arr = []
+            for (var i = 0; i < _this.noimg.length; i++) {
+                $.each(imgFiles[i].files, function (j, file) {
+                    arr.push(_this.noimg[i][2])
+                    fromdata.append('picarr[]', file)
+                    console.log(_this.noimg[i][2])
+                    console.log(file)
+                });
+            }
+            console.log(arr)
+            fromdata.append('pzwh', arr)
             this.disabledPic = true
             layui.use('layer', function(){
                 var layer = layui.layer;
                 _this.$http.upload('/shv2/goods/uploadImg', fromdata, function (res) {
                     console.log(res)
-                    if (res.code == 1) {
+                    if (res.code == 0) {
+                        _this.disabledPic = false
+                        layer.msg('请完善信息', {icon: 2})
+                    } else if (res.code == 1) {
                         _this.upload_classify()
+                        _this.disabledPic = false
                     } else {
                         _this.disabledPic = false
                         layer.msg(res.msg, {icon: 2})
                     }
-                }, function (err) {})
+                }, function (err) { console.log(err)})
+            })
+        },
+        del_fail (v) {  // 批量上传失败 删除
+            var _this = this;
+            var obj = {id: v.id }
+            layui.use('layer', function(){
+                var layer = layui.layer;
+                _this.$http.post('/shv2/goods/upload_del', obj, function (res) {
+                    if (res.code == 1) {
+                        layer.msg('删除成功', { icon: 1})
+                        console.log(_this.page)
+                        _this.goodLists(1)
+                        _this.search_fail(1)
+                    } else {
+                         layer.msg(res.msg, { icon:2})
+                    }
+                })
             })
         }
 
@@ -1345,9 +1557,9 @@ export default {
         .uploading_success_file {
             height: 200px;
             overflow: auto;
+            border: 1px solid #E6E6E6;
             .file_box {
                 width: 100%;
-                border: 1px solid #E6E6E6;
                 padding: 10px 0;
                 > ul {
                     width: 100%;
@@ -1378,7 +1590,7 @@ export default {
             }
         }
         .uploading_success_msg {
-            padding: 0px 0px 20px;
+            padding: 0px 0px 10px;
             color: #333;
             font-size: 14px;
         }
@@ -1404,27 +1616,32 @@ export default {
     #uploading_classify {
         padding: 0 40px;
         display: none;
-        > ul {
-            width: 100%;
-            overflow: hidden;
-            li {
-                float: left;
-                width: 100px;
-                height: 32px;
-                text-align: center;
-                line-height: 32px;
-                background-color: #EEEEEE;
-                color: #333;
-                font-size: 14px;
-                margin: 12px 6px 0;
-                -webkit-border-radius: 4px;
-                border-radius: 4px;
+        .uploading_classify_box {
+            height: 130px;
+            overflow: auto;
+            > ul {
+                width: 100%;
+                overflow: hidden;
+                li {
+                    float: left;
+                    height: 32px;
+                    padding: 0 10px;
+                    text-align: center;
+                    line-height: 32px;
+                    background-color: #EEEEEE;
+                    color: #333;
+                    font-size: 14px;
+                    margin: 12px 6px 0;
+                    -webkit-border-radius: 4px;
+                    border-radius: 4px;
+                }
             }
         }
+        
         >span {
             display: block;
             text-align: right;
-            margin-top: 30px;
+            margin-top: 10px;
             button {
                 width: 120px;
                 height: 40px;

@@ -2,7 +2,7 @@
     <!-- 审核 -->
     <div class="perscriptionPicShen">
         <!-- 审核中展示 -->
-        <div class="perscription " v-if='!check_show'>
+        <div class="perscription " v-if='status1'>
             <div class="msg" >
                 您好，您的资料正在审核中，请耐心等待！
             </div>
@@ -13,7 +13,7 @@
     
 
     <!-- 未通过展示 -->
-    <div class="perscription Pd-B40" v-if='check_show'>
+    <div class="perscription Pd-B40" v-if='status2'>
 
         <div class="my_check">
             <div class="msg" >
@@ -39,13 +39,14 @@ export default {
     },
         data () {
             return {
-                check_show: true,  // 是否审核
                 failed: '',        // 审核失败原因
-                status: false,
+                status1: false,    // 是否审核状态
                 status2: false
             }
         },
-       
+        mounted () {
+            this.Userdata()
+        },
         methods: {
              // 查询是否审核中
             Userdata () {
@@ -67,17 +68,12 @@ export default {
                                 }
                                 ; break;      // 未发起审核
                             case '1': 
-                                var data = _this.localstorage.get('Prescription');
-                                if (data) {
-                                    _this.localstorage.remove('Prescription');
-                                }
-                                _this.status = true; _this.fileStatus = false; _this.fileStatus2 = false; _this.disBtn = false; _this.status2 = false
-                                _this.img1 = _this.$http.baseURL + res.data.teacher_pic;
-                                _this.img2 = _this.$http.baseURL + res.data.yname_pic;
+                                
                             ; break;     // 审核中
                             case '2': 
                                 clearInterval(_this.times)
-                                _this.$router.replace({ path: '/server/YaoprescriptionListPic/YaoprescriptionList'})
+                                _this.status1 = true
+                                // _this.$router.replace({ path: '/server/YaoprescriptionListPic/YaoprescriptionList'})
                             ; break;          // 审核成功
                             case '3': _this.status2 = true; _this.failed = res.data.teacher_text 
                                 _this.status = false;

@@ -18,6 +18,23 @@
             </div>
         </div>
 
+        <div class="my_check">
+            <div class="msg" v-show='status'>
+                您好，您的资料正在审核中，请耐心等待！
+            </div>
+            <div class="msg" v-show='status2'>
+                您好，您的资料审核未通过，请重新上传！
+                <p>未通过原因：{{ failed }}！</p>
+            </div>
+        </div>
+
+        <!-- 审核信息 -->
+        <div class="shen_msg" v-show='status'>
+            <perscription-msg></perscription-msg>   
+        </div>
+        <!-- 开通 -->
+<div class="prescription_box" v-show=''>
+
         <div class="set_price bg_f Mg-T24">
             <h2>费用设定</h2>
             <div class="my_price">鲁医通账户余额&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>{{ money_balance }}元</span> <span class="my_price_msg">（请在鲁医通账户中预存100元，用于处方费用支付<b @click='go_account' class="pointer">前去充值</b>）</span></div>
@@ -28,15 +45,7 @@
             </div>
         </div>
 
-    <!-- <div class="my_check">
-        <div class="msg" v-show='status'>
-            您好，您的资料正在审核中，请耐心等待！
-        </div>
-        <div class="msg" v-show='status2'>
-            您好，您的资料审核未通过，请重新上传！
-            <p>未通过原因：{{ failed }}！</p>
-        </div>
-    </div> -->
+    
 
     <div class="file_download Mg-T24 bg_f">
         <p class="perscription_tit Color_black Ft-S16 Pd-T24 Pd-B24 Pd-L24">资料上传</p>
@@ -79,6 +88,8 @@
         </div>
 
         <div v-show='disBtn' class="btns"><button class="layui-btn layui-btn-normal" @click="submitFile" >提交并开通</button></div>
+
+    </div>
         <!-- 上传图片示例 -->
         <div id='pic_shows' class="hide">
             <h2>上传签名照片示例</h2>
@@ -104,7 +115,11 @@
     </div>
 </template>
 <script>
+import perscriptionMsg from './prescriptionList/commons/prescription_Msg';
 export default {
+    components: {
+        'perscription-msg': perscriptionMsg,
+    },
         data () {
             return {
                 img1: '',           //  显示预览
@@ -124,7 +139,8 @@ export default {
                 setMoneys: '',      // 费用设置
                 yao_user: '',       // 药师姓名
                 money_balance: 0,   // 账户余额
-                setPrice: '1',   // 处方设置最低金额
+                setPrice: 0,   // 处方设置最低金额
+                kaiBtn: false,      // 显示开通视图
             }
         },
         mounted () {
@@ -134,19 +150,33 @@ export default {
             _this.$http.post('/shv2/Recipetwo/recipe_check', {}, function (res) {   // 电子处方是否审核及状态
                 console.log(res)
                 if (res.code == 1) {
-                    if (res.data.teacher_type == 0) {
-                         _this.status0 = true; 
-                         
-                    } else if (res.data.teacher_type == 1) {
+                    if(!res.data) {
+                        return false;
+                    }
+                    if (res.data.teacher_type == 0) { // 未审核
+                        _this.status0 = true; 
+                        _this.kaiBtn = true
+                        _this.status = false; 
+                        _this.status2 = false;
+                    } else if (res.data.teacher_type == 1) { // 审核中
+                        _this.status0 = false;
+                        _this.kaiBtn = false;
+                        _this.status = true
+                        // _this.$router.replace({ path: '/server/YaoprescriptionListPic/prescriptionPicShen'})
                         _this.Userdata();
                         _this.times = setInterval(() => {
-                            // _this.Userdata();    // 查看是否已提交了资料
+                            _this.Userdata();    // 查看是否已提交了资料
                         }, 3000)
                     }
                     else if (res.data.teacher_type == 2) {    // 如果已经审核通过的直接跳转
-                    //    _this.$router.replace({ path: '/server/YaoprescriptionListPic/YaoprescriptionList'})
-                    } else if (res.data.teacher_type == 3) {
-                         
+                       _this.$router.replace({ path: '/server/YaoprescriptionListPic/YaoprescriptionList'})
+                    
+                    } else if (res.data.teacher_type == 3) { // 审核失败
+                        _this.status0 = false;
+                        _this.kaiBtn = false;
+                        _this.status = false;
+                        _this.status2 = true
+                        _this.kaiBtn = true
                     }
                 }
             }, function (err) { console.log(err)})
@@ -164,7 +194,7 @@ export default {
             addfiles1 (event) {
                 var files = event.target.files[0];  
                 if (files) {   // 是否有文件
-                    if(files.size > 1024 * 1024 * 5) {    
+                    if((files.size / 1024 / 1024) > 5) {    
                         alert('图片大小不能超过 5MB!');
                         return false;
                     }
@@ -246,30 +276,28 @@ export default {
                          var type = res.data.teacher_type.toString()
                         switch(type) {
                             case '0': // 未发起审核
-                                    _this.status0 = true; 
-                                    // _this.fileStatus = false; 
-                                    // _this.fileStatus2 = false; 
-                                    // _this.disBtn = false
-                                    // _this.img1 = data[0];
-                                    // _this.img2 = data[1];
-                                    // _this.status2 = false
-                               
+                                _this.status0 = true;
+                                _this.kaiBtn = true;
                                 ; break;      // 未发起审核
-                            case '1': 
-                                var data = _this.localstorage.get('Prescription');
-                                if (data) {
-                                    _this.localstorage.remove('Prescription');
-                                }
-                                _this.status = true; _this.fileStatus = false; _this.fileStatus2 = false; _this.disBtn = false; _this.status2 = false
-                                _this.img1 = _this.$http.baseURL + res.data.teacher_pic;
-                                _this.img2 = _this.$http.baseURL + res.data.yname_pic;
+                            case '1':
+                                _this.status = true; 
+                                _this.fileStatus = false; 
+                                _this.fileStatus2 = false; 
+                                _this.disBtn = false; 
+                                _this.status2 = false
                             ; break;     // 审核中
                             case '2': 
                                 clearInterval(_this.times)
                                 _this.$router.replace({ path: '/server/YaoprescriptionListPic/YaoprescriptionList'})
                             ; break;          // 审核成功
-                            case '3': _this.status2 = true; _this.failed = res.data.teacher_text 
+                            case '3': 
+                                clearInterval(_this.times)
+                                _this.status0 = false;
+                                _this.kaiBtn = false;
                                 _this.status = false;
+                                _this.status2 = true
+                                _this.kaiBtn = true
+                                _this.failed = res.data.teacher_text
                                 _this.img1 = _this.$http.baseURL + res.data.teacher_pic;
                                 _this.img2 = _this.$http.baseURL + res.data.yname_pic;
                                 _this.labelTxt = '重新上传'
@@ -324,12 +352,10 @@ export default {
                     if (res.code == 1) {
                         layer.msg('上传成功', { icon: 1, time: 1500});
                         var t = setTimeout(() => {
-                            _this.go('/server/YaoprescriptionListPic/prescriptionPicShen')  // 进入审核页
+                            window.location.reload()
                             clearTimeout(t)
                         }, 1000)
-                        var userMsg = { money: _this.setMoneys, name: _this.yao_user, img1: _this.img1, img2: _this.img2}
-                        console.log(userMsg)
-                        _this.localstorage.put('Prescription', userMsg)    // 上传的资料
+                        
                     } else if (res.code == 4) {
                         layer.open({    // 余额不足提示
                             type: 1,
@@ -408,6 +434,13 @@ export default {
         }
     }
 
+    .shen_msg {
+        background-color: #FFF;
+    }
+
+    .prescription_box {
+        display: none;
+
     .set_price {
         -webkit-border-radius:6px;
         border-radius:6px;
@@ -453,18 +486,7 @@ export default {
         border-bottom: 1px solid #F1F2F9;
     }
     .content {
-        .msg {
-            border:1px solid #3196FF;
-            background: #EAF4FF;
-            color: #3196FF;
-            padding: 18px 24px;
-            margin-bottom: 20px;
-            // display: none;
-            p {
-                color: #666666;
-                margin-top: 20px;
-            }
-        }
+        
         .files {
             padding-left: 10%;
             display:box;
@@ -525,6 +547,7 @@ export default {
     text-align: center;
     padding: 20px 0; 
 }
+}
     #pic_shows {
         width: 100%;
         display: none;
@@ -545,7 +568,20 @@ export default {
             }
         }
     }
-
+    .my_check {
+        .msg {
+            border:1px solid #3196FF;
+            background: #EAF4FF;
+            color: #3196FF;
+            padding: 18px 24px;
+            margin-bottom: 20px;
+            // display: none;
+            p {
+                color: #666666;
+                margin-top: 20px;
+            }
+        }
+    }
 }
 #price_shows {
     color: #333;
@@ -598,6 +634,7 @@ export default {
             }
         }
     }
+    
 }
 </style>
 
