@@ -461,20 +461,20 @@
         <!-- 上传结果, 缺图 -->
         <div id="uploading_success" class="hide">
             <div v-if='noimg.length'>
-                <p class="uploading_success_title">药品库未匹配到药品图片{{ noimg.length }}条，请手动添加</p>
+                <p class="uploading_success_title">{{ noimg.length }}条商品缺少图片，请手动添加</p>
                 <div class="uploading_success_file">
                     <div class="file_box">
                         <ul v-for='(val,i) in noimg' :key="i+'_33'" >
                             <li><span>{{ val[0] }}</span></li>
                             <li>{{ val[2] }}</li>
                             <li><img class="pic_img" src="" alt=""></li>
-                            <li><input class="img_file" @change="upFileImg($event, i)" style='display:none;' type="file" :id="'files'+i" /><label class="pointer" :for="'files'+i" >手动添加</label></li>
+                            <li><input class="img_file" @change="upFileImg($event, i)" accept="image/*" style='display:none;' type="file" :id="'files'+i" /><label class="pointer" :for="'files'+i" >手动添加</label></li>
                         </ul>
                     </div>
                 </div>
-                <p v-if='existNum' class="Color_red Mg-T10">{{ existNum }}条药品信息已存在</p>
-                <p class="Color_red Mg-T5">药品库未匹配到药品<span v-text='(uploadNum+noparamsNum)'></span>条，请稍后在批量上传失败列表中完善药品信息</p>
-                <!-- <p class="Mg-T5 Color_red" >上传失败{{noparamsNum}}条商品信息！</p> -->
+                <p v-if='existNum' class="Color_red Mg-T10">{{ existNum }}条药品信息重复</p>
+                <p v-if='noparamsNum' class="Color_red Mg-T5"><span v-text='noparamsNum'></span>条商品信息缺少关键信息，如“注意事项、使用方法、有效期”等</p>
+                <p v-if='uploadNum' class="Mg-T5 Color_red" >{{ uploadNum}}条商品批准文号未匹配</p>
                 <p class="uploading_success_msg Mg-T5">上传成功<span v-text='succNum'></span>条商品信息！</p>
                 <span style="display:block;text-align:right;">
                     <el-button type="primary" class="pointer" @click='uploadPic' :disabled="disabledPic"  :loading="disabledPic">下一步</el-button>
@@ -482,10 +482,10 @@
             </div>
             <div v-if='!noimg.length'>
                 <div style='height:250px;'>
-                    <p v-if='existNum' class="Pd-T24 Color_red" >{{ existNum }}条药品信息已存在</p>
-                    <p v-if='uploadNum' class="Pd-T24 Color_red" >药品库未匹配到药品<span v-text='(uploadNum+noparamsNum)'></span>条，请稍后在批量上传失败列表中完善药品信息</p>
+                    <p v-if='existNum' class="Pd-T24 Color_red" >{{ existNum }}条药品信息重复</p>
+                    <p v-if='noparamsNum' class="Pd-T24 Color_red" ><span v-text='noparamsNum'></span>条商品信息缺少关键信息，如“注意事项、使用方法、有效期”等</p>
+                    <p  v-if='uploadNum' class="Mg-T5 Color_red" >{{uploadNum}}条商品批准文号未匹配</p>
                     <p v-if='succNum' class="Pd-T24 Color_red" >上传成功{{succNum}}条商品信息！</p>
-                    <!-- <p v-if='noparamsNum' class="Pd-T24 Color_red" >上传失败{{noparamsNum}}条商品信息！</p> -->
                 </div>
                 <span style="display:block;text-align:right;">
                     <el-button type="primary" class="pointer" @click='uploadYes' :disabled="disabledPic"  :loading="disabledPic">下一步</el-button>
@@ -1030,7 +1030,7 @@ export default {
                     closeBtn: 1,
                     title: '上传结果',
                     content: $("#uploading_success"),
-                    area: ["700px", "460px"], 
+                    area: ["700px", "470px"], 
                 });
                 $(".layui-layer-title").css({
                     height: "50px",
