@@ -563,31 +563,9 @@ export default {
                 _this.checkedCities.map(val => {
                     arr.push(val.did)
                 })
-                
                 var tabledata = _this.tablelist.filter(val => {
                     return val.name != '' || val.num != '' || val.usage != ''
                 })
-
-                _this.drugPreserveList.map(val => {
-                    function List(){
-                        this.data = new Array();
-                        this.put = function(key,value){
-                            this.data[key] = value;
-                        };
-                        this.get = function(key){
-                            return this.data[key];
-                        };
-                        this.size = function(){
-                            return this.data.length;
-                        }
-                    }
-                    var data = new List();
-                    for (var v in val) {
-                        data.put(v, val[v])
-                    }
-                    console.log(data.data)
-                })
-
                 if (tabledata.length>0) {
                     tabledata.forEach(val => {
                         console.log(val)

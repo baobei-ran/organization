@@ -4,15 +4,15 @@ import router from '../router/index'
 // var baseURL = "https://www.yunyikang.cn" // 正式
 var baseURL = "http://test99.yunyikang.cn"; // 测试
 
-if (process.env.NODE_ENV == 'development') {
-  baseURL = "http://test99.yunyikang.cn";
-}
-else if (process.env.NODE_ENV == 'debug') {
-	baseURL = "http://test99.yunyikang.cn";
-}
-else if (process.env.NODE_ENV == 'production') {
-	baseURL = "https://www.yunyikang.cn";
-}
+// if (process.env.NODE_ENV == 'development') {
+//   baseURL = "http://test99.yunyikang.cn";
+// }
+// else if (process.env.NODE_ENV == 'debug') {
+// 	baseURL = "http://test99.yunyikang.cn";
+// }
+// else if (process.env.NODE_ENV == 'production') {
+// 	baseURL = "https://www.yunyikang.cn";
+// }
 import { Message } from 'element-ui';
 axios.defaults.retry = 2;           //  发起请求次数
 axios.defaults.retryDelay = 1500;   //  每次请求时间
