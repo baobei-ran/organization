@@ -11,11 +11,15 @@
                     </td>
                     <td class="Pd-L40 Ft-S16 Color_gray6">
                         <div class="layui-input-inline">
-                            <select name="" id="type" lay-verify="" class="input_txt">
+                            <el-select id='type' @change="cardToggle(cardVal)" v-model="cardVal">
+                                <el-option value="1" label="法人账户"></el-option>
+                                <el-option value="2" label="其他账户"></el-option>
+                            </el-select>
+                            <!-- <select name="" id="type" lay-verify="" class="input_txt">
                                 <option value="1">法人账户</option>
                                 <option value="2">其他账户</option>
-                                <!-- <option value="3">对公账户</option> -->
-                            </select>
+                                <option value="3">对公账户</option>
+                            </select> -->
                         </div>
                     </td>
                 </tr>
@@ -109,7 +113,8 @@ export default {
             auth_code: '',      // 验证码
             flag: false,        // 调取弹框
             noneclick: false,    // 控制时间
-            merchantFlowId: ''   // 绑卡请求号
+            merchantFlowId: '',  // 绑卡请求号
+            cardVal: '1',         // 切换账户类型
         }
     },
     mounted() {
@@ -124,18 +129,23 @@ export default {
         }, function (err) { console.log(err)})
     },
     methods: {
+        cardToggle (n) {
+            if (n == 2) {
+                this.go('/finance/bankcardadmin/bindbankPerson')   // 其他账户
+            }
+        },
         initdata() {
             var _this = this
             layui.use(["layer"], function () {
                 var layer = layui.layer;
                 var $ = layui.jquery;
-                $("#type").on("change", function () {
-                    if ($("#type").val() == 2) {
-                        _this.go('/finance/bankcardadmin/bindbankPerson')   // 其他账户
-                    } else if ($("#type").val() == 3) {
-                        _this.go('/finance/bankcardadmin/safePayment')  // 对公账户，已隐藏
-                    }
-                });
+                // $("#type").on("change", function () {
+                //     if ($("#type").val() == 2) {
+                //         _this.go('/finance/bankcardadmin/bindbankPerson')   // 其他账户
+                //     } else if ($("#type").val() == 3) {
+                //         _this.go('/finance/bankcardadmin/safePayment')  // 对公账户，已隐藏
+                //     }
+                // });
 
                 $("#getcode").on("click", function () {
                     //获取验证码

@@ -2,10 +2,15 @@
 <!-- 处方详情页 -->
     <div id="prescriptionCheck">
         <div class="tab_content">
-                <div class="prescriptionCheck_head dis_f Pd-L24 Pd-R24" v-show="prescriptiondata.status == 1">
+                <div class="prescriptionCheck_head dis_f Pd-L24 Pd-R24" v-show="prescriptiondata.status == 1 ">
                     <h1>处方申请详情</h1>
                     <img src="../../../common/image/icon/icon_ddsh@2x.png" alt="" />
-                    <span>等待开具中 <b>{{ downTime }}</b></span>
+                    <span>等待接单中 <b>{{ downTime }}</b></span>
+                </div>
+                <div class="prescriptionCheck_head dis_f Pd-L24 Pd-R24" v-show="prescriptiondata.status == 2 && prescriptiondata.flag == 0">
+                    <h1>处方申请详情</h1>
+                    <img src="../../../common/image/icon/icon_ddsh@2x.png" alt="" />
+                    <span>等待开具中 <b>{{ kaiTime }}</b></span>
                 </div>
                 <div class="prescriptionCheck_head dis_f Pd-L24 Pd-R24" v-show="prescriptiondata.status == 3 && prescriptiondata.flag == 0">
                     <h1>处方申请详情</h1>
@@ -57,7 +62,7 @@
                                     <label>患者姓名</label><span>{{ prescriptiondata.name }}</span>
                                 </li>
                                 <li>
-                                    <label>患者性别</label><span v-text="prescriptiondata.sex == 1? '女': '男'"></span>
+                                    <label>患者性别</label><span v-text="prescriptiondata.sex == 0? '女': '男'"></span>
                                 </li>
                                 <li>
                                     <label>患者年龄</label><span>{{ prescriptiondata.age }}</span>
@@ -94,10 +99,10 @@
                      <!-- 药品信息  -->
                     <div class="drug Mg-T24 bg_f" v-if='eat.length'>
                             <p class="orderList_tit Color_black Pd-T20 Pd-B20 Pd-L24 Pd-R24 Ft-S16 ">药品信息</p>
-                            <ol class="dis_f" >
-                                <li v-for='(val,i) in eat' :key='i'>
-                                    {{ val.name }} <span>x{{ val.num }}</span>
-                                    <span class="yao_yong">用法：<b>{{ val.usage }}</b></span>
+                            <ol>
+                                <li v-for='(val,i) in eat' :key='i' class="dis_f">
+                                    <span>{{ val.name }}</span> <span>×{{ val.num }}</span>
+                                    <div class="yao_yong dis_f"><span>用法：</span><b>{{ val.usage }}</b></div>
                                 </li>
                             </ol>
                         </div>
@@ -105,7 +110,7 @@
                 
 
             <!-- 处方开具信息 -->
-                <div class="issue_msg bg_f Mg-T24" v-show="prescriptiondata.status == 3">
+                <div class="issue_msg Mg-T24" v-show="prescriptiondata.status == 3">
                     <p class="orderList_tit Color_black Pd-L24 Pd-B20 Ft-S16 ">处方开具信息 <span class='pointer'>查看原始处方</span></p>
                     <ul>
                         <li>
@@ -140,19 +145,20 @@
                 </div>
 
                 <!-- 申请医生信息 -->
-                <div class="doc_msg" v-if="rob.length">
+                <div class="doc_msg " v-show="rob.length">
                     <p class="Pd-B24 Pd-T20 Pd-L24 Color_black Ft-S16">申请医生信息</p>
                     <ul>
                         <li v-for='itm in rob' :key='itm.id'>
                             <span>{{ itm.true_name }}：</span>
                             <span>
-                                <span v-text='itm.status == 1?"未接单":itm.status == 2?"已接单":itm.status == 3?"拒绝接单":itm.status == 4?"处方开具超时":"已开具"'></span>
+                                <span v-text='itm.status == 1?"未接单":itm.status == 2?"已接单":itm.status == 3?"拒绝接单":itm.status == 4?"处方开具超时":itm.status == 5?"已开具":""'></span>
                                 <span v-if='itm.status == 3'>(原因：{{ itm.remark }})</span>
-                                <span v-if='itm.status == 2'> 处方开具中{{ itm.creatime | downMoment }}</span>
+                                <span v-if='itm.status == 2'> 处方开具中{{ itm.creatime }}</span>
                             </span>
                         </li>
                     </ul>
                 </div>
+               
 
                 <!-- 审核未通过原因 -->
                 <div class="defeated bg_f Mg-T20" v-if='prescriptiondata.flag == 2' >
@@ -161,11 +167,11 @@
                 </div>
                 <div class="prescription_btn">
                     <button class="layui-btn layui-btn-normal" style='width: 100px;'  @click='go("/server/YaoprescriptionListPic/YaoprescriptionList")'>返回</button>
-                    <button v-show="prescriptiondata.status == 1" class="layui-btn Return_btn" @click='initdata'>取消申请</button>
-                    <button v-show="prescriptiondata.status == 3 && prescriptiondata.flag == 0" class="layui-btn Return_btn" @click='yaoAudit'>药师审核</button>
+                    <button v-show="prescriptiondata.status == 1 || prescriptiondata.status == 2" class="layui-btn Return_btn" @click='initdata'>取消申请</button>
+                    <!-- <button v-show="prescriptiondata.status == 3 && prescriptiondata.flag == 0" class="layui-btn Return_btn" @click='yaoAudit'>药师审核</button> -->
                 </div>
         </div>
-        <!-- 取消审核 -->
+        <!-- 取消申请 -->
         <div id="sendgoods" class="hide">
             <h2>服务提示</h2>
             <div>
@@ -178,7 +184,7 @@
                 <span><button class="layui-btn layui-btn-normal" @click="cancel(1)">确认</button></span>
             </p>
         </div> 
-        <!-- 取消提示 -->
+        <!-- 取消申请提示 -->
         <div id="sendgood" class="hide">
             <h2>服务提示</h2>
             <div>
@@ -199,12 +205,14 @@ export default {
             prescriptiondata: {},   // 处方数据
             num: '',                // 
             doctorId: '',           // 获取id
-            server_msg: '系统已为您再次提醒医生',         // 取消提示语
-            server_msg2:'处方申请15分钟后，才可取消申请',         // 取消提示语2
+            server_msg: '',         // 取消提示语
+            server_msg2:'',         // 取消提示语2
             eat: {},                // 药品信息
             rob: {},                // 申请医生信息
             downTime: '',           // 计时时间
-            times: '',              // 定时器
+            times: '',              // 未接单定时器
+            doc_times: '',          // 医生开具等待时间
+            kaiTime: '',            // 等待开具时间
         }
     },
     mounted() {
@@ -214,7 +222,7 @@ export default {
         this.datadetail()
     },
     methods: {
-        datadetail () {
+        datadetail () { // 获取详情
             var self = this;
             self.$http.post('/shv2/recipetwo/recipe_look', this.$route.query, function (res) {
                 console.log(res)
@@ -222,6 +230,27 @@ export default {
                     self.prescriptiondata = res.data.data
                     self.eat = res.data.eat
                     self.rob = res.data.rob
+                    self.rob.map(val => {
+                        if (val.status ==2) {
+                            console.log(val)
+                            var stTime = val.creatime
+                            self.doc_times = setInterval(() => {
+                                function oddo (mm) {
+                                    if (mm < 10) {
+                                        mm = '0' + mm
+                                    }
+                                    return mm
+                                }
+                                var endTime = Math.round((Date.now())/1000);
+                                var moments = endTime - stTime;
+                                var m = parseInt(moments % 60);
+                                var f = parseInt(moments / 60%60)
+                                var h = parseInt(moments / 3600%24)
+                                val.creatime = oddo(h)+':'+oddo(f)+':'+oddo(m)
+                                self.kaiTime = val.creatime
+                            }, 1000)
+                        }
+                    })
                     if (res.data.data.status == 1) {
                         // self.countDown(res.data.data.creatime)
                         self.countDown(1561110380)
@@ -229,22 +258,21 @@ export default {
                 }
             }, function (err) { console.log(err)})
         },
-        initdata() {    // 取消审核弹框
+        initdata() {    // 取消审请弹框
             var self = this;
-            this.cencel_shade()
-        //    layui.use(["layer"], function () {
-        //         var layer = layui.layer;
-        //         var $ = layui.jquery;
-        //         layer.open({
-        //             type: 1,
-        //             shade: 0.4,
-        //             shadeClose: true,
-        //             closeBtn: 0,
-        //             title: "",
-        //             content: $("#sendgoods"),
-        //             area: ["400px", "280px"],
-        //         });
-        //     });
+           layui.use(["layer"], function () {
+                var layer = layui.layer;
+                var $ = layui.jquery;
+                layer.open({
+                    type: 1,
+                    shade: 0.4,
+                    shadeClose: true,
+                    closeBtn: 0,
+                    title: "",
+                    content: $("#sendgoods"),
+                    area: ["400px", "280px"],
+                });
+            });
         },
         countDown (time) {  // 倒计时
             var _this = this;
@@ -265,35 +293,44 @@ export default {
             }, 1000)
              
         },
-        cancel (num) { //  取消审核或者确认取消
+        cancel (num) { //  取消申请或者确认取消申请
             if (num == 2) {
                 layui.use(["layer"], function () {
                 var layer = layui.layer;
                     layer.closeAll('page')
                 })
-                return;
+            } else {
+                var _this = this;
+                layui.use('layer', function(){
+                    var layer = layui.layer;
+                    _this.$http.post('/shv2/recipetwo/recipe_cancel', {id:_this.doctorId }, function (res) {
+                        console.log(res)
+                        if (res.code == 1) {
+                            layer.closeAll('page');
+                            layer.msg('取消成功', {icon:1, time: 1000})
+                            var tm = setTimeout(() => {
+                                _this.go('/server/YaoprescriptionListPic/YaoprescriptionList')
+                                clearTimeout(tm)
+                            }, 500)
+                        } else if (res.code == 3) {
+                            layer.closeAll('page');
+                            _this.server_msg = '系统已为您再次提醒医生'        
+                            _this.server_msg2 ='处方申请15分钟后，才可取消申请'
+                            _this.cencel_shade()
+                        } else if (res.code == 4) {
+                            layer.closeAll('page');
+                            _this.server_msg = '已有医生接单，开具处方中'        
+                            _this.server_msg2 ='不可取消申请'
+                            _this.cencel_shade()
+                        } else {
+                            layer.closeAll('page');
+                            layer.msg(res.msg, {icon:2})
+                        }
+                    }, function (err) {console.log(err)})
+                    
+                }); 
             }
-            var _this = this;
             
-            layui.use('layer', function(){
-            var layer = layui.layer;
-            // _this.$http.post('/shv2/recipe/recipe_teacher', { id: _this.doctorId, flag: num }, function (res) {  // 审核接口
-            //     console.log(res)
-            //     if (res.code == 1) {
-            //         layer.closeAll('page');
-            //         layer.msg('审核成功', {icon:1})
-            //         _this.datadetail()
-            //     } else if (res.code == 3) {
-            //         layer.closeAll('page');
-            //         layer.msg('审核成功', {icon:1})
-            //         _this.datadetail()
-            //     } else {
-            //         layer.closeAll('page');
-            //         layer.msg('审核失败', { icon: 2})
-            //     }
-            // }, function (err) { console.log(err)})
-                
-            }); 
         },
         cencel_shade () {
             layui.use(["layer"], function () {
@@ -310,21 +347,23 @@ export default {
                 });
             });
         },
-        yaoAudit () {  // 药师审核
-
-        }
       
     },
     beforeDestroy () {
         if (this.times) {
             clearInterval(this.times)
         }
-    }
+        if (this.doc_times) {
+            clearInterval(this.doc_times)
+        }
+    },
+    
 }
 </script>
 
 <style scoped lang="less">
 #prescriptionCheck {
+    height: 100%;
     padding-bottom: 20px;
     background-color: #F1F2F9;
     .orderList_tit {
@@ -334,7 +373,7 @@ export default {
         background-color: #e5f0ff;
     }
     .tab_content {
-
+        background-color: #F1F2F9;
       .prescriptionCheck_head {
             color: #3196FF;
             padding: 12px 0;
@@ -493,21 +532,38 @@ export default {
 
         .drug {
             >ol {
+                width: 100%;
                 padding: 0 24px;
                 >li {
+                    width: 100%;
                     color: #666;
+                    height: auto;
                     font-size: 14px;
-                    line-height: 50px;
-                    margin-right: 30px;
+                    padding: 15px 0;
                     font-weight: 540;
-                    font-size: 15px;
+                    font-size: 14px;
+                    // border-bottom: 1px solid #eee;
                     >span {
-                        margin-left: 100px;
+                       display: inline-block;
                     }
-                    
+                    span:first-child {
+                        width: 250px;
+                    }
                     .yao_yong {
+                        width: 70%;
+                        margin-left: 50px;
+                        display: inline-block;
+                        > span {
+                            // vertical-align: top;
+                            display: inline-block;
+                            width: 50px;
+                        }
                         >b {
                             font-weight: 500;
+                            display: inline-block;
+                            line-height: 25px;
+                            vertical-align: middle;
+                            width: 90%;
                         }
                     }   
                 }
@@ -518,6 +574,7 @@ export default {
 
         .issue_msg {
             padding: 24px 0;
+            background-color: #fff;
             >p {
                 border-bottom: 1px solid #F1F2F9;
                 span {
@@ -565,10 +622,12 @@ export default {
 
                 }
             }
+        
         }
 
         .doc_msg {
             margin-top: 24px;
+            overflow: hidden;
             background-color: #fff;
             > p {
                 

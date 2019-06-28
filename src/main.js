@@ -19,7 +19,7 @@ import 'nprogress/nprogress.css'
 var VueCookie = require('vue-cookie');
 Vue.use(VueCookie);
 import moment from 'moment'//导入文件
-
+import './common/css/fu_element.css'
 Vue.prototype.$moment = moment;//赋值使用
     moment.locale('zh-cn');//需要汉化
     // this.$moment(23534543564).format('YYYY MMMM Do h:mm:ss a')   用法

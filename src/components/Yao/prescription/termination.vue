@@ -7,38 +7,38 @@
                 <ul class="Pd-B24">
                     <li>
                         <span>医生姓名</span>
-                        <span>张三</span>
+                        <span>{{ doctormsg.true_name }}</span>
                     </li>
                     <li>
                         <span>医生职称</span>
-                        <span>医生</span>
+                        <span>{{ doctormsg.gname }}</span>
                     </li>
                     <li>
                         <span>执业医院</span>
-                        <span>山东省立医院</span>
+                        <span>{{ doctormsg.hospital_name }}</span>
                     </li>
                     <li>
                         <span>所在科室</span>
-                        <span>心内科</span>
+                        <span>{{ doctormsg.department_name }}</span>
                     </li>
                    
                 </ul>
                 <ul class="Pd-B24">
                      <li>
                         <span>合作状态</span>
-                        <span>合作终止</span>
+                        <span v-text='doctormsg.state == 1?"申请中":doctormsg.state == 2?"合作中":"合作终止"'></span>
                     </li>
                     <li>
                         <span>合作终止方</span>
-                        <span>医生</span>
+                        <span v-text='doctormsg.revoke_state == 1?"医生":"药店"'></span>
                     </li>
                     <li>
                         <span>终止时间</span>
-                        <span>2019-02-19</span>
+                        <span>{{ doctormsg.revoke_time | moment }}</span>
                     </li>
                     <li>
                         <span>终止原因</span>
-                        <span>不想合作了，不喜欢这个药店！</span>
+                        <span>{{ doctormsg.revoke_reason }}</span>
                     </li>
                 </ul>
             </div>
@@ -68,8 +68,8 @@
                                             <td>操作</td>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        <tr class="table_con Color_black ac" v-for="(val,index) in 4" :key='index'>
+                                    <tbody v-if='tableList.length'>
+                                        <tr class="table_con Color_black ac" v-for="(val,index) in tableList" :key='index'>
                                             <td>{{ index+1 }}</td>
                                             <td>12343435465769879</td>
                                             <td>2019-02-21 12:00</td>
@@ -80,12 +80,12 @@
                                             </td>
                                             <td>摇啊摇</td>
                                             <td class="dis_f dis_js">
-                                                <p class="pointer Ft-S14 Color_blue" @click="godetail">预览</p>
+                                                <p class="pointer Ft-S14 Color_blue" @click="godetail()">预览</p>
                                                 <p class="pointer Ft-S14 Color_blue" @click="f_download()">下载</p>
                                             </td>
                                         </tr>
                                     </tbody>
-                                    <tbody >
+                                    <tbody v-if='!tableList.length'>
                                         <tr class="table_con Color_black ac" >
                                             <td colspan='6'>
                                                 <img src="../../../common/image/icon/icon_zwxgjl@2x.png" alt="">
@@ -128,7 +128,7 @@
                                             <td>3.00</td>
                                             <td class="dis_f dis_js">
                                                 <p class="pointer Ft-S14" >——</p>
-                                                <p class="pointer Ft-S14 Color_blue" @click="f_download()">查看处方</p>
+                                                <p class="pointer Ft-S14 Color_blue" @click="f_details()">查看处方</p>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -157,104 +157,113 @@
         </div>
 
         <!-- 预览 -->
+        <div id='htmls'>
         <div id="fang_preview">
             <div class="fang_preview_box">
                 <ul class="f_title">
                     <li>
                         <span>处方编号：</span>
-                        <span>21456954584754564</span>
+                        <span>{{ recipemsg.order_code }}</span>
                     </li>
                     <li>
                         <span>处方生成时间：</span>
-                        <span>2019.8.8</span>
+                        <span>{{ recipemsg.start_time | moment }}</span>
                     </li>
                     <li>
                         <span>处方失效时间：</span>
-                        <span>2019.9.9</span>
+                        <span>{{ recipemsg.undue_time }}</span>
                     </li>
                 </ul>
                 <h2>云医康互联网医院电子处方</h2>
                 <div class="f_user">
                     <ul>
-                        <li><span>姓名：</span><span>李</span></li>
-                        <li><span>性别：</span><span>男</span></li>
-                        <li><span>年龄：</span><span>20岁</span></li>
-                        <li><span>肝功能：</span><span>整成</span></li>
-                        <li><span>胃功能：</span><span>正常</span></li>
-                        <li><span>备孕情况：</span><span>无</span></li>
-                        <li><span>过敏史：</span><span>无</span></li>
-                        <li><span>过往病史：</span><span>无</span></li>
+                        <li><span>姓名：</span><span>{{ recipemsg.name }}</span></li>
+                        <li><span>性别：</span><span v-text="recipemsg.sex == 0?'男':'女'"></span></li>
+                        <li><span>年龄：</span><span>{{ recipemsg.age }}岁</span></li>
+                        <li><span>肝功能：</span><span>{{ recipemsg.liver }}</span></li>
+                        <li><span>肾功能：</span><span>{{ recipemsg.kidney }}</span></li>
+                        <li><span>备孕情况：</span><span>{{ recipemsg.yun }}</span></li>
+                        <li><span>过敏史：</span><span>{{ recipemsg.allergy }}</span></li>
+                        <li><span>过往病史：</span><span>{{ recipemsg.ago }}</span></li>
                     </ul>
-                    <p>诊断结果：都是发v地方</p>
+                    <p>诊断结果：<span>{{ recipemsg.result }}</span></p>
                 </div>
                 <div class="f_yao">
                     <h3>Rp</h3>
                     <div>
-                        <ul v-for='(val, i) in 3'>
-                            <li>复方 板蓝根颗粒 *1</li>
-                            <li>口服，每日一次，每次一片</li>
+                        <ul v-for='(val, i) in recipe_eat' :key='i+"_yao"'>
+                            <li>
+                                <span>{{ val.name }}</span>
+                                <span style="margin-left:20px;">*{{ val.num }}</span>
+                            </li>
+                            <li>{{ val.usage }}</li>
                         </ul>
                     </div>
-                    <img class="f_zheng" src="../../../common/image/icon/pic_yp.png" alt="">
+                    <img class="f_zheng" :src="$http.baseURL+recipemsg.zhang_pic" alt="">
                 </div>
                 <p class="f_pety">( 以下空白，修改无效 )</p>
                 <ul class="f_signature">
                     <li>
                         <span>处方医师：</span>
-                        <img src='../../../common/image/icon/pic_yp.png' alt="">
+                        <img :src='$http.baseURL+recipemsg.signpic' alt="">
                     </li>
-                    <li>
+                    <li v-show='recipemsg.yname_pic'>
                         <span>审核药师：</span>
-                        <img src="../../../common/image/icon/pic_yp.png" alt="">
+                        <img :src="$http.baseURL+recipemsg.yname_pic" alt="">
                     </li>
                 </ul>
             </div>
         </div>
-        
+        </div>
     </div>
 </template>
 <script>
+import html2canvas from 'html2canvas'
 export default {
     name: 'orderList',
     data() {
         return {
-            
-            number: '',                 // 处方编号
-            flag: '',                   // 药师审核状态
             page: 1,
             limit: 10,
             tableList: [],              // 数据列表
-            auditor: [                  // 药师审核状态下拉框
-                {id: 0, name: '未审核'},
-                {id: 1, name: '通过'},
-                {id: 2, name: '不通过'}
-            ],
-            doctormsg: '',
+            doctormsg: '',  // 医生信息
+            recipemsg: '',  // 处方信息
+            recipe_eat: [], // 药品信息
         }
     },
     mounted() {
-        this.doctormsg = this.$route.query
         this.initdata(1) 
+        var _this = this;
+        this.$http.post('/shv2/Commonshop/com_doc_look', {id:this.$route.query.id}, function (res) {  // 获取医生信息
+            console.log(res)
+            if (res.code == 1) {
+                _this.doctormsg = res.data
+            }
+        },function (err) {})
     },
     methods: {
         tab (n) {
             console.log(n)
+            if (n == 0) {
+                this.initdata(1)
+            } else {
+ 
+            }
         },
         initdata(num) {   // 数据
             var _this = this;
             layui.use(["laypage", "layer", "laydate", "element"], function () {
                 var element = layui.element;
                 var laydate = layui.laydate;
-                
-                _this.page = num;
-                var start = $('#date').val();
-                var end_time = $('#date1').val();
-                var id = _this.$route.query.id
-                var obj = { id: id, number: _this.number, ktime: start, jtime: end_time, flag: _this.flag }
-                _this.$http.post('/shv2/Recipe/recipe_record', obj, function (res) {//
+                var id = _this.$route.query.did
+                var obj = { id: id, page: _this.page, limit: _this.limit }
+                _this.$http.post('/shv2/Commonshop/doc_put', obj, function (res) {//
                     console.log(res)
                     if (res.code == 1) {
                        _this.tableList = res.data
+                       if (num == 1) {
+                           _this.pageFun(res.count)
+                       }
                     } else {
                         _this.tableList = []
                     }
@@ -287,28 +296,106 @@ export default {
 
         
         godetail(id) {    // 预览
-            console.log(id)
+            var _this = this;
             layui.use(["layer"], function () {
                 var layer = layui.layer;
                 var $ = layui.jquery;
-                layer.open({
-                    type: 1,
-                    shade: 0.2,
-                    shadeClose: true,
-                    closeBtn: 1,
-                    title: "",
-                    content: $("#fang_preview"),
-                    area: ["600px", "560px"],
-                    cancel: function () { }
-                });
+                 _this.$http.post('/mobile/Doch5/recipe_look', {id:id}, function (res) {
+                console.log(res)
+                if (res.code == 1) {
+                    _this.recipemsg = res.data
+                    _this.recipe_eat = res.recipe_eat;
+                    layer.open({
+                        type: 1,
+                        shade: 0.2,
+                        shadeClose: true,
+                        closeBtn: 1,
+                        title: "",
+                        content: $("#htmls"),
+                        area: ["640px", "560px"],
+                        cancel: function () { }
+                    });
+                } else {
+
+                }
+            }, function (err) {})   
             });
+           
+            
         },
-       f_download () { // 处方下载
-            console.log('download')
-       }
+        recipeDetails (id) { // 获取处方单信息
+            
+        },
+        f_download (id) { // 处方下载
+            var _this = this;
+            function isIE() { //ie?
+                if (!!window.ActiveXObject || "ActiveXObject" in window) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+            _this.$http.post('/mobile/Doch5/recipe_look', {id:id}, function (res) {
+                if (res.code == 1) {
+                    _this.recipemsg = res.data
+                    _this.recipe_eat = res.recipe_eat;
+                    var html = document.getElementById('htmls');
+                    html.style.display ='block';
+                    html.classList.add("capture");
+                var tm = setTimeout(() => {
+                    /*图片跨域及截图模糊处理*/
+                    var shareContent = document.getElementById('fang_preview'); //需要截图的包裹的（原生的）DOM 对象
+                    var width = shareContent.clientWidth,//shareContent.offsetWidth; //获取dom 宽度
+                        height = shareContent.clientHeight,//shareContent.offsetHeight; //获取dom 高度
+                        canvas = document.createElement("canvas"), //创建一个canvas节点
+                        // scale = window.devicePixelRatio * 4; //定义任意放大倍数 支持小数
+                        scale = 2.5
+                    canvas.width = width * scale; //定义canvas 宽度 * 缩放
+                    canvas.height = height * scale; //定义canvas高度 *缩放
+                    canvas.style.width = shareContent.clientWidth * scale + "px";
+                    canvas.style.height = shareContent.clientHeight * scale + "px";
+                    canvas.getContext("2d").scale(scale, scale); //获取context,设置scale
+                    var opts = {
+                        scale: scale, // 添加的scale 参数
+                        canvas: canvas, //自定义 canvas
+                        logging: true, //日志开关，便于查看html2canvas的内部执行流程
+                        width: width, //dom 原始宽度
+                        height: height,
+                        // useCORS: true // 【重要】开启跨域配置
+                    };
+                    html2canvas(shareContent,opts).then(function(canvas) {
+                    if (isIE()) {
+                            var blob = canvas.msToBlob();
+                            console.log(blob)
+                            navigator.msSaveBlob(blob,'处方单.png');
+                            return false;
+                        }
+                        var url = canvas.toDataURL();
+                        var triggerDownload = $("<a>").attr("href", url).attr("download", "处方单.png").appendTo("body");
+                        triggerDownload[0].click();
+                        triggerDownload.remove();
+                    })
+                    clearTimeout(tm)
+                    
+                    }, 300)
+                    var tt = setTimeout(() => {
+                        html.classList.remove('capture')
+                        html.style.display ='none';
+                        clearTimeout(tt)
+                    }, 800)
+                } else {
+                    _this.$message.error('下载失败')
+                }
+            })
+        },
+        f_details (id) {
+            console.log('查看')
+        }
     }
 }
 </script>
+
+
 
 <style scoped lang="less">
 #orderList {
@@ -487,21 +574,31 @@ export default {
     }
 }
 // 预览样式
-#fang_preview {
-    padding:20px;
-    height: 100%;
+#htmls {
     display: none;
+}
+#fang_preview {
+    width: 640px;
+    height: 560px;
+    padding:20px;
     .fang_preview_box {
-        width:100%;
-        min-height: 100%;
+        height: 100%;
         padding: 10px;
         border: 1px solid rgba(0,0,0,.2);
         .f_title {
             overflow: hidden;
-            li {
-                margin-right: 15px;
+            > li {
+                margin-right: 12px;
                 float: left;
-                font-size: 6px;
+                height: 20px;
+                > span {
+                    display: block;
+                    float: left;
+                    font-size: 12px;
+                    -webkit-text-size-adjust:none !important;
+                    -webkit-transform: scale(0.8);
+                    transform:scale(0.8);
+                }
             }
         }
         >h2 {
@@ -574,6 +671,12 @@ export default {
     
 }
 
+.capture{
+    position: absolute;
+    top: 0;
+    right: -100%;
+    z-index: 99;
+}
 
 
 .icon_black {

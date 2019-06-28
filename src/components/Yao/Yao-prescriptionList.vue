@@ -48,10 +48,10 @@
             <div class="layui-tab">
                 <div class="layui_navs">
                     <ul class="layui-tab-title">
-                        <li class="layui-this" @click="tab(1)">等待中</li>
-                        <li @click="tab(2)">待审核</li>
-                        <li @click="tab(3)">已开具</li>
-                        <li @click="tab(4)">开具失败</li>
+                        <li class="layui-this" @click="tab(1)">等待中（{{ recipeCount.type1 }}）</li>
+                        <li @click="tab(2)">待审核（{{ recipeCount.type2 }}）</li>
+                        <li @click="tab(3)">已开具（{{ recipeCount.type3 }}）</li>
+                        <li @click="tab(4)">开具失败（{{ recipeCount.type4 }}）</li>
                     </ul>
                     <span class="btn_r">
                         <button class="layui-btn background_white layui-btn-normal"  @click='go("/server/YaoprescriptionListPic/prescriptionSetting")'>处方设置</button>
@@ -78,7 +78,7 @@
                                     <td>{{ val.number }}</td>
                                     <td>{{ val.creatime | moment }}</td>
                                     <td>{{ val.user }}</td>
-                                    <td class="Pd-L24" style='width:300px;'>
+                                    <td style='width:280px;'>
                                         <div class="doctor">
                                             <ul v-for='(st, index) in val.state' :key='index+"_1"'>
                                                 <li v-if='st.status == 1'><span>{{ st.true_name }}</span> <span>未接单</span></li>
@@ -139,7 +139,7 @@
                                     </td>
                                     <td>
                                         <span class="pointer Ft-S14 Color_blue al"  @click="godetail(val.id)">查看详情</span>
-                                        <span class="pointer Ft-S14 Color_blue al Mg-L10" v-if='tabStatus == 1'  @click="yao_set(val.id)">药师审核</span>
+                                        <span class="pointer Ft-S14 Color_blue al Mg-L10" v-if='tabStatus == 2'  @click="yao_set(val.id)">药师审核</span>
                                     </td>
                                 </tr>
                             </tbody>
@@ -207,8 +207,8 @@
                 </li>
             </ul>
             <p class="clear">
-                <span><button class="layui-btn cancel" @click='cancels(2)'>取消</button></span>
-                <span><button class="layui-btn layui-btn-normal" @click="cancels(1)">保存</button></span>
+                <span><button class="layui-btn cancel" @click='cancels'>取消</button></span>
+                <span><button class="layui-btn layui-btn-normal" @click="yaoAudit">保存</button></span>
             </p>
         </div> 
 
@@ -234,8 +234,10 @@ export default {
             },
             tableList: [],
             tabStatus: 1,           // tab 列表
-            radioVal: '1',       // 审核
+            radioVal: '1',       // 审核状态
             txt: '',             // 审核说明
+            he_id: '',           // 审核的id
+            recipeCount: {},     // 获取tab的数量
         }
     },
     activated () {
@@ -250,6 +252,7 @@ export default {
                 jtime: '',
             }
             this.tabStatus = type;
+            console.log(type)
             this.initdata(type, 1)
         },
         initdata(type, num) {   // 数据
@@ -262,6 +265,7 @@ export default {
                 _this.$http.post('/shv2/recipetwo/recipe_index', _this.list, function (res) {//
                     console.log(res)
                     if (res.code == 1) {
+                        _this.recipeCount = res;
                         _this.tableList = res.data;
                         if (num == 1) {
                             //分页
@@ -431,18 +435,15 @@ export default {
         //     }
         // },
         
-        cancels (n) {     // 审核的 取消关闭弹框 和 确认
-            if(n == 1) {
-                console.log('yes')
-                return false;   
-            }
+        cancels () {     // 审核的 取消关闭弹框
             layui.use('layer', function(){
             var layer = layui.layer;
                 layer.closeAll();
             }); 
         },
-        yao_set (id) {  // 药师审核
+        yao_set (id) {  // 药师审核弹框
             var self = this;
+            self.he_id = id
             layui.use(["layer"], function () {
                 var layer = layui.layer;
                 var $ = layui.jquery;
@@ -457,6 +458,24 @@ export default {
                     cancel: function () { }
                 });
             });
+        },
+        yaoAudit () {  // 药师审核结果
+            var _this = this;
+            layui.use(["layer"], function () {
+                var layer = layui.layer;
+                _this.$http.post('/shv2/recipetwo/recipe_audit', { id: _this.he_id, type: _this.radioVal,text: _this.txt }, function (res) {  // 审核接口
+                    console.log(res)
+                    if (res.code == 1) {
+                        layer.closeAll('page');
+                        layer.msg('审核成功', {icon:1})
+                        _this.initdata(_this.tabStatus, _this.list.page)
+                        _this.txt = ''
+                    } else {
+                        layer.closeAll('page');
+                        layer.msg('审核失败', { icon: 2})
+                    }
+                }, function (err) { console.log(err)})
+            })
         }
     }
 }
@@ -594,10 +613,11 @@ export default {
                             line-height: 30px;
                           }
                           .doctor {
+                              
                               ul {
                                   
                                   li {
-                                      text-align: left;
+                                    text-align: center;
                                     line-height: 30px;
                                     span:first-child {
                                         display: inline-block;
@@ -605,7 +625,7 @@ export default {
                                     }
                                     .docMsg {
                                         display: inline-block;
-                                        width: 100px;
+                                        max-width: 100px;
                                         overflow: hidden;
                                         text-overflow:ellipsis;
                                         white-space: nowrap;

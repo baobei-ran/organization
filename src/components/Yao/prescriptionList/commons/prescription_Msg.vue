@@ -68,7 +68,7 @@ export default {
                    console.log(res)
                     if (res.code == 1) {
                          var type = res.data.teacher_type
-                         if (type == 2) {
+                         if (type == 1 || type == 2) {
                              _this.docUser = res.data.yname
                              _this.money = res.data.recipe_money
                             _this.img1 = _this.$http.baseURL + res.data.teacher_pic;

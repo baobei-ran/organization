@@ -146,8 +146,8 @@
                                     <tr>
                                         <td ><span class="Color_red">*</span>处方/非处方</td>
                                         <td>
-                                            <el-radio v-model="recipe" label="1" >处方</el-radio>
-                                            <el-radio v-model="recipe" label="2">非处方</el-radio>
+                                            <el-radio v-model="recipe" label="1" >处方药</el-radio>
+                                            <el-radio v-model="recipe" label="2">非处方药</el-radio>
                                         </td>
                                     </tr>
                                     <tr>

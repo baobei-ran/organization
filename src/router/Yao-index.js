@@ -37,10 +37,9 @@ const PrescriptionRecords = () => import('@/components/Yao/prescription/prescrip
 
 const AddApply = () => import('@/components/Yao/prescription/addApply' /* webpackChunkName: "prescription" */);  // 创建处方单
 
-const PrescriptionListPic = () => import('@/components/Yao/Yao-prescriptionPic' /* webpackChunkName: "prescription" */);  // 处方单申请页
+const PrescriptionListPic = () => import('@/components/Yao/Yao-prescriptionPic' /* webpackChunkName: "prescription" */);  // 处方单开通 和 审核
 const YaoprescriptionList = () => import('@/components/Yao/Yao-prescriptionList' /* webpackChunkName: "prescription" */);  // 处方单列表
-const PrescriptionCheck = () => import('@/components/Yao/prescriptionList/prescriptionCheck' /* webpackChunkName: "prescription" */);        //  处方单审核
-const PrescriptionPicShen = () => import('@/components/Yao/prescriptionList/prescriptionPicShen' /* webpackChunkName: "prescription" */);    // 处方医生列表资料上传审核
+const PrescriptionCheck = () => import('@/components/Yao/prescriptionList/prescriptionCheck' /* webpackChunkName: "prescription" */);        //  处方单详情
 const PrescriptionSetting = () => import('@/components/Yao/prescriptionList/prescriptionSetting' /* webpackChunkName: "prescription" */);    // 处方设置
 const PrescriptionSet = () => import('@/components/Yao/prescriptionList/commons/prescription_set' /* webpackChunkName: "prescription" */);    // 处方设置修改
 
@@ -201,13 +200,8 @@ export default [
 
     {
         path: '/server/YaoprescriptionListPic',
-        name: '处方单医生资料上传',
+        name: '处方单医生资料上传和审核',
         component: PrescriptionListPic
-    },
-    {
-        path: '/server/YaoprescriptionListPic/prescriptionPicShen',
-        name: '处方单医生资料上传审核',
-        component: PrescriptionPicShen
     },
     {
         path: '/server/YaoprescriptionListPic/YaoprescriptionList',

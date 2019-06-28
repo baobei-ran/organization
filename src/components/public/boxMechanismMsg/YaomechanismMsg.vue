@@ -39,22 +39,19 @@
                     </td>
                     <td class="Pd-L40 Ft-S16 Color_gray6">
                         <div class="layui-input-inline">
-                            <select name="" id="sheng" @change="selectcity(formdata.province)" v-model="formdata.province" style="width: 200px;">
-                                <option value="">请选择省</option>
-                                <option :value="val.aid" v-for="val in provinceList" v-text="val.aname">请选择省</option>
-                            </select>
+                            <el-select id="sheng" @change="selectcity(formdata.province)" v-model="formdata.province" style="width: 200px;" placeholder="请选择省">
+                                <el-option :value="val.aid" v-for="val in provinceList" :key='val.aid' :label="val.aname"></el-option>
+                            </el-select>
                         </div>
                         <div class="layui-input-inline">
-                            <select name="" id="city" @change="selectcounty(formdata.city)" v-model="formdata.city" style="width: 200px;">
-                                <option value="">请选择市</option>
-                                <option :value="val.aid" v-for="val in cityList" v-text="val.aname">请选择市</option>
-                            </select>
+                            <el-select id="city" @change="selectcounty(formdata.city)" v-model="formdata.city" style="width: 200px;" placeholder="请选择市">
+                                <el-option v-for="val in cityList" :key="val.aid" :label="val.aname" :value="val.aid"></el-option>
+                            </el-select>
                         </div>
                         <div class="layui-input-inline">
-                            <select name="" v-model="formdata.county" style="width: 200px;">
-                                <option value="">请选择县/区</option>
-                                <option :value="val.aid" v-for="val in countyList" v-text="val.aname">请选择县/区</option>
-                            </select>
+                            <el-select v-model="formdata.county" style="width: 200px;" placeholder="请选择县/区">
+                                <el-option v-for="val in countyList" :key="val.aid" :label="val.aname" :value="val.aid"></el-option>
+                            </el-select>
                         </div>
                     </td>
                 </tr>
@@ -273,6 +270,7 @@ export default {
             var _this = this;
             this.formdata.city = '';
             this.formdata.county = '';
+            this.countyList = '';
             this.$http.post('/shv2/Setting/area', { fid: num }, function (res) {
                 if (res.code == 1) {
                     _this.cityList = res.data;

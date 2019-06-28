@@ -3,18 +3,22 @@
     <div class="perscription Pd-B40">
         
         <div class="perscription_msg bg_f" v-if='status0'>
-            <div class="perscription_msg_box">
-                <div>
-                    <h2>服务说明</h2>
-                    <p>云医康推出电子处方服务，药店可通过平台医生开具电子处方，扩充药店的药品经营品类；</p>
-                    <p>药店可根据顾客的实际需要，向合作医生发布处方需求，并辅以患者的基本信息和病情描述，医生将根据患者的病情，接单并开具处方，在经由药店药师审核后，处方即可生效。</p>
+            <div class="perscription_title">
+                <h2><span class="pointer" @click='btnServeMsg'>服务说明</span></h2>
+            <transition name='fade'>
+                <div class="perscription_msg_box" v-if='tilteMsg'>
+                    <div>
+                        <p>云医康推出电子处方服务，药店可通过平台医生开具电子处方，扩充药店的药品经营品类；</p>
+                        <p>药店可根据顾客的实际需要，向合作医生发布处方需求，并辅以患者的基本信息和病情描述，医生将根据患者的病情，接单并开具处方，在经由药店药师审核后，处方即可生效。</p>
+                    </div>
+                    <div>
+                        <h2>服务设置</h2>
+                        <p>药店上传药师资质及药师签名图片，经平台审核通过后，即可拥有电子处方服务；</p>
+                        <p>发布处方申请时，需向医生支付处方费用，请在鲁医通账户中预存100元，用于电子处方的费用支付。</p>
+                    </div>
+                    <span class="show_btn pointer" @click='btnServeMsg'><img src="../../common/image/icon/icon_sq.png" alt=""></span>
                 </div>
-                <div>
-                    <h2>服务设置</h2>
-                    <p>药店上传药师资质及药师签名图片，经平台审核通过后，即可拥有电子处方服务；</p>
-                    <p>发布处方申请时，需向医生支付处方费用，请在鲁医通账户中预存100元，用于电子处方的费用支付。</p>
-                </div>
-                <span class="show_btn pointer"><img src="../../common/image/icon/icon_sq.png" alt=""></span>
+            </transition>
             </div>
         </div>
 
@@ -29,18 +33,18 @@
         </div>
 
         <!-- 审核信息 -->
-        <div class="shen_msg" v-show='status'>
+        <div class="shen_msg" v-if='status'>
             <perscription-msg></perscription-msg>   
         </div>
         <!-- 开通 -->
-<div class="prescription_box" v-show=''>
+<div class="prescription_box" v-if='kaiBtn'>
 
         <div class="set_price bg_f Mg-T24">
             <h2>费用设定</h2>
             <div class="my_price">鲁医通账户余额&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>{{ money_balance }}元</span> <span class="my_price_msg">（请在鲁医通账户中预存100元，用于处方费用支付<b @click='go_account' class="pointer">前去充值</b>）</span></div>
             <div class="mySet_price dis_f">
                 <span>处方费用设定</span>
-                <input type="text" id='price_m' v-enter-number2 v-model='setMoneys'/> 元
+                <input type="text" id='price_m' autocomplete="off" v-enter-number2 v-model='setMoneys'/> 元
                 <p>（处方费用不可低于1元，申请处方时，费用将自动从鲁医通账户中扣减，医生也将根据处方费用选择是否与药店合作）</p>
             </div>
         </div>
@@ -63,7 +67,7 @@
                 <dl>
                     <dt>
                         <img :src="img1" alt="">
-                        <div v-show='fileStatus'>
+                        <div >
                             <label for="file1">{{ labelTxt }}</label>
                             <input id='file1' @change='addfiles1'  multiple="multiple" accept=".png, .jpg, .jpeg" type="file">
                         </div>
@@ -73,7 +77,7 @@
                 <dl>
                     <dt>
                         <img :src="img2" alt="">
-                        <div  v-show='fileStatus2'>
+                        <div>
                             <label for="file2">{{ labelTxt2 }}</label>
                             <input id='file2' @change='addfiles2'  multiple="multiple" accept=".png, .jpg, .jpeg" type="file">
                         </div>
@@ -131,16 +135,16 @@ export default {
                 files2: '',         //  上传签名图
                 status: false,      // 审核中
                 status2: false,     // 审核失败
-                fileStatus: true,   //  控制文件上传按钮1 
-                fileStatus2: true,  //  控制文件上传按钮2
+                
                 failed: '',         // 审核失败留言
                 disBtn: true,       // 提交按钮
                 times: '',          // 实时监测
                 setMoneys: '',      // 费用设置
                 yao_user: '',       // 药师姓名
                 money_balance: 0,   // 账户余额
-                setPrice: 0,   // 处方设置最低金额
+                setPrice: 0,        // 处方设置最低金额
                 kaiBtn: false,      // 显示开通视图
+                tilteMsg: false
             }
         },
         mounted () {
@@ -173,7 +177,6 @@ export default {
                     
                     } else if (res.data.teacher_type == 3) { // 审核失败
                         _this.status0 = false;
-                        _this.kaiBtn = false;
                         _this.status = false;
                         _this.status2 = true
                         _this.kaiBtn = true
@@ -181,21 +184,33 @@ export default {
                 }
             }, function (err) { console.log(err)})
             $("#price_m").on("input propertychange",function(event) {     // 输入的时候进行验证
+                this.value = this.value.replace(/^([1-9]\d*(\.[\d]{0,2})?|0(\.[\d.]{0,2})?)[\d]*/g, '$1');
                 this.value = this.value.replace(/[^\d\.]/g, '');
                 var m = /(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/;
-                var money2 = _this.setMoneys.match(/^\d*(\.?\d{0,2})/g)[0]; // 保留小数点后面两位小数
-                _this.setMoneys = money2;
                 if (m.test(this.value)) {
                     _this.setMoneys = this.value
                 }
+                var money2 = _this.setMoneys.match(/^\d*(\.?\d{0,2})/g)[0]; // 保留小数点后面两位小数
+                _this.setMoneys = money2;
             })
         },
         methods: {
             addfiles1 (event) {
                 var files = event.target.files[0];  
                 if (files) {   // 是否有文件
+                    var isPng = files.type === "image/png"
+                    var isJpg = files.type === 'image/jpg'
+                    var isJpeg = files.type === 'image/jpeg'
+                    if (!isPng && !isJpg && !isJpeg) {
+                        this.$message({
+                            message: '上传只能是jpg/jpeg/png格式的图片',
+                            type: 'error',
+                            duration: 3000
+                        })
+                        return false;
+                    }
                     if((files.size / 1024 / 1024) > 5) {    
-                        alert('图片大小不能超过 5MB!');
+                        this.$message.errror('图片大小不能超过 5MB!');
                         return false;
                     }
                     var URL = window.URL || window.webkitURL; 
@@ -203,16 +218,24 @@ export default {
                     this.img1 = url
                     this.files1 = files
                     this.labelTxt = '重新上传'
-                    if (this.img1 && this.img2) {
-                        this.btnss = false
-                    }
                 }
             },
             addfiles2 (event) {
                 var files = event.target.files[0];
                 if (files) {
+                    var isPng = files.type === "image/png"
+                    var isJpg = files.type === 'image/jpg'
+                    var isJpeg = files.type === 'image/jpeg'
+                    if (!isPng && !isJpg && !isJpeg) {
+                        this.$message({
+                            message: '上传只能是jpg/jpeg/png格式的图片',
+                            type: 'error',
+                            duration: 3000
+                        })
+                        return false;
+                    }
                     if(files.size > 1024 * 1024 * 5) {
-                        alert('图片大小不能超过 5MB!');
+                        this.$message.error('图片大小不能超过 5MB!');
                         return false;
                     }
                     var URL = window.URL || window.webkitURL; 
@@ -220,9 +243,6 @@ export default {
                     this.img2 = a
                     this.files2 = files
                     this.labelTxt2 = '重新上传'
-                    if (this.img1 && this.img2) {
-                        this.btnss = false
-                    }
                 }
             },
 
@@ -234,15 +254,15 @@ export default {
                 if (!_this.setMoneys) {
                     layer.msg('请填写处方费用');
                     return false;
-                } else if (Number(_this.setPrice) > Number(_this.setMoneys) ) {
-                    layer.msg('处方费用不能小于'+ _this.setPrice);
+                } else if (Number(_this.setPrice) > Number(_this.money_balance) ) {
+                    layer.msg('鲁医通余额不能小于'+ _this.setPrice);
                     return false;
                 }
                 if (!_this.yao_user) {
                     layer.msg('请填写药师姓名');
                     return false;
                 }
-                if (_this.files1 == '') {
+                if (!_this.files1) {
                     layer.msg('请上传药师资格证');
                     return false;
                 }
@@ -267,7 +287,9 @@ export default {
                 
                 });  
             },
-
+            btnServeMsg () {
+                this.tilteMsg = !this.tilteMsg
+            },
             // 查询是否审核中
             Userdata () {
                 var _this = this;
@@ -278,12 +300,13 @@ export default {
                             case '0': // 未发起审核
                                 _this.status0 = true;
                                 _this.kaiBtn = true;
+                                _this.status = false; 
+                                _this.status2 = false;
                                 ; break;      // 未发起审核
                             case '1':
                                 _this.status = true; 
-                                _this.fileStatus = false; 
-                                _this.fileStatus2 = false; 
-                                _this.disBtn = false; 
+                                _this.disBtn = false;
+                                _this.kaiBtn = false; 
                                 _this.status2 = false
                             ; break;     // 审核中
                             case '2': 
@@ -293,7 +316,6 @@ export default {
                             case '3': 
                                 clearInterval(_this.times)
                                 _this.status0 = false;
-                                _this.kaiBtn = false;
                                 _this.status = false;
                                 _this.status2 = true
                                 _this.kaiBtn = true
@@ -337,8 +359,6 @@ export default {
             },
             yes_btn () {    // 确认提交
                 var _this = this;
-                _this.go('/server/YaoprescriptionListPic/prescriptionPicShen') 
-                return;
                layui.use('layer', function() {
                 var layer = layui.layer;
                 layer.closeAll('page')
@@ -347,14 +367,19 @@ export default {
                 formdata.append('yname_pic', _this.files2)
                 formdata.append('name', _this.yao_user)
                 formdata.append('money', _this.setMoneys)
+                formdata.append('type', 1)
                 _this.$http.upload('/shv2/Recipetwo/recipe_data', formdata, function (res) {
                     console.log(res)
                     if (res.code == 1) {
                         layer.msg('上传成功', { icon: 1, time: 1500});
-                        var t = setTimeout(() => {
-                            window.location.reload()
-                            clearTimeout(t)
-                        }, 1000)
+                        // var t = setTimeout(() => {
+                        //     window.location.reload()
+                        //     clearTimeout(t)
+                        // }, 1000)
+                        _this.Userdata();
+                        _this.times = setInterval(() => {
+                            _this.Userdata();    // 查看是否已提交了资料
+                        }, 3000)
                         
                     } else if (res.code == 4) {
                         layer.open({    // 余额不足提示
@@ -398,6 +423,13 @@ export default {
 }
 </script>
 <style lang='less' scoped>
+.fade-enter-active, .fade-leave-active {
+  transition: transform 2s ease-out;
+}
+
+.fade-enter, .fade-leave-to {
+    transform: translateY(-400px);
+}
 .perscription {
     height: 100%;
     background-color: #F1F2F9;
@@ -405,14 +437,27 @@ export default {
         padding:24px;
         -webkit-border-radius:6px;
         border-radius:6px;
-        .perscription_msg_box {
+        .perscription_title {
             border: 1px dashed #DDD;
             -webkit-border-radius: 8px;
             border-radius: 8px;
+        > h2 {
+            font-size: 16px;
+            color: #333;
+            font-weight:500;
+            padding: 20px 26px;
+            span {
+                padding-left: 34px;
+                background: url('../../common/image/icon/icon_fwsm.png') no-repeat left center;
+            }
+            
+        }
+        .perscription_msg_box {
+            
             position: relative;
             padding: 0 24px 20px;
             > div {
-                > h2 {
+               > h2 {
                     font-size: 16px;
                     color: #333;
                     font-weight:500;
@@ -433,13 +478,14 @@ export default {
             }
         }
     }
+    }
 
     .shen_msg {
         background-color: #FFF;
     }
 
     .prescription_box {
-        display: none;
+
 
     .set_price {
         -webkit-border-radius:6px;

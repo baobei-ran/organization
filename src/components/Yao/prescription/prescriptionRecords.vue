@@ -88,7 +88,7 @@
                                             <td>
                                                 <span v-show='val.type == 3'>未审核</span>
                                                 <span v-show='val.type == 2'>已审核</span>
-                                                <span v-show='val.type == 1'已过期</span>
+                                                <span v-show='val.type == 1'>已过期</span>
                                             </td>
                                             <td>{{ val.name }}</td>
                                             <td class="dis_f dis_js">
@@ -166,7 +166,7 @@
         </div>
         <div class="returns Mg-T24">
             <button class="layui-btn layui-btn-normal" @click='go("/server/Yaodoctorprescription")'>返回</button>
-            <button class="btn_termination" @click='order_termination'>申请终止合作</button>
+            <button class="btn_termination" @click="centerDialogVisible = true">申请终止合作</button>
         </div>
 
         <!-- 预览 -->
@@ -174,70 +174,83 @@
             <div class="fang_preview_box">
                 <ul class="f_title">
                     <li>
-                        <span>处方编号：</span>
-                        <span>21456954584754564</span>
+                        <span>处方编号：</span><span>{{ recipeDetail.order_code }}</span>
                     </li>
                     <li>
-                        <span>处方生成时间：</span>
-                        <span>2019.8.8</span>
+                        <span>处方生成时间：</span><span>{{ recipeDetail.start_time | moment }}</span>
                     </li>
                     <li>
-                        <span>处方失效时间：</span>
-                        <span>2019.9.9</span>
+                        <span>处方失效时间：</span><span>{{ recipeDetail.undue_time | moment }}</span>
                     </li>
                 </ul>
                 <h2>云医康互联网医院电子处方</h2>
                 <div class="f_user">
                     <ul>
-                        <li><span>姓名：</span><span>李</span></li>
-                        <li><span>性别：</span><span>男</span></li>
-                        <li><span>年龄：</span><span>20岁</span></li>
-                        <li><span>肝功能：</span><span>整成</span></li>
-                        <li><span>胃功能：</span><span>正常</span></li>
-                        <li><span>备孕情况：</span><span>无</span></li>
-                        <li><span>过敏史：</span><span>无</span></li>
-                        <li><span>过往病史：</span><span>无</span></li>
+                        <li><span>姓名：</span><span>{{ recipeDetail.name }}</span></li>
+                        <li><span>性别：</span><span v-text='recipeDetail.sex == 0?"男":"女"'></span></li>
+                        <li><span>年龄：</span><span>{{ recipeDetail.age }}岁</span></li>
+                        <li><span>肝功能：</span><span>{{recipeDetail.liver}}</span></li>
+                        <li><span>肾功能：</span><span>{{recipeDetail.kidney}}</span></li>
+                        <li><span>备孕情况：</span><span>{{recipeDetail.yun}}</span></li>
+                        <li><span>过敏史：</span><span>{{recipeDetail.allergy}}</span></li>
+                        <li><span>过往病史：</span><span>{{recipeDetail.ago}}</span></li>
                     </ul>
-                    <p>诊断结果：都是发v地方</p>
+                    <p>诊断结果：<span>{{ recipeDetail.result }}</span></p>
                 </div>
                 <div class="f_yao">
                     <h3>Rp</h3>
                     <div>
-                        <ul v-for='(val, i) in 3'>
-                            <li>复方 板蓝根颗粒 *1</li>
-                            <li>口服，每日一次，每次一片</li>
+                        <ul v-for='(val, i) in recipe_eat' :key="i+'_ll'">
+                            <li><span>{{ val.name }}</span> <span>*{{val.num}}</span></li>
+                            <li>{{val.usage}}</li>
                         </ul>
                     </div>
-                    <img class="f_zheng" src="../../../common/image/icon/pic_yp.png" alt="">
+                    <img class="f_zheng" :src="$http.baseURL+recipeDetail.zhang_pic" alt="">
                 </div>
                 <p class="f_pety">( 以下空白，修改无效 )</p>
                 <ul class="f_signature">
                     <li>
                         <span>处方医师：</span>
-                        <img src='../../../common/image/icon/pic_yp.png' alt="">
+                        <img :src='$http.baseURL+recipeDetail.signpic' alt="">
                     </li>
-                    <li>
+                    <li v-show="recipeDetail.yname_pic">
                         <span>审核药师：</span>
-                        <img src="../../../common/image/icon/pic_yp.png" alt="">
+                        <img :src="$http.baseURL+recipeDetail.yname_pic" alt="">
                     </li>
                 </ul>
             </div>
         </div>
-        <!-- 终止合作 -->
-        <div id="termination">
-            <h2>申请终止合作</h2>
-            <div class="termination_txt">
-                <p>请填写终止合作原因，待平台审核通过后，即可终止合作</p>
-                <textarea v-model="terminationText" placeholder="请填写终止合作原因，如医生开具处方时间较长等"></textarea>
-            </div>
-            <div class="termination_btn">
-                <button class="btn_cancel" @click='cancelClick'>取消</button>
-                <button style="padding: 0 26px;" class="layui-btn layui-btn-normal" @click='successClick'>提交</button>
-            </div>
-        </div>
+<!-- 终止合作弹框 -->
+<el-dialog
+  title="申请终止合作"
+  :visible.sync="centerDialogVisible"
+  :show-close='false'
+  width="500px"
+  :center='true' >
+    <div class="termination_txt">
+        <p style="margin-bottom:20px;">请填写终止合作原因，待平台审核通过后，即可终止合作</p>
+        <el-input :class='{"el_textarea_fu":true}'
+            type="textarea"
+            :rows="5"
+            resize='none'
+            placeholder="请填写终止合作原因，如医生开具处方时间较长等"
+            v-model="terminationText" >
+        </el-input>
+    </div>
+  <span slot="footer" class="dialog-footer">
+    <el-button style="border: 1px solid #3196FF; color:#3196FF;margin-right:30px;" @click="centerDialogVisible = false">取 消</el-button>
+    <el-button type="primary" @click="successClick">确 定</el-button>
+  </span>
+</el-dialog>
+
+
+
+
+
     </div>
 </template>
 <script>
+import html2canvas from 'html2canvas'
 var delay = (function() {
  var timers = 0;
  return function(callback, ms) {
@@ -269,11 +282,15 @@ export default {
                     {id:6, val:'星期六'},
                     {id:0, val:'星期日'}],
             searchTime: '',                // 搜索时间
+            recipeDetail: {},              // 处方详情
+            recipe_eat: [],                // 处方中的药品
+            centerDialogVisible: false,    // 开启弹框
         }
     },
     mounted() {
         this.docMsgs()
         this.tab(0)
+        
     },
     watch: {
         //watch userName change
@@ -357,7 +374,7 @@ export default {
                 var end_time = $('#date1').val();
                 var id = _this.$route.query.did; // 医生id 
                 var obj = { id: id, page: _this.page, limit: _this.limit, name:_this.userName }
-                _this.$http.post('/shv2/Commonshop/com_doc_look', obj, function (res) {
+                _this.$http.post('/shv2/Commonshop/doc_put', obj, function (res) {
                     console.log(res)
                     if (res.code == 1) {
                        _this.tableList = res.data
@@ -393,28 +410,7 @@ export default {
         search() {  // 搜索
             this.initdata(1)
         },
-        order_termination () {  // 终止合作
-            layui.use(["layer"], function () {
-                var layer = layui.layer;
-                var $ = layui.jquery;
-                layer.open({
-                    type: 1,
-                    shade: 0.2,
-                    shadeClose: true,
-                    closeBtn: 0,
-                    title: "",
-                    content: $("#termination"),
-                    area: ["500px", "360px"],
-                });
-            });
-        },
-        cancelClick () {    // 取消终止,关闭弹框
-            layui.use(["layer"], function () {
-                var layer = layui.layer;
-                layer.closeAll()
-            })
-        },
-        successClick () {   // 提交终止
+        successClick () {   // 提交终止合作
         var _this = this;
         layui.use('layer', function(){
             var layer = layui.layer;
@@ -422,65 +418,112 @@ export default {
                 layer.msg('请填写取消合作原因', {icon: 0});
                 return false;
             }
+            _this.$http.post('/shv2/Commonshop/hos_set', {type: 3, id: _this.$route.query.did, text: _this.terminationText }, function (res) {
+                console.log(res)
+                if (res.code == 1) {
+                    _this.centerDialogVisible = false
+                    layer.msg('取消成功', {icon: 1});
+                    var tm = setTimeout(() => {
+                        _this.$router.back()
+                    }, 1000)
+                } else {
+                    layer.msg(res.msg, {icon: 2});
+                }
+            }, function (err) { console.log(err)})
             
         }); 
             
         },
-        userCFdetail (id) { // 处方信息
-            var _this = this;
-            _this.$http.post('/', {id:id}, function (res) {
-                console.log(res)
-                if (res.code == 1) {
-
-                }
-            }, function (err) {})
-        },
+       
         godetail(id) {    // 预览
-            console.log(id)
-            layui.use(["layer"], function () {
+            var _this = this;
+            layui.use(["layer"], function () { // 获取 处方展示 信息
                 var layer = layui.layer;
                 var $ = layui.jquery;
-                layer.open({
-                    type: 1,
-                    shade: 0.2,
-                    shadeClose: true,
-                    closeBtn: 1,
-                    title: "",
-                    content: $("#fang_preview"),
-                    area: ["600px", "560px"],
-                    cancel: function () { }
-                });
+                _this.$http.post('/mobile/Doch5/recipe_look', {id:id}, function (res) {
+                    console.log(res)
+                    if (res.code == 1) {
+                        _this.recipeDetail = res.data
+                        _this.recipe_eat = res.recipe_eat
+                        layer.open({
+                            type: 1,
+                            shade: 0.2,
+                            shadeClose: true,
+                            closeBtn: 1,
+                            title: "",
+                            content: $("#fang_preview"),
+                            area: ["640px", "560px"],
+                            cancel: function () { }
+                        });
+                    } else {
+
+                    }
+                }, function (err) {})
+                
             });
         },
-       f_download () { // 处方下载
-            console.log('download')
-            /*图片跨域及截图模糊处理*/
-            var shareContent = document.getElementById('html'),//需要截图的包裹的（原生的）DOM 对象
-                width = shareContent.clientWidth,//shareContent.offsetWidth; //获取dom 宽度
-                height = shareContent.clientHeight,//shareContent.offsetHeight; //获取dom 高度
-                canvas = document.createElement("canvas"), //创建一个canvas节点
-                scale = 4; //定义任意放大倍数 支持小数
-            canvas.width = width * scale; //定义canvas 宽度 * 缩放
-            canvas.height = height * scale; //定义canvas高度 *缩放
-            canvas.style.width = shareContent.clientWidth * scale + "px";
-            canvas.style.height = shareContent.clientHeight * scale + "px";
-            canvas.getContext("2d").scale(scale, scale); //获取context,设置scale
-            var opts = {
-                scale: scale, // 添加的scale 参数
-                canvas: canvas, //自定义 canvas
-                logging: false, //日志开关，便于查看html2canvas的内部执行流程
-                width: width, //dom 原始宽度
-                height: height,
-                dpi: window.devicePixelRatio
-                // useCORS: true // 【重要】开启跨域配置
-            };
-            html2canvas(shareContent,opts).then(function(canvas) {
-               
-                var url = canvas.toDataURL();
-                var triggerDownload = $("<a>").attr("href", url).attr("download", "处方单.png").appendTo("body");
-                triggerDownload[0].click();
-                triggerDownload.remove();
-            })
+        
+        f_download (id) { // 处方下载
+            var _this = this;
+            function isIE() { //ie?
+                if (!!window.ActiveXObject || "ActiveXObject" in window) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+            _this.$http.post('/mobile/Doch5/recipe_look', {id:id}, function (res) {
+                if (res.code == 1) {
+                    _this.recipeDetail = res.data
+                    _this.recipe_eat = res.recipe_eat
+                    var shareContent = document.getElementById('fang_preview');//需要截图的包裹的（原生的）DOM 对象
+                        shareContent.style.display = 'block'
+                        shareContent.classList.add('capture')
+                    var ttm = setTimeout(() => {
+                        var width = shareContent.clientWidth,//shareContent.offsetWidth; //获取dom 宽度
+                            height = shareContent.clientHeight,//shareContent.offsetHeight; //获取dom 高度
+                            canvas = document.createElement("canvas"), //创建一个canvas节点
+                            scale = window.devicePixelRatio * 2; //定义任意放大倍数 支持小数
+                        canvas.width = width * scale; //定义canvas 宽度 * 缩放
+                        canvas.height = height * scale; //定义canvas高度 *缩放
+                        canvas.style.width = shareContent.clientWidth * scale + "px";
+                        canvas.style.height = shareContent.clientHeight * scale + "px";
+                        canvas.getContext("2d").scale(scale, scale); //获取context,设置scale
+                        var opts = {
+                            scale: scale, // 添加的scale 参数
+                            canvas: canvas, //自定义 canvas
+                            logging: false, //日志开关，便于查看html2canvas的内部执行流程
+                            width: width, //dom 原始宽度
+                            height: height,
+                            // useCORS: true // 【重要】开启跨域配置
+                        };
+                        html2canvas(shareContent,opts).then(function(canvas) {
+                            if (isIE()) {
+                                var blob = canvas.msToBlob();
+                                console.log(blob)
+                                navigator.msSaveBlob(blob,'处方单.png');
+                                return false;
+                            }
+                            var url = canvas.toDataURL();
+                            var triggerDownload = $("<a>").attr("href", url).attr("download", "处方单.png").appendTo("body");
+                            triggerDownload[0].click();
+                            triggerDownload.remove();
+                        })
+                        clearTimeout(ttm)
+                    }, 500)
+                    var maxtm = setTimeout(() => {
+                        shareContent.classList.remove('capture')
+                        shareContent.style.display = 'none'
+                        clearTimeout(maxtm)
+                        
+                    }, 800)
+                } else {
+
+                }
+                
+            },function (err) {})
+           
+            
        },
        browse () { // 浏览
             var _this = this;
@@ -520,6 +563,7 @@ export default {
 <style scoped lang="less">
 #presciptionRecords {
     background-color: #F1F2F9;
+    overflow-x: hidden;
     .orderList_tit {
         border-bottom: 1px solid #e6e6e6;
         font-size: 16px;
@@ -715,10 +759,15 @@ export default {
         border: 1px solid rgba(0,0,0,.2);
         .f_title {
             overflow: hidden;
-            li {
-                margin-right: 15px;
+            > li {
+                // margin-right: 10px;
                 float: left;
-                font-size: 6px;
+                > span {
+                    display: inline-block;
+                    font-size: 12px;
+                    -webkit-transform: scale(0.8);
+                    transform: scale(0.8);
+                }
             }
         }
         >h2 {
@@ -750,6 +799,7 @@ export default {
             position: relative;
             >h3 {
                 font-size: 12px;
+                font-weight: 550;
             }
             > div {
                 ul {
@@ -757,6 +807,9 @@ export default {
                     margin-top: 10px;
                     li {
                         padding: 3px 0;
+                        span:last-child {
+                            margin-left: 20px;
+                        }
                     }
                 }
             }
@@ -777,6 +830,17 @@ export default {
         .f_signature {
             margin-top: 10px;
             overflow: hidden;
+            display: -webkit-box; 
+            display: -moz-box; 
+            display: -webkit-flex; 
+            display: -moz-flex; 
+            display: -ms-flexbox; 
+            display: flex;
+            -webkit-align-items:center;
+            box-align:center;
+            -moz-box-align:center;
+            -webkit-box-align:center;
+            align-items: center;
             li {
                 float: left;
                 width: 50%;
@@ -786,52 +850,7 @@ export default {
             }
         }
     }
-    
-
-    
 }
-
-#termination {
-    padding: 20px;
-    width: 100%;
-    display: none;
-    > h2 {
-        font-size: 17px;
-        color: #333;
-        text-align: center;
-        font-weight: 500;
-    }
-    .termination_txt {
-        width: 100%;
-        margin-top: 20px;
-        > p {
-            color: #333;
-        }
-        > textarea {
-            width: 100%;
-            margin-top: 12px;
-            height: 120px;
-            resize: none;
-            padding: 12px;
-            background-color: #F5F5F5;
-            border: 1px solid #F5F5F5;
-        }
-    }
-    .termination_btn {
-        margin-top: 20px;
-        text-align: center;
-        .btn_cancel {
-            padding: 8px 26px; 
-            vertical-align: middle;
-            border: 1px solid #3196FF;
-            background-color: #FFF;
-            color:#3196FF;
-            border-radius: 4px;
-            margin-right: 24px;
-        }
-    }
-}
-
 .icon_black {
     border: 1px solid #3196FF;
     font-size: 10px;
@@ -846,5 +865,11 @@ export default {
     padding: 2px 6px;
     border-radius: 10px;
     color: #FFF;
+}
+.capture{
+    position: absolute;
+    top: 0;
+    right: -100%;
+    z-index: 99;
 }
 </style>

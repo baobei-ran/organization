@@ -38,11 +38,6 @@
                             <span class="Color_red">*</span>
                             <label >性别</label>
                             <div class="layui-input-inline" >
-                                <!-- <select name="city" lay-verify="" style='width:165px;'  v-model='sex'  class="layui-input">
-                                    <option value="">请选择</option>
-                                    <option value="1">男</option>
-                                    <option value="2">女</option>
-                                </select> -->
                                 <el-select v-model="sex" style="width:165px;" placeholder="请选择">
                                     <el-option
                                     v-for="item in options"
@@ -105,14 +100,29 @@
                 <table class="layui-table" lay-skin="">
                     <thead>
                         <tr class="ac">
-                            <td class="firstheadtd">药品名称</td>
-                            <td>药品数量</td>
-                            <td>用法及用量</td>
+                            <td class="firstheadtd"><span class="Color_red">*</span>药品名称</td>
+                            <td><span class="Color_red">*</span>药品数量</td>
+                            <td><span class="Color_red">*</span>用法及用量</td>
+                            <td>规格</td>
                             <td>厂家名称</td>
-                            <td></td>
+                            <td style="width:120px;"></td>
                         </tr>
                     </thead>
-                    <!-- <tbody >
+                    <tbody>
+                        <tr class="Color_black ac" v-for='(val,i) in drugPreserveList' :key='i+"_jj"' >
+                            <td>
+                                {{val.name}}
+                            </td>
+                            <td>
+                                <input type="number" name="title" v-model="val.num"  lay-verify="required" placeholder="【药品数量】" autocomplete="off" class="layui-input">
+                            </td>
+                            <td style="width: 200px;">
+                               <span class="usages">{{val.usage}}</span>
+                            </td>
+                            <td>{{ val.gg }}</td>
+                            <td>{{ val.cname }}</td>
+                            <td class="delBtn"><span class="pointer" style="color: #F09F88;" @click='dels(i)'><img src="../../../common/image/icon/icon_sc@2x.png" alt="" />删除此商品</span></td>
+                        </tr>
                         <tr class="Color_black ac" v-for='(val,i) in tablelist' :key='i' >
                             <td>
                                 <input type="text" name="title" v-model='val.name' lay-verify="required" placeholder="【药品名称】" autocomplete="off" class="layui-input">
@@ -124,28 +134,17 @@
                                 <input type="text" name="title" v-model="val.usage" lay-verify="required" placeholder="【用法及用量】" autocomplete="off" class="layui-input">
                             </td>
                             <td>
+                                <input type="text" name="title" v-model="val.gg" lay-verify="required" placeholder="【规格】" autocomplete="off" class="layui-input">
+                            </td>
+                            <td>
                                 <input type="text" name="title" v-model="val.cname" lay-verify="required" placeholder="【厂家名称】" autocomplete="off" class="layui-input">
                             </td>
-                            <td><span class="pointer" style="color: #F09F88;" @click='dels(i)'><img src="../../../common/image/icon/icon_sc@2x.png" alt="" />删除此商品</span></td>
-                        </tr>
-                    </tbody> -->
-                    <tbody v-if='drugPreserveList.length'>
-                        <tr class="Color_black ac" v-for='val in drugPreserveList' :key='val.id' >
-                            <td>
-                                {{val.mc}}
+                            <td class="delBtn">
+                                <!-- <span class="pointer" style="color: #F09F88;" @click='dels(i)'><img src="../../../common/image/icon/icon_sc@2x.png" alt="" />删除此商品</span> -->
                             </td>
-                            <td>
-                                1
-                            </td>
-                            <td style="width: 200px;">
-                               <span class="usages">{{val.yfyl}}</span>
-                            </td>
-                            <td >
-                                {{ val.gg }}
-                            </td>
-                            <td><span class="pointer" style="color: #F09F88;" @click='dels(val.id)'><img src="../../../common/image/icon/icon_sc@2x.png" alt="" />删除此商品</span></td>
                         </tr>
                     </tbody>
+                    
                 </table>
                 <div class="addbtn">
                     <button @click='drugList'>+添加药品</button>
@@ -160,14 +159,14 @@
             </div>
         </div>
         <div class="returns">
-                <button class="layui-btn" @click='go("/server/YaoprescriptionListPic/YaoprescriptionList")'>取消</button>
-                <!-- <button class="layui-btn layui-btn-normal" ></button> -->
-                <el-button class='Mg-L20' type="primary" :disabled='disabled' @click='submitdata' :loading="disabled">立即提交</el-button>
+                <button class="layui-btn" @click='returnBnt'>取消</button>
+                <button class="layui-btn layui-btn-normal" @click='submitdata'>立即提交</button>
+                <!-- <el-button class='Mg-L20' type="primary" :disabled='disabled' @click='submitdata' :loading="disabled">立即提交</el-button> -->
         </div>
 
         <!-- 添加药品弹框 -->
         <div id="addDrugLsit" class='hide'>
-            <h1>添加药品 <span>手动添加</span></h1>
+            <h1>添加药品 <span @click="addtabel">手动添加</span></h1>
             <ul class="dis_f">
                     <li class="layui-inline Pd-L10">
                     <label>药品名称</label>
@@ -216,10 +215,12 @@
                     >
                     </el-table-column>
                     <el-table-column align='center'
-                    prop="yfyl"
                     label="用法用量"
                     width='250'
                     >
+                    <template slot-scope="scope">
+                        <p class="p_block">{{ scope.row.yfyl }}</p>
+                    </template>
                     </el-table-column>
                     <el-table-column align='center'
                     prop="gg"
@@ -235,6 +236,20 @@
                <button type="button" class="layui-btn layui-btn-normal" @click="drugPreserve">保存</button>
             </div>
         </div>
+
+        <!-- 收费提示 -->
+        <el-dialog title="提示" center :visible.sync="dialogVisible" :show-close='false' width="400px" >
+            <div style='padding: 20px;text-align:center;'>
+                <p style="line-height: 30px;color:#333;font-size:16px;">{{ submitMsg1 }} <br/> {{ submitMsg2 }} </p>
+            </div>
+            <div style='width: 100%;text-align:center;margin-top: 20px;'>
+                <span slot="footer" class="dialog-footer">
+                    <el-button style="border: 1px solid #3196FF; color:#3196FF;margin-right:30px;" @click="dialogVisible = false">取 消</el-button>
+                    <el-button type="primary" :disabled='disabled' :loading="disabled" @click="submitBtn(btnType)">确 定</el-button>
+                </span>
+            </div>
+        </el-dialog>
+
     </div>
 </template>
 <script>
@@ -275,14 +290,18 @@ export default {
             size: 3,                    // 处方药品的列表数量
             disabled: true,             // 按钮
             tablelist: [                // 获取处方药品的数据
-                {name: '', num: '', usage: '', cname: ''},
-                {name: '', num: '', usage: '', cname: ''},
+                {name: '', num: '', usage: '', cname: '', gg: ''},
+                {name: '', num: '', usage: '', cname: '', gg: ''},
             ],
             drugData: [],               // 药品列表
             multipleDrug: [],    // 选择的药品
             drugName: '',         // 药品名称
             drugManufacturer: '', // 药品厂商
             drugPreserveList: [], // 保存的药品
+            submitMsg1: '填写的的信息尚未提交',
+            submitMsg2: '是否确认返回？',
+            dialogVisible: false,
+            btnType: 0,    
         }
        
     },
@@ -303,13 +322,20 @@ export default {
                 self.disabled = false
             }
         }, function (err) { console.log(err)})
-        this.searchDrug()
+        this.initDrug()
     },
     methods: {
-        dels (id) {  // 删除药品
-            this.drugPreserveList = this.drugPreserveList.filter(val => {
-                return val.id !== id
-            })
+        returnBnt () {
+           this.submitMsg1 = '填写的的信息尚未提交'
+           this.submitMsg2 = '是否确认返回？'
+           this.dialogVisible = true 
+           this.btnType = 0    
+        },
+        dels (i) {  // 删除药品
+            this.drugPreserveList.splice(i, 1)
+            // this.drugPreserveList = this.drugPreserveList.filter(val => {
+            //     return val.id !== id
+            // })
         },
         handleSelectionChange(val) {  // 选择药品添加
             console.log(val)
@@ -322,7 +348,22 @@ export default {
                 return { "background-color": "#FFF" }
             }
         },
-        searchDrug () {  // 获取药品信息
+        initDrug () { // 获取药品信息
+            var _this = this;
+            var obj = {yname: this.drugName, cname: this.drugManufacturer }
+            layui.use('layer', function(){
+                var layer = layui.layer;
+                _this.$http.post('/shv2/recipetwo/hos_store', obj, function (res){
+                    console.log(res)
+                    if (res.code == 1) {
+                        _this.drugData = res.data
+                    } else {
+                        _this.drugData = []
+                    }
+                }, function (err) {})
+            })
+        },
+        searchDrug () {  // 搜索药品信息
             var _this = this;
             var obj = {yname: this.drugName, cname: this.drugManufacturer }
             layui.use('layer', function(){
@@ -340,18 +381,28 @@ export default {
         },
         drugPreserve () {  // 药品保存
             var _this = this;
-            layui.use('layer', function(){
+            layui.use('layer', function() {
                 var layer = layui.layer;
                 if (_this.multipleDrug.length <= 0) {
                     layer.msg('请选择药品',{icon:0});
                     return false;
                 }
-                console.log(_this.drugPreserveList)
-                if (_this.drugPreserveList.length > 0) {
-                    _this.drugPreserveList.concat(_this.multipleDrug)
-                } else {
-                    _this.drugPreserveList = _this.multipleDrug
-                }
+                // 'name' => '药品名称',
+                // 'num' => '药品数量',
+                // 'id'=>'药品列表id or 空',
+                // 'usage'=>'用法及用量',
+                // 'cname'=>'厂家名称',
+                // 'gg'=>规格
+                _this.multipleDrug.map(v => {
+                    var obj = new Object();
+                    obj.name = v.mc
+                    obj.num = 1
+                    obj.id = v.id
+                    obj.usage = v.yfyl
+                    obj.cname = v.gc
+                    obj.gg = v.gg
+                    _this.drugPreserveList.push(obj)
+                })
                 _this.multipleDrug = []
                 _this.drugCancel()
                 _this.searchDrug()
@@ -365,8 +416,7 @@ export default {
                 var table = layui.table;
                 var isphone = /^1[3456789]\d{9}$/;
                 var isNum = /\d/;
-                console.log(_this.checkedCities)
-
+                var flag = false;
                 if (_this.checkedCities.length <= 0) {
                     layer.msg('请选择医生',{icon:2})
                     return;
@@ -395,63 +445,46 @@ export default {
                     layer.msg('请输入症状',{icon:2})
                     return;
                 }
-                _this.disabled = true
-                var formdata = new FormData();
-                
-                _this.checkedCities.map(val => {
-                    formdata.append('did[]', val.did)
+                var tabledata = _this.tablelist.filter(val => {
+                    return val.name !== '' || val.num !== '' || val.usage !== ''
                 })
-                
-                formdata.append('names', _this.username)
-                formdata.append('sex', _this.sex)
-                formdata.append('age', _this.age)
-                formdata.append('phone', _this.userPhone)
-
-                formdata.append('liver', _this.liver != '' ? _this.liver: '正常')
-                formdata.append('kidney', _this.kidney != ''? _this.kidney : '正常')
-                formdata.append('allergy', _this.allergy != ''? _this.allergy : '正常')
-                formdata.append('ago', _this.ago != ''? _this.ago : '正常')
-                formdata.append('yun', _this.yun != ''? _this.yun : '正常')
-                formdata.append('disease', _this.disease)
-
-                // var tabledata = _this.tablelist.filter(val => {
-                //     return val.name != '' && val.num != '' && val.usage != ''
-                // })
-                // tabledata.forEach(val => {
-                //     formdata.append('name[]', val.name)
-                //     formdata.append('num[]', val.num)
-                //     formdata.append('usage[]', val.usage)
-                // })
-
-                formdata.append('drug[]', _this.tablelist)  // 传递药品列表
-                
-                formdata.append('shop_word', _this.shop_word)
-                _this.$http.upload('/shv2/Recipetwo/recipe_add', formdata, function (res) {//
-                    console.log(res)
-                    var time = setTimeout(() => {
-                        _this.disabled = false
-                        clearTimeout(time)
-                    }, 3000)
-                    if (res.code == 1) {
-                        layer.msg('提交成功', { icon:1 , time: 1000})
-                       setTimeout(() => {
-                           _this.go('/server/YaoprescriptionListPic/YaoprescriptionList')
-                       }, 1000)
-                    } else if (res.code == 0) {
-                        layer.msg('请填写处方药品',{icon:2})
-                    } else {
-                        layer.msg(res.msg,{icon:2})
-                    }
-                }, function (err) { console.log(err) 
-                    _this.disabled = false
-                });
-                
+                if (tabledata.length <=0 && _this.drugPreserveList.length <= 0) {
+                    layer.msg('请输入药品',{icon:2})
+                    return ;
+                }
+                console.log(tabledata)
+                if (tabledata.length > 0) {
+                    tabledata.map(val => {
+                        if (!val.name || !val.num || !val.usage) {
+                            layer.msg('请完善药品数据',{icon:2})
+                            flag = true
+                            return false;
+                        }
+                    })
+                }
+                if(_this.drugPreserveList.length>0) {
+                    _this.drugPreserveList.map(val => {
+                        if (val.num == '') {
+                            layer.msg('请输入药品数量',{icon:2})
+                            flag = true
+                            return false;
+                        }
+                    })
+                }
+                if (flag) {
+                    return false;
+                }
+                _this.submitMsg1 = '您将通过鲁医通账户支付此次处方费用'
+                _this.submitMsg2 =  '是否确认提交？'
+                _this.dialogVisible = true
+                _this.btnType = 1
             });
         },
          
         addtabel () {   // 添加表格
-            var obj = {name: '', num: '', usage: ''}
+            var obj = {name: '', num: '', usage: '', cname: '', gg: ''}
             this.tablelist.push(obj)
+            this.drugCancel()
         },
         handleCheckAllChange(val) {     // 全选
             if(val) {
@@ -497,7 +530,7 @@ export default {
         drugList () {  // 添加药品列表
             var self = this;
             if (this.drugData.length <= 0) {
-                this.searchDrug()
+                this.initDrug()
             }
             layui.use(["layer"], function () {
                 var layer = layui.layer;
@@ -519,6 +552,82 @@ export default {
                 var layer = layui.layer;
                 layer.closeAll('page');
             }); 
+        },
+        submitBtn (n) {
+            var _this = this;
+            if (n == 0) {
+                this.go("/server/YaoprescriptionListPic/YaoprescriptionList")
+            } else {
+                this.disabled = true
+                var arr = []
+                _this.checkedCities.map(val => {
+                    arr.push(val.did)
+                })
+                
+                var tabledata = _this.tablelist.filter(val => {
+                    return val.name != '' || val.num != '' || val.usage != ''
+                })
+
+                _this.drugPreserveList.map(val => {
+                    function List(){
+                        this.data = new Array();
+                        this.put = function(key,value){
+                            this.data[key] = value;
+                        };
+                        this.get = function(key){
+                            return this.data[key];
+                        };
+                        this.size = function(){
+                            return this.data.length;
+                        }
+                    }
+                    var data = new List();
+                    for (var v in val) {
+                        data.put(v, val[v])
+                    }
+                    console.log(data.data)
+                })
+
+                if (tabledata.length>0) {
+                    tabledata.forEach(val => {
+                        console.log(val)
+                       _this.drugPreserveList.push(val)
+                    })
+                }
+
+                var obj = {
+                    did: arr.join(','),
+                    names: _this.username,
+                    sex: _this.sex,
+                    age: _this.age,
+                    phone: _this.userPhone,
+                    liver: _this.liver != '' ? _this.liver: '正常',
+                    kidney: _this.kidney != ''? _this.kidney : '正常',
+                    allergy: _this.allergy != ''? _this.allergy : '正常',
+                    ago: _this.ago != ''? _this.ago : '正常',
+                    yun: _this.yun != ''? _this.yun : '正常',
+                    disease:  _this.disease,
+                    drug: _this.drugPreserveList,
+                    shop_word: _this.shop_word
+                }
+                _this.$http.postJson('/shv2/Recipetwo/recipe_add', obj,null, function (res) {
+                    console.log(res)
+                    if (res.code == 1) {
+                        layer.msg('提交成功', { icon:1 , time: 1000})
+                        _this.disabled = false
+                       setTimeout(() => {
+                           _this.go('/server/YaoprescriptionListPic/YaoprescriptionList')
+                       }, 1000)
+                    } else if (res.code == 0) {
+                        layer.msg('请添加完善处方药品',{icon:2})
+                        _this.disabled = false
+                    } else {
+                        layer.msg(res.msg,{icon:2})
+                        _this.disabled = false
+                    }
+                }, function (err) { console.log(err) });
+                
+            }
         }
        
     }
@@ -542,6 +651,7 @@ export default {
         color:#3196ff;
         -webkit-border-radius: 4px;
         border-radius: 4px;
+        margin-right: 20px;
     }
     .layui-btn {
         padding: 0 28px;
@@ -707,6 +817,10 @@ export default {
                             white-space: nowrap;
                         }
                     }
+                    .delBtn {
+                        padding: 9px 0;
+                        text-align: right;
+                    }
                 }
             }
         }
@@ -847,5 +961,10 @@ export default {
         }
     }
 }
-
+.p_block {
+    height: 20px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
 </style>

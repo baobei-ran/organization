@@ -10,7 +10,7 @@
         <!-- <div class="my_price">鲁医通账户余额&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>50元</span> <span class="my_price_msg">（请在鲁医通账户中预存100元，用于处方费用支付<b @click='go_account' class="pointer">前去充值</b>）</span></div> -->
         <div class="mySet_price dis_f Pd-T24">
             <span>处方费用设定</span>
-            <input type="text" id='price_m' v-enter-number2 v-model='set_money'/> 元
+            <input type="text" id='price_m' autocomplete="off" v-enter-number2 v-model='set_money'/> 元
             <p>（处方费用不可低于1元，申请处方时，费用将自动从鲁医通账户中扣减，医生也将根据处方费用选择是否与药店合作）</p>
         </div>
     </div>
@@ -107,7 +107,8 @@ export default {
                 times: '',          // 实时监测
                 set_money: '',      // 费用设置
                 yao_user: '',       // 药师姓名
-
+                minPrice: '',       // 费用最低设置
+                balance: '',        // 鲁医通账户余额
             }
         },
         mounted () {
@@ -122,13 +123,36 @@ export default {
                     _this.set_money = this.value
                 }
             })
+            this.getPrice()
         },
         methods: {
+            getPrice () {   // 获取账户 金额 和 处方申请最低金额
+                var _this = this;
+                this.$http.post('/shv2/Recipetwo/recipe_get',{}, function (res) {
+                    console.log(res)
+                    if (res.code == 1) {
+                        _this.minPrice = res.data.set_money;
+                        _this.balance = res.data.money_balance;
+                    }
+                }, function (err) { console.log(err)})
+            },
             addfiles1 (event) {
                 var files = event.target.files[0];  
+                console.log(files)
                 if (files) {   // 是否有文件
+                    var isPng = files.type === "image/png"
+                    var isJpg = files.type === 'image/jpg'
+                    var isJpeg = files.type === 'image/jpeg'
+                    if (!isPng && !isJpg && !isJpeg) {
+                        this.$message({
+                            message: '上传只能是jpg/jpeg/png格式的图片',
+                            type: 'error',
+                            duration: 3000
+                        })
+                        return false;
+                    }
                     if(files.size > 1024 * 1024 * 5) {    
-                        alert('图片大小不能超过 5MB!');
+                        this.$message.error('图片大小不能超过 5MB!');
                         return false;
                     }
                     var URL = window.URL || window.webkitURL; 
@@ -144,8 +168,19 @@ export default {
             addfiles2 (event) {
                 var files = event.target.files[0];
                 if (files) {
+                    var isPng = files.type === 'image/png'
+                    var isJpg = files.type === 'image/jpg'
+                    var isJpeg = files.type === 'image/jpeg'
+                    if (!isPng && !isJpg && !isJpeg) {
+                        this.$message({
+                            message: '上传只能是jpg/jpeg/png格式的图片',
+                            type: 'error',
+                            duration: 3000
+                        })
+                        return false;
+                    }
                     if(files.size > 1024 * 1024 * 5) {
-                        alert('图片大小不能超过 5MB!');
+                        this.$message.error('图片大小不能超过 5MB!');
                         return false;
                     }
                     var URL = window.URL || window.webkitURL; 
@@ -194,6 +229,10 @@ export default {
                     layer.msg('请填写处方费用',{icon:0});
                     return false;
                 }
+                if (Number(_this.balance) < Number(_this.minPrice)) {
+                    layer.msg('鲁医通余额不能小于'+_this.minPrice,{icon:0});
+                    return false;
+                }
                 if (!_this.yao_user) {
                     layer.msg('请填写药师姓名',{icon:0});
                     return false;
@@ -207,16 +246,17 @@ export default {
                     return false;
                 }
                 var formdata = new FormData();
-                formdata.append('teacher_pic', _this.set_money)
-                formdata.append('yname_pic', _this.yao_user)
+                formdata.append('money', _this.set_money)
+                formdata.append('name', _this.yao_user)
                 formdata.append('teacher_pic', _this.files1)
                 formdata.append('yname_pic', _this.files2)
-                _this.$http.upload('/shv2/Recipe/recipe_pic', formdata, function (res) {
+                formdata.append('type', 2)
+                _this.$http.upload('/shv2/Recipetwo/recipe_data', formdata, function (res) {
                     console.log(res)
                     if (res.code == 1) {
                         layer.msg('修改成功', { icon: 1, time: 1500});
                         var tm = setTimeout(() => {
-                            _this.$router.back()
+                            _this.$router.replace('/server/YaoprescriptionListPic')
                             clearTimeout(tm)
                         }, 1000)
                     } else {

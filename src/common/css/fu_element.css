@@ -1,0 +1,43 @@
+.el-input__inner {  /* 覆盖eleemnt ui 的input样式 */
+    height: 36px !important;
+    line-height: 36px !important;
+    -webkit-border-radius: 2px;
+    -o-border-radius: 2px;
+    border-radius: 2px;
+}
+.el-radio__inner {  /* 覆盖 eleemnt ui 单选 按钮的 样式 */
+    width: 18px;
+    height: 18px;
+}
+
+.el-dialog {  /* 屏幕居中 eleemnt ui Dialog 弹框样式 */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: 0 !important;
+  -ms-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+
+
+.el_textarea_fu > .el-textarea__inner {
+    border-color: #F5F5F5;
+    background-color: #F5F5F5;
+    color:#333;
+  }
+  .el_textarea_fu > .el-textarea__inner:hover {
+    border-color: #F5F5F5;
+  }
+  .el_textarea_fu > .el-textarea__inner:focus {
+    border-color: #F5F5F5;
+  }
+  .el_textarea_fu > .el-textarea__inner::-webkit-input-placeholder {
+    color: #808080;
+  }
+
+  .hide_box {
+    display: none;
+  }

@@ -45,10 +45,9 @@
                     </td>
                     <td class="Pd-L40 Ft-S16 Color_gray6">
                         <div class="layui-input-inline" style="width: 300px;">
-                            <select name="" v-model="tabledata.grade" style="width: 300px;">
-                                <option value=''>请选择机构等级</option>
-                                <option :value="val.id" v-for="val in gradeList" v-text="val.name"></option>
-                            </select>
+                            <el-select v-model="tabledata.grade" style="width: 300px;" placeholder="请选择机构等级">
+                                <el-option :value="val.id" v-for="val in gradeList" :key="val.id" :label="val.name"></el-option>
+                            </el-select>
                         </div>
                     </td>
                 </tr>
@@ -58,10 +57,9 @@
                     </td>
                     <td class="Pd-L40 Ft-S16 Color_gray6">
                         <div class="layui-input-inline" style="width: 300px;">
-                            <select name="" v-model="tabledata.type" style="width: 300px;">
-                                <option value=''>请选择医院类型</option>
-                                <option :value="val.id" v-for="val in typeList" v-text="val.name">药店</option>
-                            </select>
+                            <el-select v-model="tabledata.type" style="width: 300px;" placeholder="请选择医院类型">
+                                <el-option :value="val.id" v-for="val in typeList" :key="val.id" :label="val.name"></el-option>
+                            </el-select>
                         </div>
                     </td>
                 </tr>

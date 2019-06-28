@@ -48,10 +48,3 @@ vue.directive('enterNumber2', { // 输入金额的限制
       });
     }
   });
-
-
-  vue.filter('downMoment', function (value) { 
-      if (!value) {
-        return '';
-      }
-  })

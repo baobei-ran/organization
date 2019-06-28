@@ -25,17 +25,10 @@
                     <div class="layui-inline">
                         <label class="layui-form-label" style="width: 100px;">类型状态</label>
                         <div class="layui-input-inline" style="width: 160px;">
-                            <select name="" id="type" lay-verify="" v-model='type'>
-                                <option v-for='(val, index) in typeData' :key='index' :value="val.id">{{ val.name }}</option>
-                                
-                            </select>
+                            <el-select v-model='type' placeholder="请选择">
+                                <el-option v-for='(val, index) in typeData' :key='index' :value="val.id" :label="val.name" ></el-option>
+                            </el-select>
                         </div>
-                        <!-- <div class="layui-input-inline" style="width: 160px;">
-                            <select name="" id="status" lay-verify="">
-                                <option value="">全部状态</option>
-                                <option value="010">1</option>
-                            </select>
-                        </div> -->
                     </div>
                 </div>
             </div>

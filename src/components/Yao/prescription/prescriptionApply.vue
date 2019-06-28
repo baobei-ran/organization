@@ -103,14 +103,10 @@
                                     </ul>
                                 </td>
                                 <td>
+                                    <p style="width: 100px; margin:0 auto;">{{ val.busdate }}</p>
                                     <span>{{ val.busktime }}</span>
                                     <span>--</span>
                                     <span>{{ val.busjtime }}</span>
-                                    <!-- <ul>
-                                        <li>星期一、星期二、星期三</li>
-                                        <li>星期四、星期五、星期六</li>
-                                        <li>星期日、08:00-20:00</li>
-                                    </ul> -->
                                 </td>
                                 <td>
                                     <ul>
@@ -123,7 +119,10 @@
                                     <div class='dis_f flex_fc flex-vc'>
                                         <p class="Ft-S14 al" v-show='val.type == 1'>医生已停诊</p>
                                         <p class="pointer Ft-S14 Color_blue " v-show='val.type == 2' @click="delcode(val.did, 1)">申请合作</p>
-                                        <p class="Ft-S14 al" v-show='val.state == 3'>申请合作中</p>
+                                            <el-tooltip class="item" effect="light" placement="bottom-end" v-show='val.state == 3'>
+                                                <el-button><p class="Ft-S14 al">申请合作中</p></el-button>
+                                                <div slot="content">已申请该医生<br/>待医生同意后即可达成合作</div>
+                                            </el-tooltip>
                                         <p class="pointer Ft-S14 Color_blue " v-show='val.type == 4' @click="yes_delcode(val.did, 2)">同意合作</p>
                                     </div>
                                 </td>
@@ -141,7 +140,7 @@
             </div>
         </div>
 
-            <div id="sendgoods" class="hide">
+            <div id="sendgoods" class="hide_box">
                 <p class="txt">合作申请中，请等待医生回复！</p>
                 <p class="clear">
                     <span class=""><button class="send pointer" @click="cancel">确定</button></span>
@@ -223,7 +222,14 @@ export default {
                 {id:10, val:'健康讲堂'},
                 {id:11, val: '诊后随访'},
                 {id:12,val:'视频问诊'},
-                {id:13, val:'合作药店'},]
+                {id:13, val:'合作药店'},],
+            docTimer: [{id:1, val:'星期一'},  // 服务时间
+                {id:2, val:'星期二'},
+                {id:3, val:'星期二'},
+                {id:4, val:'星期四'},
+                {id:5, val:'星期五'},
+                {id:6, val:'星期六'},
+                {id:0, val:'星期日'}],
         }
     },
     mounted() {
@@ -289,6 +295,18 @@ export default {
                             }
                             val.business = arrList
                         })
+                        _this.tableList.map(val => { // 处理星期的日期
+                            var dates = val.busdate.split(','), dateArr = [];
+                            for (var i =0;i<_this.docTimer.length;i++) {
+                                for (var j=0; j<dates.length;j++) {
+                                    if (_this.docTimer[i].id == dates[j] ) {
+                                        dateArr.push(_this.docTimer[i].val)
+                                    }
+                                }
+                            }
+                            val.busdate = dateArr.join(',')
+                        })
+                        
                         if (num == 1) {
                             _this.pageFun(res.count)
                         }
@@ -324,10 +342,10 @@ export default {
             var _this = this;
             layui.use('layer', function(){
                 var layer = layui.layer;
-                if (!_this.list.name && !_this.list.true_name && !_this.list.grade && !_this.tdlast) {
-                    layer.msg('请输入要搜索的内容', { icon: 5, time: 1500});
-                    return false;
-                }
+                // if (!_this.list.name && !_this.list.true_name && !_this.list.grade && !_this.tdlast) {
+                //     layer.msg('请输入要搜索的内容', { icon: 5, time: 1500});
+                //     return false;
+                // }
                  _this.initdata(1)
             }); 
         },
@@ -373,7 +391,9 @@ export default {
                             title: "",
                             content: $("#sendgoods"),
                             area: ["400px", "300px"],
-                            cancel: function () {}
+                            end: function () {
+                                $("#sendgoods").hide()
+                            }
                         });
                         _this.initdata(_this.list.page)
                     } else if (res.code == 4) {
@@ -381,7 +401,7 @@ export default {
                     } else {
                         layer.msg('申请失败, 请联系客服', { icon: 5})
                     }
-                }, function (err) { console.log(err)})
+                }, function (err) { console.log(err) })
            });
        },
         cancel () {     // 取消关闭弹框
@@ -450,6 +470,20 @@ export default {
     }
 }
 </script>
+
+<style lang='less'>
+.el-tooltip {   //  更改 element ui的 Tooltip 提示信息的样式
+    border: 0;
+    background-color: inherit;
+    padding: 0;
+    &:hover {
+        background-color: inherit;
+        color: #333;
+        cursor: default;
+    }
+}
+</style>
+
 
 <style scoped lang="less">
 #orderList {
@@ -592,7 +626,7 @@ export default {
                                 }
                             }
                             .docMsg {
-                                width: 200px;
+                                width: 220px;
                                 margin: 0 auto;
                                 text-align: left;
                             }
@@ -607,7 +641,7 @@ export default {
 #sendgoods {
     padding-left: 53px;
     padding-right: 53px;
-
+    display: none;
     .txt {
         padding: 80px 0;
         font-size: 16px;

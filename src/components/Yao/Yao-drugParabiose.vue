@@ -10,8 +10,8 @@
                 </ul>
                 <div class="layui-tab-content">
                     <div class="screen_type Mg-T14 ">
-                        <div class="layui-form-item layui-row">
-                            <div class="layui-col-md2">
+                        <div class="layui-form-item layui_searchVal dis_f dis_js">
+                            <div >
                                 <div class="layui-inline lay_width">
                                     <label class="layui-form-label">关联机构</label>
                                     <div class="layui-input-inline">
@@ -19,7 +19,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="layui-col-md4 selecttime">
+                            <div class="selecttime">
                                 <label class="layui-form-label">关联时间</label>
                                 <div class="layui-input-block">
                                     <div class="layui-input-inline">
@@ -31,29 +31,16 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="layui-col-md2 ">
+                            <div>
                                 <div class="layui-inline lay_width">
                                     <label class="layui-form-label">业务状态</label>
-                                    <select name="city" lay-verify="required" class="select_class" v-model='state'>
-                                        <option v-for="(val,i) in statuslist" :value="val.id" :key='i'>{{ val.name }}</option>
-                                    </select>
+                                    <el-select v-model='state' placeholder="请选择业务" style="width: 130px;">
+                                        <el-option v-for="(item,i) in statuslist" :key="i" :label="item.name" :value="item.id"></el-option>
+                                    </el-select>
                                 </div>
                             </div>
-                            <!-- <div class="layui-col-md2">
-                                <div class="layui-inline lay_width">
-                                    <label class="layui-form-label" style="width:90px;">上/下级机构</label>
-                                    <select name="city" lay-verify="required" class="select_class">
-                                        <option value="">全部</option>
-                                        <option value="010">xx</option>
-                                        <option value="021">xx</option>
-                                        <option value="0571">xx</option>
-                                    </select>
-                                </div>
-                            </div> -->
-                            <div class="layui-col-md2">
-                                <div class="layui-input-inline">
-                                    <span class="Ft-S14 selectbtn ac pointer" @click='search'>查询</span>
-                                </div>
+                            <div>
+                                <span class="Ft-S14 selectbtn ac pointer" @click='search'>查询</span>
                             </div>
                         </div>
 
@@ -193,16 +180,20 @@ export default {
         background-color: #e5f0ff;
     }
     .screen_type {
+        width: 100%;
+        .layui_searchVal {
+            width:100%;
+        }
         .layui-form-item {
             .lay_width {
-                width: 100%;
+                
                 .layui-form-label {
                     width: 66px;
                     padding: 9px 10px 9px 0px;
                 }
                 .layui-input-inline {
                     font-size: 14px;
-                    width: 120px;
+                    width: 140px;
                     input {
                         height: 38px;
                     }
@@ -233,9 +224,9 @@ export default {
             display: inline-block;
             color: #3196ff;
             background: #fff;
-            width: 50px;
-            height: 28px;
-            line-height: 28px;
+            width: 60px;
+            height: 30px;
+            line-height: 30px;
             border: 1px solid #3196ff;
             border-radius: 4px;
             position: relative;

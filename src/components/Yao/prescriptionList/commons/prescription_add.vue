@@ -9,7 +9,7 @@
         <div class="mySet_price dis_f">
             <span>处方费用设定</span>
             <input type="text" id='price_m' v-enter-number2 v-model='set_money'/> 元
-            <p>（处方费用不可低于1元，申请处方时，费用将自动从鲁医通账户中扣减，医生也将根据处方费用选择是否与药店合作）</p>
+            <p>（处方费用不可低于{{ setPrice }}元，申请处方时，费用将自动从鲁医通账户中扣减，医生也将根据处方费用选择是否与药店合作）</p>
         </div>
     </div>
 

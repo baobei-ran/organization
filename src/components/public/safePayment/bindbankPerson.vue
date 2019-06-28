@@ -11,11 +11,15 @@
                     </td>
                     <td class="Pd-L40 Ft-S16 Color_gray6">
                         <div class="layui-input-inline" style="width: 200px;">
-                            <select name="" id="type" lay-verify="" style="width: 200px;">
+                            <el-select @change="cardToggle(cardVal)" v-model="cardVal">
+                                <el-option value="1" label="法人账户"></el-option>
+                                <el-option value="2" label="其他账户"></el-option>
+                            </el-select>
+                            <!-- <select name="" id="type" lay-verify="" style="width: 200px;">
                                 <option value="1">其他账户</option>
-                                <!-- <option value="2">对公账户</option> -->
+                                <option value="2">对公账户</option>
                                 <option value="3">法人账户</option>
-                            </select>
+                            </select> -->
                         </div>
                     </td>
                 </tr>
@@ -132,27 +136,30 @@ export default {
             zcard: '',                     // 身份证正面
             fcard: '',                     // 身份证反面
             upfile: '',                    // 授权证明文件
+            cardVal: '2',                  // 绑卡账户 切换
         }
     },
     mounted() {
         this.initdata()
     },
     methods: {
-        test() {
-            this.go('/finance/bankcardadmin/checkbank')
+        cardToggle (n) {
+            if (n == 1) {
+                this.go('/finance/bankcardadmin/bindbankLegal')  // 法人账户
+            }
         },
         initdata() {
           var _this=this
           var formdata = new FormData();
             layui.use(["layer"], function () {
                 var $ = layui.jquery;
-                $("#type").on("change", function () {
-                    if ($("#type").val() == 2) {
-                        _this.go('/finance/bankcardadmin/safePayment')  // 对公账户，已隐藏
-                    } else if ($("#type").val() == 3) {
-                        _this.go('/finance/bankcardadmin/bindbankLegal')  // 法人账户
-                    }
-                });
+                // $("#type").on("change", function () {
+                //     if ($("#type").val() == 2) {
+                //         _this.go('/finance/bankcardadmin/safePayment')  // 对公账户，已隐藏
+                //     } else if ($("#type").val() == 3) {
+                //         _this.go('/finance/bankcardadmin/bindbankLegal')  // 法人账户
+                //     }
+                // });
 
                 $('#zfile').on('change', function () {  // 身份证正面
                     $('#zcard > img').attr('src' , window.URL.createObjectURL(this.files[0]))

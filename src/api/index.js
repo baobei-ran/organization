@@ -1,12 +1,21 @@
 import axios from "axios";
-
+import router from '../router/index'
+// var baseURL = document.location.origin
 // var baseURL = "https://www.yunyikang.cn" // 正式
 var baseURL = "http://test99.yunyikang.cn"; // 测试
-// var baseURL="http://192.168.8.107"//
 
-
+if (process.env.NODE_ENV == 'development') {
+  baseURL = "http://test99.yunyikang.cn";
+}
+else if (process.env.NODE_ENV == 'debug') {
+	baseURL = "http://test99.yunyikang.cn";
+}
+else if (process.env.NODE_ENV == 'production') {
+	baseURL = "https://www.yunyikang.cn";
+}
+import { Message } from 'element-ui';
 axios.defaults.retry = 2;           //  发起请求次数
-axios.defaults.retryDelay = 2000;   //  每次请求时间
+axios.defaults.retryDelay = 1500;   //  每次请求时间
 
 axios.defaults.withCredentials = true;
 var http = axios.create({
@@ -43,7 +52,16 @@ http.interceptors.response.use(function(res) {
   // 全局拦截处理未登录
   if (res.data.code == 406) {
     localStorage.clear();
-    window.location.href = "/shanghu/#/login";
+    Message({
+      showClose: true,
+      message: '登录失效，请重新登录！',
+      type: 'warning',
+      center: true
+    });
+    router.replace({
+      path: '/login',
+    });
+    // window.location.href = "/shanghu/#/login";
   }
   return res;
 }, function (error) {
@@ -141,59 +159,18 @@ function $upload(Url, data, handle) {
       handle(res.data);
     })
     .catch(error => {
-      if (error && error.response) {
-        switch (error.response.status) {
-          case 400:
-            console.log('错误请求')
-            break;
-          case 401:
-            console.log('未授权，请重新登录')
-            break;
-          case 403:
-            console.log( '拒绝访问')
-            break;
-          case 404:
-            console.log('请求错误,未找到该资源')
-            break;
-          case 405:
-            console.log('请求方法未允许')
-            break;
-          case 408:
-            console.log('请求超时')
-            break;
-          case 500:
-            console.log('服务器端出错')
-            break;
-          case 501:
-            console.log('网络未实现')
-            break;
-          case 502:
-            console.log('网络错误')
-            break;
-          case 503:
-            console.log('服务不可用')
-            break;
-          case 504:
-            console.log('网络超时')
-            break;
-          case 505:
-            console.log('http版本不支持该请求')
-            break;
-          default:
-            console.log(`连接错误${error.response.status}`)
-        }
-      }
+      rejectErr(error)
       return Promise.reject(error);
     });
 }
 
-function Axios(method, url, params) {
+function Axios(method, url, data) {
   return new Promise((resolve, reject) => {
     http({
       method: method,
       url: url,
-      data: method === "post" || method === "put" ? params : null,
-      params: method === "GET" || method === "delelte" ? params : null
+      data: method === "post" || method === "put" ? data : null,
+      params: method === "GET" || method === "delelte" ? data : null
     })
       .then(function(res) {
         resolve(res.data);
@@ -223,11 +200,12 @@ function uploadFile (Url, data, upload, handle) {
 
 
 
+
 export default {
   get: function(url, params, response, err) {
     return apiAxios("GET", url, params, response, err);
   },
-  post: function(url, params, response, err) {
+  post: function(url, params, response, err) {  // 普通请求数据方式
     return apiAxios("post", url, params, response, err);
   },
   put: function(url, params, response, err) {
@@ -236,19 +214,27 @@ export default {
   delete: function(url, params, response, err) {
     return apiAxios("delete", url, params, response, err);
   },
-  all: function(arr, response) {
+  all: function(arr, response) { // 并发请求
     axios.all(arr).then(
       axios.spread(function(acct, perms) {
         return response(acct, perms);
       })
     );
   },
-  upload: function(url, params, response) {
+  upload: function(url, params, response) {  // formdata 传参方法
     return $upload(url, params, response);
   },
   $post: async function (url, data) { // 用 then 接收
     return await Axios('POST', url, data)
   },
-  uploadFile: uploadFile,
-  baseURL: baseURL  // 导出前缀路径
+  uploadFile: uploadFile, // 批量上传接口
+  baseURL: baseURL,       // 导出前缀路径
+  postJson: function (url, data, headers, response, error) { // 自定义headers 方法, 如果不改变 headers 参数，必须传 null，不然参数对不上，就报错
+    axios({
+        method: 'post',
+        url: baseURL+url,
+        data:data,
+        headers: headers ? headers : {"Content-Type":"application/json;charset=UTF-8"}
+    }).then(res => { response(res.data) }).catch(err => { error(err) })
+  }
 };

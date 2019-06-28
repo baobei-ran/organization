@@ -773,7 +773,8 @@ export default {
         background: @sidebar_bgcolor;
         height: 100%;
         width: @sidebar_width;
-        overflow-y: auto;
+        overflow: hidden;
+        // overflow-y: auto;
         .float(left);
         .logo {
             cursor: pointer;
