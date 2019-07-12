@@ -353,3 +353,7 @@ input::-webkit-input-placeholder {
 $(function(){
     $(".scroll_content").niceScroll({cursorborder:"",cursorcolor:"rgba(0,0,0,0)",boxzoom:true});
 }) */
+
+.break-word { /* 英文字母或数字超出宽度自动换行 */
+  word-wrap:break-word;
+}

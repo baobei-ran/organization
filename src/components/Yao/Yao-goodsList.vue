@@ -190,8 +190,8 @@
                             label="商品名称"
                            align ='center' style='width:300px!mportant;'>
                            <template slot-scope="scope">
-                                <div  style='-webkit-display:flex;display:flex;align-items: center;'>
-                                    <img :src="$http.baseURL+scope.row.pic" alt="" style='width: 60px; height:60px;display:block;' >
+                                <div  style='display:-webkit-flex;display:flex;align-items: center;'>
+                                    <!-- <img :src="$http.baseURL+scope.row.pic" alt="" style='width: 60px; height:60px;display:block;' > -->
                                 <p style='margin-left:20px;text-align:left;color: #333;'>{{ scope.row.name }}</p>
                                 </div>
                             </template>
@@ -204,7 +204,7 @@
                             label="商品图片"
                            align ='center' style='width:300px!mportant;'>
                            <template slot-scope="scope">
-                                <div  style='-webkit-display:flex;display:flex;align-items: center;'>
+                                <div  style='display:-webkit-flex;display:flex;align-items: center;'>
                                     <img :src="$http.baseURL+scope.row.pic" alt="" style='width: 60px; height:60px;display:block;margin:0 auto;' >
                                 </div>
                             </template>
@@ -530,7 +530,7 @@ export default {
             goodCount: '',   // 数量
             page: 1,    
             limit: 10,
-            examine: '1',    // 审核状态
+            examine: '',    // 审核状态
             name: '',       // 商品名称
             number: '',     // 商品编号
             record: [],      // 记录列表
@@ -552,7 +552,8 @@ export default {
             disabledPic: false,   // 图片上传的按钮
             existNum: 0,          // 已存在数量
             noparamsNum: 0,       // 上传失败数量
-            uploadcsv: false,    
+            uploadcsv: false,  
+            page2: 1, // 上传失败的页数  
         }
     },
     mounted() {
@@ -631,6 +632,7 @@ export default {
             this.shopName = '';
             if (num == 10) {
                 this.goodList = []
+                this.page2 = 1
                 this.search_fail(1)
                 return false;
             }
@@ -652,7 +654,7 @@ export default {
                 var layer = layui.layer;
                 var form = layer.form;
                 var obj = {type: _this.type,examine: _this.examine,name: _this.name, number: _this.number, page: _this.page, limit: _this.limit}
-                console.log(obj)
+               
                 _this.$http.post('/shv2/goods/index', obj, function (res) {
                     console.log(res)
                     if(res.code == 1) {
@@ -730,7 +732,7 @@ export default {
                 var layer = layui.layer;
                 _this.$http.post('/shv2/goods/goods_set', {id: id, type: 2}, function (res) {
                     // console.log(res)
-                    layer.msg(res.msg);
+                    layer.msg(res.msg,{icon:0});
                 }, function (err) { console.log(err) })
             });  
         },
@@ -1129,18 +1131,21 @@ export default {
         },
         search_fail (n) { // 批量上传失败的搜索 和 列表数据
             var _this = this;
-            console.log(_this.page)
-            var obj = { pzwh: this.wenNumber, name: this.shopName, page: n, limit: _this.limit }
+            console.log(n)
+            var obj = { pzwh: this.wenNumber, name: this.shopName, page: _this.page2, limit: _this.limit }
             console.log(obj)
             this.$http.post('/shv2/goods/upload_fail', obj, function (res) {
                 console.log(res)
                 if (res.code == 1) {
                     _this.goodList2 = res.data.data
-                    if (n == 1) {
-                        _this.initdata2(res.data.count)
-                    }
+                    _this.initdata2(res.data.count)
                 } else {
-                    _this.goodList2 = []
+                    if (_this.page2 !== 1) {
+                        _this.page2 = _this.page2 - 1
+                        _this.search_fail(_this.page2)
+                    } else {
+                        _this.goodList2 = []
+                    }
                 }
             }, function (err) { console.log(err)})
         },
@@ -1149,15 +1154,16 @@ export default {
             var _this = this;
             layui.use(['layer','laypage'], function () {
                 var layer = layui.layer;
-               var laypage = layui.laypage
+                var laypage = layui.laypage
                 //完整功能
                 laypage.render({
                     elem: 'page2'
                     ,count: total
+                    ,curr: _this.page2
                     ,layout: [ 'prev', 'page', 'next', 'skip']
                     ,jump: function(obj, first){
                         if(!first){
-                            _this.page = obj.curr
+                            _this.page2 = obj.curr
                             _this.search_fail(obj.curr)
                         }
                     }
@@ -1208,9 +1214,9 @@ export default {
                 _this.$http.post('/shv2/goods/upload_del', obj, function (res) {
                     if (res.code == 1) {
                         layer.msg('删除成功', { icon: 1})
-                        console.log(_this.page)
                         _this.goodLists(1)
-                        _this.search_fail(1)
+                        console.log(_this.page2)
+                        _this.search_fail(_this.page2)
                     } else {
                          layer.msg(res.msg, { icon:2})
                     }

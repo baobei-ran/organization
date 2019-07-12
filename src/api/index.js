@@ -1,6 +1,6 @@
 import axios from "axios";
 import router from '../router/index'
-// var baseURL = document.location.origin
+// var baseURL = window.location.protocol+"//"+window.location.host; // 获取 url 的域名兼容ie
 // var baseURL = "https://www.yunyikang.cn" // 正式
 var baseURL = "http://test99.yunyikang.cn"; // 测试
 
@@ -13,7 +13,6 @@ var baseURL = "http://test99.yunyikang.cn"; // 测试
 // else if (process.env.NODE_ENV == 'production') {
 // 	baseURL = "https://www.yunyikang.cn";
 // }
-import { Message } from 'element-ui';
 axios.defaults.retry = 2;           //  发起请求次数
 axios.defaults.retryDelay = 1500;   //  每次请求时间
 
@@ -52,16 +51,9 @@ http.interceptors.response.use(function(res) {
   // 全局拦截处理未登录
   if (res.data.code == 406) {
     localStorage.clear();
-    Message({
-      showClose: true,
-      message: '登录失效，请重新登录！',
-      type: 'warning',
-      center: true
-    });
     router.replace({
       path: '/login',
     });
-    // window.location.href = "/shanghu/#/login";
   }
   return res;
 }, function (error) {

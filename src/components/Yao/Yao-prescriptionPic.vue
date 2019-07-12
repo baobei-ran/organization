@@ -3,23 +3,23 @@
     <div class="perscription Pd-B40">
         
         <div class="perscription_msg bg_f" v-if='status0'>
-            <div class="perscription_title">
-                <h2><span class="pointer" @click='btnServeMsg'>服务说明</span></h2>
+            <h2 :class="{'h2-title':!tilteMsg }"><span class="pointer" @click='btnServeMsg'>服务说明</span></h2>
             <transition name='fade'>
-                <div class="perscription_msg_box" v-if='tilteMsg'>
-                    <div>
-                        <p>云医康推出电子处方服务，药店可通过平台医生开具电子处方，扩充药店的药品经营品类；</p>
-                        <p>药店可根据顾客的实际需要，向合作医生发布处方需求，并辅以患者的基本信息和病情描述，医生将根据患者的病情，接单并开具处方，在经由药店药师审核后，处方即可生效。</p>
+                <div class="perscription_title" v-show='tilteMsg'>
+                    <div class="perscription_msg_box" >
+                        <div>
+                            <p>云医康推出电子处方服务，药店可通过平台医生开具电子处方，扩充药店的药品经营品类；</p>
+                            <p>药店可根据顾客的实际需要，向合作医生发布处方需求，并辅以患者的基本信息和病情描述，医生将根据患者的病情，接单并开具处方，在经由药店药师审核后，处方即可生效。</p>
+                        </div>
+                        <div>
+                            <h2>服务设置</h2>
+                            <p>药店上传药师资质及药师签名图片，经平台审核通过后，即可拥有电子处方服务；</p>
+                            <p>发布处方申请时，需向医生支付处方费用，请在鲁医通账户中预存100元，用于电子处方的费用支付。</p>
+                        </div>
+                        <span class="show_btn pointer" @click='btnServeMsg'><img src="../../common/image/icon/icon_sq.png" alt=""></span>
                     </div>
-                    <div>
-                        <h2>服务设置</h2>
-                        <p>药店上传药师资质及药师签名图片，经平台审核通过后，即可拥有电子处方服务；</p>
-                        <p>发布处方申请时，需向医生支付处方费用，请在鲁医通账户中预存100元，用于电子处方的费用支付。</p>
-                    </div>
-                    <span class="show_btn pointer" @click='btnServeMsg'><img src="../../common/image/icon/icon_sq.png" alt=""></span>
                 </div>
-            </transition>
-            </div>
+             </transition>
         </div>
 
         <div class="my_check">
@@ -144,7 +144,7 @@ export default {
                 money_balance: 0,   // 账户余额
                 setPrice: 0,        // 处方设置最低金额
                 kaiBtn: false,      // 显示开通视图
-                tilteMsg: false
+                tilteMsg: true
             }
         },
         mounted () {
@@ -166,7 +166,6 @@ export default {
                         _this.status0 = false;
                         _this.kaiBtn = false;
                         _this.status = true
-                        // _this.$router.replace({ path: '/server/YaoprescriptionListPic/prescriptionPicShen'})
                         _this.Userdata();
                         _this.times = setInterval(() => {
                             _this.Userdata();    // 查看是否已提交了资料
@@ -424,7 +423,7 @@ export default {
 </script>
 <style lang='less' scoped>
 .fade-enter-active, .fade-leave-active {
-  transition: transform 2s ease-out;
+  transition: transform .3s ease-out;
 }
 
 .fade-enter, .fade-leave-to {
@@ -435,25 +434,38 @@ export default {
     background-color: #F1F2F9;
     .perscription_msg {
         padding:24px;
+        min-height: 110px;
         -webkit-border-radius:6px;
         border-radius:6px;
-        .perscription_title {
-            border: 1px dashed #DDD;
-            -webkit-border-radius: 8px;
-            border-radius: 8px;
-        > h2 {
+        position: relative;
+        
+         > h2 {
+            position: absolute;
+            top: 24px;
+            left: 24px;
             font-size: 16px;
             color: #333;
             font-weight:500;
             padding: 20px 26px;
+            display: inline;
             span {
                 padding-left: 34px;
                 background: url('../../common/image/icon/icon_fwsm.png') no-repeat left center;
             }
             
         }
+        .h2-title {
+            -webkit-border-radius: 8px;
+            border-radius: 8px;
+            border: 1px dashed #DDD;
+        }
+        .perscription_title {
+            border: 1px dashed #DDD;
+            -webkit-border-radius: 8px;
+            border-radius: 8px;
+       
         .perscription_msg_box {
-            
+            margin-top: 60px;
             position: relative;
             padding: 0 24px 20px;
             > div {

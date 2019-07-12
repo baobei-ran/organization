@@ -27,7 +27,7 @@
                     </li>
                     <li>
                         <span>合作状态</span>
-                        <span v-text='docData.state == 1?"申请中":docData.state == 2?"合作中":docData.state == 3?"合作终止":""'></span>
+                        <span v-text='docData.state == 1?"申请中":docData.state == 2?"合作中":docData.state == 3?"合作终止":"终止审核中"'></span>
                     </li>
                 </ul>
                 <ul class="Pd-B24">
@@ -63,7 +63,8 @@
                                 <li @click="tab(1)">药品推荐记录</li>
                             </ul>
                             <p class="layui_right">
-                                <input type="search" v-model='userName' placeholder="输入患者姓名搜索"/>
+                                <input type="search" v-show="!tabNum" v-model='userName' placeholder="输入患者姓名搜索"/>
+                                <input type="search" v-show="tabNum" v-model='userName' placeholder="输入订单号搜索"/>
                             </p>
                         </div>
                         <div class="layui-tab-content">
@@ -119,32 +120,34 @@
                                             <td>下单时间</td>
                                             <td>下单用户</td>
                                             <td>订单金额（元）</td>
-                                            <td>推荐酬金（元）</td>
                                             <td>操作</td>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        <tr class="table_con Color_black ac" v-for="(val,index) in 4" :key='index'>
+                                    <tbody v-if='rmddata.length'>
+                                        <tr class="table_con Color_black ac" v-for="(val,index) in rmddata" :key='index+"_2"'>
                                             <td>
-                                                <span class="icon_black">建议用药</span>
-                                                <span class="icon_black2">处方用药</span>
+                                                <span v-show="val.busitype = 8" class="icon_black">建议用药</span>
+                                                <span v-show="val.busitype = 7" class="icon_black2">处方用药</span>
                                             </td>
                                             <td>{{ index+1 }}</td>
-                                            <td>12343435465769879</td>
-                                            <td>订单已完成</td>
                                             <td>
-                                                2019-02-21 12:00
+                                                <span v-text='val.order_code?val.order_code:""'></span>
                                             </td>
-                                            <td>摇啊摇</td>
-                                            <td>87.00</td>
-                                            <td>3.00</td>
+                                            <td>
+                                                <span v-text='val.status == 2?"订单已支付":val.status == 5?"订单已完成":""'></span>
+                                            </td>
+                                            <td>
+                                                {{ val.addtime | moment }}
+                                            </td>
+                                            <td>{{ val.real_name }}</td>
+                                            <td>{{ val.money }}</td>
                                             <td class="dis_f dis_js">
-                                                <p class="pointer Ft-S14" >——</p>
-                                                <p class="pointer Ft-S14 Color_blue" @click="f_download()">查看处方</p>
+                                                <p v-show="val.busitype == 8" class="pointer Ft-S14" >——</p>
+                                                <p v-show="val.busitype == 7" class="pointer Ft-S14 Color_blue" @click="lookover(val.reid)">查看处方</p>
                                             </td>
                                         </tr>
                                     </tbody>
-                                    <tbody >
+                                    <tbody v-if='!rmddata.length'>
                                         <tr class="table_con Color_black ac" >
                                             <td colspan='9'>
                                                 <img src="../../../common/image/icon/icon_zwxgjl@2x.png" alt="">
@@ -174,13 +177,13 @@
             <div class="fang_preview_box">
                 <ul class="f_title">
                     <li>
-                        <span>处方编号：</span><span>{{ recipeDetail.order_code }}</span>
+                        <span class="smallsize-font">处方编号：</span><span v-text="recipeDetail.order_code?recipeDetail.order_code:''"></span>
                     </li>
                     <li>
-                        <span>处方生成时间：</span><span>{{ recipeDetail.start_time | moment }}</span>
+                        <span class="smallsize-font">处方生成时间：</span><span>{{ recipeDetail.start_time | moment }}</span>
                     </li>
                     <li>
-                        <span>处方失效时间：</span><span>{{ recipeDetail.undue_time | moment }}</span>
+                        <span class="smallsize-font">处方失效时间：</span><span>{{ recipeDetail.undue_time | moment }}</span>
                     </li>
                 </ul>
                 <h2>云医康互联网医院电子处方</h2>
@@ -244,13 +247,17 @@
 </el-dialog>
 
 
+    <div id="cfdetail" class="hide">
+        <cf-details ref='son' ></cf-details>
+    </div>
 
 
 
     </div>
 </template>
 <script>
-import html2canvas from 'html2canvas'
+import html2canvas from 'html2canvas';
+import cfdetails from './cfdetails.vue';
 var delay = (function() {
  var timers = 0;
  return function(callback, ms) {
@@ -260,11 +267,15 @@ var delay = (function() {
 })();
 export default {
     name: 'presciptionRecords',
+    components: {
+        'cf-details':cfdetails
+    },
     data() {
         return {
             tabNum: 0,            // nav
             userName: '',           // 搜索
             page: 1,
+            page2: 1,               // 推荐的页数
             limit: 10,
             tableList: [],              // 数据列表
             auditor: [                  // 药师审核状态下拉框
@@ -285,6 +296,7 @@ export default {
             recipeDetail: {},              // 处方详情
             recipe_eat: [],                // 处方中的药品
             centerDialogVisible: false,    // 开启弹框
+            rmddata: [],                   // 推荐记录
         }
     },
     mounted() {
@@ -299,7 +311,7 @@ export default {
                if (this.tabNum == 0) {
                     this.initdata(1);
                } else {
-                   console.log('111')
+                   this.initdata2(1)
                }
             }, 500);
         },
@@ -311,7 +323,7 @@ export default {
             if (n == 0) {
                 this.initdata(1) 
             } else {
-                console.log('aaaa')
+                this.initdata2(1)
             }
         },
         changeTime (time){ // 时间转换
@@ -400,8 +412,13 @@ export default {
                     groups: 4,
                     jump: function (obj, first) {
                         if (!first) {
-                            _this.page = obj.curr;
-                            _this.initdata(obj.curr)
+                            if (_this.tabNum == 0) {
+                                _this.page = obj.curr;
+                                _this.initdata(obj.curr)
+                            } else {
+                                _this.page2 = obj.curr;
+                                _this.initdata2(obj.curr)
+                            }
                         }
                     }
                 });
@@ -555,6 +572,48 @@ export default {
                 var url = canvas.toDataURL('image/png');
                 _this.$refs.imgs.src = url
             })
+        },
+        initdata2 (n) {  // 推荐记录
+            var _this = this;
+            var id = _this.$route.query.did; // 医生id 
+            var obj = { id: id, page: this.page2, limit: _this.limit, order_code: _this.userName }
+            _this.$http.post('/shv2/Commonshop/doc_push', obj, function (res) {
+                console.log(res)
+                if (res.code == 1) {
+                    _this.rmddata = res.data
+                    if (n==1) {
+                        _this.pageFun(res.count)
+                    }
+                } else {
+                    _this.rmddata = []
+                }
+            })
+        },
+        lookover (id) {  // 查看处方
+            var _this = this;
+            layui.use(["layer"], function () { // 获取 处方展示 信息
+                var layer = layui.layer;
+                var $ = layui.jquery;
+                _this.$http.post('/mobile/doch5/user_recipe_detail', {id:id}, function (res) {
+                    console.log(res)
+                    if (res.code == 1) {
+                        _this.$refs.son.sonFun(res)
+                        layer.open({
+                            type: 1,
+                            shade: 0.2,
+                            shadeClose: true,
+                            closeBtn: 1,
+                            title: "",
+                            content: $("#cfdetail"),
+                            area: ["640px", "560px"],
+                            cancel: function () { }
+                        });
+                    } else {
+
+                    }
+                }, function (err) {})
+                
+            });
         }
     }
 }
@@ -767,6 +826,9 @@ export default {
                     font-size: 12px;
                     -webkit-transform: scale(0.8);
                     transform: scale(0.8);
+                }
+                .smallsize-font{
+                    font-size: 6px;
                 }
             }
         }

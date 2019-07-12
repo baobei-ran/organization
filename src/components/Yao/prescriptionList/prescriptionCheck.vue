@@ -48,7 +48,7 @@
                         <ul>
                             <li><span>处方需求单号</span><span>{{ prescriptiondata.number }}</span></li>
                             <li><span>处方申请时间</span><span>{{ prescriptiondata.creatime,'YYYY-MM-DD HH:mm' | moment }}</span></li>
-                            <li><span>药店留言</span><span>{{ prescriptiondata.shop_word }}</span></li>
+                            <li><span>药店留言</span><span v-text='prescriptiondata.shop_word?prescriptiondata.shop_word:"无"'></span></li>
                         </ul>
                     </div>
                     
@@ -110,7 +110,7 @@
                 
 
             <!-- 处方开具信息 -->
-                <div class="issue_msg Mg-T24" v-show="prescriptiondata.status == 3">
+                <div class="issue_msg Mg-T24" v-show="prescriptiondata.status == 3 || prescriptiondata.status == 5">
                     <p class="orderList_tit Color_black Pd-L24 Pd-B20 Ft-S16 ">处方开具信息 <span class='pointer'>查看原始处方</span></p>
                     <ul>
                         <li>

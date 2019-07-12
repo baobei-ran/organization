@@ -26,7 +26,7 @@
                 <ul class="Pd-B24">
                      <li>
                         <span>合作状态</span>
-                        <span v-text='doctormsg.state == 1?"申请中":doctormsg.state == 2?"合作中":"合作终止"'></span>
+                        <span v-text='doctormsg.state == 1?"申请中":doctormsg.state == 2?"合作中":doctormsg.state == 3?"合作终止":"终止审核中"'></span>
                     </li>
                     <li>
                         <span>合作终止方</span>
@@ -38,7 +38,7 @@
                     </li>
                     <li>
                         <span>终止原因</span>
-                        <span>{{ doctormsg.revoke_reason }}</span>
+                        <p class="txt">{{ doctormsg.revoke_reason }}</p>
                     </li>
                 </ul>
             </div>
@@ -71,17 +71,17 @@
                                     <tbody v-if='tableList.length'>
                                         <tr class="table_con Color_black ac" v-for="(val,index) in tableList" :key='index'>
                                             <td>{{ index+1 }}</td>
-                                            <td>12343435465769879</td>
-                                            <td>2019-02-21 12:00</td>
+                                            <td>{{ val.number }}</td>
+                                            <td>{{ val.start_time | moment }}</td>
                                             <td>
-                                                <span >未审核</span>
-                                                <span >已审核</span>
-                                                <span >已过期</span>
+                                                <span v-show="val.type == 3">未审核</span>
+                                                <span v-show="val.type == 2">已审核</span>
+                                                <span v-show="val.type == 1">已过期</span>
                                             </td>
-                                            <td>摇啊摇</td>
+                                            <td>{{ val.name }}</td>
                                             <td class="dis_f dis_js">
-                                                <p class="pointer Ft-S14 Color_blue" @click="godetail()">预览</p>
-                                                <p class="pointer Ft-S14 Color_blue" @click="f_download()">下载</p>
+                                                <p class="pointer Ft-S14 Color_blue" @click="godetail(val.id)">预览</p>
+                                                <p class="pointer Ft-S14 Color_blue" @click="f_download(val.id)">下载</p>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -107,32 +107,32 @@
                                             <td>下单时间</td>
                                             <td>下单用户</td>
                                             <td>订单金额（元）</td>
-                                            <td>推荐酬金（元）</td>
                                             <td>操作</td>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        <tr class="table_con Color_black ac" v-for="(val,index) in 4" :key='index'>
+                                    <tbody v-if='rmddata.length'>
+                                        <tr class="table_con Color_black ac" v-for="(val,index) in rmddata" :key='index+"_2"'>
                                             <td>
-                                                <span class="icon_black">建议用药</span>
-                                                <span class="icon_black2">处方用药</span>
+                                                <span v-show='val.busitype == 8' class="icon_black">建议用药</span>
+                                                <span v-show='val.busitype == 7' class="icon_black2">处方用药</span>
                                             </td>
                                             <td>{{ index+1 }}</td>
-                                            <td>12343435465769879</td>
-                                            <td>订单已完成</td>
+                                            <td>{{ val.order_code }}</td>
                                             <td>
-                                                2019-02-21 12:00
+                                                <span v-text='val.status==2?"订单已支付":val.status==5?"订单已完成":""'></span>
                                             </td>
-                                            <td>摇啊摇</td>
-                                            <td>87.00</td>
-                                            <td>3.00</td>
+                                            <td>
+                                                {{ val.addtime | moment }}
+                                            </td>
+                                            <td>{{ val.real_name }}</td>
+                                            <td>{{ val.money }}</td>
                                             <td class="dis_f dis_js">
-                                                <p class="pointer Ft-S14" >——</p>
-                                                <p class="pointer Ft-S14 Color_blue" @click="f_details()">查看处方</p>
+                                                <p v-show="val.busitype == 8" class="pointer Ft-S14" >——</p>
+                                                <p v-show="val.busitype == 7" class="pointer Ft-S14 Color_blue" @click="f_details(val.reid)">查看处方</p>
                                             </td>
                                         </tr>
                                     </tbody>
-                                    <tbody >
+                                    <tbody v-if='!rmddata.length'>
                                         <tr class="table_con Color_black ac" >
                                             <td colspan='9'>
                                                 <img src="../../../common/image/icon/icon_zwxgjl@2x.png" alt="">
@@ -161,15 +161,15 @@
         <div id="fang_preview">
             <div class="fang_preview_box">
                 <ul class="f_title">
-                    <li>
+                    <li class="smallsize-font">
                         <span>处方编号：</span>
                         <span>{{ recipemsg.order_code }}</span>
                     </li>
-                    <li>
+                    <li class="smallsize-font">
                         <span>处方生成时间：</span>
                         <span>{{ recipemsg.start_time | moment }}</span>
                     </li>
-                    <li>
+                    <li class="smallsize-font">
                         <span>处方失效时间：</span>
                         <span>{{ recipemsg.undue_time }}</span>
                     </li>
@@ -215,20 +215,31 @@
             </div>
         </div>
         </div>
+
+        <div id="cfdetail" class="hide">
+            <cf-details ref='son' ></cf-details>
+        </div>
     </div>
 </template>
 <script>
-import html2canvas from 'html2canvas'
+import html2canvas from 'html2canvas';
+import cfdetails from './cfdetails.vue';
 export default {
     name: 'orderList',
+    components: {
+        'cf-details':cfdetails
+    },
     data() {
         return {
             page: 1,
+            page2: 1,
             limit: 10,
+            tabId: 0,
             tableList: [],              // 数据列表
             doctormsg: '',  // 医生信息
             recipemsg: '',  // 处方信息
             recipe_eat: [], // 药品信息
+            rmddata: [],     // 推荐记录
         }
     },
     mounted() {
@@ -243,11 +254,11 @@ export default {
     },
     methods: {
         tab (n) {
-            console.log(n)
+            this.tabId = n
             if (n == 0) {
                 this.initdata(1)
             } else {
- 
+                this.initdata2(1)
             }
         },
         initdata(num) {   // 数据
@@ -285,8 +296,14 @@ export default {
                     groups: 4,
                     jump: function (obj, first) {
                         if (!first) {
-                            _this.page = obj.curr;
-                            _this.initdata(obj.curr)
+                            if (_this.tabId == 0) {
+                                 _this.page = obj.curr;
+                                _this.initdata(obj.curr)
+                            } else {
+                                 _this.page2 = obj.curr;
+                                _this.initdata2(obj.curr)
+                            }
+                           
                         }
                     }
                 });
@@ -388,8 +405,45 @@ export default {
                 }
             })
         },
-        f_details (id) {
-            console.log('查看')
+        f_details (id) { // 查看处方
+          var _this = this;
+            layui.use(["layer"], function () { // 获取 处方展示 信息
+                var layer = layui.layer;
+                var $ = layui.jquery;
+                _this.$http.post('/mobile/doch5/user_recipe_detail', {id:id}, function (res) {
+                    console.log(res)
+                    if (res.code == 1) {
+                        _this.$refs.son.sonFun(res)
+                        layer.open({
+                            type: 1,
+                            shade: 0.2,
+                            shadeClose: true,
+                            closeBtn: 1,
+                            title: "",
+                            content: $("#cfdetail"),
+                            area: ["640px", "560px"],
+                            cancel: function () { }
+                        });
+                    } else {
+
+                    }
+                }, function (err) {})
+                
+            });
+        },
+        initdata2 (n) { // 推荐记录
+            var _this = this;
+            var id = _this.$route.query.did
+            var obj = { id: id, page: _this.page2, limit: _this.limit, order_code: '' }
+            _this.$http.post('/shv2/Commonshop/doc_push', obj, function (res) {
+                console.log(res)
+                if (res.code == 1) {
+                    _this.rmddata = res.data
+                    if (n == 1) {
+                        _this.pageFun(res.count)
+                    }
+                }
+            }, function (err) {})
         }
     }
 }
@@ -420,6 +474,7 @@ export default {
             }
         }
         ul:last-child {
+            width: 50%;
             li {
                 font-size: 14px;
                 color: #333;
@@ -428,6 +483,13 @@ export default {
                    display: inline-block;
                    width:100px;
                    text-align: right;
+                   vertical-align: top;
+                }
+                .txt {
+                    width: 70%;
+                    display: inline-block;
+                    overflow: hidden;
+                    word-wrap:break-word;
                 }
             }
         }
@@ -588,7 +650,7 @@ export default {
         .f_title {
             overflow: hidden;
             > li {
-                margin-right: 12px;
+                margin-right: 3px;
                 float: left;
                 height: 20px;
                 > span {
@@ -599,6 +661,10 @@ export default {
                     -webkit-transform: scale(0.8);
                     transform:scale(0.8);
                 }
+                
+            }
+            .smallsize-font{
+                font-size: 6px;
             }
         }
         >h2 {
@@ -669,6 +735,9 @@ export default {
     
 
     
+}
+#cfdetail {
+    height: 100%;
 }
 
 .capture{

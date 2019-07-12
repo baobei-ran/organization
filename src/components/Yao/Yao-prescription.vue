@@ -1,17 +1,16 @@
 <template>
     <div id="yaoPrescription">
-        <div class="orderList_msg">
-            <div class="pass_test" >
-                <h2><span class="pointer" @click='cancelTest'>服务说明</span></h2>
-                <transition name='fade'>
-                    <div class="msgs" v-if='tests'>
+        <div class="orderList_msg" :class="{'heights':!tests}">
+            <h2><span class="pointer" @click='cancelTest'>服务说明</span></h2>
+            <transition name='fade'>
+                <div class="pass_test" v-if='tests'>
+                    <div class="msgs" >
                         <p>云医康合作医生服务上线了，药店可选择云医康平台医生并申请合作，医生可为合作药店开具线上处方，增加药店的药品经营范围；合作医生在问诊过程中，若患者需要相应的药品治疗，医生可向患者推荐药店的药品。</p>
                         <p>药店可为店铺商品，设定佣金比例，医生向患者推荐药品，患者支付后，将按此比例向医生支付佣金，医生也将根据佣金比例范围及处方需求数量，选择是否与药店进行合作。</p>
                         <button class="pointer" @click='cancelTest'></button>
                     </div>
-                </transition>
-                
-            </div>
+                </div>
+            </transition>
         </div>
 
          <div class="tab_content Pd-L24 Pd-R24">
@@ -166,7 +165,7 @@ export default {
     name: 'yaoPrescription',
     data() {
         return {
-            tests: false,        // 审核通过提示
+            tests: true,        // 审核通过提示
             tableList: [],              // 数据列表
             headernum: '',
             doctorNum: true,          // 添加的医生数量
@@ -294,7 +293,7 @@ export default {
 
 <style scoped lang="less">
 .fade-enter-active, .fade-leave-active {
-  transition: transform 2s ease-out;
+  transition: transform .3s ease-out;
 }
 
 .fade-enter, .fade-leave-to {
@@ -302,16 +301,24 @@ export default {
 }
 #yaoPrescription {
     height: 100%;
+    .heights {
+        height: 105px !important;
+        > h2 {
+            border: 1px dashed #DDD;
+            -webkit-border-radius:4px;
+            border-radius:4px;
+            padding: 15px 20px !important;
+        }
+    }
     .orderList_msg {
         padding: 24px;
-      .pass_test {
-        background: #FFF;
-        border: 1px dashed #DDDDDD;
-        -webkit-border-radius:4px;
-        border-radius:4px;
-        margin-bottom: 20px;
+        height: 250px;
+        position: relative;
         > h2 {
+            position: absolute;
+            left: 24px;
             padding: 24px;
+            
             > span{
                 color:#333;
                 font-size: 18px;
@@ -321,7 +328,15 @@ export default {
                 
             }
         }
+      .pass_test {
+        background: #FFF;
+        border: 1px dashed #DDDDDD;
+        -webkit-border-radius:4px;
+        border-radius:4px;
+        margin-bottom: 20px;
+        
        .msgs {
+           margin-top: 80px;
            width: 100%;
            padding: 0 24px 26px;
            position: relative;
