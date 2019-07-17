@@ -46,14 +46,13 @@ export default {
                 var layer = layui.layer;
                 var exgphone = /^1(3|4|5|6|7|8|9)\d{9}$/;//手机号验证
                 var isNumber = /^\d{4}$/; //验证数字
-                var ispass = /^\d{6,12}$/; //验证密码
+                var ispass = /^[0-9a-zA-Z]+$/; //验证密码
                 var userphone = $('#phone').val();
                 var checkpress = function () {
                     if (!exgphone.test($('#phone').val())) {
                         layer.msg('请输入正确的手机号',{ icon: 2});
                         return false
                     }
-
                     if (!ispass.test($('#pass').val())) {
                         layer.msg('请输入正确的密码',{ icon: 2})
                         return false
@@ -78,6 +77,9 @@ export default {
                             }
 
                         } else if (res.code == 3) {
+                           layer.msg(res.msg, { icon: 2})
+                           $('#imgcode').attr('src', _this.$http.baseURL+'/captcha.html')
+                        } else if (res.code == 4) {
                            layer.msg(res.msg, { icon: 2})
                            $('#imgcode').attr('src', _this.$http.baseURL+'/captcha.html')
                         } else {

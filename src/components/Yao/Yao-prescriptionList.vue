@@ -27,11 +27,11 @@
                 <div class="layui-inline lay_width">
                     <label class="layui-form-label">处方需求单号</label>
                     <div class="layui-input-inline" style="width:160px">
-                        <input type="text" v-model="list.order_code" autocomplete="off" class="layui-input">
+                        <input type="text" v-model="list.number" autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-inline Mg-L10 lay_width">
-                    <label class="layui-form-label">申请医生</label>
+                    <label class="layui-form-label">患者姓名</label>
                     <div class="layui-input-inline" style="width:160px">
                         <input type="text" v-model="list.name" autocomplete="off" class="layui-input">
                     </div>
@@ -225,7 +225,7 @@ export default {
             doctorId: '',               // 再次提价发起，获取医生id
             list: {
                 status: 1,
-                order_code: '',
+                number: '',
                 name: '',
                 ktime: '',
                 jtime: '',
@@ -246,7 +246,7 @@ export default {
     methods: {
         tab(type) {
             this.list = {
-                order_code: '',
+                number: '',
                 name: '',
                 ktime: '',
                 jtime: '',
@@ -257,6 +257,7 @@ export default {
         },
         initdata(type, num) {   // 数据
             var _this = this;
+            console.log(_this.list)
             layui.use(["laypage", "layer", "element"], function () {
                 var element = layui.element;
                 _this.list.page = num;
@@ -410,7 +411,7 @@ export default {
         },
         empty() {   // 清空
            this.list = {
-                order_code: '',
+                number: '',
                 name: '',
                 ktime: '',
                 jtime: '',

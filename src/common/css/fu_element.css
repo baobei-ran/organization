@@ -1,6 +1,6 @@
 .el-input__inner {  /* 覆盖eleemnt ui 的input样式 */
-    height: 36px !important;
-    line-height: 36px !important;
+    height: 36px;
+    line-height: 36px;
     -webkit-border-radius: 2px;
     -o-border-radius: 2px;
     border-radius: 2px;
@@ -41,3 +41,42 @@
   .hide_box {
     display: none;
   }
+
+.hover-tips { /* 自定义类名 更改停诊 tips 的样式 */
+    border:0;
+    padding: 0;
+}
+.el-input-40 > .el-input__inner {
+   height: 40px;
+}
+
+.el-button-cancel {  /* MessageBox 弹框的 取消自定义类名 */
+  padding: 10px 18px;
+  border-color:  #409EFF;
+  color:  #409EFF;
+  font-size: 15px;
+  margin-right: 20px;
+}
+.el-button-submit { /* MessageBox 弹框的 确定自定义类名 */
+  padding: 10px 18px;
+  font-size: 15px;
+}
+
+/* （申请合作医生的合作申请中）自定义类名更改 element ui的 Tooltip 提示信息的样式 */
+.el-btn-tooltip {   
+     border: 0;
+     background-color: inherit;
+     padding: 0;
+}
+.el-btn-tooltip:hover {
+  background-color: inherit;
+ color: #333;
+  cursor: default;
+}
+
+.el-input__inner:focus {    /* 全局改变element UI 的 selece下拉框获取焦点时的边框颜色 */
+  border-color: #e6e6e6;
+}
+.el-input__inner {    /* 全局改变element UI 的 selece下拉框获取焦点时的边框颜色 */
+  border-color: #c2c2c3;
+}

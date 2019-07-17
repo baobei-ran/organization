@@ -4,7 +4,11 @@
             <p class="orderList_tit Color_black Ft-S16 Pd-T24 Pd-B24 Pd-L24">医生信息 
                 <span v-if='docData.type == 1'>
                     <img style="width:40px;height:14px;" src="../../../common/image/icon/icon_tzz.png" alt="">
-                    <img class="icon_hover" src="../../../common/image/icon/icon_xqsm.png" alt="">
+                    <el-tooltip class="item" effect="light" placement="bottom-start">
+                        <div slot="content" v-html="txt"></div>
+                        <el-button :class='{"hover-tips":true}'><img src="../../../common/image/icon/icon_xqsm.png" alt=""></el-button>
+                    </el-tooltip>
+                    
                 </span>
             </p>
             <div class="orderList_msg dis_f">
@@ -126,15 +130,15 @@
                                     <tbody v-if='rmddata.length'>
                                         <tr class="table_con Color_black ac" v-for="(val,index) in rmddata" :key='index+"_2"'>
                                             <td>
-                                                <span v-show="val.busitype = 8" class="icon_black">建议用药</span>
-                                                <span v-show="val.busitype = 7" class="icon_black2">处方用药</span>
+                                                <span v-show="val.busitype == 8" class="icon_black">建议用药</span>
+                                                <span v-show="val.busitype == 7" class="icon_black2">处方用药</span>
                                             </td>
                                             <td>{{ index+1 }}</td>
                                             <td>
                                                 <span v-text='val.order_code?val.order_code:""'></span>
                                             </td>
                                             <td>
-                                                <span v-text='val.status == 2?"订单已支付":val.status == 5?"订单已完成":""'></span>
+                                                <span v-text='val.status == 5?"订单已完成":"订单已支付"'></span>
                                             </td>
                                             <td>
                                                 {{ val.addtime | moment }}
@@ -216,7 +220,7 @@
                         <span>处方医师：</span>
                         <img :src='$http.baseURL+recipeDetail.signpic' alt="">
                     </li>
-                    <li v-show="recipeDetail.yname_pic">
+                    <li v-show="recipeDetail.flag == 0?false:true">
                         <span>审核药师：</span>
                         <img :src="$http.baseURL+recipeDetail.yname_pic" alt="">
                     </li>
@@ -297,6 +301,7 @@ export default {
             recipe_eat: [],                // 处方中的药品
             centerDialogVisible: false,    // 开启弹框
             rmddata: [],                   // 推荐记录
+            txt: ''
         }
     },
     mounted() {
@@ -364,15 +369,9 @@ export default {
                     _this.docData.busdate = arrTime.join('、');
                     var startTime = _this.changeTime(_this.docData.start_time);
                     var endTime = _this.changeTime(_this.docData.end_time);
-        var txt = '<div style="color: #000;"><h2 style="text-align: center;font-size: 14px;">医生停诊中</h2><ul><li style="color:#808080;">停诊时间</li><li>'+startTime+'--'+endTime+'</li></ul><ul><li style="color:#808080;">停诊说明</li><li>'+_this.docData.cause+'</li></ul></div>'
-                    $(".icon_hover").hover(function () {
-                        layer.tips(txt, '.icon_hover', {
-                            tips: [3, '#FFF'],
-                            time: 0
-                        });
-                    }, function () {
-                        layer.closeAll()
-                    });
+                   _this.txt = '<div style="color: #000;"><h2 style="text-align: center;font-size: 14px;">医生停诊中</h2><ul><li style="color:#808080;margin: 10px 0;">停诊时间</li><li>'+startTime+'--'+endTime+'</li></ul><ul><li style="color:#808080;margin: 10px 0;">停诊说明</li><li>'+_this.docData.cause+'</li></ul></div>';
+                } else {
+                    _this.docData = {}
                 }
             }, function (err) {})
         },

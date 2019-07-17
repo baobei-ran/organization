@@ -119,7 +119,7 @@
                                             <td>{{ index+1 }}</td>
                                             <td>{{ val.order_code }}</td>
                                             <td>
-                                                <span v-text='val.status==2?"订单已支付":val.status==5?"订单已完成":""'></span>
+                                                <span v-text='val.status==5?"订单已完成":"订单已支付"'></span>
                                             </td>
                                             <td>
                                                 {{ val.addtime | moment }}
@@ -207,7 +207,7 @@
                         <span>处方医师：</span>
                         <img :src='$http.baseURL+recipemsg.signpic' alt="">
                     </li>
-                    <li v-show='recipemsg.yname_pic'>
+                    <li v-show='recipemsg.flag == 0?false:true'>
                         <span>审核药师：</span>
                         <img :src="$http.baseURL+recipemsg.yname_pic" alt="">
                     </li>

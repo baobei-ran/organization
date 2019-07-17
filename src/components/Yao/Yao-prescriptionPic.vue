@@ -44,8 +44,8 @@
             <div class="my_price">鲁医通账户余额&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>{{ money_balance }}元</span> <span class="my_price_msg">（请在鲁医通账户中预存100元，用于处方费用支付<b @click='go_account' class="pointer">前去充值</b>）</span></div>
             <div class="mySet_price dis_f">
                 <span>处方费用设定</span>
-                <input type="text" id='price_m' autocomplete="off" v-enter-number2 v-model='setMoneys'/> 元
-                <p>（处方费用不可低于1元，申请处方时，费用将自动从鲁医通账户中扣减，医生也将根据处方费用选择是否与药店合作）</p>
+                <input type="text" id='price_m' @input="changeMoney" autocomplete="off" v-enter-number2 v-model='setMoneys'/> 元
+                <p>（处方费用不可低于<span>{{ minMoney }}</span>元，申请处方时，费用将自动从鲁医通账户中扣减，医生也将根据处方费用选择是否与药店合作）</p>
             </div>
         </div>
 
@@ -144,7 +144,9 @@ export default {
                 money_balance: 0,   // 账户余额
                 setPrice: 0,        // 处方设置最低金额
                 kaiBtn: false,      // 显示开通视图
-                tilteMsg: true
+                tilteMsg: true,
+                minMoney: 1,
+                type: 0,            // 是否发起过审核或者发起的审核失败
             }
         },
         mounted () {
@@ -154,6 +156,7 @@ export default {
             _this.$http.post('/shv2/Recipetwo/recipe_check', {}, function (res) {   // 电子处方是否审核及状态
                 console.log(res)
                 if (res.code == 1) {
+                    _this.type = res.data.teacher_type
                     if(!res.data) {
                         return false;
                     }
@@ -179,6 +182,7 @@ export default {
                         _this.status = false;
                         _this.status2 = true
                         _this.kaiBtn = true
+                        _this.failed = res.data.teacher_text; // 拒绝留言
                     }
                 }
             }, function (err) { console.log(err)})
@@ -189,11 +193,13 @@ export default {
                 if (m.test(this.value)) {
                     _this.setMoneys = this.value
                 }
-                var money2 = _this.setMoneys.match(/^\d*(\.?\d{0,2})/g)[0]; // 保留小数点后面两位小数
-                _this.setMoneys = money2;
             })
         },
         methods: {
+            changeMoney () {
+                var money2 = this.setMoneys.match(/^\d*(\.?\d{0,2})/g)[0]; // 保留小数点后面两位小数
+                this.setMoneys = money2;
+            },
             addfiles1 (event) {
                 var files = event.target.files[0];  
                 if (files) {   // 是否有文件
@@ -250,23 +256,45 @@ export default {
                 console.log(_this.setMoneys, _this.setPrice)
                 layui.use('layer', function() {
                 var layer = layui.layer;
-                if (!_this.setMoneys) {
-                    layer.msg('请填写处方费用');
+                if (Number(_this.setPrice) > Number(_this.money_balance) ) {
+                    // layer.msg('鲁医通余额不能小于'+ _this.setPrice, {icon:0});
+                    layer.open({    // 余额低于100元提示
+                        type: 1,
+                        shade: 0.2,
+                        shadeClose: true,
+                        closeBtn: 0,
+                        title: "",
+                        content: $("#price_shows"),
+                        area: ["400px", "260px"],
+                        cancel: function () {},
+                        end: function () {
+                            $("#price_shows").hide()
+                        }
+                    });
                     return false;
-                } else if (Number(_this.setPrice) > Number(_this.money_balance) ) {
-                    layer.msg('鲁医通余额不能小于'+ _this.setPrice);
+                }
+                if (!_this.setMoneys) {
+                    layer.msg('请填写处方费用',{icon:2});
+                    return false;
+                }
+                if (Number(_this.setMoneys) < Number(_this.minMoney)) {
+                    layer.msg('处方费用不可低于'+_this.minMoney+'元',{icon:0});
+                    return false;
+                }
+                if (Number(_this.setMoneys) > 100) {
+                    layer.msg('处方费用不可大于100元',{icon:0});
                     return false;
                 }
                 if (!_this.yao_user) {
-                    layer.msg('请填写药师姓名');
+                    layer.msg('请填写药师姓名',{icon:2});
                     return false;
                 }
                 if (!_this.files1) {
-                    layer.msg('请上传药师资格证');
+                    layer.msg('请上传药师资格证',{icon:2});
                     return false;
                 }
                 if (!_this.files2) {
-                    layer.msg('请上传药师签名图片');
+                    layer.msg('请上传药师签名图片',{icon:2});
                     return false;
                 }
                 
@@ -294,6 +322,7 @@ export default {
                 var _this = this;
                 _this.$http.post('/shv2/Recipetwo/recipe_check', {}, function (res) {
                     if (res.code == 1) {
+                        _this.type = res.data.teacher_type;
                          var type = res.data.teacher_type.toString()
                         switch(type) {
                             case '0': // 未发起审核
@@ -322,7 +351,8 @@ export default {
                                 _this.img1 = _this.$http.baseURL + res.data.teacher_pic;
                                 _this.img2 = _this.$http.baseURL + res.data.yname_pic;
                                 _this.labelTxt = '重新上传'
-                                _this.labelTxt2 = '重新上传'
+                                _this.labelTxt2 = '重新上传';
+                                _this.failed = res.data.teacher_text; // 拒绝留言
                             ; break;  // 审核失败
                         }
                     }
@@ -361,12 +391,14 @@ export default {
                layui.use('layer', function() {
                 var layer = layui.layer;
                 layer.closeAll('page')
+                var t = _this.type == 0? 1 : 2;
                 var formdata = new FormData();
                 formdata.append('teacher_pic', _this.files1)
                 formdata.append('yname_pic', _this.files2)
                 formdata.append('name', _this.yao_user)
                 formdata.append('money', _this.setMoneys)
-                formdata.append('type', 1)
+                formdata.append('type', t)
+                console.log(t)
                 _this.$http.upload('/shv2/Recipetwo/recipe_data', formdata, function (res) {
                     console.log(res)
                     if (res.code == 1) {
@@ -407,6 +439,7 @@ export default {
                     console.log(res)
                     if (res.code == 1) {
                         _this.setPrice = res.data.set_money;
+                        _this.minMoney = res.data.lowest;
                         _this.money_balance = res.data.money_balance
                     }
                 }, function (err) { console.log(err)})
@@ -417,8 +450,7 @@ export default {
                 var data = this.times;
                 clearInterval(data)
             }
-            
-        }
+        },
 }
 </script>
 <style lang='less' scoped>

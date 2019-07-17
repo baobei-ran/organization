@@ -11,7 +11,7 @@
         <div class="mySet_price dis_f Pd-T24">
             <span>处方费用设定</span>
             <input type="text" id='price_m' autocomplete="off" v-enter-number2 v-model='set_money'/> 元
-            <p>（处方费用不可低于1元，申请处方时，费用将自动从鲁医通账户中扣减，医生也将根据处方费用选择是否与药店合作）</p>
+            <p>（处方费用不可低于<span>{{ minMoney }}</span>元，申请处方时，费用将自动从鲁医通账户中扣减，医生也将根据处方费用选择是否与药店合作）</p>
         </div>
     </div>
 
@@ -57,7 +57,8 @@
 
         <div class="btns">
             <button class="layui-btn layui_btns" @click="go('/server/YaoprescriptionListPic/prescriptionSetting')" >取消</button>
-            <button class="layui-btn layui-btn-normal" @click="submitFile" >保存</button>
+            <!-- <button class="layui-btn layui-btn-normal" @click="submitFile" >保存</button> -->
+            <el-button type="primary" @click="submitFile" :loading="disabled">保存</el-button>
         </div>
      
     
@@ -109,6 +110,8 @@ export default {
                 yao_user: '',       // 药师姓名
                 minPrice: '',       // 费用最低设置
                 balance: '',        // 鲁医通账户余额
+                minMoney: 1,        // 处方设置不低于的金额
+                disabled: false
             }
         },
         mounted () {
@@ -132,6 +135,7 @@ export default {
                     console.log(res)
                     if (res.code == 1) {
                         _this.minPrice = res.data.set_money;
+                        _this.minMoney = res.data.lowest;
                         _this.balance = res.data.money_balance;
                     }
                 }, function (err) { console.log(err)})
@@ -229,6 +233,14 @@ export default {
                     layer.msg('请填写处方费用',{icon:0});
                     return false;
                 }
+                if (Number(_this.set_money) < Number(_this.minMoney)) {
+                    layer.msg('处方费用不可低于'+_this.minMoney+'元',{icon:0});
+                    return false;
+                }
+                if (Number(_this.set_money) > 100) {
+                    layer.msg('处方费用不可大于100元',{icon:0});
+                    return false;
+                }
                 if (Number(_this.balance) < Number(_this.minPrice)) {
                     layer.msg('鲁医通余额不能小于'+_this.minPrice,{icon:0});
                     return false;
@@ -245,6 +257,7 @@ export default {
                     layer.msg('请上传药师签名图片',{icon:0});
                     return false;
                 }
+                _this.disabled = true;
                 var formdata = new FormData();
                 formdata.append('money', _this.set_money)
                 formdata.append('name', _this.yao_user)
@@ -258,11 +271,13 @@ export default {
                         var tm = setTimeout(() => {
                             _this.$router.replace('/server/YaoprescriptionListPic')
                             clearTimeout(tm)
+                            _this.disabled = false;
                         }, 1000)
                     } else {
                         layer.msg('修改失败', { icon: 2, time: 1500});
+                        _this.disabled = false;
                     }
-                }, function (err) { })
+                }, function (err) { _this.disabled = false; })
                 
                 });  
             },

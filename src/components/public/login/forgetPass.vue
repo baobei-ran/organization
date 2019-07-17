@@ -7,8 +7,8 @@
             </div>
             <p>忘记密码</p>
             <form id="myform" action="" onsubmit="return false">
-            <div class="my_group"><input type="tel" id="phone" v-model='phone' name="phone" placeholder="手机号"></div>
-            <div class="my_group code"><input type="text" id="code" v-model='code' name="code" placeholder="请输入验证码"><button id="sendCode" >发送验证码</button></div>
+            <div class="my_group"><input type="tel" id="phone" v-model='phone' autocomplete="off" name="phone" placeholder="手机号"></div>
+            <div class="my_group code"><input type="text" id="code" v-model='code' autocomplete="off" name="code" placeholder="请输入验证码"><button id="sendCode" >发送验证码</button></div>
             <div class="my_group"><input type="text" id="pwd" v-model='newPass' autocomplete="new-password" name="pwd" placeholder="请输入密码"></div>
             <div class="my_group link_box">
                 <span class="login pointer" @click="go('/login')">返回登录</span>
@@ -45,7 +45,7 @@ export default {
                 var layer = layui.layer;
                 _this.disabled = true
                 var reg = /^1[3456789]\d{9}$/;  //11位手机号
-                 var ispass = /^\d{6,12}$/; //验证密码
+                 var ispass = /^\d{6,18}$/; //验证密码
                 var time = setTimeout(() => {
                   _this.disabled = false
                   clearTimeout(time)
@@ -59,7 +59,7 @@ export default {
                     return;
                 }
                 if (!_this.newPass && !ispass.test(_this.newPass)) {
-                  layer.msg('请输入6~12位数字为密码', { icon: 7});
+                  layer.msg('请输入6~18位数字和字母为密码', { icon: 7});
                     return;
                 }
                 var obj = { phone: _this.phone, code: _this.code, pwd: _this.newPass }

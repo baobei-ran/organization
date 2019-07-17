@@ -43,8 +43,10 @@
                         <div class="layui-form-item selecttime layui-row dis_f">
                             <div class="kai_server layui-col-md4">
                                 <label>开通服务</label>
-                                <el-radio v-model="list.business" label="6">电子处方</el-radio>
-                                <el-radio v-model="list.business" label="1">线下门诊</el-radio>
+                                <!-- <el-radio v-model="list.business" label="6">电子处方</el-radio>
+                                <el-radio v-model="list.business" label="1">线下门诊</el-radio> -->
+                                <el-checkbox v-model="check1">电子处方</el-checkbox>
+                                <el-checkbox v-model="check2">线下门诊</el-checkbox>
                             </div>
                             <div class="layui-inline layui-col-md4">
                                 <label class="layui-form-label">服务时间段</label>
@@ -57,7 +59,6 @@
                                         :value="item.id">
                                         </el-option>
                                     </el-select>
-                                    <!-- <input type="text" name="price_min" placeholder="" v-model="" id="date" autocomplete="off" class="layui-input "> -->
                                 </div>
                             </div>
                             <!-- <div  class="layui-inline layui-col-md3">
@@ -119,10 +120,10 @@
                                     <div class='dis_f flex_fc flex-vc'>
                                         <p class="Ft-S14 al" v-show='val.type == 1'>医生已停诊</p>
                                         <p class="pointer Ft-S14 Color_blue " v-show='val.type == 2' @click="delcode(val.did, 1)">申请合作</p>
-                                            <el-tooltip class="item" effect="light" placement="bottom-end" v-show='val.state == 3'>
-                                                <el-button><p class="Ft-S14 al">申请合作中</p></el-button>
-                                                <div slot="content">已申请该医生<br/>待医生同意后即可达成合作</div>
-                                            </el-tooltip>
+                                        <el-tooltip class="item" effect="light" placement="bottom-end" v-show='val.type == 3'>
+                                            <el-button :class="{'el-btn-tooltip':true}"><p class="Ft-S14 al">申请合作中</p></el-button>
+                                            <div slot="content">已申请该医生<br/>待医生同意后即可达成合作</div>
+                                        </el-tooltip>
                                         <p class="pointer Ft-S14 Color_blue " v-show='val.type == 4' @click="yes_delcode(val.did, 2)">同意合作</p>
                                     </div>
                                 </td>
@@ -130,7 +131,7 @@
                         </tbody>
                         <tbody v-else>
                             <tr class="table_con Color_black ac" >
-                                <td colspan='6'>暂无数据</td>
+                                <td colspan='7'>暂无数据</td>
                             </tr>
                         </tbody>
                     </table>
@@ -199,12 +200,12 @@ export default {
             logistics_number: '',
             number: '',
             doctorType: [],         // 医生职称
-            teamwork: 0,             // 合作数量
             timers: [
+                {id:5, time:'全天'},
                 {id:1, time:' 00:00:00 - 06:00:00'},
                 {id:2, time:' 06:00:00 - 12:00:00'},
                 {id:3, time:' 12:00:00 - 18:00:00'},
-                {id:4, time:' 18:00:00 - 00:00:00'},
+                {id:4, time:' 18:00:00 - 24:00:00'},
             ],
             doc_id: '',              // 申请合作的医生 id
             doc_type: '',            // 申请合作的医生 type
@@ -230,18 +231,12 @@ export default {
                 {id:5, val:'星期五'},
                 {id:6, val:'星期六'},
                 {id:0, val:'星期日'}],
+            check1: false,
+            check2: false
         }
     },
     mounted() {
         this.initdata(1)
-        var _this = this;
-        // _this.$http.post('/shv2/Recipe/recipe_doccount', {}, function (res) {
-        //     console.log(res)
-        //     if (res.code) {
-        //         _this.teamwork = res.data.type // 获取数量
-        //     }
-        // }, function (err) { console.log(err)})
-
     },
     methods: {
         // docType () {    // 获取医生职称
@@ -255,7 +250,7 @@ export default {
         // },
         initdata(num) {   // 数据
             var _this = this;
-            var a = '00:00', b = '06:00', c = '12:00', d = '18:00'
+            var a = '00:00', b = '06:00', c = '12:00', d = '18:00', e = '24:00'
             if (this.tdlast == 1) {
                 this.list.ktime = a
                 this.list.jtime = b
@@ -267,10 +262,23 @@ export default {
                 this.list.jtime = d
             } else if (this.tdlast == 4) {
                 this.list.ktime = d
-                this.list.jtime = a
+                this.list.jtime = e
+            } else if (this.tdlast == 5) {
+                this.list.ktime = a
+                this.list.jtime = e
             } else {
                 this.list.ktime = ''
                 this.list.jtime = ''
+            }
+            var serve = [];
+            if (this.check1) {
+                serve.push('6')
+            }
+            if (this.check2) {
+                serve.push('1')
+            }
+            if (serve.length > 0) {
+                _this.list.business = serve.join(',');
             }
             layui.use(["laypage", "layer", "laydate", "element"], function () {
                 var element = layui.element;
@@ -296,17 +304,19 @@ export default {
                             val.business = arrList
                         })
                         _this.tableList.map(val => { // 处理星期的日期
-                            var dates = val.busdate.split(','), dateArr = [];
-                            for (var i =0;i<_this.docTimer.length;i++) {
-                                for (var j=0; j<dates.length;j++) {
-                                    if (_this.docTimer[i].id == dates[j] ) {
-                                        dateArr.push(_this.docTimer[i].val)
+                            if (val.busdate) {
+                                var dates = val.busdate.split(','), dateArr = [];
+                                for (var i =0;i<_this.docTimer.length;i++) {
+                                    for (var j=0; j<dates.length;j++) {
+                                        if (dates[j] == _this.docTimer[i].id) {
+                                            dateArr.push(_this.docTimer[i].val)
+                                        }
                                     }
                                 }
+                                val.busdate = dateArr.join(',')
                             }
-                            val.busdate = dateArr.join(',')
                         })
-                        
+                        console.log(_this.tableList)
                         if (num == 1) {
                             _this.pageFun(res.count)
                         }
@@ -418,6 +428,8 @@ export default {
             this.list.jtime = '';
             this.list.ktime = '';
             this.list.business = '';
+            this.check1 = false;
+            this.check2 = false;
             this.initdata(1)
         },
         yes_delcode (id, type) {  // 同意合作提示
@@ -470,19 +482,6 @@ export default {
     }
 }
 </script>
-
-<style lang='less'>
-.el-tooltip {   //  更改 element ui的 Tooltip 提示信息的样式
-    border: 0;
-    background-color: inherit;
-    padding: 0;
-    &:hover {
-        background-color: inherit;
-        color: #333;
-        cursor: default;
-    }
-}
-</style>
 
 
 <style scoped lang="less">

@@ -152,7 +152,6 @@ export default {
                      var regex=/^[0]+/;
                      _this.price = _this.price.replace(regex,"");
                      _this.price =  _this.price.replace(/^\./g, '0.');
-                     _this.price =  _this.price.replace(/^\d$/g, '$1');
                 });
                 $("#money").on("input propertychange",function(event) {     // 输入的时候进行验证
                     this.value = this.value.replace(/^([1-9]\d*(\.[\d]{0,2})?|0(\.[\d]{0,2})?)[\d.]*/g, '$1');
@@ -166,7 +165,7 @@ export default {
                 
 
                 _this.$http.post('/shv2/account/recharge',{}, function (res) {  // 充值参数判断
-                    // console.log(res)
+                    console.log(res)
                     if(res.code == 1) {
                         var data = res.data;
                         _this.maxPrice = data.max;
@@ -183,22 +182,22 @@ export default {
                          _this.disabled = false
                          clearTimeout(time)
                     }, 2000)
-                    var money = $('#money').val(); //金额 各种验证规则不太清楚
-                    if (money <= 0) {
-                        // layer.msg('充值金额不能小于100');
-                        layer.msg('请输入充值金额');
+                    var moneys = Number(_this.price); //金额 各种验证规则不太清楚
+                    console.log(moneys)
+                    if (moneys <= 0) {
+                        layer.msg('请输入充值金额', {icon:2});
                         return false;
                     }
-                    if (money < _this.minPrice) {
-                        layer.msg('充值金额不能小于'+_this.minPrice);
+                    if (moneys < Number(_this.minPrice)) {
+                        layer.msg('充值金额不能小于'+_this.minPrice, {icon:0});
                         return false;
                     }
-                    if (money > _this.maxPrice) {
-                        layer.msg('充值金额不能大于'+_this.maxPrice);
+                    if (moneys > Number(_this.maxPrice)) {
+                        layer.msg('充值金额不能大于'+_this.maxPrice, {icon:0});
                         return false;
                     }
                     if (paytext == '') {
-                        layer.msg('请选择充值方式');
+                        layer.msg('请选择充值方式',{icon:2});
                         return false;
                     }
                     if (paytext == "微信支付") {

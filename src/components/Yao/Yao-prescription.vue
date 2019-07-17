@@ -21,7 +21,7 @@
                         <li @click="tab(2)">申请记录</li>
                         <li @click="tab(3)">合作终止记录</li>
                     </ul>
-                    <span><el-button style="padding: 8px 16px;" type="primary" @click="go('/server/Yaodoctorprescription/prescriptionApply')">申请合作医生</el-button></span>
+                    <span><el-button style="padding: 8px 16px;" type="primary" @click="applyfordoc">申请合作医生</el-button></span>
                 </div>
                 <div class="layui-tab-content">
                     <!-- 1 -->
@@ -57,7 +57,7 @@
                             </tbody>
                             <tbody v-else>
                                 <tr class="table_con Color_black ac" >
-                                    <td colspan='7'>暂无数据</td>
+                                    <td colspan='8'>暂无数据</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -98,7 +98,7 @@
                             </tbody>
                             <tbody v-else>
                                 <tr class="table_con Color_black ac" >
-                                    <td colspan='7'>暂无数据</td>
+                                    <td colspan='8'>暂无数据</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -136,7 +136,7 @@
                             </tbody>
                             <tbody v-else>
                                 <tr class="table_con Color_black ac" >
-                                    <td colspan='7'>暂无数据</td>
+                                    <td colspan='8'>暂无数据</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -152,7 +152,7 @@
             <h2>服务提示</h2>
             <div class="txt">
                 <p>当前合作医生数量已达上限</p>
-                <p>不可同意合作</p>
+                <p>{{ tipstxt }}</p>
             </div>
             <p class="clear">
                <button class="layui-btn layui-btn-normal" @click='cancel'>好的</button>
@@ -172,11 +172,12 @@ export default {
             page: 1,
             limit: 10,
             type: 1,
-            name: ''
+            name: '',
+            tipstxt: '',        // 提示
         }
     },
     activated () {
-        this.tab(this.type)
+        this.tab(this.type);
     },
     methods: {
         tab:function (n) {  // nav切换
@@ -259,33 +260,77 @@ export default {
                 layer.closeAll();
             }); 
         },
-        success_cooperation (id) { // 同意合作,合作已达上限提示
+        success_cooperation(id) { // 同意合作,合作已达上限提示
+            var _this = this;
+            this.$confirm('<div><p style="color: #333;">是否确认同意合作?</p> 达成合作后，医生可为你开具处方并为患者推荐药店药品</div>', '合作提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: '',
+                center: true,
+                showClose: false,
+                dangerouslyUseHTMLString: true,
+                cancelButtonClass: 'el-button-cancel',
+                confirmButtonClass: 'el-button-submit'
+            }).then(() => {
+                layui.use('layer', function(){
+                    var layer = layui.layer;
+                    _this.$http.post('/shv2/Commonshop/hos_set', {type: 2, id:id }, function (res) {
+                        console.log(res)
+                        if (res.code == 1) {
+                            layer.msg('合作成功！', {icon:1})
+                            _this.initdata(_this.page)
+                        } else if (res.code == 7) {
+                            _this.tipstxt = '不可同意合作';
+                            layer.open({
+                                type: 1,
+                                shade: 0.2,
+                                shadeClose: true,
+                                closeBtn: 0,
+                                title: '',
+                                content: $("#sendgoods_shade"),
+                                area: ["400px", "300px"],
+                                end:function(){
+                                    $("#sendgoods_shade").hide();
+                                },
+                            });
+                        } else {
+                            layer.msg(res.msg, {icon:0})
+                        }
+                    })
+                }); 
+            }).catch(() => {});
+        },
+        applyfordoc () { // 申请合作医生，验证是否已到达上限
             var _this = this;
             layui.use('layer', function(){
                 var layer = layui.layer;
-                _this.$http.post('/shv2/Commonshop/hos_set', {type: 2, id:id }, function (res) {
+                _this.$http.post('/shv2/Recipe/recipe_doccount', {}, function (res) {
                     console.log(res)
                     if (res.code == 1) {
-                        layer.msg('合作成功！', {icon:1})
-                        _this.initdata(_this.page)
-                    } else if (res.code == 7) {
-                        layer.open({
-                            type: 1,
-                            shade: 0.2,
-                            shadeClose: true,
-                            closeBtn: 0,
-                            title: '',
-                            content: $("#sendgoods_shade"),
-                            area: ["400px", "300px"],
-                            end:function(){
-                                $("#sendgoods_shade").hide();
-                            },
-                        });
+                        if (res.data.type == 1) {
+                            _this.tipstxt = '不可继续申请';
+                            layer.open({
+                                type: 1,
+                                shade: 0.2,
+                                shadeClose: true,
+                                closeBtn: 0,
+                                title: '',
+                                content: $("#sendgoods_shade"),
+                                area: ["400px", "300px"],
+                                end:function(){
+                                    $("#sendgoods_shade").hide();
+                                },
+                            });
+                        } else {
+                            _this.go('/server/Yaodoctorprescription/prescriptionApply')
+                        }
                     } else {
-                        layer.msg(res.msg, {icon:0})
+                        _this.$message.error('操作失败')
                     }
+                }, function (err) {
+                    _this.$message.error('服务器发生错误，请联系管理员')
                 })
-            }); 
+            })
         }   
     }
 }

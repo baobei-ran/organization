@@ -1079,12 +1079,6 @@ export default {
         }
     }
 }
-.el-input__inner:focus {    // 全局改变element UI 的 selece下拉框获取焦点时的边框颜色
-    border-color: #e6e6e6 !important;
-}
-.el-input__inner {    // 全局改变element UI 的 selece下拉框获取焦点时的边框颜色
-    border-color: #c2c2c3 !important;
-}
 
 #viewheight {
     overflow-y: auto;

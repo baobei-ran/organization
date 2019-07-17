@@ -604,9 +604,9 @@ export default {
                 formdata.append('name', _this.name);  // 商品名称
                 formdata.append('pic', _this.zPic);  // 商品图片
                 if (_this.recipe == 1) {   // 处方状态
-                    formdata.append('cfy', '处方'); 
+                    formdata.append('cfy', '处方药'); 
                 } else {
-                    formdata.append('cfy', '非处方'); 
+                    formdata.append('cfy', '非处方药'); 
                 }
                 formdata.append("ypzt", _this.brandVal); // 剂型
                 formdata.append('pzwh', _this.code)  // 批准文号

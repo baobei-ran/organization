@@ -269,14 +269,14 @@ export default {
                 'background':'#DAE9FF',
                 'color': '#333',
             },
-            options: [{id:1, val: '男'},{id:2,val:'女'}],
+            options: [{id:2, val: '男'},{id:1,val:'女'}],
             doctorList: [],             // 医生列表
             checkAll: false,            // 全选按钮操作
             checkedCities: [],          // 选择医生的数据列表
             username: '',               // 名字
             sex: '',                    // 性别
             age: '',                    // 年龄
-            userPhone: '',                  // 电话
+            userPhone: '',              // 电话
             liver: '',                  // 肝功能
             kidney: '',                 // 肾功能
             allergy: '',                // "过敏史
@@ -576,28 +576,30 @@ export default {
                 var obj = {
                     did: arr.join(','),
                     names: _this.username,
-                    sex: _this.sex,
+                    sex: _this.sex == 1? _this.sex:'0',
                     age: _this.age,
                     phone: _this.userPhone,
-                    liver: _this.liver != '' ? _this.liver: '正常',
-                    kidney: _this.kidney != ''? _this.kidney : '正常',
-                    allergy: _this.allergy != ''? _this.allergy : '正常',
-                    ago: _this.ago != ''? _this.ago : '正常',
-                    yun: _this.yun != ''? _this.yun : '正常',
+                    liver: _this.liver? _this.liver:'正常',
+                    kidney: _this.kidney?_this.kidney : '正常',
+                    allergy: _this.allergy?_this.allergy : '正常',
+                    ago: _this.ago? _this.ago : '正常',
+                    yun: _this.yun? _this.yun : '正常',
                     disease:  _this.disease,
                     drug: _this.drugPreserveList,
                     shop_word: _this.shop_word
                 }
+                console.log(obj)
                 _this.$http.postJson('/shv2/Recipetwo/recipe_add', obj,null, function (res) {
                     console.log(res)
                     if (res.code == 1) {
                         layer.msg('提交成功', { icon:1 , time: 1000})
-                        _this.disabled = false
-                       setTimeout(() => {
-                           _this.go('/server/YaoprescriptionListPic/YaoprescriptionList')
-                       }, 1000)
+                        var t = setTimeout(() => {
+                           _this.disabled = false
+                           _this.go('/server/YaoprescriptionListPic/YaoprescriptionList');
+                           clearTimeout(t)
+                        }, 1000)
                     } else if (res.code == 0) {
-                        layer.msg('请添加完善处方药品',{icon:2})
+                        layer.msg('请添加完善数据和处方药品',{icon:2})
                         _this.disabled = false
                     } else {
                         layer.msg(res.msg,{icon:2})

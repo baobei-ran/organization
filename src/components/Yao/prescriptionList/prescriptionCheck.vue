@@ -62,7 +62,7 @@
                                     <label>患者姓名</label><span>{{ prescriptiondata.name }}</span>
                                 </li>
                                 <li>
-                                    <label>患者性别</label><span v-text="prescriptiondata.sex == 0? '女': '男'"></span>
+                                    <label>患者性别</label><span v-text="prescriptiondata.sex == 0? '男':'女'"></span>
                                 </li>
                                 <li>
                                     <label>患者年龄</label><span>{{ prescriptiondata.age }}</span>
@@ -246,23 +246,28 @@ export default {
                                 var m = parseInt(moments % 60);
                                 var f = parseInt(moments / 60%60)
                                 var h = parseInt(moments / 3600%24)
-                                val.creatime = oddo(h)+':'+oddo(f)+':'+oddo(m)
-                                self.kaiTime = val.creatime
+                                val.creatime = oddo(f)+':'+oddo(m)
+                                self.kaiTime = val.creatime  // 医生开具中
                             }, 1000)
                         }
                     })
                     if (res.data.data.status == 1) {
-                        // self.countDown(res.data.data.creatime)
-                        self.countDown(1561110380)
+                        self.countDown(res.data.data.creatime)
                     }
                 }
             }, function (err) { console.log(err)})
         },
         initdata() {    // 取消审请弹框
-            var self = this;
+            var _this = this;
            layui.use(["layer"], function () {
                 var layer = layui.layer;
                 var $ = layui.jquery;
+                if (_this.downTime < '10:00') { // 提示 10 分钟后才能取消
+                    _this.server_msg = ''        
+                    _this.server_msg2 ='处方申请10分钟后，才可取消申请'
+                    _this.cencel_shade()
+                    return false;
+                }
                 layer.open({
                     type: 1,
                     shade: 0.4,
@@ -289,7 +294,7 @@ export default {
                 var m = parseInt(moments % 60);
                 var f = parseInt(moments / 60%60)
                 var h = parseInt(moments / 3600%24)
-                _this.downTime = oddo(h)+':'+oddo(f)+':'+oddo(m)
+                _this.downTime = oddo(f)+':'+oddo(m)
             }, 1000)
              
         },
@@ -315,7 +320,7 @@ export default {
                         } else if (res.code == 3) {
                             layer.closeAll('page');
                             _this.server_msg = '系统已为您再次提醒医生'        
-                            _this.server_msg2 ='处方申请15分钟后，才可取消申请'
+                            _this.server_msg2 ='处方申请10分钟后，才可取消申请'
                             _this.cencel_shade()
                         } else if (res.code == 4) {
                             layer.closeAll('page');
