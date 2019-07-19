@@ -55,7 +55,7 @@ export default [
     {
         path: "/jgmall/goodsList",
         name: "goodsList",
-        meta: { title: '商品列表' },
+        meta: { title: '商品列表', keepAlive: true },
         component: goodsList
     },
     {
@@ -182,6 +182,9 @@ export default [
         path: '/server/Yaodoctorprescription',
         title: '处方单医生列表',
         name: 'yaoPrescription',
+        meta: {
+            keepAlive: true // 需要被缓存
+        },
         component: Yaoprescription
     },
     {
@@ -207,6 +210,9 @@ export default [
         path: '/server/YaoprescriptionListPic/YaoprescriptionList',
         title: '处方单列表',
         name: 'yaoPrescriptionList',
+        meta: {
+            keepAlive: true // 需要被缓存
+        },
         component: YaoprescriptionList
     },
     {

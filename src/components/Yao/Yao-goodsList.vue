@@ -657,8 +657,8 @@ export default {
                
                 _this.$http.post('/shv2/goods/index', obj, function (res) {
                     console.log(res)
+                    _this.goodCount = res;
                     if(res.code == 1) {
-                        _this.goodCount = res;
                         _this.goodList = res.data;
                         if (n == 1) {
                              _this.initdata(res.num) // 传递总数

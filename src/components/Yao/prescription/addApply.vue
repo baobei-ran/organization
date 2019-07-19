@@ -232,7 +232,7 @@
                 <span class="shads"></span>
             </div>
             <div class="footBtn">
-               <button type="button" class="layui-btn cancel" @click='drugCancel'>取消</button>
+               <button type="button" class="layui-btn cancel" @click='drugCancel(1)'>取消</button>
                <button type="button" class="layui-btn layui-btn-normal" @click="drugPreserve">保存</button>
             </div>
         </div>
@@ -547,7 +547,12 @@ export default {
                 });
             });
         },
-        drugCancel () { // 关闭弹框
+        drugCancel (n) { // 关闭弹框
+            if (n == 1) {
+                this.drugManufacturer = ''
+                this.drugName = ''
+                this.searchDrug()
+            }
             layui.use('layer', function(){
                 var layer = layui.layer;
                 layer.closeAll('page');

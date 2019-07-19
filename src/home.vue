@@ -57,10 +57,14 @@
         <div id="index_content" class="fl" :style="{'position':'absolute','left':pdleft, 'right':'0px'}">
             <div class="Pd-L24 Pd-R24 Mg-T24" >
                 <div id="viewheight">
-                        <keep-alive include="goodsList,yaoPrescription,yaoPrescriptionList">
+                        <!-- <keep-alive include="goodsList,yaoPrescription,yaoPrescriptionList">
                             <router-view></router-view>
+                        </keep-alive> -->
+                        <keep-alive>
+                            <router-view v-if="$route.meta.keepAlive"></router-view>
                         </keep-alive>
-                        
+                        <router-view v-if="!$route.meta.keepAlive"></router-view>
+
                 </div>
             </div>
         </div>

@@ -1,6 +1,8 @@
 <template>
     <div id="orderList" class="bg_f" style="height:100%">
-        <p class="orderList_tit Color_black Ft-S16 Pd-T24 Pd-B24 Pd-L24">订单列表</p>
+        <div class="orderList_tit Color_black Ft-S16 Pd-T24 Pd-B24 Pd-L24">
+            <p><span>服务说明</span></p>
+        </div>
 
         <div class="screen_type Pd-B14 Mg-T14  dis_f">
             <div class="layui-form-item selecttime dis_f">
@@ -238,10 +240,19 @@ export default {
             txt: '',             // 审核说明
             he_id: '',           // 审核的id
             recipeCount: {},     // 获取tab的数量
+            iskp: false,
         }
     },
-    activated () {
+    mounted () {
         this.tab(this.tabStatus)
+        setTimeout(() => {
+            this.iskp = true
+        }, 1000)
+    },
+    activated () {
+        if (this.iskp) {
+            this.tab(this.tabStatus)
+        }
     },
     methods: {
         tab(type) {
@@ -252,21 +263,19 @@ export default {
                 jtime: '',
             }
             this.tabStatus = type;
-            console.log(type)
             this.initdata(type, 1)
         },
         initdata(type, num) {   // 数据
             var _this = this;
-            console.log(_this.list)
             layui.use(["laypage", "layer", "element"], function () {
                 var element = layui.element;
                 _this.list.page = num;
                 _this.list.status = type;
                 _this.list.limit = 10;
-                _this.$http.post('/shv2/recipetwo/recipe_index', _this.list, function (res) {//
+                _this.$http.post('/shv2/recipetwo/recipe_index', _this.list, function (res) { // 列表数据
                     console.log(res)
+                    _this.recipeCount = res;
                     if (res.code == 1) {
-                        _this.recipeCount = res;
                         _this.tableList = res.data;
                         if (num == 1) {
                             //分页
@@ -487,6 +496,17 @@ export default {
     height: 100%;
     .orderList_tit {
         border-bottom: 1px solid #e6e6e6;
+        >p {
+            display: inline;
+            padding: 10px;
+            border: 1px dashed #ddd;
+            border-radius: 4px;
+            span {
+                padding-left: 24px;
+                background: url('../../common/image/icon/icon_fwsm.png') no-repeat left center;
+                background-size: 20%;
+            }
+        }
     }
     input:hover,
     input:focus {
