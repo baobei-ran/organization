@@ -1,7 +1,24 @@
 <template>
     <div id="orderList" class="bg_f" style="height:100%">
         <div class="orderList_tit Color_black Ft-S16 Pd-T24 Pd-B24 Pd-L24">
-            <p><span>服务说明</span></p>
+            <p class="head-title" v-show="!tilteMsg"><span @click='btnServeMsg'>服务说明</span></p>
+            <transition name='fade'>
+                <div class="perscription_title" v-show='tilteMsg'>
+                    <p class="head-title"><span>服务说明</span></p>
+                    <div class="perscription_msg_box" >
+                        <div>
+                            <p>云医康推出电子处方服务，药店可通过平台医生开具电子处方，扩充药店的药品经营品类；</p>
+                            <p>药店可根据顾客的实际需要，向合作医生发布处方需求，并辅以患者的基本信息和病情描述，医生将根据患者的病情，接单并开具处方，在经由药店药师审核后，处方即可生效。</p>
+                        </div>
+                        <div>
+                            <h2>服务设置</h2>
+                            <p>药店上传药师资质及药师签名图片，经平台审核通过后，即可拥有电子处方服务；</p>
+                            <p>发布处方申请时，需向医生支付处方费用，请在鲁医通账户中预存100元，用于电子处方的费用支付。</p>
+                        </div>
+                        <span class="show_btn pointer" @click='btnServeMsg'><img src="../../common/image/icon/icon_sq.png" alt=""></span>
+                    </div>
+                </div>
+             </transition>
         </div>
 
         <div class="screen_type Pd-B14 Mg-T14  dis_f">
@@ -241,6 +258,7 @@ export default {
             he_id: '',           // 审核的id
             recipeCount: {},     // 获取tab的数量
             iskp: false,
+            tilteMsg: false,      // 服务说明显示与否
         }
     },
     mounted () {
@@ -486,27 +504,81 @@ export default {
                     }
                 }, function (err) { console.log(err)})
             })
+        },
+        btnServeMsg () {
+            this.tilteMsg = !this.tilteMsg
         }
     }
 }
 </script>
 
 <style scoped lang="less">
+.fade-enter-active, .fade-leave-active {
+  transition: transform .3s ease-out;
+}
+
+.fade-enter, .fade-leave-to {
+    transform: translateY(-400px);
+}
 #orderList {
     height: 100%;
     .orderList_tit {
         border-bottom: 1px solid #e6e6e6;
         >p {
-            display: inline;
-            padding: 10px;
+            padding: 12px 20px;
             border: 1px dashed #ddd;
+        }
+        .head-title {
+            display: inline;
             border-radius: 4px;
             span {
-                padding-left: 24px;
+                padding-left: 32px;
                 background: url('../../common/image/icon/icon_fwsm.png') no-repeat left center;
-                background-size: 20%;
+                background-size: 20px;
+                cursor: pointer;
             }
         }
+        .perscription_title {
+            border: 1px dashed #DDD;
+            -webkit-border-radius: 8px;
+            border-radius: 8px;
+            padding: 20px 0 0px  24px;
+            font-size: 14px;
+            margin-right: 24px;
+            >p {
+                span {
+                    background-size: 22px;
+                    padding-left: 35px;
+                    font-size: 16px;
+                }
+            }
+        .perscription_msg_box {
+            margin-top: 20px;
+            position: relative;
+            padding-bottom: 24px;
+            > div {
+               > h2 {
+                    font-size: 16px;
+                    color: #333;
+                    font-weight:500;
+                    padding: 20px 0;
+                    padding-left: 34px;
+                    background: url('../../common/image/icon/icon_fwsm.png') no-repeat left center;
+                    background-size: 22px;
+                }
+                p {
+                    color: #666;
+                    line-height: 20px;
+                    margin-top: 7px;
+                }
+            }
+            .show_btn {
+                position: absolute;
+                right: 0;
+                bottom: 0;
+            }
+        }
+    }
     }
     input:hover,
     input:focus {

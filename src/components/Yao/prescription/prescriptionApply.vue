@@ -104,7 +104,7 @@
                                     </ul>
                                 </td>
                                 <td>
-                                    <p style="width: 100px; margin:0 auto;">{{ val.busdate }}</p>
+                                    <p style="width: 100px; margin:10px auto;">{{ val.busdate }}</p>
                                     <span>{{ val.busktime }}</span>
                                     <span>--</span>
                                     <span>{{ val.busjtime }}</span>
@@ -226,7 +226,7 @@ export default {
                 {id:13, val:'合作药店'},],
             docTimer: [{id:1, val:'星期一'},  // 服务时间
                 {id:2, val:'星期二'},
-                {id:3, val:'星期二'},
+                {id:3, val:'星期三'},
                 {id:4, val:'星期四'},
                 {id:5, val:'星期五'},
                 {id:6, val:'星期六'},
@@ -313,7 +313,13 @@ export default {
                                         }
                                     }
                                 }
-                                val.busdate = dateArr.join(',')
+                                dateArr
+                                if (dateArr.length == 7) {
+                                    val.busdate = '每日'
+                                } else {
+                                    val.busdate = dateArr.join(',')
+                                }
+                                
                             }
                         })
                         console.log(_this.tableList)
