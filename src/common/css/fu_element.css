@@ -70,13 +70,26 @@
 }
 .el-btn-tooltip:hover {
   background-color: inherit;
- color: #333;
+  color: #333;
   cursor: default;
 }
 
 .el-input__inner:focus {    /* 全局改变element UI 的 selece下拉框获取焦点时的边框颜色 */
   border-color: #e6e6e6;
 }
-.el-input__inner {    /* 全局改变element UI 的 selece下拉框获取焦点时的边框颜色 */
+.el-select .el-input.is-focus .el-input__inner, .el-select .el-input__inner:focus {    /* 全局改变element UI 的 selece下拉框获取焦点时的边框颜色 */
   border-color: #c2c2c3;
+}
+
+.el-MsgBox-btn { /* MessageBox 弹框的自定义确定按钮样式 */
+  margin-top: 10px;
+  padding: 10px 26px;
+  font-size: 14px;
+  background-color: #128DFF;
+}
+.el-message-box__message .el-MsgBox-txt { /* MessageBox 弹框的自定义确定 文本内容 样式 */
+  display: block;
+  line-height: 60px;
+  color: #333;
+  font-size: 15px;
 }

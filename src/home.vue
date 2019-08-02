@@ -80,7 +80,7 @@ export default {
     name: "home",
     data() {
         return {
-            SidebarList: [
+            SidebarList: [ // 医院
                 {
                     title: "首页",
                     urlIndexof: '',
@@ -173,11 +173,7 @@ export default {
                         {
                             title: '会员',
                             url: '/vip/vipmember',
-                        },
-                        // {
-                        //     title: '会员',
-                        //     url: '',
-                        // }
+                        }     
                     ]
                 },
                 {
@@ -187,11 +183,7 @@ export default {
                         {
                             title: '采购',
                             url: '/supply/purchase',
-                        },
-                        // {
-                        //     title: '采购',
-                        //     url: '',
-                        // }
+                        }
                     ]
                 },
                 {
@@ -201,11 +193,7 @@ export default {
                         {
                             title: '通知',
                             url: '/message/inform',
-                        },
-                        // {
-                        //     title: '通知',
-                        //     url: '',
-                        // }
+                        }
                     ]
                 },
                 {
@@ -250,22 +238,22 @@ export default {
                             title: '商城管理',
                             url: '/jgmall/openmall',
                         },
-                        {
-                            title: '发货单列表',
-                            url: '/jgmall/sendGoodsList',
-                        },
-                        {
-                            title: '发货日志',
-                            url: '/jgmall/sendGoodsLog',
-                        },
-                        {
-                            title: '退款列表',
-                            url: '/jgmall/refundList',
-                        },
-                        {
-                            title: '评价管理',
-                            url: '/jgmall/evaluationAdmin',
-                        }
+                        // {
+                        //     title: '发货单列表',
+                        //     url: '/jgmall/sendGoodsList',
+                        // },
+                        // {
+                        //     title: '发货日志',
+                        //     url: '/jgmall/sendGoodsLog',
+                        // },
+                        // {
+                        //     title: '退款列表',
+                        //     url: '/jgmall/refundList',
+                        // },
+                        // {
+                        //     title: '评价管理',
+                        //     url: '/jgmall/evaluationAdmin',
+                        // }
                         
                         
                     ]
@@ -352,6 +340,10 @@ export default {
                         {
                             title:'电子处方',
                             url: '/server/YaoprescriptionListPic'
+                        },
+                        {
+                            title:'处方用药审核',
+                            url: '/server/YaoRecipeShenhe'
                         }
                     ]
                 },

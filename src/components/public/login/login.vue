@@ -36,10 +36,17 @@ export default {
             flag: false
         }
     },
+    beforeRouteEnter (to, from, next) {
+        next(vm => {
+            var user = vm.localstorage.get('logindata');
+            if (user) {
+                next('/')
+            } else {
+                next('/login')
+            }
+        })
+    },
     methods: {
-        initdata() {
-
-        },
         submitFun() {
             var _this = this;
             layui.use(["layer"], function () {

@@ -171,7 +171,7 @@
                     </li>
                     <li class="smallsize-font">
                         <span>处方失效时间：</span>
-                        <span>{{ recipemsg.undue_time }}</span>
+                        <span>{{ recipemsg.undue_time | moment }}</span>
                     </li>
                 </ul>
                 <h2>云医康互联网医院电子处方</h2>
@@ -317,7 +317,7 @@ export default {
             layui.use(["layer"], function () {
                 var layer = layui.layer;
                 var $ = layui.jquery;
-                 _this.$http.post('/mobile/Doch5/recipe_look', {id:id}, function (res) {
+                _this.$http.post('/mobile/Doch5/recipe_look', {id:id}, function (res) {
                 console.log(res)
                 if (res.code == 1) {
                     _this.recipemsg = res.data

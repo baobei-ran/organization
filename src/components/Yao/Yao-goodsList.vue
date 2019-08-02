@@ -557,7 +557,7 @@ export default {
         }
     },
     mounted() {
-        this.isIE()
+        this.isIE();
     },
     
     activated () {

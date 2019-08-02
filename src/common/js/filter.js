@@ -23,7 +23,7 @@ vue.filter('moment', function (value, formatString) {
     if (!value) {
       return ''
     }
-    formatString = formatString || 'YYYY-MM-DD HH:mm:ss';
+    formatString = formatString || 'YYYY-MM-DD HH:mm';
     return moment.unix(value).format(formatString); // 这是时间戳转时间
 });
 

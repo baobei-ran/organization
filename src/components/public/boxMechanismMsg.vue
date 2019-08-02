@@ -1,5 +1,5 @@
 <template>
-    <div id="boxmechanismMsg" class="bg_f">
+    <div id="boxmechanismMsg" class="bg_f" v-show="isView">
         <p class="mechanismMsg_tit Ft-S18 Color_black Pd-L22 Pd-T24 Pd-B24 Mg-B24">
             认证机构信息
         </p>
@@ -59,6 +59,7 @@ export default {
     data() {
         return {
             type: '1',
+            isView: false
         }
     },
     mounted() {
@@ -77,9 +78,10 @@ export default {
                 if (rea.code == 1) {
                     if (rea.data.hospital_status == 1 && res.code == 224 && res.data == 8 ) {
                         _this.$router.replace('/setting/boxMechanismMsg/Yaomesuccess')       // 药店
-                    } 
-                    if (rea.data.hospital_status == 1 && res.code == 224 && res.data == 1) {
+                    } else if (rea.data.hospital_status == 1 && res.code == 224 && res.data == 1) {
                         _this.$router.replace('/setting/boxMechanismMsg/mesuccess')          // 医院
+                    } else {
+                        _this.isView = true
                     }
                 }     
             })

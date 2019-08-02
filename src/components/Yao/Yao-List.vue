@@ -2,31 +2,38 @@
     <div id="orderList" class="bg_f" style="height:100%">
         <p class="orderList_tit Color_black Ft-S16 Pd-T24 Pd-B24 Pd-L24">订单列表</p>
         <div class="tab_content Pd-L24 Pd-R24">
-            <div class="layui-tab Pd-T24">
-                <ul class="layui-tab-title">
-                    <li class="layui-this" @click="tab(0)">全部商品（{{headernum.count}}）</li>
-                    <li @click="tab(1)">待付款（{{headernum.count1}}）</li>
-                    <li @click="tab(7)">待发货（{{headernum.count2}}）</li>
-                    <li @click="tab(4)">待收货（{{headernum.count3}}）</li>
-                    <li @click="tab(8)">待核销（{{headernum.count4}}）</li>
-                    <li @click="tab(5)">已完成（{{headernum.count5}}）</li>
-                    <li @click="tab(6)">已关闭（{{headernum.count6}}）</li>
-                </ul>
+            <div class="layui-tab">
+               
                 <div class="layui-tab-content">
-                    <div class="screen_type Pd-B24 Mg-T14 Mg-B24">
+                    <div class="screen_type Pd-B24 Mg-T14">
                         <div class="layui-form-item layui-row">
-                            <div class="layui-col-md4">
+                            <div class="layui-col-md3">
                                 <div class="layui-inline lay_width">
                                     <label class="layui-form-label">订单编号</label>
                                     <div class="layui-input-inline">
-                                        <input type="text" name="" v-model="list.number" autocomplete="off" class="layui-input">
+                                        <input type="text" name="" v-model="list.number" autocomplete="off" class="layui-input" />
                                     </div>
                                 </div>
                             </div>
-                            <div class="layui-inline layui-col-md4">
-                                <label class="layui-form-label">收货人</label>
-                                <div class="layui-input-inline" style="width:65%">
-                                    <input type="text" name="" v-model="list.name" autocomplete="off" class="layui-input">
+                            <div class="layui-col-md3">
+                                <div class="layui-inline lay_width">
+                                    <label class="layui-form-label">订单类型</label>
+                                    <div class="layui-input-inline">
+                                        <el-select v-model="typeValue" placeholder="请选择">
+                                            <el-option
+                                                v-for="item in options"
+                                                :key="item.value"
+                                                :label="item.label"
+                                                :value="item.value">
+                                            </el-option>
+                                        </el-select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md4">
+                                <label class="layui-form-label order_label">下单用户姓名</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" v-model="list.name" autocomplete="off" class="layui-input"/>
                                 </div>
                             </div>
                         </div>
@@ -49,50 +56,66 @@
                         </div>
                        
                     </div>
+                     <ul class="layui-tab-title">
+                        <li class="layui-this" @click="tab(0)">全部订单（{{headernum.count}}）</li>
+                        <li @click="tab(1)">待付款（{{headernum.count1}}）</li>
+                        <li @click="tab(8)">待核销（{{headernum.count4}}）</li>
+                        <li @click="tab(7)">待发货（{{headernum.count2}}）</li>
+                        <li @click="tab(4)">待收货（{{headernum.count3}}）</li>
+                        <li @click="tab(5)">已完成（{{headernum.count5}}）</li>
+                        <li @click="tab(6)">已关闭（{{headernum.count6}}）</li>
+                    </ul>
                     <table class="layui-table" lay-skin="">
                         <thead>
                             <tr class="Color_black table_headtr ac">
                                 <td class="firstheadtd">序号</td>
-                                <td>订单编号</td>
-                                <td>金额信息</td>
+                                <td>订单信息</td>
+                                <td>订单类型</td>
+                                <td>下单用户</td>
                                 <td>收货信息</td>
-                                <td>下单时间</td>
                                 <td>订单状态</td>
+                                <td>金额信息</td>
                                 <td>操作</td>
                             </tr>
                         </thead>
-                        <tbody v-if='tableList.length'>
-                            <tr class="table_con Color_black ac" v-for="(val,index) in tableList">
-                                <td v-text="index+1"></td>
-                                <td v-text="val.number"></td>
+                        <tbody>
+                            <tr class="table_con Color_black" v-for="(val,index) in 2">
+                                <td class="ac" v-text="index+1"></td>
                                 <td>
-                                    <p>总金额：{{val.money}}</p>
-                                    <p>支付方式：{{val.type}}</p>
+                                    <p>订单编号：464646765656</p>
+                                    <p class="Mg-T10">下单时间：2019-02-02 12:00</p>
                                 </td>
                                 <td>
-                                    <p>收货人：{{val.rname}}</p>
-                                    <p>联系电话：{{val.rphone}}</p>
-                                    <p>地址：{{val.raddress}}</p>
-                                </td>
-                                <td v-text="val.addtime"></td>
-                                <td>
-                                    <p v-text="val.pay"></p>
-                                    <p v-text="val.express"></p>
-                                    <p v-text="val.order"></p>
+                                    <p>医生推荐订单</p>
+                                    <p class="Mg-T10">推荐医生：李大牛</p>
                                 </td>
                                 <td>
+                                    <p>李大牛</p>
+                                    <p class="Mg-T10">13222333452</p>
+                                </td>
+                                <td class="ac">配送方式：门店自提</td>
+                                <td class="ac">
+                                    <p>已付款</p>
+                                    <p class="Mg-T10">待核销</p>
+                                </td>
+                                <td>
+                                    <p>总金额：</p>
+                                    <p class="Mg-T10">支付方式：</p>
+                                </td>
+                                <td>
+                                    <p class="pointer Ft-S14 Color_blue al" @click="delcode">核销自提码</p>
+                                    <p class="pointer Ft-S14 Mg-T10 Color_blue al" @click="ClickCfdetail()">查看原始处方</p>
                                     <div>
-                                        <p class="pointer Ft-S14 Color_blue al" style="width:80px;margin:0 auto" @click="godetail(val.number,val.pay,val.express,val.order)"><i class="seedetail_icon Mg-R5"></i>查看详情</p>
-                                        <p class="pointer Ft-S14 Mg-T14 Color_blue al" style="width:80px;margin:0 auto" @click="sendgoods(val.number)" v-show="(val.status==2||val.status==3)&&val.distribution==1"><i class="sendhw_icon Mg-R5"></i>发货</p>
+                                        <p class="pointer Ft-S14 Mg-T10 Color_blue al" @click="godetail(val.number,val.pay,val.express,val.order)">查看详情</p>
+                                        <p class="pointer Ft-S14 Mg-T10 Color_blue al" @click="sendgoods(val.number)" >发货</p>
                                     </div>
-                                    <p v-show="tdlast==8" class="pointer Ft-S14 Color_blue" style="width:80px;margin:0 auto" @click="godetail(val.number,val.pay,val.express,val.order)"><i class="seedetail_icon Mg-R5"></i>查看详情</p>
-                                    <p v-show="tdlast==8" class="pointer Ft-S14 Color_blue Mg-T14 al" style="width:80px;margin:0 auto" @click="delcode"><i class="del_icon Mg-R5"></i>核销</p>
+                                    
                                 </td>
                             </tr>
                         </tbody>
-                        <tbody v-else>
+                        <tbody >
                             <tr class="table_con Color_black ac" >
-                                <td colspan='7'>暂无数据</td>
+                                <td colspan='8'>暂无数据</td>
                             </tr>
                         </tbody>
                     </table>
@@ -152,7 +175,9 @@ export default {
             headernum: '',
             company: '',
             logistics_number: '',
-            number: ''
+            number: '',
+            typeValue: '全部',  // 订单类型
+            options: [],        // 订单类型列表
         }
     },
     mounted() {
@@ -320,6 +345,9 @@ export default {
             this.list.name = '';
             this.list.start_time = '';
             this.list.end_time = '';
+        },
+        ClickCfdetail() { // 查看处方
+            console.log('yes')
         }
     }
 }
@@ -335,7 +363,6 @@ export default {
         border: 1px solid #c2c3c3;
     }
     .screen_type {
-        border-bottom: 1px solid #e6e6e6;
         .layui-form-item {
             .lay_width {
                 width: 100%;
@@ -346,9 +373,14 @@ export default {
                 .layui-input-inline {
                     width: 65%;
                     input {
+                        width: 200px;
                         height: 34px;
                     }
                 }
+            }
+            .order_label {
+                width: 110px;
+                padding-left: 0;
             }
         }
         .selecttime {
@@ -397,53 +429,29 @@ export default {
             padding-left: 1px;
             padding-right: 1px;
             .layui-table {
+                
                 .table_headtr {
                     height: 50px;
                     background: #dae9ff;
                     td {
                         font-size: 16px;
+                        border: 0;
                     }
                     .firstheadtd {
                         position: relative;
                     }
                 }
                 tbody {
+                    tr:nth-child(even) {
+                        background-color: #E5F0FF;
+                    }
                     .table_con {
                         background: #fff;
-
+                        
                         td {
-                            padding: 30px 0px;
+                            padding: 12px 0px 12px 30px;
                             font-size: 14px;
-                            .shopdetail {
-                                padding: 52px 0px;
-                                padding-right: 60px;
-                                span:last-child {
-                                    position: absolute;
-                                    right: 20px;
-                                }
-                            }
-                        }
-                        td:last-child {
-                            i {
-                                display: inline-block;
-                                width: 14px;
-                                height: 14px;
-                                position: relative;
-                                top: 3px;
-                            }
-                            .seedetail_icon {
-                                background: url(../../common/image/icon/icon_ck.png)
-                                    no-repeat;
-                            }
-                            .sendhw_icon {
-                                background: url(../../common/image/icon/icon_fh.png)
-                                    no-repeat;
-                            }
-                            .del_icon {
-                                background: url(../../common/image/icon/icon_hx.png)
-                                    no-repeat;
-                                background-size: 100%;
-                            }
+                            border:0;
                         }
                     }
                 }

@@ -43,8 +43,9 @@ const PrescriptionCheck = () => import('@/components/Yao/prescriptionList/prescr
 const PrescriptionSetting = () => import('@/components/Yao/prescriptionList/prescriptionSetting' /* webpackChunkName: "prescription" */);    // 处方设置
 const PrescriptionSet = () => import('@/components/Yao/prescriptionList/commons/prescription_set' /* webpackChunkName: "prescription" */);    // 处方设置修改
 
-// const ListOfPrescription = () => import('@/components/Yao/prescriptionList/listOfprescription' /* webpackChunkName: "prescription" */);   //  处方列表
-
+// 处方用药审核
+const YaoRecipeShenhe = () => import('@/components/Yao/recipes/Yao-recipeShenhe' /* webpackChunkName: "recipe" */);       //  处方审核列表
+const YaoRecipeDetails = () => import('../components/Yao/recipes/Yao-recipeDetails.vue' /* webpackChunkName: "recipe" */); // 处方用药详情
 
 export default [
     {
@@ -235,4 +236,17 @@ export default [
         name: '处方设置修改',
         component: PrescriptionSet
     },
+
+    // 处方审核
+    {
+        path: '/server/YaoRecipeShenhe',
+        name: '处方用药列表',
+        meta: { keepAlive: true },
+        component: YaoRecipeShenhe
+    },
+    {
+        path: '/server/YaoRecipeShenhe/YaoRecipeDetails:id?',
+        name: '处方用药详情',
+        component: YaoRecipeDetails
+    }
 ]

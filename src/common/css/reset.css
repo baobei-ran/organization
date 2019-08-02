@@ -78,7 +78,9 @@ var {
   font-style: normal;
   font-weight: normal;
 }
-
+b {
+  font-weight:normal;
+}
 a {
   color: #555;
   text-decoration: none;

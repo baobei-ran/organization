@@ -168,7 +168,6 @@
                 <div class="prescription_btn">
                     <button class="layui-btn layui-btn-normal" style='width: 100px;'  @click='go("/server/YaoprescriptionListPic/YaoprescriptionList")'>返回</button>
                     <button v-show="prescriptiondata.status == 1 || prescriptiondata.status == 2" class="layui-btn Return_btn" @click='initdata'>取消申请</button>
-                    <!-- <button v-show="prescriptiondata.status == 3 && prescriptiondata.flag == 0" class="layui-btn Return_btn" @click='yaoAudit'>药师审核</button> -->
                 </div>
         </div>
         <!-- 取消申请 -->
