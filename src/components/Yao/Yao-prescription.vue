@@ -21,7 +21,7 @@
                         <li @click="tab(2)">申请记录</li>
                         <li @click="tab(3)">合作终止记录</li>
                     </ul>
-                    <span><el-button style="padding: 8px 16px;" type="primary" @click="applyfordoc">申请合作医生</el-button></span>
+                    <span><el-button style="padding: 8px 16px;" type="primary" plain @click="docSetMoney">医生佣金设定</el-button> <el-button plain style="padding: 8px 16px;" type="primary" @click="applyfordoc">申请合作医生</el-button></span>
                 </div>
                 <div class="layui-tab-content">
                     <!-- 1 -->
@@ -331,6 +331,9 @@ export default {
                     _this.$message.error('服务器发生错误，请联系管理员')
                 })
             })
+        },
+        docSetMoney () {  // 进入设置佣金页
+            this.go('/server/Yaodoctorprescription/docSetMoney');
         }   
     }
 }

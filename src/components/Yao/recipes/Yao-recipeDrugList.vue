@@ -1,10 +1,10 @@
 <template>
-    <div id="recipeShenhe" class="bg_f" style="height:100%">
+    <div id="recipeShenhe" class="bg_f" style="height:100%" v-show="isView">
         <div class="orderList_tit Color_black Ft-S16 Pd-T24 Pd-B24 Pd-L24">
-            <p class="head-title" v-show="!tilteMsg"><span @click='btnServeMsg'>服务说明</span></p>
-            <transition name='fade'>
+            <p :class='{"border-dashed":!tilteMsg }' class="head-title"><span @click='btnServeMsg'>服务说明</span></p>
+            <transition name="slide-fade">
                 <div class="perscription_title" v-show='tilteMsg'>
-                    <p class="head-title"><span>服务说明</span></p>
+                    
                     <div class="perscription_msg_box" >
                         <div>
                             <p>药店开通处方服务后，平台医生向患者开具处方将选择药店药品，药店须由药师审核处方，患者方可购买。</p>
@@ -16,13 +16,13 @@
              </transition>
         </div>
 
-        <div class="screen_type Pd-B14 Mg-T14  dis_f">
+        <div class="screen_type Pd-B14 Mg-T24  dis_f">
             <div class="layui-form-item selecttime dis_f">
                 <div class="layui-inline">
                     <label class="layui-form-label">处方申请时间</label>
                     <div class="layui-input-inline" style="width:160px">
                         <el-date-picker style="width:160px;"
-                            v-model="list.ktime"
+                            v-model="list.start_time"
                             type="date"
                             value-format="yyyy-MM-dd"
                             placeholder="选择开始日期">
@@ -31,7 +31,7 @@
                     <div class="layui-form-mid">-</div>
                     <div class="layui-input-inline" style="width:160px">
                         <el-date-picker style="width:160px;"
-                            v-model="list.jtime"
+                            v-model="list.end_time"
                             type="date"
                             value-format="yyyy-MM-dd"
                             placeholder="选择结束日期">
@@ -41,13 +41,13 @@
                 <div class="layui-inline lay_width">
                     <label class="layui-form-label">患者姓名</label>
                     <div class="layui-input-inline" style="width:160px">
-                        <input type="text" v-model="list.name" autocomplete="off" class="layui-input">
+                        <input type="text" v-model="list.patient_name" autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-inline Mg-L10 lay_width">
                     <label class="layui-form-label">开具医生</label>
                     <div class="layui-input-inline" style="width:160px">
-                        <input type="text" v-model="list.doc" autocomplete="off" class="layui-input">
+                        <input type="text" v-model="list.doctor_name" autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <p class="Pd-L15">
@@ -62,10 +62,10 @@
             <div class="layui-tab">
                 <div class="layui_navs">
                     <ul class="layui-tab-title">
-                        <li class="layui-this" @click="tab(1)">全部（{{ recipeCount.type1 }}）</li>
-                        <li @click="tab(2)">待审核（{{ recipeCount.type2 }}）</li>
-                        <li @click="tab(3)">已审核（{{ recipeCount.type3 }}）</li>
-                        <li @click="tab(4)">已过期（{{ recipeCount.type4 }}）</li>
+                        <li class="layui-this" @click="tab(1)">全部<b v-show="tabStatus == 1">（{{ recipeCount }}）</b></li>
+                        <li @click="tab(2)">待审核<b v-show="tabStatus == 2">（{{ recipeCount }}）</b></li>
+                        <li @click="tab(3)">已审核<b v-show="tabStatus == 3">（{{ recipeCount }}）</b></li>
+                        <li @click="tab(4)">已过期<b v-show="tabStatus == 4">（{{ recipeCount }}）</b></li>
                     </ul>
                 </div>
                 <div class="layui-tab-content">
@@ -87,21 +87,23 @@
                                     <td>{{ i+1 }}</td>
                                     <td>
                                         <span>{{ val.number }}</span>
-                                        <img style="width: 19px;" src='../../../common/image/icon/icon_copy@2x.png' alt='' />
+                                        <img style="width: 19px;" :data-clipboard-text="val.number" class="pointer copy_text" @mouseenter="copy(i)"  @click="copy(i)" src='../../../common/image/icon/icon_copy@2x.png' alt='' />
                                     </td>
                                     <td class="doc_name">
-                                        <span>王二小</span>
-                                        <img src="../../../common/image/icon/bq_hzz.png" alt="" />
+                                        <span>{{ val.true_name }}</span>
+                                        <img v-show="val.state == 2" src="../../../common/image/icon/bq_hzz.png" alt="" />
                                     </td>
-                                    <td>{{ val.user }}</td>
+                                    <td>
+                                        <p>{{ val.name }}<span>|</span>{{ val.sex == 1? '男':'女' }}<span>|</span>{{ val.age }}</p>
+                                        <p v-show="val.status == 5">订单已支付</p>
+                                    </td>
                                     <td style='width:280px;'>
                                         <div class="doctor">
-                                            <ul v-for='(st, index) in val.state' :key='index+"_1"'>
-                                                <li v-if='st.status == 1'><span>{{ st.true_name }}</span> <span>未接单</span></li>
-                                                <li v-if='st.status == 2'><span>{{ st.true_name }}</span> <span>已接单</span></li>
-                                                <li v-if='st.status == 3'><span>{{ st.true_name }}</span> <span>已拒绝</span><span class="docMsg">（{{ st.remark }}</span><b>）</b></li>
-                                                <li v-if='st.status == 4'><span>{{ st.true_name }}</span> <span>处方开具超时</span></li>
-                                                <li v-if='st.status == 5'><span>{{ st.true_name }}</span> <span>已开具</span></li>
+                                            <ul>
+                                                <li v-if='val.drug_autdit == 0'>处方未审核</li>
+                                                <li v-if='val.drug_autdit == 1'>处方审核通过</li>
+                                                <li v-if='val.drug_autdit == 2'>处方审核拒绝</li>
+                                                <li v-if='val.is_expire == 1'>处方已过期</li>
                                             </ul>
                                         </div>
                                     </td>
@@ -109,7 +111,7 @@
                                     <td class="dis_f dis_js" style="max-width: 200px; margin: 0 auto;">
                                         <p class="pointer Ft-S14 Color_blue al"  @click="godetail(val.id)">查看详情</p>
                                         <p class="pointer Ft-S14 Color_blue al"  @click="lookover(val.id)">查看处方</p>
-                                        <p v-show="tabStatus == 1 || tabStatus == 2" class="pointer Ft-S14 Color_blue al"  @click="yao_set(val.id)">审核</p>
+                                        <p v-show="tabStatus == 1 && val.is_expire == 0 || tabStatus == 2 && val.is_expire == 0" class="pointer Ft-S14 Color_blue al"  @click="yao_set(val.id)">审核</p>
                                     </td>
                                 </tr>
                             </tbody>
@@ -120,7 +122,16 @@
                             </tbody>
                         </table>
                     </div>
-                    <div id="page" v-show='tableList.length' class="ac Mg-T30"></div>
+                     <div v-show='tableList.length' class="block ac Mg-T30">
+                        <el-pagination background
+                            @current-change="handleCurrentChange"
+                            :current-page="page"
+                            prev-text='上一页'
+                            next-text='下一页'
+                        layout="prev, pager, next, jumper"
+                        :total="recipeCount">
+                        </el-pagination>
+                    </div>
                 </div>
             </div>
         </div>
@@ -152,11 +163,25 @@
             </p>
         </div> 
 
+        <!-- 处方缩略图 -->
+        <el-dialog
+            title=""
+            :visible.sync="iscfPic"
+            width="660px"
+            :before-close="handleClose">
+                <v-cf v-if="iscfPic" :id="id" :isReject='isReject' />
+        </el-dialog>
+
     </div>
 </template>
 <script>
+import Clipboard from 'clipboard';
+var Cfdetails = () => import('./childrenRecipe');
 export default {
     name: 'yaoPrescriptionList',
+    components: {
+        'v-cf': Cfdetails
+    },
     data() {
         return {
             doctorList: [],             // 医生列表
@@ -164,117 +189,144 @@ export default {
             checkedCities: [],          // 选择医生的数据liebaio
             doctorId: '',               // 再次提价发起，获取医生id
             list: {
-                status: 1,
-                doc: '',
-                name: '',
-                ktime: '',
-                jtime: '',
-                limit: 10,
-                page: 1
+                hos_id: '',
+                start_time: '',
+                end_time: '',
+                patient_name: '',
+                doctor_name: '',
+                drug_autdit: '',
             },
+            limit: 10,
+            page: 1,
             tableList: [],
             tabStatus: 1,           // tab 列表
             radioVal: '1',       // 审核状态
             txt: '',             // 审核说明
             he_id: '',           // 审核的id
-            recipeCount: {},     // 获取tab的数量
+            recipeCount: 0,     // 获取tab的数量
             iskp: false,
             tilteMsg: false,      // 服务说明显示与否
             disabled: false,      // 审核 loading 
+            isView: false,
+            iscfPic: false,
+            id: 0,
+            isReject: Number(0),  // boolean
         }
     },
     mounted () {
-    
+        var dom = document.getElementsByClassName('copy_text');
+        for(var i=0; i<dom.length;i++) {
+            this.copy(i)
+        }
+       
     },
     activated () {
+        var _this = this;
+        this.$http.post('/shv2/Recipetwo/recipe_check', null, function (res) {
+            // console.log(res)
+            if (res.code == 1) {
+                if (res.data.teacher_type !== 2) {
+                    _this.$router.replace({ path: '/server/YaoRecipeDrugList/YaoRecipeDrugSH'})
+                } else {
+                    _this.isView = true
+                }
+            }   
+        })
         this.tab(this.tabStatus)
     },
     methods: {
+        handleCurrentChange (num) {
+            this.page = num
+            this.initdata() 
+        },
+        handleClose () {
+            this.iscfPic = false
+        },
         tab(type) {
-            this.list = {
-                number: '',
-                name: '',
-                ktime: '',
-                jtime: '',
+            if (this.tabStatus !== type) {
+                this.list = {
+                    start_time: '',
+                    end_time: '',
+                    patient_name: '',
+                    doctor_name: '',
+                }
+                this.page = 1
+            }
+            if (type == 2) {
+                this.list.drug_autdit = 3
+            } else if (type == 3) {
+                this.list.drug_autdit = 1
+            } else if (type == 4) {
+                this.list.drug_autdit = 2
+            } else {
+                this.list.drug_autdit = ''
             }
             this.tabStatus = type;
-            this.initdata(type, 1)
+            this.initdata()
         },
-        initdata(type, num) {   // 数据
+        initdata() {   // 数据
+            var user = this.localstorage.get('logindata');
+            this.list.hos_id = user.hid;
+            this.list.page = this.page;
+            this.list.limit = this.limit;
             var _this = this;
+            // console.log(this.list)
             layui.use(["laypage", "layer", "element"], function () {
                 var element = layui.element;
-                _this.list.page = num;
-                _this.list.status = type;
-                _this.list.limit = 10;
-                _this.$http.post('/shv2/recipetwo/recipe_index', _this.list, function (res) { // 列表数据
+                _this.$http.post('/shv2/Patient/patient_prescription_audit_list', _this.list, function (res) { // 列表数据
                     console.log(res)
-                    _this.recipeCount = res;
                     if (res.code == 1) {
+                        _this.recipeCount = res.num
                         _this.tableList = res.data;
-                        if (num == 1) {
-                            //分页
-                            _this.pageFun(res.count)
-                        }
                     } else {
+                        if (_this.page !== 1) {
+                            _this.page --
+                            _this.initdata()
+                            return;
+                        }
                         _this.tableList = [];
-                        _this.pageFun(0)
+                        _this.recipeCount = 0
                     }
                 }, function (err) { console.log(err) });
 
             });
         },
-        pageFun(total) {    // 分页
-            var _this = this;
-            layui.use(["laypage", "layer", "element"], function () {
-                var element = layui.element;
-                var laypage = layui.laypage;
-                laypage.render({
-                    elem: "page", //注意，这里的 test1 是 ID，不用加 # 号
-                    count: total, //数据总数，从服务端得到
-                    limit: _this.list.limit, //每页条数
-                    layout: ["prev", "page", "next", "skip"],
-                    groups: 4,
-                    jump: function (obj, first) {
-                        if (!first) {
-                            _this.list.page = obj.curr;
-                            _this.initdata(_this.list.status, obj.curr)
-                        }
-                    }
-                });
-            });
-        },
         search() {  // 搜索
           var _this = this;
+          if (_this.page != 1) {
+            _this.page = 1;
+          }
           layui.use('layer', function(){
             var layer = layui.layer;
-            if (_this.list.ktime && _this.list.jtime) {
-                var date1 = new Date(_this.list.ktime).getTime();
-                var date2 = new Date(_this.list.jtime).getTime();
+            if (_this.list.start_time && _this.list.end_time) {
+                var date1 = new Date(_this.list.start_time).getTime();
+                var date2 = new Date(_this.list.end_time).getTime();
                 if (date1 > date2) {
                     layer.msg('开始时间不能大于结束时间', { icon: 5});
                     return false
                 }
             }
-            _this.initdata(_this.list.status, 1)
+            _this.initdata()
             
           });
            
         },
         godetail(val) {    // 查看详情
             if (val) {
-                this.go('/server/YaoRecipeShenhe/YaoRecipeDetails?id='+ val)
+                this.go('/server/YaoRecipeDrugList/YaoRecipeDetails?id='+ val)
             }
-            
         },
         empty() {   // 清空
-           this.list = {
-                doc: '',
-                name: '',
-                ktime: '',
-                jtime: '',
+            if (this.page != 1) {
+                this.page = 1;
             }
-            this.initdata(this.tabStatus, 1)
+           this.list = {
+                start_time: '',
+                end_time: '',
+                patient_name: '',
+                doctor_name: '',
+            }
+            this.initdata()
         },
         
         cancels () {     // 审核的 取消关闭弹框
@@ -306,17 +358,17 @@ export default {
             this.disabled = true;
             layui.use(["layer"], function () {
                 var layer = layui.layer;
-                _this.$http.post('/shv2/recipetwo/recipe_audit', { id: _this.he_id, type: _this.radioVal,text: _this.txt }, function (res) {  // 审核接口
+                _this.$http.post('/shv2/Patient/patient_prescription_audit', { patient_id: _this.he_id, audit_type: _this.radioVal,audit_Explain: _this.txt }, function (res) {  // 审核接口
                     console.log(res)
                     _this.disabled = false;
                     if (res.code == 1) {
                         layer.closeAll('page');
                         layer.msg('审核成功', {icon:1})
-                        _this.initdata(_this.tabStatus, _this.list.page)
+                        _this.initdata()
                         _this.txt = ''
                     } else {
                         layer.closeAll('page');
-                        layer.msg('审核失败', { icon: 2})
+                        layer.msg(res.msg, { icon: 2})
                     }
                 }, function (err) { console.log(err)})
             })
@@ -325,38 +377,67 @@ export default {
             this.tilteMsg = !this.tilteMsg
         },
         lookover(id){ // 查看处方
-            this.$alert('<span class="el-MsgBox-txt" >该处方已过期！</span>', '服务提示', {
-                confirmButtonText: '确认',
-                dangerouslyUseHTMLString: true,
-                center: true,
-                showClose: false,
-                confirmButtonClass: 'el-MsgBox-btn',
-            })
+            this.id = Number(id)
+            this.iscfPic = true
+            // this.$alert('<span class="el-MsgBox-txt" >该处方已过期！</span>', '服务提示', {
+            //     confirmButtonText: '确认',
+            //     dangerouslyUseHTMLString: true,
+            //     center: true,
+            //     showClose: false,
+            //     confirmButtonClass: 'el-MsgBox-btn',
+            // })
         },
-        
-    }
+        copy(i) {
+            var _this = this;
+            var dom = document.getElementsByClassName('copy_text');
+            var clipboard = new Clipboard(dom[i]);
+            clipboard.on("success", e => {
+                _this.$message.success("复制成功");
+                // 释放内存
+                clipboard.destroy();
+            });
+            clipboard.on("error", e => {
+                // 不支持复制
+                _this.$message.error('该浏览器不支持自动复制');
+                // 释放内存
+                clipboard.destroy();
+            });
+                
+            
+        }
+
+    },
 }
 </script>
 
 <style scoped lang="less">
-.fade-enter-active, .fade-leave-active {
-  transition: transform .3s ease-out;
+.slide-fade-enter-active {
+  transition: all .5s ease;
+}
+.slide-fade-leave-active {
+  transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+.slide-fade-enter, .slide-fade-leave-to {
+  transform: translateX(20px);
+  opacity: 0;
 }
 
-.fade-enter, .fade-leave-to {
-    transform: translateY(-400px);
-}
 #recipeShenhe {
     height: 100%;
     .orderList_tit {
         border-bottom: 1px solid #e6e6e6;
-        >p {
-            padding: 12px 20px;
+        position: relative;
+        min-height: 90px;
+        .border-dashed{
             border: 1px dashed #ddd;
         }
         .head-title {
             display: inline;
             border-radius: 4px;
+            padding: 12px 20px;
+            position: absolute;
+            top: 24px;
+            left: 24px;
             span {
                 padding-left: 32px;
                 background: url('../../../common/image/icon/icon_fwsm.png') no-repeat left center;
@@ -368,16 +449,10 @@ export default {
             border: 1px dashed #DDD;
             -webkit-border-radius: 8px;
             border-radius: 8px;
-            padding: 20px 0 0px  24px;
+            padding: 40px 0 0px  24px;
             font-size: 14px;
             margin-right: 24px;
-            >p {
-                span {
-                    background-size: 22px;
-                    padding-left: 35px;
-                    font-size: 16px;
-                }
-            }
+            
         .perscription_msg_box {
             margin-top: 20px;
             position: relative;
@@ -509,6 +584,7 @@ export default {
                             padding: 15px 0px;
                             font-size: 14px;
                             border:0;
+                            color: #666;
                             >p {
                             line-height: 30px;
                           }
@@ -520,28 +596,14 @@ export default {
                                   li {
                                     text-align: center;
                                     line-height: 30px;
-                                    span:first-child {
-                                        display: inline-block;
-                                        min-width: 50px;
-                                    }
-                                    .docMsg {
-                                        display: inline-block;
-                                        max-width: 100px;
-                                        overflow: hidden;
-                                        text-overflow:ellipsis;
-                                        white-space: nowrap;
-                                        vertical-align: middle;
-                                    }
-                                    b {
-                                        font-weight: normal;
-                                    }
                                   }
                               }
                           }
                         }
                         .doc_name {
                               img {
-                                width: 40px;
+                                // width: 42px;
+                                vertical-align: middle;
                               }
                           }
                         td:last-child {

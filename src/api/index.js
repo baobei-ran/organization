@@ -13,7 +13,7 @@ var baseURL = "http://test99.yunyikang.cn"; // 测试
 // else if (process.env.NODE_ENV == 'production') {
 // 	baseURL = "https://www.yunyikang.cn";
 // }
-axios.defaults.retry = 2;           //  发起请求次数
+axios.defaults.retry = 1;           //  发起请求次数
 axios.defaults.retryDelay = 1500;   //  每次请求时间
 
 axios.defaults.withCredentials = true;

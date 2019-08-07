@@ -22,9 +22,9 @@
                                         <el-select v-model="typeValue" placeholder="请选择">
                                             <el-option
                                                 v-for="item in options"
-                                                :key="item.value"
-                                                :label="item.label"
-                                                :value="item.value">
+                                                :key="item.id"
+                                                :label="item.name"
+                                                :value="item.id">
                                             </el-option>
                                         </el-select>
                                     </div>
@@ -41,11 +41,13 @@
                             <div class="layui-inline">
                                 <label class="layui-form-label">订单时间</label>
                                 <div class="layui-input-inline" style="width:180px">
-                                    <input type="text" name="price_min" placeholder="" v-model="list.start_time" id="date" autocomplete="off" class="layui-input date_icon">
+                                    <el-date-picker style="width:180px" value-format="yyyy-MM-dd" v-model="list.start_time" type="date" placeholder="选择日期"></el-date-picker>
+                                    <!-- <input type="text" name="price_min" v-model="list.start_time" id="date" autocomplete="off" class="layui-input date_icon"> -->
                                 </div>
                                 <div class="layui-form-mid">-</div>
                                 <div class="layui-input-inline" style="width:180px">
-                                    <input type="text" name="price_max" placeholder="" v-model="list.end_time" id="date1" autocomplete="off" class="layui-input date_icon">
+                                    <el-date-picker style="width:180px" value-format="yyyy-MM-dd" v-model="list.end_time" type="date" placeholder="选择日期"></el-date-picker>
+                                    <!-- <input type="text" name="price_max" v-model="list.end_time" id="date1" autocomplete="off" class="layui-input date_icon"> -->
                                 </div>
                             </div>
                             <p class="Mg-L30 Pd-L50">
@@ -79,41 +81,46 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="table_con Color_black" v-for="(val,index) in 2">
+                            <tr class="table_con Color_black" v-for="(val,index) in tableList" :key='index'>
                                 <td class="ac" v-text="index+1"></td>
                                 <td>
-                                    <p>订单编号：464646765656</p>
-                                    <p class="Mg-T10">下单时间：2019-02-02 12:00</p>
+                                    <p>订单编号：<span>{{ val.number }}</span><img :data-clipboard-text='val.number' v-show='val.number' @mouseenter="copy(index)" @click='copy(index)' style="width: 19px;" class="pointer copy_text" src='../../common/image/icon/icon_copy@2x.png' alt='' /></p>
+                                    <p class="Mg-T10">下单时间：{{ val.addtime }}</p>
                                 </td>
                                 <td>
-                                    <p>医生推荐订单</p>
-                                    <p class="Mg-T10">推荐医生：李大牛</p>
+                                    <p v-text='val.order_type == 1?"医生推荐订单":val.order_type == 2?"平台商城订单":""'></p>
+                                    <p v-show="val.order_type == 1" class="Mg-T10">推荐医生：{{ val.dname }}</p>
                                 </td>
                                 <td>
-                                    <p>李大牛</p>
-                                    <p class="Mg-T10">13222333452</p>
+                                    <p>{{ val.uname }}</p>
+                                    <p class="Mg-T10">{{ val.uphone }}</p>
                                 </td>
-                                <td class="ac">配送方式：门店自提</td>
                                 <td class="ac">
-                                    <p>已付款</p>
-                                    <p class="Mg-T10">待核销</p>
+                                    配送方式：<span v-text='val.distribution == 1?"物流发货":val.distribution == 2?"门店自提":""'></span>
+                                    <p v-show="val.distribution == 1">收货人：{{ val.rname }}</p>
+                                    <p v-show="val.distribution == 1">联系方式：{{ val.rphone }}</p>
+                                </td>
+                                <td class="ac">
+                                    <p>{{ val.pay }}</p>
+                                    <p class="Mg-T10">{{ val.express }}</p>
+                                    <p class="Mg-T10">{{ val.order }}</p>
                                 </td>
                                 <td>
-                                    <p>总金额：</p>
-                                    <p class="Mg-T10">支付方式：</p>
+                                    <p>总金额：{{ val.money }}</p>
+                                    <p class="Mg-T10">支付方式：{{ val.type }}</p>
                                 </td>
                                 <td>
-                                    <p class="pointer Ft-S14 Color_blue al" @click="delcode">核销自提码</p>
-                                    <p class="pointer Ft-S14 Mg-T10 Color_blue al" @click="ClickCfdetail()">查看原始处方</p>
+                                    <p v-show='val.status == 8' class="pointer Ft-S14 Color_blue al" @click="delcode(val.number)">核销自提码</p>
+                                    <p v-show="val.rx == 1" class="pointer Ft-S14 Mg-T10 Color_blue al" @click="ClickCfdetail(val.reid)">查看原始处方</p>
                                     <div>
-                                        <p class="pointer Ft-S14 Mg-T10 Color_blue al" @click="godetail(val.number,val.pay,val.express,val.order)">查看详情</p>
-                                        <p class="pointer Ft-S14 Mg-T10 Color_blue al" @click="sendgoods(val.number)" >发货</p>
+                                        <p class="pointer Ft-S14 Mg-T10 Color_blue al" @click="godetail(val.number)">查看详情</p>
+                                        <p v-show='val.status == 7' class="pointer Ft-S14 Mg-T10 Color_blue al" @click="sendgoods(val.number)" >发货</p>
                                     </div>
                                     
                                 </td>
                             </tr>
                         </tbody>
-                        <tbody >
+                        <tbody v-show="!tableList.length">
                             <tr class="table_con Color_black ac" >
                                 <td colspan='8'>暂无数据</td>
                             </tr>
@@ -123,15 +130,16 @@
                 </div>
             </div>
         </div>
-        <div id="sendgoods" class="hide">
+        <!-- 发货 -->
+        <div id="sendgoods" class="hide shadeStyle">
             <table width="100%">
                 <tr>
                     <td class="Color_black Ft-S16" width="90px"><span class="Color_red">*</span>配送公司</td>
-                    <td><input type="text" v-model="company"></td>
+                    <td><input type="text" v-model="company" /></td>
                 </tr>
                 <tr>
                     <td class="Color_black Ft-S16"><span class="Color_red">*</span>物流单号</td>
-                    <td><input type="text" v-model="logistics_number"></td>
+                    <td><input type="text" v-model="logistics_number" /></td>
                 </tr>
             </table>
             <p class="clear">
@@ -139,26 +147,40 @@
                 <span class="fr"><button class="send pointer" @click="sendup">发货</button></span>
             </p>
         </div>
-        <div id="sendgoods" class="hide delcode">
+        <!-- 核销 -->
+        <div class="hide delcode shadeStyle">
             <table width="100%" class="Mg-T50">
                 <tr>
-                    <td class="Color_black Ft-S16" width="90px"><span class="Color_red">*</span>核销码</td>
+                    <td class="Color_black Ft-S16" width="90px">自提码</td>
                     <td>
-                        <input type="text">
-                        <p class="Color_red Ft-S12" style="position:absolute; z-index:100;margin-top:5px"><i class="tan_icon"></i>核销码不存在</p>
+                        <input type="text"  v-model="code"/>
+                        <!-- <p class="Color_red Ft-S12" style="position:absolute; z-index:100;margin-top:5px"><i class="tan_icon"></i>核销码不存在</p> -->
                     </td>
                 </tr>
             </table>
             <p class="clear">
                 <span class="fl"><button class="cancel pointer" @click='cancel'>取消</button></span>
-                <span class="fr"><button class="send pointer">发货</button></span>
+                <span class="fr"><button @click='delcodeApi' class="send pointer">确认</button></span>
             </p>
         </div>
+        <!-- 处方缩略图 -->
+        <el-dialog
+            title=""
+            :visible.sync="iscfPic"
+            width="660px"
+            :before-close="handleClose">
+                <v-cf v-if="iscfPic" :id="id" :isReject='isReject' />
+        </el-dialog>
     </div>
 </template>
 <script>
+import Clipboard from 'clipboard';
+var Cfdetails = () => import('./recipes/childrenRecipe');
 export default {
-    name: 'orderList',
+    name: 'yaoList',
+    components: {
+        'v-cf': Cfdetails
+    },
     data() {
         return {
             tdlast: 0,
@@ -171,49 +193,54 @@ export default {
                 page: 1,
                 limit: 10
             },
-            tableList: '',
+            tableList: [],
             headernum: '',
             company: '',
             logistics_number: '',
             number: '',
             typeValue: '全部',  // 订单类型
-            options: [],        // 订单类型列表
+            options: [{id: '', name: '全部'},{ id: 1, name: '医生推荐订单' }, { id: 2, name: '平台商城订单' }],        // 订单类型列表
+            code: '',           // 核销码
+            strNumber: '',      // 核销订单号
+            page: 1,
+            id: 0,          
+            iscfPic: false,
+            isReject: Number(0),
         }
     },
-    mounted() {
-        this.tab(0)
-        
+    activated () {
+        this.tab(this.tdlast)
     },
     methods: {
         tab(type) {
+            if(this.tdlast !== type) {
+                this.page = 1
+                this.typeValue = ''
+                this.list.number = ''
+                this.list.name= ''
+                this.list.start_time= ''
+                this.list.end_time= ''
+            }
             this.tdlast = type;
             this.initdata(type, 1)
         },
         initdata(type, num) {   // 数据
             var _this = this;
-            layui.use(["laypage", "layer", "laydate", "element"], function () {
+            layui.use(["laypage", "layer", "element"], function () {
                 var element = layui.element;
-                var laydate = layui.laydate;
-                laydate.render({
-                    elem: "#date",
-                });
-                laydate.render({
-                    elem: "#date1",
-                });
-                var oDate1 = new Date($('#date').val());
-                var oDate2 = new Date($('#date1').val());
+                var oDate1 = new Date(_this.list.start_time);
+                var oDate2 = new Date(_this.list.end_time);
                 if (oDate1.getTime() > oDate2.getTime()) {
-                    layer.msg('开始时间不能大于结束时间');
+                    layer.msg('开始时间不能大于结束时间', { icon: 2 });
                     return
                 }
-                _this.list.page = num;
+                _this.list.page = _this.page
                 _this.list.status = type;
-                _this.list.start_time = $('#date').val();
-                _this.list.end_time = $('#date1').val();
+                _this.list.type = _this.typeValue;
                 _this.$http.post('/shv2/goodsorder/index', _this.list, function (res) {//
                     console.log(res)
+                    _this.headernum = res;
                     if (res.code == 1) {
-                        _this.headernum = res;
                         _this.tableList = res.data;
                         if (num == 1) {
                             switch (_this.tdlast) {//分页
@@ -243,11 +270,12 @@ export default {
                     elem: "page", //注意，这里的 test1 是 ID，不用加 # 号
                     count: total, //数据总数，从服务端得到
                     limit: 10, //每页条数
+                    curr: _this.page,
                     layout: ["prev", "page", "next", "skip"],
                     groups: 4,
                     jump: function (obj, first) {
                         if (!first) {
-                            _this.list.page = obj.curr;
+                            _this.page = obj.curr;
                             _this.initdata(_this.tdlast, obj.curr)
                         }
                     }
@@ -257,10 +285,11 @@ export default {
         search() {  // 搜索
             this.initdata(this.tdlast, 1)
         },
-        godetail(number,pay,express,order) {    // 查看详情
-            this.go('/jgmall/List/listDetail?number='+number+'&pay='+pay+'&express='+express+'&order='+order)
+        godetail(number) {    // 查看详情
+            this.go('/jgmall/List/listDetail?number='+number)
         },
-        delcode() { // 核销
+        delcode(int) { // 核销弹框
+            this.strNumber = int
             layui.use(["layer"], function () {
                 var layer = layui.layer;
                 var $ = layui.jquery;
@@ -269,7 +298,7 @@ export default {
                     shade: 0.2,
                     shadeClose: true,
                     closeBtn: 1,
-                    title: "自取核销",
+                    title: "",
                     content: $(".delcode"),
                     area: ["500px", "300px"],
                     cancel: function () { }
@@ -282,6 +311,26 @@ export default {
                 });
                 $(".layui-layer-setwin").css("top", "19px");
             });
+        },
+        delcodeApi () { // 核销接口
+            var _this = this;
+            
+            layui.use(["layer"], function () {
+                var layer = layui.layer;
+                if(!_this.code) {
+                    layer.msg('请输入自提码', {icon: 2})
+                    return;
+                }
+                _this.$http.post('/shv2/goodsorder/code_check_submit', { number: _this.strNumber,code: _this.code }, function (res) {
+                    console.log(res)
+                    if (res.code == 1) {
+                        layer.closeAll('page')
+                        layer.msg('核销成功', {icon: 1})
+                    } else {
+                        layer.msg(res.msg, {icon: 2})
+                    }
+                }, function (err ) { console.log (err) })
+            })
         },
         sendgoods(num) {    // 发货
             this.number = num;
@@ -336,18 +385,45 @@ export default {
         cancel () {     // 取消关闭弹框
             layui.use('layer', function(){
             var layer = layui.layer;
-            
                 layer.closeAll();
             }); 
         },
         empty() {   // 清空
+            this.typeValue = '';
             this.list.number = '';
-            this.list.name = '';
-            this.list.start_time = '';
-            this.list.end_time = '';
+            this.list.name= '';
+            this.list.start_time= '';
+            this.list.end_time= '';
+            this.initdata(this.tdlast, 1);
         },
-        ClickCfdetail() { // 查看处方
-            console.log('yes')
+        handleClose () {
+            this.iscfPic = false
+        },
+        ClickCfdetail(id) { // 查看处方
+            if (!id) {
+                this.$message.error('处方id不存在，无法进行查看')
+                return;
+            }
+            this.id = Number(id)
+            this.iscfPic = true
+        },
+        copy(i) {
+            var _this = this;
+            var dom = document.getElementsByClassName('copy_text');
+            var clipboard = new Clipboard(dom[i]);
+            clipboard.on("success", e => {
+                _this.$message.success("复制成功");
+                // 释放内存
+                clipboard.destroy();
+            });
+            clipboard.on("error", e => {
+                // 不支持复制
+                _this.$message.error('该浏览器不支持自动复制');
+                // 释放内存
+                clipboard.destroy();
+            });
+                
+            
         }
     }
 }
@@ -387,15 +463,6 @@ export default {
             .layui-inline {
                 .layui-form-label {
                     padding: 7px 10px 7px 0px;
-                }
-                .layui-input-inline {
-                    input {
-                        height: 34px;
-                    }
-                    .date_icon {
-                        background: url(../../common/image/pages/account/icon_sj.png)
-                            no-repeat 150px;
-                    }
                 }
             }
         }
@@ -459,7 +526,7 @@ export default {
         }
     }
 }
-#sendgoods {
+.shadeStyle {
     padding-left: 53px;
     padding-right: 53px;
 
@@ -494,11 +561,11 @@ export default {
         }
     }
     button {
-        width: 160px;
-        height: 46px;
+        width: 120px;
+        height: 40px;
         border-radius: 4px;
         border: none;
-        font-size: 18px;
+        font-size: 16px;
         margin-top: 46px;
     }
     .cancel {

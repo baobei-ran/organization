@@ -2,32 +2,24 @@
 <!-- 处方详情页 -->
     <div id="prescriptionCheck">
         <div class="tab_content">
-            <!-- 1、待审核 -->
-                <div class="prescriptionCheck_head dis_f Pd-L24 Pd-R24" >
+            <!-- 1、待审核,已审核 -->
+                <div class="prescriptionCheck_head dis_f Pd-L24 Pd-R24" v-show='isStatus'>
                     <h1>处方详情</h1>
                     <img src="../../../common/image/icon/icon_ddsh@2x.png" alt="" />
                     <span>
-                        处方未审核
-                        <b>（患者已支付）</b>
+                        {{ recipeMsg }}
+                        <b v-show="prescriptiondata.order_status == 5">（患者已支付）</b>
                     </span>
                 </div>
-                <!-- 2、 处方未审核，过期 -->
-                 <div class="prescriptionCheck_header dis_f Pd-L24 Pd-R24" >
+                <!-- 2、 orange -->
+                 <div class="prescriptionCheck_header dis_f Pd-L24 Pd-R24" v-show="isStatusErr" >
                     <h1>处方详情</h1>
                     <img src="../../../common/image/icon/icon_cfygq@2x.png" alt="" />
                     <span>
                         {{ recipeMsg }}
-                        <b>（患者已支付）</b>
+                        <b v-show="prescriptiondata.order_status == 5">（患者已支付）</b>
                     </span>
                 </div>
-                 <!-- 3、 处方审核未通过 -->
-                 <!-- <div class="prescriptionCheck_header dis_f Pd-L24 Pd-R24" >
-                    <h1>处方详情</h1>
-                    <img src="../../../common/image/icon/icon_cfygq@2x.png" alt="" />
-                    <span>处方审核拒绝
-                        <b>（患者已支付）</b>
-                    </span>
-                </div> -->
                               
                 <div class="Mg-T20 prescription">
                     <div class="prescription_msg bg_f">
@@ -35,15 +27,15 @@
                         <div>
                             <ul>
                                 <li><span>处方单编号</span><span>{{ prescriptiondata.number }}</span></li>
-                                <li><span>处方生成时间</span><span>{{ prescriptiondata.creatime,'YYYY-MM-DD HH:mm' | moment }}</span></li>
-                                <li><span>处方失效时间</span><span >827788390022</span></li>
+                                <li><span>处方生成时间</span><span>{{ prescriptiondata.start_time | moment }}</span></li>
+                                <li><span>处方失效时间</span><span >{{ prescriptiondata.undue_time | moment }}</span></li>
                             </ul>
                             <ul>
-                                <li><span>开具医生</span><span>里大大
-                                    <img style="width: 40px;" src='../../../common/image/icon/bq_hzz.png' alt='' />
+                                <li><span>开具医生</span><span>{{ prescriptiondata.true_name }}
+                                    <img v-show="prescriptiondata.state == 2" src='../../../common/image/icon/bq_hzz.png' alt='' />
                                     </span></li>
-                                <li><span>医院</span><span>山东省立医院</span></li>
-                                <li><span>商品订单编号</span><span>827788390022 <img style="width: 20px;" src="../../../common/image/icon/icon_copy@2x.png" alt="" /></span></li>
+                                <li><span>医院</span><span>{{ prescriptiondata.hospital_name }}</span></li>
+                                <li><span>商品订单编号</span><span class="tag-read" :data-clipboard-text='prescriptiondata.order_code'>{{ prescriptiondata.order_code }} <img v-show="prescriptiondata.order_code" data-clipboard-target=".tag-read"  style="width: 20px;" class="pointer" @mouseenter="copy"  @click='copy' src="../../../common/image/icon/icon_copy@2x.png" alt="" /></span></li>
                             </ul>
                         </div>
                     </div>
@@ -58,7 +50,7 @@
                                     <label>患者姓名</label><span>{{ prescriptiondata.name }}</span>
                                 </li>
                                 <li>
-                                    <label>患者性别</label><span v-text="prescriptiondata.sex == 0? '男':'女'"></span>
+                                    <label>患者性别</label><span v-text="prescriptiondata.sex == 1? '男':'女'"></span>
                                 </li>
                                 <li>
                                     <label>患者年龄</label><span>{{ prescriptiondata.age }}</span>
@@ -85,12 +77,12 @@
                             </ul>
                             <ol>
                                 <li>
-                                    <label>患者主诉</label><span>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar tempor. Cum sociis natoque penatibus et magnis dis parturient</span>
+                                    <label>患者主诉</label><span>{{ prescriptiondata.opinion }}</span>
                                 </li>
                             </ol>
                             <ol>
                                 <li>
-                                    <label>诊断结果</label><span>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar tempor. Cum sociis natoque penatibus et magnis dis parturient</span>
+                                    <label>诊断结果</label><span>{{ prescriptiondata.result }}</span>
                                 </li>
                             </ol>
                         </div>
@@ -102,21 +94,19 @@
                             <p class="orderList_tit Color_black Pd-T20 Pd-B20 Pd-L24 Pd-R24 Ft-S16 ">药品信息</p>
                             <ol>
                                 <li v-for='(val,i) in eat' :key='i' class="dis_f">
-                                    <img src="../../../common/image/icon/pic_xsp.png" alt="" />
+                                    <img :src="$http.baseURL+val.img" alt="" />
                                     <dl>
                                         <dt>
                                             <div>
-                                                <label>{{ val.name }} <b>（3g/袋*15袋）</b></label>
+                                                <label>{{ val.name }} <b>（{{ val.gg }}）</b></label>
                                             </div>
                                             <div class="dis_f">
-                                                <span>广州云南白药厂</span>
-                                                <span>¥243.00</span>
+                                                <span>{{ val.company }}</span>
+                                                <span><i style="font-size: 12px;">¥</i>{{ val.money }}</span>
                                                 <span>×{{ val.num }}</span>
                                             </div>
                                         </dt>
-                                        <dd><label>用法：</label><span>
-                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar tempor. Cum sociis natoque penatibus et magnis dis parturient
-                                            </span></dd>
+                                        <dd><label>用法：</label><span>{{ val.usage }}</span></dd>
                                     </dl>
                                 </li>
                             </ol>
@@ -125,22 +115,24 @@
                 
 
                 <!-- 审核信息 -->
-                <div class="doc_msg " v-show="rob.length">
+                <div class="doc_msg ">
                     <p class="Pd-B24 Pd-T20 Pd-L24 Color_black Ft-S16">审核信息</p>
-                    <ul>
-                        <li>处方未审核</li>
+                    <ul v-show="prescriptiondata.drug_autdit == 0">
+                         <li>处方未审核</li>
+                    </ul>
+                    <ul v-show="prescriptiondata.drug_autdit !== 0">
+                       
                         <li>
                             <div>
-                                <p><label>审核药师</label><span>李二牛</span></p>
-                                <p><label>审核时间</label><span>2019-01-01 12:00</span></p>
+                                <p><label>审核药师</label><span>{{ prescriptiondata.yname }}</span></p>
+                                <p><label>审核时间</label><span>{{ prescriptiondata.drug_audit_time | moment }}</span></p>
                             </div>
                         </li>
                         <li>
-                            <label>审核结果</label><span>审核拒绝</span>
+                            <label>审核结果</label><span v-text='prescriptiondata.drug_autdit == 1? "审核通过": prescriptiondata.drug_autdit == 2? "审核拒绝": ""'></span>
                         </li>
                         <li>
-                            <label>审核描述</label><span>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. 
-Proin sodales pulvinar tempor. Cum sociis natoque penatibus et magnis dis parturient</span>
+                            <label>审核描述</label><span>{{ prescriptiondata.drug_audit_reason }}</span>
                         </li>
                     </ul>
                 </div>
@@ -149,7 +141,7 @@ Proin sodales pulvinar tempor. Cum sociis natoque penatibus et magnis dis partur
                 <!-- 底部按钮 -->
                 <div class="prescription_btn">
                     <button class="layui-btn layui-btn-normal" style='width: 100px;'  @click='Returns'>返回</button>
-                    <button class="layui-btn Return_btn" @click='ClickmodelAudit'>处方审核</button>
+                    <button class="layui-btn Return_btn" v-show="prescriptiondata.drug_autdit == 0 && prescriptiondata.p_status == 1" @click='ClickmodelAudit'>处方审核</button>
                 </div>
         </div>
 
@@ -189,6 +181,7 @@ Proin sodales pulvinar tempor. Cum sociis natoque penatibus et magnis dis partur
     </div>
 </template>
 <script>
+import Clipboard from 'clipboard';
 var Cfdetails = () => import('./childrenRecipe');
 export default {
     name: 'recipeDetails',
@@ -200,15 +193,16 @@ export default {
             prescriptiondata: {},   // 处方数据
             num: '',                // 
             doctorId: '',           // 获取id
-            eat: {},                // 药品信息
-            rob: {},                // 申请医生信息
-            radioVal: '',           // 审核的选择
+            eat: [],                // 药品信息
+            radioVal: '1',           // 审核的选择
             txt:'',                 // 审核说明
-            recipeMsg: '处方未审核，处方已过期', // 处方状态展示
+            recipeMsg: '', // 处方状态展示
             isView: false,
-            id: Number(95),     // 传给处方的id
+            id: Number(this.$route.query.id),     // 传给处方的id
             isReject: Number(0),// 传给处方的 是否审核拒绝的判断
             disabled: false,
+            isStatus: false,
+            isStatusErr: false
         }
     },
     mounted() {
@@ -220,14 +214,32 @@ export default {
     methods: {
         datadetail () { // 获取详情
             var self = this;
-            self.$http.post('/shv2/recipetwo/recipe_look', this.$route.query, function (res) {
+            self.$http.post('/shv2/Patient/patient_prescription_audit_details', { patient_id: this.$route.query.id }, function (res) {
                 console.log(res)
                 if (res.code == 1) {
-                    self.prescriptiondata = res.data.data
-                    self.eat = res.data.eat
-                    self.rob = res.data.rob
+                    self.prescriptiondata = res.data[0];
+                    self.eat = res.info
+                    if (self.prescriptiondata.drug_autdit == 0 && self.prescriptiondata.p_status == 1) {
+                        self.recipeMsg = '处方待审核';
+                        self.isStatus = true
+                    } else if (self.prescriptiondata.drug_autdit == 0 && self.prescriptiondata.p_status == 2) {
+                        self.recipeMsg = '处方待审核，处方已过期';
+                        self.isStatusErr = true
+                    }
+                    if (self.prescriptiondata.drug_autdit == 1 && self.prescriptiondata.p_status == 1) {
+                        self.recipeMsg = '处方已审核';
+                        self.isStatus = true
+                    } else if (self.prescriptiondata.drug_autdit == 1 && self.prescriptiondata.p_status == 2) {
+                        self.recipeMsg = '处方已过期';
+                        self.isStatusErr = true
+                    }
+                    if (self.prescriptiondata.drug_autdit == 2) {
+                        self.recipeMsg = '处方审核拒绝';
+                        self.isStatusErr = true
+                    }
+                    
                 } else {
-
+                    self.prescriptiondata = {}
                 }
             }, function (err) { console.log(err)})
         },
@@ -254,13 +266,49 @@ export default {
             this.isView = false
         },
         handleClickAudit () {  // 审核结果
-            console.log('yes')
+            var _this = this;
+            this.disabled = true;
+            layui.use(["layer"], function () {
+                var layer = layui.layer;
+                var obj = { patient_id: _this.$route.query.id, audit_type: _this.radioVal,audit_explain: _this.txt }
+                console.log(obj)
+                _this.$http.post('/shv2/Patient/patient_prescription_audit', obj, function (res) {  // 审核接口
+                    console.log(res)
+                    _this.disabled = false;
+                    if (res.code == 1) {
+                        layer.closeAll('page');
+                        layer.msg('审核成功', {icon:1})
+                        _this.initdata(_this.list.page)
+                        _this.txt = ''
+                    } else {
+                        layer.closeAll('page');
+                        layer.msg( res.msg, { icon: 2})
+                    }
+                }, function (err) { console.log(err)})
+            })
         },
         cancels () {     // 审核的 取消关闭弹框
             layui.use('layer', function(){
             var layer = layui.layer;
                 layer.closeAll();
             }); 
+        },
+        copy() {  
+            var _this = this;
+            var spn = document.getElementsByClassName('tag-read')
+            var clipboard = new Clipboard(spn);
+            var success;
+            clipboard.on('success', e => {  
+                _this.$message.success("复制成功");//这里你如果引入了elementui的提示就可以用，没有就注释即可
+                  // 释放内存  
+                  clipboard.destroy()  
+                })  
+                clipboard.on('error', e => {  
+                  // 不支持复制  
+                  _this.$message.error('该浏览器不支持自动复制');
+                  // 释放内存  
+                  clipboard.destroy()  
+                })  
         },
      }
     
@@ -424,7 +472,7 @@ export default {
                         li {
                             float: left;
                             padding: 12px 0;
-                            width: 33.3%;
+                            width: 33%;
                             font-size: 14px;
                             font-weight: 540;
                             color: #666;
@@ -434,8 +482,11 @@ export default {
                                 text-align: right;
                             }
                             span {
+                                display: inline-block;
                                 margin-left: 20px;
                                 color: #333;
+                                width: 60%;
+                                vertical-align: top;
                             }
                         }
                     }

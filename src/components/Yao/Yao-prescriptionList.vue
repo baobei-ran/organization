@@ -514,7 +514,7 @@ export default {
 
 <style scoped lang="less">
 .fade-enter-active, .fade-leave-active {
-  transition: transform .3s ease-out;
+  transition: transform .5s ease-out;
 }
 
 .fade-enter, .fade-leave-to {
@@ -617,10 +617,6 @@ export default {
                   margin: 0;
                     input {
                         height: 36px;
-                    }
-                    .date_icon {
-                        background: url(../../common/image/pages/account/icon_sj.png)
-                            no-repeat right center;
                     }
                 }
             }

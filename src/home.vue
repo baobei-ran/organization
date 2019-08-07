@@ -343,7 +343,7 @@ export default {
                         },
                         {
                             title:'处方用药审核',
-                            url: '/server/YaoRecipeShenhe'
+                            url: '/server/YaoRecipeDrugList'
                         }
                     ]
                 },
@@ -580,7 +580,6 @@ export default {
         },
         initdata() {
             this.ShowMenu = false;
-            console.log(this.$route.query)
             if (this.$route.query.login) {
                 this.go('/')
                 // this.$router.go(0)

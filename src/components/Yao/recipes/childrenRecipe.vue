@@ -6,7 +6,7 @@
                 <ul class="f_title">
                     <li class="smallsize-font">
                         <span>处方编号：</span>
-                        <span>{{ recipemsg.order_code }}</span>
+                        <span>{{ recipemsg.number }}</span>
                     </li>
                     <li class="smallsize-font">
                         <span>处方生成时间：</span>
@@ -21,13 +21,13 @@
                 <div class="f_user">
                     <ul>
                         <li><span>姓名：</span><span>{{ recipemsg.name }}</span></li>
-                        <li><span>性别：</span><span v-text="recipemsg.sex == 0?'男':'女'"></span></li>
+                        <li><span>性别：</span><span v-text="recipemsg.sex == 1?'男':'女'"></span></li>
                         <li><span>年龄：</span><span>{{ recipemsg.age }}岁</span></li>
-                        <li><span>肝功能：</span><span>{{ recipemsg.liver }}</span></li>
-                        <li><span>肾功能：</span><span>{{ recipemsg.kidney }}</span></li>
+                        <li><span>肝功能：</span><span>{{ recipemsg.liver?recipemsg.liver:'正常' }}</span></li>
+                        <li><span>肾功能：</span><span>{{ recipemsg.kidney?recipemsg.kidney: '正常' }}</span></li>
                         <li><span>备孕情况：</span><span>{{ recipemsg.yun }}</span></li>
-                        <li><span>过敏史：</span><span>{{ recipemsg.allergy }}</span></li>
-                        <li><span>过往病史：</span><span>{{ recipemsg.ago }}</span></li>
+                        <li class="contents"><span>过敏史：</span><span>{{ recipemsg.allergy }}</span></li>
+                        <li class="contents"><span>过往病史：</span><span>{{ recipemsg.ago }}</span></li>
                     </ul>
                     <p>诊断结果：<span>{{ recipemsg.result }}</span></p>
                 </div>
@@ -39,20 +39,20 @@
                                 <span>{{ val.name }}</span>
                                 <span style="margin-left:20px;">*{{ val.num }}</span>
                             </li>
-                            <li>{{ val.usage }}</li>
+                            <li>用法：{{ val.usage }}</li>
                         </ul>
                     </div>
-                    <img class="f_zheng" :src="$http.baseURL+recipemsg.zhang_pic" alt="">
+                    <img class="f_zheng" :src="recipemsg.seal?$http.baseURL+recipemsg.seal:''" alt="">
                 </div>
                 <p class="f_pety">( 以下空白，修改无效 )</p>
                 <ul class="f_signature">
                     <li>
                         <span>处方医师：</span>
-                        <img :src='$http.baseURL+recipemsg.signpic' alt="">
+                        <img :src='recipemsg.signpic?$http.baseURL+recipemsg.signpic:""' alt="">
                     </li>
                     <li v-show='recipemsg.flag == 0?false:true'>
                         <span>审核药师：</span>
-                        <img :src="$http.baseURL+recipemsg.yname_pic" alt="">
+                        <img :src="recipemsg.yname_pic?$http.baseURL+recipemsg.yname_pic:''" alt="">
                     </li>
                 </ul>
             </div>
@@ -80,11 +80,11 @@ export default {
     },
     mounted () {
         var _this = this;
-        this.$http.post('/mobile/Doch5/recipe_look', {id: this.id}, function (res) {
+        this.$http.post('/mobile/doch5/user_recipe_detail', {id: this.id}, function (res) {
                 console.log(res)
                 if (res.code == 1) {
-                    _this.recipemsg = res.data
-                    _this.recipe_eat = res.recipe_eat;
+                    _this.recipemsg = res.data;
+                    _this.recipe_eat = res.drug;
                 }
         }, function (err) { console.log(err) })
     },
@@ -149,6 +149,17 @@ export default {
                     width: 33.3%;
                     font-size: 12px;
                     padding: 3px 0;
+                }
+                li.contents {
+                    span {
+                        display: inline-block;
+                        width: 60px;
+                    }
+                    span:last-child {
+                        width: 138px;
+                        vertical-align: top;
+                        line-height: 20px; 
+                    }
                 }
             }
             >p {

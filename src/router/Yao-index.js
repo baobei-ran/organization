@@ -28,7 +28,7 @@ import Yaoequipmenjl from "@/components/Yao/equipmenApply/equipmenjl"; //记录
 
 
 
-
+const DocSetMoney = () => import('../components/Yao/prescription/docSetMoney.vue');    // 设置佣金
 // 药店路由
 const Termination = () => import('../components/Yao/prescription/termination.vue' /* webpackChunkName: "prescription" */);              // 合作医生-- 处方单终止医生信息
 const Yaoprescription = () => import('@/components/Yao/Yao-prescription' /* webpackChunkName: "prescription" */);                       // 
@@ -44,9 +44,9 @@ const PrescriptionSetting = () => import('@/components/Yao/prescriptionList/pres
 const PrescriptionSet = () => import('@/components/Yao/prescriptionList/commons/prescription_set' /* webpackChunkName: "prescription" */);    // 处方设置修改
 
 // 处方用药审核
-const YaoRecipeShenhe = () => import('@/components/Yao/recipes/Yao-recipeShenhe' /* webpackChunkName: "recipe" */);       //  处方审核列表
-const YaoRecipeDetails = () => import('../components/Yao/recipes/Yao-recipeDetails.vue' /* webpackChunkName: "recipe" */); // 处方用药详情
-
+const YaoRecipeDrugList = () => import('@/components/Yao/recipes/Yao-recipeDrugList' /* webpackChunkName: "recipe" */);         //  处方审核列表
+const YaoRecipeDetails = () => import('../components/Yao/recipes/Yao-recipeDetails' /* webpackChunkName: "recipe" */);          // 处方用药详情
+const YaoRecipeDrugSH = () => import('../components/Yao/recipes/Yao-recipeDrugSH' /* webpackChunkName: "recipe" */);            // 处方费用开通
 export default [
     {
         path: "/setting/shopMsg",
@@ -72,6 +72,7 @@ export default [
     {
         path: "/jgmall/List",
         name: "订单列表",
+        meta: { keepAlive: true },
         component: List
     },
     {
@@ -178,7 +179,11 @@ export default [
         name: '处方单终止医生信息',
         component: Termination
     },
-    
+    {
+        path: '/server/Yaodoctorprescription/docSetMoney',
+        name: '处方单佣金设置',
+        component: DocSetMoney
+    },
     {
         path: '/server/Yaodoctorprescription',
         title: '处方单医生列表',
@@ -237,16 +242,21 @@ export default [
         component: PrescriptionSet
     },
 
-    // 处方审核
+    // 处方用药审核
     {
-        path: '/server/YaoRecipeShenhe',
+        path: '/server/YaoRecipeDrugList',    // 列表
         name: '处方用药列表',
         meta: { keepAlive: true },
-        component: YaoRecipeShenhe
+        component: YaoRecipeDrugList
     },
     {
-        path: '/server/YaoRecipeShenhe/YaoRecipeDetails:id?',
+        path: '/server/YaoRecipeDrugList/YaoRecipeDetails:id?',     // 详情
         name: '处方用药详情',
         component: YaoRecipeDetails
+    },
+    {
+        path: '/server/YaoRecipeDrugList/YaoRecipeDrugSH',      // 开通提交签名
+        name: '处方开通页',
+        component: YaoRecipeDrugSH 
     }
 ]

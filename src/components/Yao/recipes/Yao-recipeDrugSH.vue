@@ -8,15 +8,10 @@
                 <div class="perscription_title" v-show='tilteMsg'>
                     <div class="perscription_msg_box" >
                         <div>
-                            <p>云医康推出电子处方服务，药店可通过平台医生开具电子处方，扩充药店的药品经营品类；</p>
-                            <p>药店可根据顾客的实际需要，向合作医生发布处方需求，并辅以患者的基本信息和病情描述，医生将根据患者的病情，接单并开具处方，在经由药店药师审核后，处方即可生效。</p>
+                            <p>药店开通处方服务后，平台医生向患者开具处方将选择药店药品，药店须由药师审核处方，患者方可购买。</p>
+                            <p>请确保开通处方服务，以及线上药品种类齐全。</p>
                         </div>
-                        <div>
-                            <h2>服务设置</h2>
-                            <p>药店上传药师资质及药师签名图片，经平台审核通过后，即可拥有电子处方服务；</p>
-                            <p>发布处方申请时，需向医生支付处方费用，请在鲁医通账户中预存100元，用于电子处方的费用支付。</p>
-                        </div>
-                        <span class="show_btn pointer" @click='btnServeMsg'><img src="../../common/image/icon/icon_sq.png" alt=""></span>
+                        <span class="show_btn pointer" @click='btnServeMsg'><img src="../../../common/image/icon/icon_sq.png" alt=""></span>
                     </div>
                 </div>
              </transition>
@@ -117,8 +112,8 @@
     </div>
 </template>
 <script>
-var QmPic = () => import('./YaoCommon/signature');
-import perscriptionMsg from './prescriptionList/commons/prescription_Msg';
+var QmPic = () => import('../YaoCommon/signature');
+import perscriptionMsg from '../prescriptionList/commons/prescription_Msg';
 export default {
     components: {
         'perscription-msg': perscriptionMsg,
@@ -175,7 +170,7 @@ export default {
                         }, 3000)
                     }
                     else if (res.data.teacher_type == 2) {    // 如果已经审核通过的直接跳转
-                       _this.$router.replace({ path: '/server/YaoprescriptionListPic/YaoprescriptionList'})
+                       _this.$router.replace({ path: '/server/YaoRecipeDrugList'})
                     
                     } else if (res.data.teacher_type == 3) { // 审核失败
                         _this.status0 = false;
@@ -339,7 +334,7 @@ export default {
                             ; break;     // 审核中
                             case '2': 
                                 clearInterval(_this.times)
-                                _this.$router.replace({ path: '/server/YaoprescriptionListPic/YaoprescriptionList'})
+                                _this.$router.replace({ path: '/server/YaoRecipeDrugList'})
                             ; break;          // 审核成功
                             case '3': 
                                 clearInterval(_this.times)
@@ -482,7 +477,7 @@ export default {
             display: inline;
             span {
                 padding-left: 34px;
-                background: url('../../common/image/icon/icon_fwsm.png') no-repeat left center;
+                background: url('../../../common/image/icon/icon_fwsm.png') no-repeat left center;
             }
             
         }
@@ -507,7 +502,7 @@ export default {
                     font-weight:500;
                     padding: 20px 0;
                     padding-left: 34px;
-                    background: url('../../common/image/icon/icon_fwsm.png') no-repeat left center;
+                    background: url('../../../common/image/icon/icon_fwsm.png') no-repeat left center;
                 }
                 p {
                     color: #666;

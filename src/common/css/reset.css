@@ -81,6 +81,9 @@ var {
 b {
   font-weight:normal;
 }
+i {
+  font-style:normal;
+}
 a {
   color: #555;
   text-decoration: none;
