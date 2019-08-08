@@ -197,6 +197,7 @@ export default {
             },
             addfiles1 (event) {
                 var files = event.target.files[0];  
+                console.log(files)
                 if (files) {   // 是否有文件
                     var isPng = files.type === "image/png"
                     var isJpg = files.type === 'image/jpg'
@@ -205,7 +206,6 @@ export default {
                         this.$message({
                             message: '上传只能是jpg/jpeg/png格式的图片',
                             type: 'error',
-                            duration: 3000
                         })
                         return false;
                     }
@@ -230,7 +230,6 @@ export default {
                         this.$message({
                             message: '上传只能是jpg/jpeg/png格式的图片',
                             type: 'error',
-                            duration: 3000
                         })
                         return false;
                     }
@@ -607,6 +606,7 @@ export default {
                     }
                     img {
                         width: 100%;
+                        max-height: 100%;
                     }
                 }
                 dd {
