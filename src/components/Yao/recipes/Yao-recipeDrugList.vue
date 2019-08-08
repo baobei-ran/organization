@@ -62,10 +62,10 @@
             <div class="layui-tab">
                 <div class="layui_navs">
                     <ul class="layui-tab-title">
-                        <li class="layui-this" @click="tab(1)">全部<b v-show="tabStatus == 1">（{{ recipeCount }}）</b></li>
-                        <li @click="tab(2)">待审核<b v-show="tabStatus == 2">（{{ recipeCount }}）</b></li>
-                        <li @click="tab(3)">已审核<b v-show="tabStatus == 3">（{{ recipeCount }}）</b></li>
-                        <li @click="tab(4)">已过期<b v-show="tabStatus == 4">（{{ recipeCount }}）</b></li>
+                        <li class="layui-this" @click="tab(1)">全部<b>（{{ count4 }}）</b></li>
+                        <li @click="tab(2)">待审核<b>（{{ count1 }}）</b></li>
+                        <li @click="tab(3)">已审核<b>（{{ count2 }}）</b></li>
+                        <li @click="tab(4)">已过期<b>（{{ count3 }}）</b></li>
                     </ul>
                 </div>
                 <div class="layui-tab-content">
@@ -107,11 +107,10 @@
                                             </ul>
                                         </div>
                                     </td>
-                                    
                                     <td class="dis_f dis_js" style="max-width: 200px; margin: 0 auto;">
                                         <p class="pointer Ft-S14 Color_blue al"  @click="godetail(val.id)">查看详情</p>
                                         <p class="pointer Ft-S14 Color_blue al"  @click="lookover(val.id)">查看处方</p>
-                                        <p v-show="tabStatus == 1 && val.is_expire == 0 || tabStatus == 2 && val.is_expire == 0" class="pointer Ft-S14 Color_blue al"  @click="yao_set(val.id)">审核</p>
+                                        <p v-show="val.drug_autdit == 0 && (tabStatus == 1 && val.is_expire == 0 || tabStatus == 2 && val.is_expire == 0)" class="pointer Ft-S14 Color_blue al"  @click="yao_set(val.id, val.drug_autdit)">审核</p>
                                     </td>
                                 </tr>
                             </tbody>
@@ -203,7 +202,11 @@ export default {
             radioVal: '1',       // 审核状态
             txt: '',             // 审核说明
             he_id: '',           // 审核的id
-            recipeCount: 0,     // 获取tab的数量
+            recipeCount: 0,      // 获取tab的数量
+            count1: 0,
+            count2: 0,
+            count3: 0,
+            count4: 0,
             iskp: false,
             tilteMsg: false,      // 服务说明显示与否
             disabled: false,      // 审核 loading 
@@ -275,8 +278,12 @@ export default {
                 var element = layui.element;
                 _this.$http.post('/shv2/Patient/patient_prescription_audit_list', _this.list, function (res) { // 列表数据
                     console.log(res)
+                    _this.count1= res.num1?res.num1: 0;
+                    _this.count2= res.num2?res.num2: 0;
+                    _this.count3= res.num3?res.num3: 0;
+                    _this.count4= _this.count1 +_this.count2+_this.count3
+                    _this.recipeCount = res.num4
                     if (res.code == 1) {
-                        _this.recipeCount = res.num
                         _this.tableList = res.data;
                     } else {
                         if (_this.page !== 1) {
@@ -287,7 +294,7 @@ export default {
                         _this.tableList = [];
                         _this.recipeCount = 0
                     }
-                }, function (err) { console.log(err) });
+                }, function (err) { _this.tableList = []; console.log(err) });
 
             });
         },
@@ -335,22 +342,30 @@ export default {
                 layer.closeAll();
             }); 
         },
-        yao_set (id) {  // 药师审核弹框
+        yao_set (id, autdit) {  // 药师审核弹框
             var self = this;
+            console.log(autdit)
             self.he_id = id
             layui.use(["layer"], function () {
                 var layer = layui.layer;
                 var $ = layui.jquery;
-                layer.open({
-                    type: 1,
-                    shade: 0.4,
-                    shadeClose: true,
-                    closeBtn: 0,
-                    title: "",
-                    content: $("#sendgoods_shen"),
-                    area: ["520px", "400px"],
-                    cancel: function () { }
-                });
+                if (autdit == 0) {
+                    layer.open({
+                        type: 1,
+                        shade: 0.4,
+                        shadeClose: true,
+                        closeBtn: 0,
+                        title: "",
+                        content: $("#sendgoods_shen"),
+                        area: ["520px", "400px"],
+                        cancel: function () { }
+                    });
+                } else if (autdit == 1) {
+                    layer.msg('该处方已审核', { icon: 0})
+                } else {
+                    layer.msg('该处方已过期，无法审核', { icon: 0})
+                }
+                
             });
         },
         yaoAudit () {  // 药师审核结果

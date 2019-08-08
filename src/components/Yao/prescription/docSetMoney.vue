@@ -40,11 +40,11 @@
                         <dl>
                             <dt>
                                 <span class="Mg-R24">订单最低金额设定</span>
-                                <el-input type='number' style="width: 200px;" v-model="moneyVal" ></el-input> 元
+                                <input class="money-number" type='text' :change="check_price()" style="width: 200px;" v-model="moneyVal" /> 元
                                 <b>（低于此金额，医生推荐的药品订单将不会产生佣金）</b>
                             </dt>
                             <dd>
-                                <span class="Color_red Ft-S12">设定金额过高，将不利于医生推荐药品，请合理设定</span>
+                                <span v-show="moneyVal > 199.99" class="Color_red Ft-S12">设定金额过高，将不利于医生推荐药品，请合理设定</span>
                             </dd>
                         </dl>
                         <dl class="Mg-T24">
@@ -54,7 +54,7 @@
                                 <b>（患者支付的订单金额*返佣比例=医生所得佣金）</b>
                             </dt>
                             <dd>
-                                <span class="Color_red Ft-S12">返佣比例，不可低于1%，也不可超过100%</span>
+                                <span v-show="moneyRatio > 0 && (moneyRatio < 1 || moneyRatio > 100)" class="Color_red Ft-S12">返佣比例，不可低于1%，也不可超过100%</span>
                             </dd>
                         </dl>
                     </div>
@@ -68,7 +68,7 @@
                                 <el-input type='number' style="width: 200px;" v-model="drug_rx" ></el-input> %
                             </dt>
                             <dd>
-                                <span class="Color_red Ft-S12">返佣比例，不可低于1%，也不可超过100%</span>
+                                <span v-show="drug_rx > 0 && ( drug_rx <1 || drug_rx >100 )" class="Color_red Ft-S12">返佣比例，不可低于1%，也不可超过100%</span>
                             </dd>
                         </dl>
                         <dl class="Mg-T24">
@@ -77,7 +77,7 @@
                                 <el-input type='number' style="width: 200px;" v-model="drug_otc" ></el-input> %
                             </dt>
                             <dd>
-                                <span class="Color_red Ft-S12">返佣比例，不可低于1%，也不可超过100%</span>
+                                <span v-show="drug_otc > 0 && (drug_otc<1 || drug_otc>100)" class="Color_red Ft-S12">返佣比例，不可低于1%，也不可超过100%</span>
                             </dd>
                         </dl>
                     </div>
@@ -148,21 +148,20 @@ export default {
                 isdisabled: false,      // 按钮loading
             }
         },
-        mounted () {
-           
-            $("#price_m").on("input propertychange",function(event) {     // 输入的时候进行验证
-                this.value = this.value.replace(/^([1-9]\d*(\.[\d]{0,2})?|0(\.[\d.]{0,2})?)[\d]*/g, '$1');
-                this.value = this.value.replace(/[^\d\.]/g, '');
-                var m = /(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/;
-                if (m.test(this.value)) {
-                    
-                }
-            })
-        },
         methods: {
-            changeMoney () {
-                var money2 = this.setMoneys.match(/^\d*(\.?\d{0,2})/g)[0]; // 保留小数点后面两位小数
-                this.setMoneys = money2;
+            check_price: function(){ // 限制价格只能输入数字,且最多两个小数
+                var price = '' + this.moneyVal;
+                price = price
+                    .replace(/[^\d.]/g, '')
+                    .replace(/\.{2,}/g, '.') 
+                    .replace('.', '$#$')
+                    .replace(/\./g, '')
+                    .replace('$#$', '.')
+                    .replace(/^(\-)*(\d+)\.(\d\d).*$/, '$1$2.$3');
+                if (price.indexOf('.') < 0 && price != '') {
+                    price = parseFloat(price);
+                }
+                this.moneyVal = price;
             },
             cancels () {     // 取消关闭弹框
                 layui.use('layer', function(){
@@ -348,6 +347,12 @@ export default {
                         dl {
                             width: 100%;
                             dt {
+                                .money-number {
+                                    width: 200px;
+                                    height: 36px;
+                                    border:1px solid #dcdfe6;
+                                    padding: 0 15px;
+                                }
                                 span {
                                     display: inline-block;
                                     width: 120px;
@@ -356,6 +361,7 @@ export default {
                             }
                             dd {
                                 margin-top: 10px;
+                                height: 20px;
                                 margin-left: 145px;
                             }
                         }
@@ -380,6 +386,7 @@ export default {
                             }
                             dd {
                                 margin-top: 10px;
+                                height: 20px;
                                 margin-left: 145px;
                             }
                         }
