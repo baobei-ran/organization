@@ -85,6 +85,8 @@ export default {
                     }
                 }     
             })
+        } else {
+            _this.isView = true
         }
         
         this.initdata()
