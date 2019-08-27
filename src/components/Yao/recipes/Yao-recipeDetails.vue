@@ -102,7 +102,7 @@
                                             </div>
                                             <div class="dis_f">
                                                 <span>{{ val.company }}</span>
-                                                <span><i style="font-size: 12px;">¥</i>{{ val.money }}</span>
+                                                <span v-if='val.money'><i style="font-size: 12px;">¥</i>{{ val.money }}</span>
                                                 <span>×{{ val.num }}</span>
                                             </div>
                                         </dt>
@@ -278,7 +278,7 @@ export default {
                     if (res.code == 1) {
                         layer.closeAll('page');
                         layer.msg('审核成功', {icon:1})
-                        _this.initdata(_this.list.page)
+                        _this.datadetail()
                         _this.txt = ''
                     } else {
                         layer.closeAll('page');
