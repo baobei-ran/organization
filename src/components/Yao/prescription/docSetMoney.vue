@@ -40,7 +40,8 @@
                         <dl>
                             <dt>
                                 <span class="Mg-R24">订单最低金额设定</span>
-                                <input class="money-number" type='text' :change="check_price()" style="width: 200px;" v-model="moneyVal" /> 元
+                                <span v-show='!isSetting' class='number'>100</span>
+                                <input v-show='isSetting' class="money-number" type='text' :change="check_price()" maxLength='11' style="width: 200px;" v-model="moneyVal" /> 元
                                 <b>（低于此金额，医生推荐的药品订单将不会产生佣金）</b>
                             </dt>
                             <dd>
@@ -50,7 +51,8 @@
                         <dl class="Mg-T24">
                             <dt>
                                 <span class="Mg-R24"><i class="Color_red">*</i>返佣比例设定</span>
-                                <el-input type='number' style="width: 200px;" v-model="moneyRatio" ></el-input> %
+                                <span v-show='!isSetting' class='number'>12</span>
+                                <el-input v-show='isSetting' type='number' style="width: 200px;" v-model="moneyRatio" ></el-input> %
                                 <b>（患者支付的订单金额*返佣比例=医生所得佣金）</b>
                             </dt>
                             <dd>
@@ -65,7 +67,8 @@
                         <dl>
                             <dt>
                                 <span class="Mg-R24">处方药返佣比例</span>
-                                <el-input type='number' style="width: 200px;" v-model="drug_rx" ></el-input> %
+                                <span v-show='!isSetting' class='number'>15</span>
+                                <el-input v-show='isSetting' type='number' style="width: 200px;" v-model="drug_rx" ></el-input> %
                             </dt>
                             <dd>
                                 <span v-show="drug_rx > 0 && ( drug_rx <1 || drug_rx >100 )" class="Color_red Ft-S12">返佣比例，不可低于1%，也不可超过100%</span>
@@ -74,7 +77,8 @@
                         <dl class="Mg-T24">
                             <dt>
                                 <span class="Mg-R24">非处方药返佣比例</span>
-                                <el-input type='number' style="width: 200px;" v-model="drug_otc" ></el-input> %
+                                <span v-show='!isSetting' class='number'>13</span>
+                                <el-input v-show='isSetting' type='number' style="width: 200px;" v-model="drug_otc" ></el-input> %
                             </dt>
                             <dd>
                                 <span v-show="drug_otc > 0 && (drug_otc<1 || drug_otc>100)" class="Color_red Ft-S12">返佣比例，不可低于1%，也不可超过100%</span>
@@ -86,9 +90,13 @@
             </div>
         </div>
 
-        <div class="btns">
+        <div class="btns" v-show='isBtn'>
             <el-button class="border_blue" @click='go("/server/Yaodoctorprescription")' plain>取消</el-button>
             <button class="layui-btn layui-btn-normal" @click='clickShowShade' >保存</button>
+        </div>
+        <div class="btns" v-show='!isBtn'>
+            <el-button class="border_blue" @click='go("/server/Yaodoctorprescription")' plain>返回</el-button>
+            <button class="layui-btn layui-btn-normal" @click='handleClickReset' >修改</button>
         </div>
     </div>
         
@@ -137,6 +145,7 @@
 export default {
         data () {
             return {
+                isSetting: false,        //  是否设定
                 dialogVisible: false,
                 drugView: false,
                 tilteMsg: true,
@@ -146,9 +155,14 @@ export default {
                 drug_rx: '',
                 drug_otc: '',
                 isdisabled: false,      // 按钮loading
+                isBtn: false,
             }
         },
         methods: {
+            handleClickReset () {
+                this.isSetting = true;
+                this.isBtn = true
+            },
             check_price: function(){ // 限制价格只能输入数字,且最多两个小数
                 var price = '' + this.moneyVal;
                 price = price
@@ -253,10 +267,11 @@ export default {
 </script>
 <style lang='less' scoped>
 .fade-enter-active, .fade-leave-active {
-  transition: transform .3s ease-out;
+  transition: transform .5s ease-out;
 }
 
 .fade-enter, .fade-leave-to {
+    -webkit-transform: translateY(-400px);
     transform: translateY(-400px);
 }
 .perscription {
@@ -358,6 +373,13 @@ export default {
                                     width: 120px;
                                     text-align: right;
                                 }
+                                .number {
+                                    width: auto;
+                                }
+                                b {
+                                    color: #808080;
+                                    font-size: 13px;
+                                }
                             }
                             dd {
                                 margin-top: 10px;
@@ -382,6 +404,9 @@ export default {
                                     display: inline-block;
                                     width: 120px;
                                     text-align: right;
+                                }
+                                .number {
+                                    width: auto;
                                 }
                             }
                             dd {

@@ -221,21 +221,27 @@ export default {
                     self.eat = res.info
                     if (self.prescriptiondata.drug_autdit == 0 && self.prescriptiondata.p_status == 1) {
                         self.recipeMsg = '处方待审核';
-                        self.isStatus = true
+                        self.isStatus = true;
+                        self.isStatusErr = false;
                     } else if (self.prescriptiondata.drug_autdit == 0 && self.prescriptiondata.p_status == 2) {
                         self.recipeMsg = '处方待审核，处方已过期';
+                        self.isStatus = false;
                         self.isStatusErr = true
                     }
                     if (self.prescriptiondata.drug_autdit == 1 && self.prescriptiondata.p_status == 1) {
                         self.recipeMsg = '处方已审核';
-                        self.isStatus = true
+                        self.isStatus = true;
+                        self.isStatusErr = false;
                     } else if (self.prescriptiondata.drug_autdit == 1 && self.prescriptiondata.p_status == 2) {
                         self.recipeMsg = '处方已过期';
+                        self.isStatus = false;
                         self.isStatusErr = true
                     }
                     if (self.prescriptiondata.drug_autdit == 2) {
                         self.recipeMsg = '处方审核拒绝';
+                        self.isStatus = false;
                         self.isStatusErr = true
+                        self.isReject = 2
                     }
                     
                 } else {

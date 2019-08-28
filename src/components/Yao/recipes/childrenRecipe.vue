@@ -42,17 +42,17 @@
                             <li>用法：{{ val.usage }}</li>
                         </ul>
                     </div>
-                    <img class="f_zheng" :src="recipemsg.seal?$http.baseURL+recipemsg.seal:''" alt="">
+                    <img class="f_zheng" :src="recipemsg.seal?$http.baseURL+recipemsg.seal:''" alt="" />
                 </div>
                 <p class="f_pety">( 以下空白，修改无效 )</p>
                 <ul class="f_signature">
                     <li>
                         <span>处方医师：</span>
-                        <img :src='recipemsg.signpic?$http.baseURL+recipemsg.signpic:""' alt="">
+                        <img :src='recipemsg.signpic?$http.baseURL+recipemsg.signpic:""' alt="" />
                     </li>
-                    <li v-show='recipemsg.flag == 0?false:true'>
+                    <li v-show='recipemsg.drug_autdit > 0?true:false'>
                         <span>审核药师：</span>
-                        <img :src="recipemsg.yname_pic?$http.baseURL+recipemsg.yname_pic:''" alt="">
+                        <img :src="recipemsg.yname_pic?$http.baseURL+recipemsg.yname_pic:''" alt="" />
                     </li>
                 </ul>
             </div>
@@ -205,6 +205,7 @@ export default {
                 width: 50%;
                 > img {
                     width: 50px;
+                    vertical-align: middle;
                 }
             }
         }

@@ -109,7 +109,7 @@
                                     </td>
                                     <td class="dis_f dis_js" style="max-width: 200px; margin: 0 auto;">
                                         <p class="pointer Ft-S14 Color_blue al"  @click="godetail(val.id)">查看详情</p>
-                                        <p class="pointer Ft-S14 Color_blue al"  @click="lookover(val.id)">查看处方</p>
+                                        <p class="pointer Ft-S14 Color_blue al"  @click="lookover(val.id, val.drug_autdit)">查看处方</p>
                                         <p v-show="val.drug_autdit == 0 && (tabStatus == 1 && val.is_expire == 0 || tabStatus == 2 && val.is_expire == 0)" class="pointer Ft-S14 Color_blue al"  @click="yao_set(val.id, val.drug_autdit)">审核</p>
                                     </td>
                                 </tr>
@@ -381,6 +381,10 @@ export default {
                         layer.msg('审核成功', {icon:1})
                         _this.initdata()
                         _this.txt = ''
+                    } else if (res.code == 3) {
+                        layer.closeAll('page');
+                        layer.msg(res.msg, { icon: 2})
+                        _this.initdata()
                     } else {
                         layer.closeAll('page');
                         layer.msg(res.msg, { icon: 2})
@@ -391,8 +395,13 @@ export default {
         btnServeMsg () { // 服务说明按钮
             this.tilteMsg = !this.tilteMsg
         },
-        lookover(id){ // 查看处方
+        lookover(id, num){ // 查看处方
             this.id = Number(id)
+            if (num == 2) {
+                this.isReject = 2
+            } else {
+                this.isReject = 0
+            }
             this.iscfPic = true
             // this.$alert('<span class="el-MsgBox-txt" >该处方已过期！</span>', '服务提示', {
             //     confirmButtonText: '确认',
