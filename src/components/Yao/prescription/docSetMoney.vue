@@ -40,23 +40,23 @@
                         <dl>
                             <dt>
                                 <span class="Mg-R24">订单最低金额设定</span>
-                                <span v-show='!isSetting' class='number'>100</span>
-                                <input v-show='isSetting' class="money-number" type='text' :change="check_price()" maxLength='11' style="width: 200px;" v-model="moneyVal" /> 元
+                                <span v-show='isSetting' class='number'>{{ moneyVal }}</span>
+                                <input v-show='isNotSetting' class="money-number" type='text' :change="check_price()" maxLength='11' style="width: 200px;" v-model="moneyVal" /> 元
                                 <b>（低于此金额，医生推荐的药品订单将不会产生佣金）</b>
                             </dt>
                             <dd>
-                                <span v-show="moneyVal > 199.99" class="Color_red Ft-S12">设定金额过高，将不利于医生推荐药品，请合理设定</span>
+                                <span v-show="!isSetting && moneyVal > 199.99" class="Color_red Ft-S12">设定金额过高，将不利于医生推荐药品，请合理设定</span>
                             </dd>
                         </dl>
                         <dl class="Mg-T24">
                             <dt>
                                 <span class="Mg-R24"><i class="Color_red">*</i>返佣比例设定</span>
-                                <span v-show='!isSetting' class='number'>12</span>
-                                <el-input v-show='isSetting' type='number' style="width: 200px;" v-model="moneyRatio" ></el-input> %
+                                <span v-show='isSetting' class='number'>{{ moneyRatio }}</span>
+                                <el-input v-show='isNotSetting' type='number' style="width: 200px;" v-model="moneyRatio" ></el-input> %
                                 <b>（患者支付的订单金额*返佣比例=医生所得佣金）</b>
                             </dt>
                             <dd>
-                                <span v-show="moneyRatio > 0 && (moneyRatio < 1 || moneyRatio > 100)" class="Color_red Ft-S12">返佣比例，不可低于1%，也不可超过100%</span>
+                                <span v-show="!isSetting && moneyRatio > 0 && (moneyRatio < 1 || moneyRatio > 100)" class="Color_red Ft-S12">返佣比例，不可低于1%，也不可超过100%</span>
                             </dd>
                         </dl>
                     </div>
@@ -67,8 +67,8 @@
                         <dl>
                             <dt>
                                 <span class="Mg-R24">处方药返佣比例</span>
-                                <span v-show='!isSetting' class='number'>15</span>
-                                <el-input v-show='isSetting' type='number' style="width: 200px;" v-model="drug_rx" ></el-input> %
+                                <span v-show='isSetting' class='number'>{{ drug_rx }}</span>
+                                <el-input v-show='isNotSetting' type='number' style="width: 200px;" v-model="drug_rx" ></el-input> %
                             </dt>
                             <dd>
                                 <span v-show="drug_rx > 0 && ( drug_rx <1 || drug_rx >100 )" class="Color_red Ft-S12">返佣比例，不可低于1%，也不可超过100%</span>
@@ -77,8 +77,8 @@
                         <dl class="Mg-T24">
                             <dt>
                                 <span class="Mg-R24">非处方药返佣比例</span>
-                                <span v-show='!isSetting' class='number'>13</span>
-                                <el-input v-show='isSetting' type='number' style="width: 200px;" v-model="drug_otc" ></el-input> %
+                                <span v-show='isSetting' class='number'>{{ drug_otc }}</span>
+                                <el-input v-show='isNotSetting' type='number' style="width: 200px;" v-model="drug_otc" ></el-input> %
                             </dt>
                             <dd>
                                 <span v-show="drug_otc > 0 && (drug_otc<1 || drug_otc>100)" class="Color_red Ft-S12">返佣比例，不可低于1%，也不可超过100%</span>
@@ -91,10 +91,10 @@
         </div>
 
         <div class="btns" v-show='isBtn'>
-            <el-button class="border_blue" @click='go("/server/Yaodoctorprescription")' plain>取消</el-button>
+            <el-button class="border_blue" @click='handleCancel' plain>取消</el-button>
             <button class="layui-btn layui-btn-normal" @click='clickShowShade' >保存</button>
         </div>
-        <div class="btns" v-show='!isBtn'>
+        <div class="btns" v-show='isBtnReset'>
             <el-button class="border_blue" @click='go("/server/Yaodoctorprescription")' plain>返回</el-button>
             <button class="layui-btn layui-btn-normal" @click='handleClickReset' >修改</button>
         </div>
@@ -145,23 +145,71 @@
 export default {
         data () {
             return {
-                isSetting: false,        //  是否设定
+                isNotSetting: false,     // 未设定展示
+                isSetting: false,        // 已设定展示
                 dialogVisible: false,
                 drugView: false,
                 tilteMsg: true,
-                moneyType: '1',
+                moneyType: '1',         // 根据这个字段区分选择的设置
                 moneyVal: '',
                 moneyRatio: '',
                 drug_rx: '',
                 drug_otc: '',
                 isdisabled: false,      // 按钮loading
                 isBtn: false,
+                isBtnReset: false,      // 
+                is_type: 0,
             }
         },
+        created () {
+            var _this = this;
+            this.$http.post('/shv2/Reward/reward_flag', null, function (res) {
+                console.log(res)
+                if (res.code == 1) {    // 已设置
+                    _this.isNotSetting = false;
+                    _this.isBtn = false;
+                    _this.isSetting = true;
+                    _this.isBtnReset = true;
+                    _this.getSettingMoneyInfo()
+                } else {    // 未设置
+                    _this.isSetting = false;
+                    _this.isBtnReset = false;
+                    _this.isBtn = true;
+                    _this.isNotSetting = true;
+                }
+            }, function (err) {
+                _this.$message.error('服务器错误，获取数据失败');
+            })
+        },
         methods: {
-            handleClickReset () {
-                this.isSetting = true;
-                this.isBtn = true
+            getSettingMoneyInfo () {
+                var _this = this;
+                _this.$http.post('/shv2/Reward/reward_look', null, function (response) {
+                    console.log(response)
+                    if (response.code == 1) {
+                        _this.moneyVal = response.data.full_money?response.data.full_money:0 ;
+                        _this.moneyRatio = response.data.full_ratio?response.data.full_ratio:0;
+                        _this.drug_rx = response.data.drug_rx?response.data.drug_rx:0;
+                        _this.drug_otc = response.data.drug_otc?response.data.drug_otc:0;
+                    } else { }
+                }, function (err) { console.log(err) })
+            },
+            handleClickReset () {   // 修改按钮切换
+                this.isSetting = false;
+                this.isNotSetting = true;
+                this.isBtn = true;
+                this.isBtnReset = false;
+                this.is_type = 1;
+            },
+            handleCancel () {
+                if (this.is_type) {
+                    this.isSetting = true;
+                    this.isNotSetting = false;
+                    this.isBtn = false;
+                    this.isBtnReset = true;
+                } else {
+                    this.go("/server/Yaodoctorprescription")
+                }
             },
             check_price: function(){ // 限制价格只能输入数字,且最多两个小数
                 var price = '' + this.moneyVal;
@@ -240,24 +288,47 @@ export default {
                 layui.use('layer', function(){
                     var layer = layui.layer;
                     console.log(obj)
-                    _this.$http.post('/shv2/Reward/reward_set', obj, function (res) {
-                        console.log(res)
-                        _this.isdisabled = false
-                        if(res.code == 1) {
-                            if (_this.moneyType == 1) {
-                                _this.dialogVisible = false
+                    if (_this.is_type) {
+                        _this.$http.post('/shv2/Reward/reward_edit', obj, function (res) {
+                            console.log(res)
+                            _this.isdisabled = false
+                            if (res.code == 1) {
+                                if (_this.moneyType == 1) {
+                                    _this.dialogVisible = false
+                                } else {
+                                    _this.drugView = false
+                                }
+                                layer.msg('设置成功', {icon: 1})
+                                var t =setTimeout(() => {
+                                    _this.$router.back()
+                                    clearTimeout(t)
+                                }, 1500)
                             } else {
-                                _this.drugView = false
+                                layer.msg(res.msg, {icon: 2})
                             }
-                            layer.msg('设置成功', {icon: 1})
-                            var t =setTimeout(() => {
-                                _this.$router.back()
-                                clearTimeout(t)
-                            }, 1500)
-                        } else {
-                            layer.msg(res.msg, {icon: 2})
-                        }
-                    }, function (err) { })
+                        }, function (err){ 
+                            layer.msg('服务器错误，无法设置', {icon: 2})
+                        })
+                    } else {
+                        _this.$http.post('/shv2/Reward/reward_set', obj, function (res) {
+                            console.log(res)
+                            _this.isdisabled = false
+                            if(res.code == 1) {
+                                if (_this.moneyType == 1) {
+                                    _this.dialogVisible = false
+                                } else {
+                                    _this.drugView = false
+                                }
+                                layer.msg('设置成功', {icon: 1})
+                                var t =setTimeout(() => {
+                                    _this.$router.back()
+                                    clearTimeout(t)
+                                }, 1500)
+                            } else {
+                                layer.msg(res.msg, {icon: 2})
+                            }
+                        }, function (err) { })
+                    }
                 })
             }
            

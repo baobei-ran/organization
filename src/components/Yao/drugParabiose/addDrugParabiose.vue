@@ -9,36 +9,71 @@
                             <div class="layui-col-md5">
                                 <div class="layui-inline lay_width">
                                     <label class="layui-form-label" style="width:90px;">机构所在地</label>
-                                    <select name="city" lay-verify="required" v-model='sheng' @change='changeSheng' class="select_class">
-                                        <option value="">请选择省</option>
-                                        <option v-for='val in province' :key='val.aid' :value="val.aid">{{ val.aname }}</option>
-                                    </select>
-                                    <select name="city" lay-verify="required" v-model='shi' @change='changeShi' class="select_class">
-                                        <option value="">请选择市</option>
-                                        <option v-for='val in city' :key='val.aid' :value="val.aid">{{ val.aname }}</option>
-                                    </select>
-                                    <select name="city" lay-verify="required" v-model='qu' class="select_class">
-                                        <option value="">请选择县\区</option>
-                                        <option v-for='val in county' :key='val.aid' :value="val.aid">{{ val.aname }}</option>
-                                    </select>
+                                    <el-select v-model="sheng" style="width: 120px;" @change='changeSheng' placeholder="请选择">
+                                        <el-option
+                                        v-for="item in province"
+                                        :key="item.aid"
+                                        :label="item.aname"
+                                        :value="item.aid">
+                                        </el-option>
+                                    </el-select>
+                                    <el-select v-model="shi" style="width: 120px;" @change='changeShi' placeholder="请选择">
+                                        <el-option
+                                        v-for="item in city"
+                                        :key="item.aid"
+                                        :label="item.aname"
+                                        :value="item.aid">
+                                        </el-option>
+                                    </el-select>
+                                    <el-select v-model="qu" style="width: 120px;" placeholder="请选择">
+                                        <el-option
+                                        v-for="item in county"
+                                        :key="item.aid"
+                                        :label="item.aname"
+                                        :value="item.aid">
+                                        </el-option>
+                                    </el-select>
                                 </div>
                             </div>
                             <div class="layui-col-md2">
                                 <div class="layui-inline lay_width">
                                     <label class="layui-form-label">机构类型</label>
-                                    <select name="city" lay-verify="required" class="select_class">
-                                        <option value="">全部</option>
-                                       <option v-for='(val,i) in structureType' :key='i' :value="val">{{ val }}</option>
-                                    </select>
+                                    <el-select v-model="htype" style="width: 120px;" placeholder="请选择">
+                                        <el-option label="全部" value="" ></el-option>
+                                        <el-option
+                                        v-for="(item, i) in structureType"
+                                        :key="i"
+                                        :label="item"
+                                        :value="item">
+                                        </el-option>
+                                    </el-select>
                                 </div>
                             </div>
                             <div class="layui-col-md2">
                                 <div class="layui-inline lay_width">
                                     <label class="layui-form-label">机构级别</label>
-                                    <select name="city" lay-verify="required" class="select_class">
-                                        <option value="">全部</option>
-                                        <option v-for='val in hospitalgrade' :key='val.id' :value="val.id">{{ val.name }}</option>
-                                    </select>
+                                    <el-select v-model="grade" style="width: 120px;" placeholder="请选择">
+                                        <el-option label="全部" value="" ></el-option>
+                                        <el-option
+                                        v-for="(item, i) in hospitalgrade"
+                                        :key="item.id"
+                                        :label="item.name"
+                                        :value="item.id">
+                                        </el-option>
+                                    </el-select>
+                                </div>
+                            </div>
+                            <div class="layui-col-md2">
+                                <div class="layui-inline lay_width">
+                                    <label class="layui-form-label layui-label-msg">上下级机构</label>
+                                    <el-select v-model="type" style="width: 120px;" placeholder="请选择">
+                                        <el-option
+                                        v-for="(item, j) in typeList"
+                                        :key="j+'_tp'"
+                                        :label="item.name"
+                                        :value="item.id">
+                                        </el-option>
+                                    </el-select>
                                 </div>
                             </div>
                             <div class="layui-col-md1">
@@ -97,9 +132,6 @@ export default {
     name: 'adddoctorParabiose',
     data() {
         return {
-            province: '',   // 省
-            city: '',       // 市
-            county: '',     // 区
             htype: '',      // 机构类型
             grade: '',      // 机构级别
             type: '',       // 上下级机构
@@ -114,6 +146,7 @@ export default {
             sheng: '',         // 获取省的id
             shi: '',            // 城市id
             qu: '',             // 区的id
+            typeList: [{id: '', name:'全部'}, {id:0, name: '上级机构'}, { id:1, name: '下级机构'}]
         }
     },
     mounted() {
@@ -126,7 +159,8 @@ export default {
         initlist(num) {
             console.log(num)
             var _this = this;
-            var obj = { province: _this.province, city: _this.city, county: _this.county, htype: _this.htype, grade: _this.grade, type: _this.type, page: _this.page, limit: _this.limit}
+            var obj = { province: _this.sheng, city: _this.shi, county: _this.qu, htype: _this.htype, grade: _this.grade, type: _this.type, page: _this.page, limit: _this.limit}
+            console.log(obj)
             _this.$http.post('/shv2/dcouplet/relevance_add', obj, function (res) {
                 console.log(res)
                 if(res.code == 1) {
@@ -170,7 +204,8 @@ export default {
         changeSheng () {    // 获取市
             var _this = this;
             this.shi = ''
-            this.qu = ''
+            this.qu = '';
+            _this.county= []
             _this.$http.post('/shv2/Setting/area', { fid: this.sheng}, function (res) {
                 console.log(res)
                 if (res.code == 1) {
@@ -229,8 +264,11 @@ export default {
             .lay_width {
                 width: 100%;
                 .layui-form-label {
-                    width: 66px;
+                    width: 68px;
                     padding: 9px 10px 9px 0px;
+                }
+                .layui-label-msg {
+                     width: 80px;
                 }
                 .layui-input-inline {
                     font-size: 14px;
@@ -238,11 +276,6 @@ export default {
                     input {
                         height: 38px;
                     }
-                }
-                .select_class {
-                    width: 120px;
-                    height: 38px;
-                    border: 1px solid #ddd;
                 }
             }
         }

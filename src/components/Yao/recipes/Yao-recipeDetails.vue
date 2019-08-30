@@ -56,7 +56,7 @@
                                     <label>患者年龄</label><span>{{ prescriptiondata.age }}</span>
                                 </li>
                                 <li>
-                                    <label>患者电话</label><span>{{ prescriptiondata.phone }}</span>
+                                    <label>患者电话</label><span>{{ prescriptiondata.patient_phone }}</span>
                                 </li>
                             
                                 <li>
@@ -131,7 +131,7 @@
                         <li>
                             <label>审核结果</label><span v-text='prescriptiondata.drug_autdit == 1? "审核通过": prescriptiondata.drug_autdit == 2? "审核拒绝": ""'></span>
                         </li>
-                        <li>
+                        <li v-show="prescriptiondata.drug_audit_reason">
                             <label>审核描述</label><span>{{ prescriptiondata.drug_audit_reason }}</span>
                         </li>
                     </ul>
