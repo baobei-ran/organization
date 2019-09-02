@@ -61,7 +61,7 @@
             <div class="files Mg-T20">
                 <dl>
                     <dt>
-                        <img :src="img1" alt="">
+                        <img :src="img1" alt="" />
                         <div >
                             <label for="file1">{{ labelTxt }}</label>
                             <input id='file1' @change='addfiles1'  multiple="multiple" accept=".png, .jpg, .jpeg" type="file">
@@ -71,7 +71,7 @@
                 </dl>
                 <dl>
                     <dt>
-                        <img :src="img2" alt="">
+                        <img :src="img2" alt="" />
                         <div>
                             <label for="file2">{{ labelTxt2 }}</label>
                             <input id='file2' @change='addfiles2'  multiple="multiple" accept=".png, .jpg, .jpeg" type="file">
@@ -151,10 +151,11 @@ export default {
             _this.$http.post('/shv2/Recipetwo/recipe_check', {}, function (res) {   // 电子处方是否审核及状态
                 console.log(res)
                 if (res.code == 1) {
-                    _this.type = res.data.teacher_type
+                    _this.type = res.data.teacher_type;
                     if(!res.data) {
                         return false;
                     }
+                    
                     if (res.data.teacher_type == 0) { // 未审核
                         _this.status0 = true; 
                         _this.kaiBtn = true
@@ -175,9 +176,23 @@ export default {
                     } else if (res.data.teacher_type == 3) { // 审核失败
                         _this.status0 = false;
                         _this.status = false;
-                        _this.status2 = true
-                        _this.kaiBtn = true
-                        _this.failed = res.data.teacher_text; // 拒绝留言
+                        _this.status2 = true;
+                        _this.kaiBtn = true;
+                        _this.failed = res.data.teacher_text;                   // 拒绝的留言
+                        _this.yao_user = res.data.yname;                        // 名字
+                        _this.setMoneys = res.data.recipe_money;                // 价格
+                        if (res.data.teacher_pic) {
+                            _this.img1 = _this.$http.baseURL + res.data.teacher_pic;  // 药师资格证
+                            _this.labelTxt = '重新上传';
+                        } else {
+                            _this.labelTxt = '点击上传';
+                        }
+                        if (res.data.yname_pic) {
+                            _this.img2 = _this.$http.baseURL + res.data.yname_pic;     // 药师签名
+                            _this.labelTxt2 = '重新上传';
+                        } else {
+                            _this.labelTxt2 = '点击上传';
+                        }
                     }
                 }
             }, function (err) { console.log(err)})
@@ -247,7 +262,6 @@ export default {
 
             submitFile () {     // 上传资料
                 var _this = this;
-                console.log(_this.setMoneys, _this.setPrice)
                 layui.use('layer', function() {
                 var layer = layui.layer;
                 if (Number(_this.setPrice) > Number(_this.money_balance) ) {
@@ -283,15 +297,23 @@ export default {
                     layer.msg('请填写药师姓名',{icon:2});
                     return false;
                 }
-                if (!_this.files1) {
+                if (_this.type !== 3 && !_this.files1) {
                     layer.msg('请上传药师资格证',{icon:2});
                     return false;
                 }
-                if (!_this.files2) {
+                if (_this.type !== 3 && !_this.files2) {
                     layer.msg('请上传药师签名图片',{icon:2});
                     return false;
                 }
-                
+
+                if (_this.type == 3 && !_this.files1) {
+                    layer.msg('请重新上传药师资格证',{icon:2});
+                    return false;
+                }
+                if (_this.type == 3 && !_this.files2) {
+                    layer.msg('请重新上传药师签名图片',{icon:2});
+                    return false;
+                }
                 layer.open({    // 确认提交
                     type: 1,
                     shade: 0.2,
@@ -341,11 +363,20 @@ export default {
                                 _this.status = false;
                                 _this.status2 = true
                                 _this.kaiBtn = true
-                                _this.failed = res.data.teacher_text
-                                _this.img1 = _this.$http.baseURL + res.data.teacher_pic;
-                                _this.img2 = _this.$http.baseURL + res.data.yname_pic;
-                                _this.labelTxt = '重新上传'
-                                _this.labelTxt2 = '重新上传';
+                                _this.yao_user = res.data.yname;                        // 名字
+                                _this.setMoneys = res.data.recipe_money;                // 价格
+                                if (res.data.teacher_pic) {
+                                    _this.img1 = _this.$http.baseURL + res.data.teacher_pic;  // 药师资格证
+                                    _this.labelTxt = '重新上传';
+                                } else {
+                                    _this.labelTxt = '点击上传';
+                                }
+                                if (res.data.yname_pic) {
+                                    _this.img2 = _this.$http.baseURL + res.data.yname_pic;     // 药师签名
+                                    _this.labelTxt2 = '重新上传';
+                                } else {
+                                    _this.labelTxt2 = '点击上传';
+                                }
                                 _this.failed = res.data.teacher_text; // 拒绝留言
                             ; break;  // 审核失败
                         }
@@ -391,16 +422,11 @@ export default {
                 formdata.append('yname_pic', _this.files2)
                 formdata.append('name', _this.yao_user)
                 formdata.append('money', _this.setMoneys)
-                formdata.append('type', t)
-                console.log(t)
+                formdata.append('type', t);
                 _this.$http.upload('/shv2/Recipetwo/recipe_data', formdata, function (res) {
                     console.log(res)
                     if (res.code == 1) {
                         layer.msg('上传成功', { icon: 1, time: 1500});
-                        // var t = setTimeout(() => {
-                        //     window.location.reload()
-                        //     clearTimeout(t)
-                        // }, 1000)
                         _this.Userdata();
                         _this.times = setInterval(() => {
                             _this.Userdata();    // 查看是否已提交了资料
@@ -573,7 +599,6 @@ export default {
         
         .files {
             padding-left: 10%;
-            display:box;
             display:-webkit-box;
             display:-webkit-flex; 
             display:-moz-box; 

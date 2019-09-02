@@ -345,7 +345,13 @@ export default {
         yao_set (id, autdit) {  // 药师审核弹框
             var self = this;
             console.log(autdit)
-            self.he_id = id
+            if (this.disabled) {
+                this.disabled = false;
+            }
+            if (self.he_id != id) {
+                this.txt = ''
+            }
+            self.he_id = id;
             layui.use(["layer"], function () {
                 var layer = layui.layer;
                 var $ = layui.jquery;
@@ -389,7 +395,10 @@ export default {
                         layer.closeAll('page');
                         layer.msg(res.msg, { icon: 2})
                     }
-                }, function (err) { console.log(err)})
+                }, function (err) {
+                    _this.disabled = false;
+                    layer.msg('服务器错误，无法审核', { icon: 2})
+                     console.log(err)})
             })
         },
         btnServeMsg () { // 服务说明按钮

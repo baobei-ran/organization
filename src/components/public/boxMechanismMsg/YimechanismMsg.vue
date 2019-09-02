@@ -68,7 +68,12 @@
                         <span class="Color_red">*</span> 营业执照有效期：
                     </td>
                     <td class="Pd-L40 Ft-S16 Color_gray6">
-                        <input type="text" id="date" placeholder="请选择起始时间" style="width: 300px;" />-<input type="text" id="date1" placeholder="请选择到期时间" style="width: 300px;" />
+                        <div class="layui-form " id='IsPurchased'>
+                            <input type="radio" name="dates" value="1" title="长期有效" lay-filter="jiedian"  checked/>
+                            <input type="radio" name="dates" value="2" title="选择有效期" lay-filter="jiedian" />
+                            <input type="text" id="date" placeholder="请选择起始时间" style="width: 200px;" />-<input type="text" id="date1" placeholder="请选择到期时间" style="width: 200px;" />
+                        </div>
+                        <!-- <input type="text" id="date" placeholder="请选择起始时间" style="width: 300px;" />-<input type="text" id="date1" placeholder="请选择到期时间" style="width: 300px;" /> -->
                     </td>
                 </tr>
                 <tr class="" height="60px">
@@ -210,14 +215,16 @@ export default {
             })
         },
         initdata() {
-            layui.use(["laydate"], function () {
+            layui.use(["laydate", "form"], function () {
                 var laydate = layui.laydate;
+                var form = layui.form;
                 laydate.render({
                     elem: "#date" //指定元素
                 });
                 laydate.render({
                     elem: "#date1" //指定元素
                 });
+                form.render()
             });
 
             $('#yyzz').on('change', function () {
@@ -279,7 +286,9 @@ export default {
             var _this = this;
             var regyyzz = /(^(?:(?![IOZSV])[\dA-Z]){2}\d{6}(?:(?![IOZSV])[\dA-Z]){10}$)|(^\d{15}$)/;
             var cardid = /^[1-9][0-9]{5}(19|20)[0-9]{2}((01|03|05|07|08|10|12)(0[1-9]|[1-2][0-9]|31)|(04|06|09|11)(0[1-9]|[1-2][0-9]|30)|02(0[1-9]|[1-2][0-9]))[0-9]{3}([0-9]|x|X)$/;
-            
+            var validity = $('#IsPurchased input[name="dates"]:checked').val();
+            var fromdata = new FormData();
+            console.log(validity)
             layui.use(["layer"], function () {
                 var layer=layui.layer;
                 
@@ -311,19 +320,23 @@ export default {
                     layer.msg('请填写营业执照地址',{ icon:2});
                     return false
                 }
-                if (!$('#date').val()) {
-                    layer.msg('请选择营业执照有效期开始时间',{ icon:2});
-                    return false
-                }
-                if (!$('#date1').val()) {
-                    layer.msg('请选择营业执照有效期结束时间',{ icon:2});
-                    return false
-                }
-                var oDate1 = new Date($('#date').val());
-                var oDate2 = new Date($('#date1').val());
-                if (oDate1.getTime() > oDate2.getTime()) {
-                    layer.msg('开始时间不能大于结束时间',{ icon:2});
-                    return false
+                if (validity == 2) {
+                    if (!$('#date').val()) {
+                        layer.msg('请选择营业执照有效期开始时间',{ icon:2});
+                        return false
+                    }
+                    if (!$('#date1').val()) {
+                        layer.msg('请选择营业执照有效期结束时间',{ icon:2});
+                        return false
+                    }
+                    var oDate1 = new Date($('#date').val());
+                    var oDate2 = new Date($('#date1').val());
+                    if (oDate1.getTime() > oDate2.getTime()) {
+                        layer.msg('开始时间不能大于结束时间',{ icon:2});
+                        return false
+                    }
+                    fromdata.append('ktime', $('#date').val());
+                    fromdata.append('jtime', $('#date1').val());
                 }
                 if (!_this.formdata.method_name) {
                     layer.msg('请填写法人姓名',{ icon:2});
@@ -342,7 +355,6 @@ export default {
                     return false
                 }
                 _this.disabled = true
-                var fromdata = new FormData()
                 fromdata.append('name', _this.formdata.name);
                 fromdata.append('type', _this.formdata.type);
                 fromdata.append('number', _this.formdata.number);
@@ -350,8 +362,7 @@ export default {
                 fromdata.append('city', _this.formdata.city);
                 fromdata.append('county', _this.formdata.county);
                 fromdata.append('address', _this.formdata.address);
-                fromdata.append('ktime', $('#date').val());
-                fromdata.append('jtime', $('#date1').val());
+                fromdata.append('license_tstatus', validity);           // 营业执照有效期,1 长期有效 2 选择有效期
                 fromdata.append('method_name', _this.formdata.method_name);
                 fromdata.append('method_prove', _this.formdata.method_prove);
                 $.each($('#yyzz')[0].files, function (i, file) {
