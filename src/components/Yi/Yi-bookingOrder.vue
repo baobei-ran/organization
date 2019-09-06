@@ -32,21 +32,25 @@
                             <div class="layui-col-md3">
                                 <div class="layui-inline lay_width">
                                     <label class="layui-form-label">所属科室</label>
-                                    <select name="city" lay-verify="required" v-model='depid' class="select_class">
+                                    <el-select style="width: 120px;" v-model='depid' placeholder="请选择">
+                                        <el-option label="全部" value=""></el-option>
+                                        <el-option v-for="item in depList" :key="val.department_id" :label="val.department_name" :value="val.department_id"></el-option>
+                                    </el-select>
+                                    <!-- <select name="city" lay-verify="required" v-model='depid' class="select_class">
                                         <option value="">全部</option>
                                         <option v-for='(val,i) in depList' :key='i' :value="val.department_id">{{ val.department_name }}</option>
-                                    </select>
+                                    </select> -->
                                 </div>
                             </div>
                             <!-- <div class="layui-col-md4 selecttime">
                                 <label class="layui-form-label">预约时间</label>
                                 <div class="layui-input-block">
                                     <div class="layui-input-inline">
-                                        <input type="text" name="price_min" v-model='ktime' placeholder="" id="date" autocomplete="off" class="layui-input">
+                                        <input type="text" name="price_min" v-model='ktime' placeholder="" id="date" autocomplete="off" class="layui-input" />
                                     </div>
                                     <div class="layui-form-mid">-</div>
                                     <div class="layui-input-inline">
-                                        <input type="text" name="price_max" v-model='jtime' placeholder="" id="date1" autocomplete="off" class="layui-input">
+                                        <input type="text" name="price_max" v-model='jtime' placeholder="" id="date1" autocomplete="off" class="layui-input" />
                                     </div>
                                 </div>
                             </div>
@@ -93,7 +97,7 @@
                                 <td>操作</td>
                             </tr>
                         </thead>
-                        <tbody v-show='orderList'>
+                        <tbody v-show='orderList.length'>
                             <tr v-for="(val,i) in orderList">
                                 <td>{{ i+1 }}</td>
                                 <td>{{ val.registration_number }}</td>
@@ -107,11 +111,11 @@
                                 <td><span class="Color_blue pointer" @click="godetail(val.registration_id)">查看</span></td>
                             </tr>
                         </tbody>
-                        <tbody v-show='!orderList'>
+                        <tbody v-show='!orderList.length'>
                             <td colspan="10">暂无数据</td>
                         </tbody>
                     </table>
-                    <div v-show='orderList' id="page" class="ac Mg-T30"></div>
+                    <div v-show='orderList.length' id="page" class="ac Mg-T30"></div>
                 </div>
                 
 
@@ -175,12 +179,15 @@ export default {
             console.log(obj)
             this.$http.post('/shv2/server/make_list', obj, function (res) {
                 console.log(res)
-                if (res.code == 0) {
+                _this.orderNavNum = res.type
+                if (res.code == 1) {
                     _this.orderList = res.data
-                    _this.orderNavNum = res.type
                         if (num == 1) {
                             _this.initdata(res.count)
                         }
+                } else {
+                    _this.orderList = []
+                    _this.initdata(0)
                 }
             }, function (err) { console.log(err)})
         },

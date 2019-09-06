@@ -54,22 +54,19 @@
                     <span class="Ft-S14 selectbtn ac pointer" @click="search">筛选</span>
                     <span class="Color_blue pointer Ft-S14 Mg-L24" @click='empty'>清空筛选条件</span>
                 </p>
-
             </div>
         </div>
-
         <div class="tab_content Pd-L24 Pd-R24">
             <div class="layui-tab">
                 <div class="layui_navs">
                     <ul class="layui-tab-title">
-                        <li class="layui-this" @click="tab(1)">全部<b>（{{ count4 }}）</b></li>
-                        <li @click="tab(2)">待审核<b>（{{ count1 }}）</b></li>
-                        <li @click="tab(3)">已审核<b>（{{ count2 }}）</b></li>
-                        <li @click="tab(4)">已过期<b>（{{ count3 }}）</b></li>
+                        <li class="layui-this" @click="tab(1)">全部<b>（{{ count1 }}）</b></li>
+                        <li @click="tab(2)">待审核<b>（{{ count2 }}）</b></li>
+                        <li @click="tab(3)">已审核<b>（{{ count3 }}）</b></li>
+                        <li @click="tab(4)">已过期<b>（{{ count4 }}）</b></li>
                     </ul>
                 </div>
                 <div class="layui-tab-content">
-                    
                     <div>
                         <table class="layui-table" lay-skin="">
                             <thead>
@@ -84,7 +81,7 @@
                             </thead>
                             <tbody v-if='tableList.length'>
                                 <tr class="table_con Color_black ac" v-for='(val,i) in tableList' :key='i'>
-                                    <td>{{ i+1 }}</td>
+                                    <td>{{ val.index }}</td>
                                     <td>
                                         <span>{{ val.number }}</span>
                                         <img style="width: 19px;" :data-clipboard-text="val.number" class="pointer copy_text" @mouseenter="copy(i)"  @click="copy(i)" src='../../../common/image/icon/icon_copy@2x.png' alt='' />
@@ -134,8 +131,6 @@
                 </div>
             </div>
         </div>
-
-
         <!-- 审核弹框 -->
         <div id="sendgoods_shen" class="hide">
             <h2>药师审核</h2>
@@ -146,7 +141,7 @@
                     <el-radio v-model="radioVal" label="1">审核通过</el-radio>
                     <div class="on-msg">
                         <el-radio v-model="radioVal" label="2">审核拒绝</el-radio>
-                        <span>（患者已支付订单，处方审核拒绝将自动为患者退款）</span>
+                        <span v-show="radioVal == 2 && is_buy == 1">（患者已支付订单，处方审核拒绝将自动为患者退款）</span>
                     </div>
                 </li>
                 <li>
@@ -161,16 +156,10 @@
                 </span>
             </p>
         </div> 
-
         <!-- 处方缩略图 -->
-        <el-dialog
-            title=""
-            :visible.sync="iscfPic"
-            width="660px"
-            :before-close="handleClose">
-                <v-cf v-if="iscfPic" :id="id" :isReject='isReject' />
+        <el-dialog title="" :visible.sync="iscfPic" width="660px" :before-close="handleClose">
+            <v-cf v-if="iscfPic" :id="id" :isReject='isReject' />
         </el-dialog>
-
     </div>
 </template>
 <script>
@@ -214,6 +203,7 @@ export default {
             iscfPic: false,
             id: 0,
             isReject: Number(0),  // boolean
+            is_buy: 0,        // 是否已经支付
         }
     },
     mounted () {
@@ -278,12 +268,15 @@ export default {
                 var element = layui.element;
                 _this.$http.post('/shv2/Patient/patient_prescription_audit_list', _this.list, function (res) { // 列表数据
                     console.log(res)
-                    _this.count1= res.num1?res.num1: 0;
-                    _this.count2= res.num2?res.num2: 0;
-                    _this.count3= res.num3?res.num3: 0;
-                    _this.count4= _this.count1 +_this.count2+_this.count3
-                    _this.recipeCount = res.num4
+                    _this.count1= res.count1;
+                    _this.count2= res.count2;
+                    _this.count3= res.count3;
+                    _this.count4= res.count4;
+                    _this.recipeCount = res.counts;
                     if (res.code == 1) {
+                        res.data.forEach((item, index)=>{
+                            item.index = (index+1)+(_this.page-1)*10;  
+                        })
                         _this.tableList = res.data;
                     } else {
                         if (_this.page !== 1) {
@@ -352,6 +345,16 @@ export default {
                 this.txt = ''
             }
             self.he_id = id;
+            this.$http.post('/shv2/Patient/patient_is_pay', {patient_id: id}, function (res) {
+                console.log(res)
+                if (res.code == 1) {
+                    self.is_buy = 1
+                } else {
+                    self.is_buy = 0
+                }
+            }, function (err) {
+                console.log(err)
+            })
             layui.use(["layer"], function () {
                 var layer = layui.layer;
                 var $ = layui.jquery;

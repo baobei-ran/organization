@@ -562,7 +562,10 @@ export default {
                                 var childli = $('.childmenu li');//子菜单
                                 ele.children.forEach((val, index) => {
                                     // childli[index].setAttribute('style', '');//子菜单初始化选中
-                                    childli[index].removeAttribute('class','enter')
+                                    var getClass = childli[index].getAttribute('class');
+                                    if (getClass == 'enter') {
+                                        childli[index].removeAttribute('class','enter')
+                                    }
                                     if (_this.$route.path.includes(val.url)) {//子路由对应url
                                         // childli[index].setAttribute('style', 'color:#3196FF!important');//子菜单初始化选中
                                         childli[index].setAttribute('class', 'enter');

@@ -183,6 +183,20 @@ export default {
                         _this.status2 = true
                         _this.kaiBtn = true
                         _this.failed = res.data.teacher_text; // 拒绝留言
+                        _this.yao_user = res.data.yname;                        // 名字
+                        _this.setMoneys = res.data.recipe_money;                // 价格
+                        if (res.data.teacher_pic) {
+                            _this.img1 = _this.$http.baseURL + res.data.teacher_pic;  // 药师资格证
+                            _this.labelTxt = '重新上传';
+                        } else {
+                            _this.labelTxt = '点击上传';
+                        }
+                        if (res.data.yname_pic) {
+                            _this.img2 = _this.$http.baseURL + res.data.yname_pic;     // 药师签名
+                            _this.labelTxt2 = '重新上传';
+                        } else {
+                            _this.labelTxt2 = '点击上传';
+                        }
                     }
                 }
             }, function (err) { console.log(err)})
@@ -347,12 +361,21 @@ export default {
                                 _this.status = false;
                                 _this.status2 = true
                                 _this.kaiBtn = true
-                                _this.failed = res.data.teacher_text
-                                _this.img1 = _this.$http.baseURL + res.data.teacher_pic;
-                                _this.img2 = _this.$http.baseURL + res.data.yname_pic;
-                                _this.labelTxt = '重新上传'
-                                _this.labelTxt2 = '重新上传';
-                                _this.failed = res.data.teacher_text; // 拒绝留言
+                                _this.failed = res.data.teacher_text                    // 拒绝的留言
+                                _this.yao_user = res.data.yname;                        // 名字
+                                _this.setMoneys = res.data.recipe_money;                // 价格
+                                if (res.data.teacher_pic) {
+                                    _this.img1 = _this.$http.baseURL + res.data.teacher_pic;  // 药师资格证
+                                    _this.labelTxt = '重新上传';
+                                } else {
+                                    _this.labelTxt = '点击上传';
+                                }
+                                if (res.data.yname_pic) {
+                                    _this.img2 = _this.$http.baseURL + res.data.yname_pic;     // 药师签名
+                                    _this.labelTxt2 = '重新上传';
+                                } else {
+                                    _this.labelTxt2 = '点击上传';
+                                }
                             ; break;  // 审核失败
                         }
                     }

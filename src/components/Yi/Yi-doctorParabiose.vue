@@ -34,23 +34,23 @@
                             <div class="fl ">
                                 <div class="layui-inline lay_width">
                                     <label class="layui-form-label">业务状态</label>
-                                    <select name="" v-model="list.state" class="select_class">
-                                        <option value="0">全部</option>
-                                        <option value="1">单项关联</option>
-                                        <option value="2">双向关联</option>
-                                        <option value="3">合作开启中</option>
-                                        <option value="4">已合作</option>
-                                    </select>
+                                    <el-select style="width: 120px;" v-model="list.state" placeholder="请选择">
+                                        <el-option label='全部' value="0" ></el-option>
+                                        <el-option label='单项关联' value="1" ></el-option>
+                                        <el-option label='双向关联' value="2" ></el-option>
+                                        <el-option label='合作开启中' value="3" ></el-option>
+                                        <el-option label='已合作' value="4" ></el-option>
+                                    </el-select>
                                 </div>
                             </div>
                             <div class="fl">
                                 <div class="layui-inline lay_width">
                                     <label class="layui-form-label" style="width:90px;">上/下级机构</label>
-                                    <select name="" v-model="list.type_data" class="select_class">
-                                        <option value="0">全部</option>
-                                        <option value="1">上级机构</option>
-                                        <option value="2">下级机构</option>
-                                    </select>
+                                    <el-select style="width: 110px;" v-model="list.type_data" placeholder="请选择">
+                                        <el-option label='全部' value="0" ></el-option>
+                                        <el-option label='上级机构' value="1" ></el-option>
+                                        <el-option label='下级机构' value="2" ></el-option>
+                                    </el-select>
                                 </div>
                             </div>
                             <div class="fl">
@@ -116,8 +116,8 @@ export default {
                 name: '',
                 start_time: '',
                 end_time: '',
-                state: 0,
-                type_data: 0,
+                state: '0',
+                type_data: '0',
                 page: 1,
                 limit: 10
             },
@@ -158,8 +158,8 @@ export default {
                 _this.list.end_time = $('#date1').val();
                 _this.$http.post('/shv2/dcouplet/relevance_list', _this.list, function (res) {//
                 console.log(res)
+                    _this.headernum = res;
                     if (res.code == 1) {
-                        _this.headernum = res;
                         _this.tableList = res.data;
                         if (num == 1) {
                             _this.page(res.count)

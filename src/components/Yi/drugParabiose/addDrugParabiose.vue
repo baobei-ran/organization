@@ -9,7 +9,16 @@
                             <div class="fl">
                                 <div class="layui-inline lay_width">
                                     <label class="layui-form-label" style="width:90px;">机构所在地</label>
-                                    <select name="province" @change="selectcity(list.province)" v-model="list.province" class="select_class">
+                                    <el-select style="width: 130px;" v-model="list.province" @change="selectcity(list.province)" placeholder="请选择省">
+                                        <el-option :value="val.aid" v-for="val in provinceList" :key="val.aid" :label="val.aname"></el-option>
+                                    </el-select>
+                                    <el-select style="width: 130px;" v-model="list.city" @change="selectcounty(list.city)" placeholder="请选择市">
+                                        <el-option :value="val.aid" v-for="val in cityList" :key="val.aid" :label="val.aname"></el-option>
+                                    </el-select>
+                                    <el-select style="width: 130px;" v-model="list.county" placeholder="请选择县/区">
+                                        <el-option :value="val.aid" v-for="val in countyList" :key="val.aid" :label="val.aname"></el-option>
+                                    </el-select>
+                                    <!-- <select name="province" @change="selectcity(list.province)" v-model="list.province" class="select_class">
                                         <option :value="val.aid" v-for="val in provinceList" v-text="val.aname">请选择省</option>
                                     </select>
                                     <select name="city" @change="selectcounty(list.city)" v-model="list.city" class="select_class">
@@ -17,16 +26,19 @@
                                     </select>
                                     <select name="county" v-model="list.county" class="select_class">
                                         <option :value="val.aid" v-for="val in countyList" v-text="val.aname">请选择县/区</option>
-                                    </select>
+                                    </select> -->
                                 </div>
                             </div>
                             <div class="fl">
                                 <div class="layui-inline lay_width">
                                     <label class="layui-form-label" style="width:100px;">机构类型筛选</label>
-                                    <select name="" v-model="list.htype" class="select_class">
+                                    <el-select style="width: 130px;" v-model="list.htype" placeholder="请选择">
+                                        <el-option v-for="(val, j) in structureType" :key="j+'_type'" :value="val" :label="val"></el-option>
+                                    </el-select>
+                                    <!-- <select name="" v-model="list.htype" class="select_class">
                                         <option value="">全部</option>
                                         <option :value="key" v-for="(val,key) in structureType">{{val}}</option>
-                                    </select>
+                                    </select> -->
                                 </div>
                             </div>
                             <div class="fl">
@@ -49,7 +61,7 @@
                                 <td>操作</td>
                             </tr>
                         </thead>
-                        <tbody v-show="tableList">
+                        <tbody v-show="tableList.length">
                             <tr v-for="(val,index) in tableList">
                                 <td>{{index+1}}</td>
                                 <td v-text="val.hospital_name"></td>
@@ -63,7 +75,7 @@
                                 </td>
                             </tr>
                         </tbody>
-                        <tbody v-show="!tableList">
+                        <tbody v-show="!tableList.length">
                             <tr>
                                 <td colspan="7">暂无数据</td>
                             </tr>
@@ -97,7 +109,7 @@ export default {
             countyList: '',
             structureType: '',
             hospitalgrade: '',
-            tableList: ''
+            tableList: []
         }
     },
     mounted() {
@@ -110,8 +122,10 @@ export default {
             layui.use(["laypage", "layer", "element"], function () {
                 var element = layui.element;
                 var laypage = layui.laypage;
-                _this.list.page = num
+                _this.list.page = num;
+                console.log( _this.list)
                 _this.$http.post('/shv2/medicine/relevance_add', _this.list, function (res) {//
+                    console.log(res)
                     if (res.code == 1) {
                         _this.structureType = res.structureType;
                         _this.hospitalgrade = res.hospitalgrade;
@@ -121,6 +135,14 @@ export default {
                         if (num == 1) {
                             _this.page(res.count)
                         }
+                    } else {
+                        _this.structureType = '';
+                        _this.hospitalgrade = '';
+                        _this.count2 = res.count2;
+                        _this.tableList = [];
+                        _this.count = res.count;
+                        _this.page(0)
+                        
                     }
                 });
             });
@@ -170,7 +192,11 @@ export default {
             })
         },
         selectcity(num) {//市
-            var _this = this
+            var _this = this;
+            _this.list.city = '';
+            _this.list.county = '';
+            _this.cityList = []
+            _this.countyList = []
             this.$http.post('/shv2/Setting/area', { fid: num }, function (res) {
                 if (res.code == 1) {
                     _this.cityList = res.data;
@@ -180,7 +206,8 @@ export default {
             })
         },
         selectcounty(num) { //区县
-            var _this = this
+            var _this = this;
+            _this.list.county = '';
             this.$http.post('/shv2/Setting/area', { fid: num }, function (res) {
                 if (res.code == 1) {
                     _this.countyList = res.data;

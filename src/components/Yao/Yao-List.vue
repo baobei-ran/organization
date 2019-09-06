@@ -11,7 +11,7 @@
                                 <div class="layui-inline lay_width">
                                     <label class="layui-form-label">订单编号</label>
                                     <div class="layui-input-inline">
-                                        <input type="text" name="" v-model="list.number" autocomplete="off" class="layui-input" />
+                                        <input type="text" name="" v-model="list.order_code" autocomplete="off" class="layui-input" />
                                     </div>
                                 </div>
                             </div>
@@ -82,9 +82,9 @@
                         </thead>
                         <tbody>
                             <tr class="table_con Color_black" v-for="(val,index) in tableList" :key='index'>
-                                <td class="ac" v-text="index+1"></td>
+                                <td class="ac" v-text="val.index"></td>
                                 <td>
-                                    <p>订单编号：<span>{{ val.number }}</span><img :data-clipboard-text='val.number' v-show='val.number' @mouseenter="copy(index)" @click='copy(index)' style="width: 19px;" class="pointer copy_text" src='../../common/image/icon/icon_copy@2x.png' alt='' /></p>
+                                    <p>订单编号：<span>{{ val.order_code }}</span><img :data-clipboard-text='val.order_code' v-show='val.order_code' @mouseenter="copy(index)" @click='copy(index)' style="width: 19px;" class="pointer copy_text" src='../../common/image/icon/icon_copy@2x.png' alt='' /></p>
                                     <p class="Mg-T10">下单时间：{{ val.addtime }}</p>
                                 </td>
                                 <td>
@@ -186,7 +186,7 @@ export default {
             tdlast: 0,
             list: {
                 status: 0,
-                number: '',
+                order_code: '',
                 name: '',
                 start_time: '',
                 end_time: '',
@@ -216,7 +216,7 @@ export default {
             if(this.tdlast !== type) {
                 this.page = 1
                 this.typeValue = ''
-                this.list.number = ''
+                this.list.order_code = ''
                 this.list.name= ''
                 this.list.start_time= ''
                 this.list.end_time= ''
@@ -241,6 +241,9 @@ export default {
                     console.log(res)
                     _this.headernum = res;
                     if (res.code == 1) {
+                        res.data.forEach((item, index)=>{
+                            item.index = (index+1)+(_this.page-1)*10;  
+                        })
                         _this.tableList = res.data;
                         if (num == 1) {
                             switch (_this.tdlast) {//分页
@@ -390,7 +393,7 @@ export default {
         },
         empty() {   // 清空
             this.typeValue = '';
-            this.list.number = '';
+            this.list.order_code = '';
             this.list.name= '';
             this.list.start_time= '';
             this.list.end_time= '';

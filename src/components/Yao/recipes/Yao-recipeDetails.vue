@@ -163,7 +163,7 @@
                     <el-radio v-model="radioVal" label="1">审核通过</el-radio>
                     <div class="on-msg">
                         <el-radio v-model="radioVal" label="2">审核拒绝</el-radio>
-                        <span>（患者已支付订单，处方审核拒绝将自动为患者退款）</span>
+                        <span v-show="radioVal == 2 && is_buy">（患者已支付订单，处方审核拒绝将自动为患者退款）</span>
                     </div>
                 </li>
                 <li>
@@ -202,7 +202,8 @@ export default {
             isReject: Number(0),// 传给处方的 是否审核拒绝的判断
             disabled: false,
             isStatus: false,
-            isStatusErr: false
+            isStatusErr: false,
+            is_buy: 0,
         }
     },
     mounted() {
@@ -253,6 +254,17 @@ export default {
             this.$router.back();
         },
         ClickmodelAudit () { // 处方审核弹框
+            var self = this;
+            this.$http.post('/shv2/Patient/patient_is_pay', {patient_id: this.doctorId}, function (res) {
+                console.log(res)
+                if (res.code == 1) {
+                    self.is_buy = 1
+                } else {
+                    self.is_buy = 0
+                }
+            }, function (err) {
+                console.log(err)
+            })
             layui.use(["layer"], function () {
                 var layer = layui.layer;
                 var $ = layui.jquery;

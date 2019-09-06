@@ -93,7 +93,7 @@
                             </thead>
                             <tbody v-if='tableList.length'>
                                 <tr class="table_con Color_black ac" v-for='(val,i) in tableList' :key='i'>
-                                    <td>{{ i+1 }}</td>
+                                    <td>{{ val.index }}</td>
                                     <td>{{ val.number }}</td>
                                     <td>{{ val.creatime | moment }}</td>
                                     <td>{{ val.user }}</td>
@@ -142,7 +142,7 @@
                             </thead>
                             <tbody v-if='tableList.length'>
                                 <tr class="table_con Color_black ac" v-for='(val,i) in tableList' :key='i+"_2"'>
-                                    <td>{{ i+1 }}</td>
+                                    <td>{{ val.index }}</td>
                                     <td>{{ val.number }}</td>
                                     <td>{{ val.creatime | moment }}</td>
                                     <td>{{ val.user }}</td>
@@ -294,6 +294,10 @@ export default {
                     console.log(res)
                     _this.recipeCount = res;
                     if (res.code == 1) {
+                        res.data.forEach((item, i)=>{
+                            item.index = (i+1)+(_this.list.page-1)*10;  
+                        })
+                        console.log(res.data)
                         _this.tableList = res.data;
                         if (num == 1) {
                             //分页

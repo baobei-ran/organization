@@ -35,18 +35,25 @@
                             <div class="layui-col-md2">
                                 <div class="layui-inline lay_width">
                                     <label class="layui-form-label">所属科室</label>
-                                    <select name="city" lay-verify="required" v-model='depid' class="select_class" >
+                                    <el-select style="width:120px;" v-model='depid' placeholder="请选择">
+                                        <el-select value='' label='全部' ></el-select>
+                                        <el-option v-for='(val,i) in depList' :key='i' :value="val.department_id" :label="val.department_name"></el-option>
+                                    </el-select>
+                                    <!-- <select name="city" lay-verify="required" v-model='depid' class="select_class" >
                                         <option value="">全部</option>
                                         <option v-for='(val,i) in depList' :key='i' :value="val.department_id">{{ val.department_name }}</option>
-                                    </select>
+                                    </select> -->
                                 </div>
                             </div>
                             <div class="layui-col-md4 selecttime">
                                 <label class="layui-form-label">问诊状态</label>
-                                <select name="city" lay-verify="required" v-model='stateId' class="select_tai" style='width: 100px;height:38px;'>
-                                        <option value="">请选择</option>
-                                        <option v-for='(val,i) in states' :key='i' :value="val.id">{{ val.name }}</option>
-                                    </select>
+                                <el-select style="width:120px;" v-model='stateId' placeholder="请选择">
+                                    <el-option v-for='(val,i) in states' :key='i+"_st"' :value="val.id" :label="val.name"></el-option>
+                                </el-select>
+                                <!-- <select name="city" lay-verify="required" v-model='stateId' class="select_tai" style='width: 100px;height:38px;'>
+                                    <option value="">请选择</option>
+                                    <option v-for='(val,i) in states' :key='i' :value="val.id">{{ val.name }}</option>
+                                </select> -->
                                 
                             </div>
                             <div class="layui-col-md1">
@@ -218,10 +225,14 @@ export default {
             var obj = {busitype: _this.tdlast, page: num,limit: _this.limit, number: _this.number, name: _this.name, depid: _this.depid, type:_this.stateId }
             this.$http.post('/shv2/server/asking_list', obj, function (res) {
                 // console.log(res)
+                _this.orderNavNum = res.type
                 if (res.code == 1) {
                     _this.orderList = res.data
-                    _this.orderNavNum = res.type
-                    _this.initdata(res.count)
+                    if (num == 1) {
+                        _this.initdata(res.count)
+                    }
+                } else {
+                    _this.orderList = []
                 }
             }, function (err) { console.log(err)})
         },

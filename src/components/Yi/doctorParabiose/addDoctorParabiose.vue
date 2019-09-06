@@ -9,45 +9,42 @@
                             <div class="layui-col-md5">
                                 <div class="layui-inline lay_width">
                                     <label class="layui-form-label" style="width:90px;">机构所在地</label>
-                                    <select name="city" @change="selectcity(list.province)" v-model="list.province" class="select_class">
-                                        <option value="">请选择省</option>
-                                        <option :value="val.aid" v-for="val in provinceList" v-text="val.aname"></option>
-                                    </select>
-                                    <select name="city" @change="selectcounty(list.city)" v-model="list.city" class="select_class">
-                                        <option value="" >请选择市</option>
-                                        <option :value="val.aid" v-for="val in cityList" v-text="val.aname"></option>
-                                    </select>
-                                    <select name="city" v-model="list.county" class="select_class">
-                                        <option value=''>请选择市</option>
-                                        <option :value="val.aid" v-for="val in countyList" v-text="val.aname"></option>
-                                    </select>
+                                    <el-select style="width: 130px;" v-model="list.province" @change="selectcity(list.province)" placeholder="请选择省">
+                                        <el-option :value="val.aid" v-for="val in provinceList" :key="val.aid" :label="val.aname"></el-option>
+                                    </el-select>
+                                    <el-select style="width: 130px;" v-model="list.city" @change="selectcounty(list.city)" placeholder="请选择市">
+                                        <el-option :value="val.aid" v-for="val in cityList" :key="val.aid" :label="val.aname"></el-option>
+                                    </el-select>
+                                    <el-select style="width: 130px;" v-model="list.county" placeholder="请选择县/区">
+                                        <el-option :value="val.aid" v-for="val in countyList" :key="val.aid" :label="val.aname"></el-option>
+                                    </el-select>
                                 </div>
                             </div>
                             <div class="layui-col-md2">
                                 <div class="layui-inline lay_width">
                                     <label class="layui-form-label">机构类型</label>
-                                    <select name="city" v-model="list.htype" class="select_class">
-                                        <option value="">全部</option>
-                                        <option :value="key" v-for="(val,key) in structureType">{{val}}</option>
-                                    </select>
+                                    <el-select style="width: 130px;" v-model="list.htype" placeholder="请选择">
+                                        <el-option v-for="(val, j) in structureType" :key="j+'_type'" :value="val" :label="val"></el-option>
+                                    </el-select>
                                 </div>
                             </div>
                             <div class="layui-col-md2">
                                 <div class="layui-inline lay_width">
                                     <label class="layui-form-label">机构级别</label>
-                                    <select name="city" v-model="list.grade" class="select_class">
-                                        <option :value="val.id" v-for="val in hospitalgrade">{{val.name}}</option>
-                                    </select>
+                                    <el-select style="width: 130px;" v-model="list.grade" placeholder="请选择">
+                                        <el-option value="" label="全部"></el-option>
+                                        <el-option v-for="(val, j) in hospitalgrade" :key="j+'_rank'" :value="val.id" :label="val.name"></el-option>
+                                    </el-select>
                                 </div>
                             </div>
                             <div class="layui-col-md2">
                                 <div class="layui-inline lay_width">
                                     <label class="layui-form-label" style="width:90px;">上/下级机构</label>
-                                    <select name="city" v-model="list.type" class="select_class">
-                                        <option value="0">全部</option>
-                                        <option value="1">上级机构</option>
-                                        <option value="2">下级机构</option>
-                                    </select>
+                                    <el-select style="width: 130px;" v-model="list.type" placeholder="请选择">
+                                        <el-option value="" label="全部"></el-option>
+                                        <el-option value="1" label="上级机构"></el-option>
+                                        <el-option value="2" label="下级机构"></el-option>
+                                    </el-select>
                                 </div>
                             </div>
                             <div class="layui-col-md1">
@@ -137,6 +134,7 @@ export default {
                 var laypage = layui.laypage;
                 _this.list.page = num
                 _this.$http.post('/shv2/dcouplet/relevance_add', _this.list, function (res) {//
+                    console.log(res)
                     if (res.code == 1) {
                         _this.structureType = res.structureType;
                         _this.hospitalgrade = res.hospitalgrade;
@@ -145,6 +143,12 @@ export default {
                         if (num == 1) {
                             _this.page(res.count)
                         }
+                    } else {
+                        _this.structureType = '';
+                        _this.hospitalgrade = '';
+                        _this.tableList = [];
+                        _this.count = res.count;
+                        _this.page(0)
                     }
                 });
             });
@@ -184,7 +188,9 @@ export default {
             })
         },
         selectprovince() {//初始化下拉框 省份
-            var _this = this
+            var _this = this;
+            _this.list.city = '';
+            _this.list.county = ''
             _this.cityList = []
             _this.countyList = []
             this.$http.post('/shv2/Setting/area', { fid: 1 }, function (res) {
@@ -196,8 +202,10 @@ export default {
             })
         },
         selectcity(num) {//市
-            var _this = this
-             _this.countyList = []
+            var _this = this;
+            _this.list.city = '';
+            _this.list.county = '';
+            _this.countyList = []
             this.$http.post('/shv2/Setting/area', { fid: num }, function (res) {
                 if (res.code == 1) {
                     _this.cityList = res.data;
@@ -208,6 +216,7 @@ export default {
         },
         selectcounty(num) { //区县
             var _this = this
+            _this.list.county = ''
             this.$http.post('/shv2/Setting/area', { fid: num }, function (res) {
                 if (res.code == 1) {
                     _this.countyList = res.data;

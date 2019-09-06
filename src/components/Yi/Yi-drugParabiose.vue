@@ -34,13 +34,13 @@
                             <div class="fl Mg-R20">
                                 <div class="layui-inline lay_width">
                                     <label class="layui-form-label">业务状态</label>
-                                    <select name="city" v-model="list.state" class="select_class">
-                                        <option value="0">全部</option>
-                                        <option value="1">单项关联</option>
-                                        <option value="2">双向关联</option>
-                                        <option value="3">合作开启中</option>
-                                        <option value="4">已合作</option>
-                                    </select>
+                                    <el-select style="width: 120px;" v-model="list.state" placeholder="请选择">
+                                        <el-option value="0" label="全部"></el-option>
+                                        <el-option value="1" label="单项关联"></el-option>
+                                        <el-option value="2" label="双向关联"></el-option>
+                                        <el-option value="3" label="合作开启中"></el-option>
+                                        <el-option value="4" label="已合作"></el-option>
+                                    </el-select>
                                 </div>
                             </div>
                             <div class="fl">
@@ -102,7 +102,7 @@ export default {
                 name: '',
                 start_time: '',
                 end_time: '',
-                state: 0,
+                state: '0',
                 type_data: '',
                 page: 1,
                 limit: 10
@@ -149,8 +149,8 @@ export default {
                 _this.list.start_time = $('#date').val();
                 _this.list.end_time = $('#date1').val();
                 _this.$http.post('/shv2/medicine/relevance_list', _this.list, function (res) {//
+                    _this.headernum = res;
                     if (res.code == 1) {
-                        _this.headernum = res;
                         _this.tableList = res.data;
                         _this.htype=res.structureType;
                         if (num == 1) {

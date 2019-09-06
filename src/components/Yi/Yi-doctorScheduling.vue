@@ -16,19 +16,27 @@
                             <div class="layui-col-md3">
                                 <div class="layui-inline lay_width">
                                     <label class="layui-form-label">所属科室</label>
-                                    <select name="city" lay-verify="required" v-model='departmentName' class="select_class1">
+                                    <el-select style="width:180px;" v-model='departmentName' placeholder="请选择">
+                                        <el-option value="" label='全部'></el-option>
+                                        <el-option v-for='(val,i) in departmentList' :key='i+"_sts"' :value="val.department_id" :label="val.department_name"></el-option>
+                                    </el-select>
+                                    <!-- <select name="city" lay-verify="required" v-model='departmentName' class="select_class1">
                                         <option value="">全部</option>
                                         <option v-for='(val, i) in departmentList' :key='i' :value="val.department_id">{{ val.department_name }}</option>
-                                    </select>
+                                    </select> -->
                                 </div>
                             </div>
                             <div class="layui-col-md3">
                                 <div class="layui-inline lay_width">
                                     <label class="layui-form-label">医生职称</label>
-                                    <select name="city" lay-verify="required" v-model='doctorName' class="select_class1">
+                                    <el-select style="width:180px;" v-model='doctorName' placeholder="请选择">
+                                        <el-option value="" label='全部'></el-option>
+                                        <el-option v-for='(val,i) in doctorList' :key='val.id' :value="val.id" :label="val.name"></el-option>
+                                    </el-select>
+                                    <!-- <select name="city" lay-verify="required" v-model='doctorName' class="select_class1">
                                         <option value="">全部</option>
                                         <option v-for='(val,i) in doctorList' :key='i' :value="val.id">{{ val.name }}</option>
-                                    </select>
+                                    </select> -->
                                 </div>
                             </div>
                             <div class="layui-col-md1">
@@ -115,6 +123,9 @@ export default {
                         _this.doctorLists = res.data
                         _this.initdata(res.count)   // 传递总条数
                       
+                    } else {
+                        _this.doctorLists = []
+                        _this.initdata(0)
                     }
                 }, function (err) { console.log(err)})
             });
