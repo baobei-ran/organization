@@ -2,41 +2,41 @@
 <!-- 处方详情页 -->
     <div id="prescriptionCheck">
         <div class="tab_content">
-                <div class="prescriptionCheck_head dis_f Pd-L24 Pd-R24" v-show="prescriptiondata.status == 1 ">
+                <div class="prescriptionCheck_head dis_f Pd-L24 Pd-R24" v-if="prescriptiondata.status == 1 ">
                     <h1>处方申请详情</h1>
                     <img src="../../../common/image/icon/icon_ddsh@2x.png" alt="" />
                     <span>等待接单中 <b>{{ downTime }}</b></span>
                 </div>
-                <div class="prescriptionCheck_head dis_f Pd-L24 Pd-R24" v-show="prescriptiondata.status == 2 && prescriptiondata.flag == 0">
+                <div class="prescriptionCheck_head dis_f Pd-L24 Pd-R24" v-if="prescriptiondata.status == 2 && prescriptiondata.flag == 0">
                     <h1>处方申请详情</h1>
                     <img src="../../../common/image/icon/icon_ddsh@2x.png" alt="" />
                     <span>等待开具中 <b>{{ kaiTime }}</b></span>
                 </div>
-                <div class="prescriptionCheck_head dis_f Pd-L24 Pd-R24" v-show="prescriptiondata.status == 3 && prescriptiondata.flag == 0">
+                <div class="prescriptionCheck_head dis_f Pd-L24 Pd-R24" v-if="prescriptiondata.status == 3 && prescriptiondata.flag == 0">
                     <h1>处方申请详情</h1>
                     <img src="../../../common/image/icon/icon_ddsh@2x.png" alt="" />
                     <span>处方已开具，等待药师审核</span>
                 </div>
-                <div class="prescriptionCheck_head dis_f Pd-L24 Pd-R24" v-show="prescriptiondata.status == 3 && prescriptiondata.flag == 1">
+                <div class="prescriptionCheck_head dis_f Pd-L24 Pd-R24" v-if="prescriptiondata.status == 3 && prescriptiondata.flag == 1">
                     <h1>处方申请详情</h1>
                     <img src="../../../common/image/icon/icon_cfykj@2x.png" alt="" />
                     <span>处方已开具，药师已审核</span>
                 </div>
                 <!-- 处方过期 -->
-                 <div class="prescriptionCheck_header dis_f Pd-L24 Pd-R24" v-show="prescriptiondata.status == 5 && prescriptiondata.flag == 1">
+                 <div class="prescriptionCheck_header dis_f Pd-L24 Pd-R24" v-if="prescriptiondata.status == 5 && prescriptiondata.flag == 1">
                     <h1>处方申请详情</h1>
                     <img src="../../../common/image/icon/icon_cfygq@2x.png" alt="" />
                     <span>处方已开具，处方已过期</span>
                 </div>
 
                  <!-- 处方审核未通过 -->
-                 <div class="prescriptionCheck_header dis_f Pd-L24 Pd-R24" v-show="prescriptiondata.status == 3 && prescriptiondata.flag == 2">
+                 <div class="prescriptionCheck_header dis_f Pd-L24 Pd-R24" v-if="prescriptiondata.status == 3 && prescriptiondata.flag == 2">
                     <h1>处方申请详情</h1>
                     <img src="../../../common/image/icon/icon_cfygq@2x.png" alt="" />
                     <span>处方已开具，药师审核未通过</span>
                 </div>
                 <!-- 取消处方 -->
-                 <div class="prescriptionCheck_header dis_f Pd-L24 Pd-R24" v-show="prescriptiondata.status == 4">
+                 <div class="prescriptionCheck_header dis_f Pd-L24 Pd-R24" v-if="prescriptiondata.status == 4">
                     <h1>处方申请详情</h1>
                     <img src="../../../common/image/icon/icon_cfygq@2x.png" alt="" />
                     <span>已取消申请，处方开具失败</span>
@@ -111,7 +111,7 @@
 
             <!-- 处方开具信息 -->
                 <div class="issue_msg Mg-T24" v-show="prescriptiondata.status == 3 || prescriptiondata.status == 5">
-                    <p class="orderList_tit Color_black Pd-L24 Pd-B20 Ft-S16 ">处方开具信息 <span class='pointer'>查看原始处方</span></p>
+                    <p class="orderList_tit Color_black Pd-L24 Pd-B20 Ft-S16 ">处方开具信息 <span class='pointer' @click='handleClickCf'>查看原始处方</span></p>
                     <ul>
                         <li>
                             处方编号<span>{{ prescriptiondata.order_code }}</span>
@@ -194,6 +194,66 @@
                 <button class="layui-btn layui-btn-normal" @click="cancel(2)">好的</button>
             </p>
         </div> 
+
+        <!-- 预览 -->
+        <div id='htmls'>
+        <div id="fang_preview">
+            <div class="fang_preview_box">
+                <ul class="f_title">
+                    <li class="smallsize-font">
+                        <span>处方编号：</span>
+                        <span>{{ recipemsg.order_code }}</span>
+                    </li>
+                    <li class="smallsize-font">
+                        <span>处方生成时间：</span>
+                        <span>{{ recipemsg.start_time | moment }}</span>
+                    </li>
+                    <li class="smallsize-font">
+                        <span>处方失效时间：</span>
+                        <span>{{ recipemsg.undue_time | moment }}</span>
+                    </li>
+                </ul>
+                <h2>云医康互联网医院电子处方</h2>
+                <div class="f_user">
+                    <ul>
+                        <li><span>姓名：</span><span>{{ recipemsg.name }}</span></li>
+                        <li><span>性别：</span><span v-text="recipemsg.sex == 0?'男':'女'"></span></li>
+                        <li><span>年龄：</span><span>{{ recipemsg.age }}岁</span></li>
+                        <li><span>肝功能：</span><span>{{ recipemsg.liver }}</span></li>
+                        <li><span>肾功能：</span><span>{{ recipemsg.kidney }}</span></li>
+                        <li><span>备孕情况：</span><span>{{ recipemsg.yun }}</span></li>
+                        <li><span>过敏史：</span><span>{{ recipemsg.allergy }}</span></li>
+                        <li><span>过往病史：</span><span>{{ recipemsg.ago }}</span></li>
+                    </ul>
+                    <p>诊断结果：<span>{{ recipemsg.result }}</span></p>
+                </div>
+                <div class="f_yao">
+                    <h3>Rp</h3>
+                    <div>
+                        <ul v-for='(val, i) in recipe_eat' :key='i+"_yao"'>
+                            <li>
+                                <span>{{ val.name }}</span>
+                                <span style="margin-left:20px;">*{{ val.num }}</span>
+                            </li>
+                            <li>{{ val.usage }}</li>
+                        </ul>
+                    </div>
+                    <img class="f_zheng" :src="$http.baseURL+recipemsg.zhang_pic" alt="">
+                </div>
+                <p class="f_pety">( 以下空白，修改无效 )</p>
+                <ul class="f_signature">
+                    <li>
+                        <span>处方医师：</span>
+                        <img :src='$http.baseURL+recipemsg.signpic' alt="">
+                    </li>
+                    <li v-show='recipemsg.flag == 0?false:true'>
+                        <span>审核药师：</span>
+                        <img :src="$http.baseURL+recipemsg.yname_pic" alt="">
+                    </li>
+                </ul>
+            </div>
+        </div>
+        </div>
     </div>
 </template>
 <script>
@@ -212,6 +272,8 @@ export default {
             times: '',              // 未接单定时器
             doc_times: '',          // 医生开具等待时间
             kaiTime: '',            // 等待开具时间
+            recipemsg: '',
+            recipe_eat: []
         }
     },
     mounted() {
@@ -221,6 +283,34 @@ export default {
         this.datadetail()
     },
     methods: {
+        handleClickCf () {  // 查看处方
+            var _this = this;
+            layui.use(["layer"], function () {
+                var layer = layui.layer;
+                var $ = layui.jquery;
+                _this.$http.post('/mobile/Doch5/recipe_look', {id:_this.doctorId}, function (res) {
+                console.log(res)
+                if (res.code == 1) {
+                    _this.recipemsg = res.data
+                    _this.recipe_eat = res.recipe_eat;
+                    layer.open({
+                        type: 1,
+                        shade: 0.2,
+                        shadeClose: true,
+                        closeBtn: 1,
+                        title: "",
+                        content: $("#htmls"),
+                        area: ["640px", "560px"],
+                        cancel: function () { }
+                    });
+                } else {
+                    _this.recipemsg = '';
+                    _this.recipe_eat = [];
+                    layer.msg(res.msg)
+                }
+            }, function (err) {})   
+            });
+        },
         datadetail () { // 获取详情
             var self = this;
             self.$http.post('/shv2/recipetwo/recipe_look', this.$route.query, function (res) {
@@ -242,10 +332,10 @@ export default {
                                 }
                                 var endTime = Math.round((Date.now())/1000);
                                 var moments = endTime - stTime;
-                                var m = parseInt(moments % 60);
+                                var s = parseInt(moments % 60);
                                 var f = parseInt(moments / 60%60)
                                 var h = parseInt(moments / 3600%24)
-                                val.creatime = oddo(f)+':'+oddo(m)
+                                val.creatime = oddo(h)+':'+oddo(f)+':'+oddo(s)
                                 self.kaiTime = val.creatime  // 医生开具中
                             }, 1000)
                         }
@@ -293,7 +383,7 @@ export default {
                 var m = parseInt(moments % 60);
                 var f = parseInt(moments / 60%60)
                 var h = parseInt(moments / 3600%24)
-                _this.downTime = oddo(f)+':'+oddo(m)
+                _this.downTime = oddo(h)+':'+oddo(f)+':'+oddo(m)
             }, 1000)
              
         },
@@ -727,5 +817,107 @@ export default {
             }
         }
     }
+
+    // 预览样式
+#htmls {
+    display: none;
+}
+#fang_preview {
+    width: 640px;
+    height: 560px;
+    padding:20px;
+    .fang_preview_box {
+        height: 100%;
+        padding: 10px;
+        border: 1px solid rgba(0,0,0,.2);
+        .f_title {
+            overflow: hidden;
+            > li {
+                margin-right: 3px;
+                float: left;
+                height: 20px;
+                > span {
+                    display: block;
+                    float: left;
+                    font-size: 12px;
+                    -webkit-text-size-adjust:none !important;
+                    -webkit-transform: scale(0.8);
+                    transform:scale(0.8);
+                }
+                
+            }
+            .smallsize-font{
+                font-size: 6px;
+            }
+        }
+        >h2 {
+            font-size: 18px;
+            text-align: center;
+            font-weight: 550;
+            letter-spacing: 2px;
+            padding: 10px 0;
+        }
+        .f_user {
+            border-bottom: 1px dashed #666;
+            > ul {
+                overflow: hidden;
+                li {
+                    float: left;
+                    width: 33.3%;
+                    font-size: 12px;
+                    padding: 3px 0;
+                }
+            }
+            >p {
+                margin: 10px 0;
+                font-size: 12px;
+            }
+        }
+        .f_yao {
+            padding: 10px 0;
+            min-height: 120px;
+            position: relative;
+            >h3 {
+                font-size: 12px;
+            }
+            > div {
+                ul {
+                    font-size: 12px;
+                    margin-top: 10px;
+                    li {
+                        padding: 3px 0;
+                    }
+                }
+            }
+            .f_zheng {
+                position: absolute;
+                right: 20px;
+                top: 10%;
+                width: 100px;
+                height: 100px;
+                -webkit-border-radius: 100%;
+                border-radius: 100%;
+            }
+        }
+        .f_pety {
+            width: 100%;
+            text-align: center;
+        }
+        .f_signature {
+            margin-top: 10px;
+            overflow: hidden;
+            li {
+                float: left;
+                width: 50%;
+                > img {
+                    width: 50px;
+                }
+            }
+        }
+    }
+    
+
+    
+}
 }
 </style>

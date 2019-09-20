@@ -989,6 +989,7 @@ export default {
                 width: 50px;
                 color: #bfbfc1;
                 font-size: 16px;
+                z-index: 1000;
                 dl {
                     position: relative;
                     left: 52px;
