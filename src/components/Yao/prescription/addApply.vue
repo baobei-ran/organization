@@ -288,7 +288,7 @@ export default {
             usage: [],                  // 用法及用量
             shop_word: '',              // 药店留言
             size: 3,                    // 处方药品的列表数量
-            disabled: true,             // 按钮
+            disabled: false,             // 按钮
             tablelist: [                // 获取处方药品的数据
                 {name: '', num: '', usage: '', cname: '', gg: ''},
                 {name: '', num: '', usage: '', cname: '', gg: ''},
@@ -319,7 +319,7 @@ export default {
             console.log(res)
             if (res.code == 1) {
                 self.doctorList = res.data
-                self.disabled = false
+                // self.disabled = false
             }
         }, function (err) { console.log(err)})
         this.initDrug()
