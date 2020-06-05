@@ -337,10 +337,14 @@ export default {
                     layui.layer.msg('请填写医生姓名')
                     return false;
                 }
-                if (!$('#idcardz').val()) {
+                if (!this.zcard) {
                     layui.layer.msg('请上传身份证正面')
                     return false;
                 }
+                // if (!$('#idcardz').val()) {
+                //     layui.layer.msg('请上传身份证正面')
+                //     return false;
+                // }
                 if (!$('#idcardf').val()) {
                     layui.layer.msg('请上传身份证反面')
                     return false;
