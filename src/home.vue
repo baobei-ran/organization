@@ -49,7 +49,7 @@
                    
                     <ul class="Mg-T60">
                         <!-- 子级菜单 -->
-                        <li v-for="(val,index) in childlist" @click="childselect(val,index)" :name="val.url" class="pointer Mg-B24 Color_black Ft-S16 Pd-L30 childhover">{{val.title}}</li>
+                        <li v-for="(val,index) in childlist" :key="index" @click="childselect(val,index)" :name="val.url" class="pointer Mg-B24 Color_black Ft-S16 Pd-L30 childhover">{{val.title}}</li>
                     </ul>
                 </div>
             </transition>
